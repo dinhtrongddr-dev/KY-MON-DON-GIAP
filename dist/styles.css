@@ -576,6 +576,14 @@ textarea:focus { outline:3px solid #bce8ce; }
   .table-scroll th,.table-scroll td { padding:9px 5px; }
   .table-scroll .element-chip { font-size:0.875rem; }
 }
+.ai-panel { margin: 16px 0 24px; border: 2px solid #b58a24; }
+.local-controls { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:16px 0; }
+.local-controls .field { flex:1 1 280px; }
+.ai-panel p,.ai-panel li { font-size:16px; line-height:1.65; overflow-wrap:anywhere; }
+.ai-panel code { white-space:normal; overflow-wrap:anywhere; }
+.ai-assessment { padding:14px 0; border-top:1px solid var(--line); }
+#ai-status { font-weight:600; }
+[hidden] { display:none !important; }
 @media print {
   body { background: #fff; }
   .page-shell { width: 100%; padding: 0; }

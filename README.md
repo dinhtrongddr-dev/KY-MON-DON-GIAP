@@ -2,6 +2,12 @@
 
 Ứng dụng web tĩnh lập bàn **Thời Gia Kỳ Môn Độn Giáp – Chuyển Bàn** từ ngày, giờ, phút và múi giờ.
 
+## Luận bằng Codex local
+
+Nút Luận bằng AI kết nối server local trên máy người dùng, gọi `codex app-server` qua stdio với model `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Bộ chạy và hướng dẫn nằm trong `dist/downloads/ky-mon-codex-local.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
+
+Tạo lại gói tải bằng `python scripts/package-local.py` sau mỗi thay đổi. Server tính lại bàn, gắn căn cứ, kiểm tra JSON trả về; kiểm thử giao thức dùng mock, chưa thay thế kiểm tra trực tiếp trên tài khoản/máy của người dùng.
+
 ## Khẩu quyết đã mã hóa
 
 - Tứ trụ đổi theo tiết khí; nhật trụ đổi lúc 23:00.
@@ -18,7 +24,7 @@
 - Ô sự việc và 16 nhóm chủ đề đi kèm ví dụ, điểm đại diện cần xem và câu hỏi đối chiếu thực tế.
 - Hướng dẫn xác định cung Nhật can, Thời can trên thiên bàn; Giáp tra nghi ẩn theo tuần của từng trụ. Nút hướng dẫn chọn trực tiếp cung trên bàn.
 - Bảng tương sinh/tương khắc hai chiều và sáu bước đọc bàn cơ bản.
-- Câu hỏi chỉ ở phiên trang hiện tại, không lưu tự động và không gửi cho AI. Nội dung luận là hướng dẫn theo mẫu, không tự hiểu câu hỏi hay dự đoán chắc chắn.
+- Câu hỏi không lưu tự động. Hướng dẫn nhập môn là nội dung theo mẫu; khi bấm Luận bằng AI, server local gửi câu hỏi và dữ liệu bàn tới Codex. Lời luận AI không phải dự đoán chắc chắn.
 - Không dùng bàn thay thế dữ liệu đầu tư, chẩn đoán y tế hay tư vấn pháp lý.
 
 ## Chạy kiểm thử

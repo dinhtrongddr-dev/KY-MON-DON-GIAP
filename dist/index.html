@@ -39,7 +39,7 @@
           <form id="chart-form" class="input-grid" novalidate>
             <label class="field question-field"><span>Sự việc cần hỏi</span>
               <textarea id="question" rows="2" maxlength="1500" placeholder="Ví dụ: Trong 30 ngày tới, công ty tôi có nhận được hợp đồng tạp vụ của công ty A không?"></textarea>
-              <small>Một việc cụ thể + đối tượng + thời hạn. Nội dung chỉ ở phiên đang mở, không tự lưu hay gửi để AI luận.</small>
+              <small>Một việc cụ thể + đối tượng + thời hạn. Chỉ gửi câu hỏi và dữ liệu bàn tới Codex khi bạn bấm Luận bằng AI.</small>
             </label>
             <label class="field question-field"><span>Nhóm sự việc · chọn để xem hướng dẫn</span><select id="topic"></select></label>
             <label class="field field-time">
@@ -77,6 +77,18 @@
 
         <section id="result" class="result" aria-live="polite" aria-busy="false">
           <p id="question-summary" class="question-summary"></p>
+          <section class="learning-panel ai-panel" aria-labelledby="ai-title">
+            <div class="control-heading"><div><p class="eyebrow">Codex trên máy tính của bạn</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">GPT-5.6 Sol</span></div>
+            <p>Nhập sự việc ở trên, kết nối server local rồi bấm luận. Kết quả gồm cách chọn dụng thần, điểm thuận–vướng và căn cứ trên bàn.</p>
+            <details id="local-setup"><summary>Kết nối Codex trên máy tính · hướng dẫn lần đầu</summary>
+              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-codex-local.zip" download>Tải bộ Kỳ Môn Local</a> và giải nén trên máy tính có Node.js 22 trở lên, Codex CLI đã đăng nhập ChatGPT.</li><li>Chạy START-WINDOWS.cmd trên Windows, hoặc chạy <code>node local/server.mjs</code> trong thư mục đã giải nén trên macOS/Linux.</li><li>Nhập mã ghép nối hiện trong cửa sổ server vào ô bên dưới. Mã mới được tạo mỗi lần mở server; đây không phải API key.</li><li>Nếu trình duyệt hỏi quyền truy cập mạng cục bộ, chỉ cho phép khi bạn đã mở server. Nếu không kết nối được từ website, mở <a href="http://127.0.0.1:8765" target="_blank" rel="noopener noreferrer">bản chạy trên máy tính</a> rồi nhập lại câu hỏi.</li></ol>
+              <p>Server phải chạy trên cùng máy với trình duyệt. Điện thoại không kết nối được qua địa chỉ local này. Codex gọi model qua Internet bằng tài khoản ChatGPT đã đăng nhập; quyền dùng Sol và hạn mức phụ thuộc tài khoản.</p>
+            </details>
+            <div class="local-controls"><label class="field"><span>Mã ghép nối server local</span><input id="local-token" type="password" autocomplete="off" spellcheck="false" placeholder="Dán mã từ cửa sổ Kỳ Môn Local" /></label><button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button><button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button><button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button></div>
+            <p id="ai-status" role="status">Chưa kết nối server local.</p>
+            <div id="ai-answer" aria-live="polite" hidden></div>
+            <details><summary>Quy tắc và phạm vi luận</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. Server tính lại bàn từ ngày giờ, đối chiếu Nhật can–Thời can, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm và Môn bức cung. Các nhận xét phải gắn căn cứ có trên bàn.</p><p>Chưa bao quát đầy đủ nhập mộ, kích hình, vượng suy Cửu Tinh, thập can khắc ứng và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. AI có thể diễn giải sai dù trỏ đúng căn cứ; lời luận không bảo đảm sự việc sẽ xảy ra.</p></details>
+          </section>
           <div class="chart-meta">
             <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
             <div class="calculation-summary" id="calculation-summary"></div>

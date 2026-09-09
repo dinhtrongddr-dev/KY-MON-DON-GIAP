@@ -2,6 +2,7 @@ import {
   BRANCHES, STAR_QIN, elementSlug, formatInstantAtOffset, formatOffset, generateQimen,
 } from "./qimen.mjs";
 import {TOPICS, GENERATES, CONTROLS, relation, locateStem, locateRef} from './guide.mjs';
+import {initLocalAi} from './ai-local.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -247,6 +248,7 @@ function renderChart(chart) {
   renderDetail(chart);
   renderMethod(chart);
   renderGuide(chart);
+  document.dispatchEvent(new Event('qimen-chart'));
 }
 
 function generateAndRender({ scroll = false } = {}) {
@@ -333,3 +335,9 @@ topicInput.addEventListener('change',()=>{if(currentChart)renderGuide(currentCha
 questionInput.addEventListener('input',()=>{
   document.querySelector('#question-summary').textContent = questionInput.value.trim()===currentQuestion ? (currentQuestion?`Câu hỏi của bàn: ${currentQuestion}`:'Chưa ghi câu hỏi.') : 'Bạn đang sửa câu hỏi. Bấm Lập bàn để gắn câu hỏi mới với ngày giờ đã chọn.';
 });
+
+initLocalAi({prepare(){
+  generateAndRender();
+  if(!errorBox.hidden)throw new Error(errorBox.textContent);
+  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input}};
+}});
