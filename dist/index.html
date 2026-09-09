@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#15251f" />
+    <meta name="description" content="Lập bàn Thời Gia Kỳ Môn Độn Giáp theo ngày, giờ, tiết khí và Can Chi." />
+    <title>Kỳ Môn Bàn · Thời Gia Kỳ Môn Độn Giáp</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Kỳ Môn Bàn – về đầu trang">
+          <span class="brand-seal" aria-hidden="true">
+            <i>四</i><i>九</i><i>二</i><i>三</i><i>五</i><i>七</i><i>八</i><i>一</i><i>六</i>
+          </span>
+          <span>
+            <strong>Kỳ Môn Bàn</strong>
+            <small>Thời Gia · Chuyển Bàn</small>
+          </span>
+        </a>
+        <div class="school-mark" aria-label="Phương pháp mặc định">
+          <span>時家奇門</span>
+          <small>Âm Dương 18 cục</small>
+        </div>
+      </header>
+
+      <main id="top">
+        <section class="control-panel" aria-labelledby="input-title">
+          <div class="control-heading">
+            <div>
+              <p class="eyebrow">Thời điểm hỏi quẻ</p>
+              <h1 id="input-title">Lập bàn Kỳ Môn</h1>
+            </div>
+            <button class="button button-quiet" id="now-button" type="button">Lấy giờ hiện tại</button>
+          </div>
+
+          <form id="chart-form" class="input-grid" novalidate>
+            <label class="field field-time">
+              <span>Ngày · giờ · phút</span>
+              <input id="datetime" name="datetime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" required />
+            </label>
+            <label class="field field-zone">
+              <span>Múi giờ UTC</span>
+              <select id="timezone" name="timezone" aria-describedby="timezone-help">
+                <option value="7" selected>UTC+07 · Việt Nam</option>
+                <option value="8">UTC+08 · Trung Quốc</option>
+                <option value="9">UTC+09</option>
+                <option value="6.5">UTC+06:30</option>
+                <option value="5.5">UTC+05:30</option>
+                <option value="0">UTC+00</option>
+                <option value="-5">UTC−05</option>
+                <option value="-8">UTC−08</option>
+              </select>
+              <small id="timezone-help">Giờ địa phương, chưa hiệu chỉnh chân thái dương</small>
+            </label>
+            <label class="field field-method">
+              <span>Pháp định cục</span>
+              <select id="method" name="method">
+                <option value="chaibu" selected>Tháo bổ · theo Phù đầu</option>
+                <option value="maoshan">Mao Sơn · 5 ngày/nguyên</option>
+              </select>
+              <small id="method-note">Lấy nguyên theo Phù đầu của nhật Can Chi</small>
+            </label>
+            <button class="button button-primary" type="submit">
+              <span>Lập bàn</span><span aria-hidden="true">→</span>
+            </button>
+          </form>
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+        </section>
+
+        <section id="result" class="result" aria-live="polite" aria-busy="false">
+          <div class="chart-meta">
+            <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
+            <div class="calculation-summary" id="calculation-summary"></div>
+          </div>
+
+          <div class="workspace">
+            <div class="board-column">
+              <div class="board-toolbar">
+                <div>
+                  <p class="eyebrow">Lạc thư Cửu Cung</p>
+                  <h2>Bàn chuyển Kỳ Môn</h2>
+                </div>
+                <div class="board-key" aria-label="Chú thích lớp bàn">
+                  <span><i class="key-dot spirit-dot"></i>Thần</span>
+                  <span><i class="key-dot star-dot"></i>Tinh</span>
+                  <span><i class="key-dot door-dot"></i>Môn</span>
+                  <span><i class="key-dot stem-dot"></i>Can</span>
+                </div>
+              </div>
+              <div class="board-frame">
+                <div id="qimen-board" class="qimen-board" role="group" aria-label="Bàn Kỳ Môn chín cung"></div>
+              </div>
+              <div id="board-flags" class="board-flags" aria-label="Dấu hiệu toàn bàn"></div>
+            </div>
+
+            <aside class="inspector" aria-labelledby="inspector-title">
+              <div class="inspector-head">
+                <p class="eyebrow">Luận tượng từng cung</p>
+                <h2 id="inspector-title">Chọn một cung trên bàn</h2>
+              </div>
+              <div id="palace-detail" class="palace-detail"></div>
+            </aside>
+          </div>
+
+          <section class="reading-strip" aria-labelledby="reading-title">
+            <div>
+              <p class="eyebrow">Mấu chốt nhập môn</p>
+              <h2 id="reading-title">Đọc bàn theo lớp</h2>
+            </div>
+            <ol>
+              <li><strong>Cung</strong><span>Bối cảnh và phương vị</span></li>
+              <li><strong>Thần</strong><span>Khí thế vô hình</span></li>
+              <li><strong>Tinh</strong><span>Thiên thời, năng lực</span></li>
+              <li><strong>Môn</strong><span>Con đường sự việc</span></li>
+              <li><strong>Thiên–Địa can</strong><span>Quan hệ chủ–khách</span></li>
+            </ol>
+          </section>
+
+          <details class="method-details">
+            <summary>Quy tắc đang dùng và cách đối chiếu với phần mềm khác</summary>
+            <div class="method-copy" id="method-copy"></div>
+          </details>
+        </section>
+      </main>
+
+      <footer>
+        <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
+        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT).</p>
+      </footer>
+    </div>
+
+    <script src="./vendor/lunar.js"></script>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
