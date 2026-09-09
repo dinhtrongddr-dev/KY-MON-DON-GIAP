@@ -2,11 +2,11 @@ const mod = (value, size) => ((value % size) + size) % size;
 const wrapPalace = (value) => mod(value - 1, 9) + 1;
 
 export const ELEMENTS = {
-  "Mộc": { slug: "wood", color: "#17724b" },
-  "Hỏa": { slug: "fire", color: "#b83a35" },
-  "Thổ": { slug: "earth", color: "#9b6a24" },
-  "Kim": { slug: "metal", color: "#52606d" },
-  "Thủy": { slug: "water", color: "#236b91" },
+  "Mộc": { slug: "wood", color: "#08783c" },
+  "Hỏa": { slug: "fire", color: "#ce202c" },
+  "Thổ": { slug: "earth", color: "#86411e" },
+  "Kim": { slug: "metal", color: "#775600" },
+  "Thủy": { slug: "water", color: "#1557cc" },
 };
 
 export const STEMS = [

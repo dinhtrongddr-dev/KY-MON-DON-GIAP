@@ -37,6 +37,11 @@
           </div>
 
           <form id="chart-form" class="input-grid" novalidate>
+            <label class="field question-field"><span>Sự việc cần hỏi</span>
+              <textarea id="question" rows="2" maxlength="1500" placeholder="Ví dụ: Trong 30 ngày tới, công ty tôi có nhận được hợp đồng tạp vụ của công ty A không?"></textarea>
+              <small>Một việc cụ thể + đối tượng + thời hạn. Nội dung chỉ ở phiên đang mở, không tự lưu hay gửi để AI luận.</small>
+            </label>
+            <label class="field question-field"><span>Nhóm sự việc · chọn để xem hướng dẫn</span><select id="topic"></select></label>
             <label class="field field-time">
               <span>Ngày · giờ · phút</span>
               <input id="datetime" name="datetime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" required />
@@ -71,6 +76,7 @@
         </section>
 
         <section id="result" class="result" aria-live="polite" aria-busy="false">
+          <p id="question-summary" class="question-summary"></p>
           <div class="chart-meta">
             <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
             <div class="calculation-summary" id="calculation-summary"></div>
@@ -84,10 +90,11 @@
                   <h2>Bàn chuyển Kỳ Môn</h2>
                 </div>
                 <div class="board-key" aria-label="Chú thích lớp bàn">
-                  <span><i class="key-dot spirit-dot"></i>Thần</span>
-                  <span><i class="key-dot star-dot"></i>Tinh</span>
-                  <span><i class="key-dot door-dot"></i>Môn</span>
-                  <span><i class="key-dot stem-dot"></i>Can</span>
+                  <span class="element-chip" data-element="wood">Mộc · xanh lá</span>
+                  <span class="element-chip" data-element="fire">Hỏa · đỏ</span>
+                  <span class="element-chip" data-element="earth">Thổ · nâu</span>
+                  <span class="element-chip" data-element="metal">Kim · vàng</span>
+                  <span class="element-chip" data-element="water">Thủy · xanh dương</span>
                 </div>
               </div>
               <div class="board-frame">
@@ -105,6 +112,41 @@
             </aside>
           </div>
 
+          <section class="learning-panel" aria-labelledby="guide-title">
+            <p class="eyebrow">Bắt đầu từ bàn đang xem</p><h2 id="guide-title">Hướng dẫn cho câu hỏi của bạn</h2>
+            <div id="live-guide"></div>
+          </section>
+          <section class="learning-panel" aria-labelledby="elements-title">
+            <h2 id="elements-title">Ngũ hành tương sinh · tương khắc</h2>
+            <p>Màu chỉ giúp nhận diện hành, không phải điểm tốt/xấu. Bát Thần dùng chữ tím riêng, không suy ngũ hành của Thần chỉ từ màu.</p>
+            <div id="elements-table" class="table-scroll"></div>
+            <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
+            <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
+              <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>
+              <p>Đây là cách đọc sơ bộ trong hệ thống truyền thống. Còn phải xét mùa, vượng suy, Môn–Tinh–Thần, Không/Mã và hoàn cảnh thực tế.</p>
+            </details>
+          </section>
+          <section class="learning-panel" aria-labelledby="basics-title">
+            <h2 id="basics-title">Tự đọc một bàn trong 6 bước</h2>
+            <ol class="beginner-steps">
+              <li><strong>Viết một câu hỏi rõ.</strong> Nêu mình hỏi cho ai, việc gì, trong bao lâu. Ví dụ “Tôi có ký được hợp đồng A trong tháng này không?”; tránh gộp cả công việc, hôn nhân và tiền bạc.</li>
+              <li><strong>Chốt ngày giờ và phương pháp.</strong> Dùng thời điểm hỏi; giữ nguyên khi đọc lại cùng bàn. Phút không tạo bàn mới riêng nếu chưa đổi giờ Can Chi hoặc giao tiết. Đừng bấm lại liên tục để tìm bàn thuận ý.</li>
+              <li><strong>Tìm người và việc.</strong> Chữ đầu ở trụ Ngày là Nhật can; chữ đầu ở trụ Giờ là Thời can. Tìm chúng ở Thiên bàn. Các nút hướng dẫn bên trên chỉ tới cung tương ứng, kể cả can ký cung.</li>
+              <li><strong>Chọn dụng thần phụ.</strong> Dụng thần là ký hiệu đại diện điều đang hỏi. Chọn chủ đề để biết nên xem thêm Môn, Tinh hoặc Thần nào. Đây là cách lấy tượng nhập môn, không phải một quy tắc duy nhất cho mọi phái.</li>
+              <li><strong>So cung rồi đọc các lớp.</strong> So sinh–khắc hai cung; đọc Môn (lối diễn biến), Tinh (tính chất), Thần (tượng bổ sung). Không suy chỉ từ một chữ Sinh hay Tử.</li>
+              <li><strong>Viết nhận xét có điều kiện.</strong> Ghi yếu tố thuận, yếu tố vướng và điều cần xác minh. Kết luận theo mẫu “Tượng gợi ý…, nhưng cần kiểm tra…”, không đổi thành xác suất hay lời hứa về tương lai.</li>
+            </ol>
+            <details><summary>Từ điển nhanh: Trực Phù, Trực Sử, Thiên Cầm, Không, Mã…</summary>
+              <dl><dt>Trực Phù</dt><dd>Có hai cách dùng tên: sao giữ vai trò chủ trong Cửu Tinh và Thần Trực Phù trong Bát Thần. “Trực Phù: Thiên Anh” nghĩa sao Thiên Anh đang giữ vai trò chủ.</dd>
+              <dt>Trực Sử</dt><dd>Môn chủ của giờ đang xét, giúp đọc đường diễn tiến; không phải tên một Thần.</dd>
+              <dt>Thiên Cầm</dt><dd>Một trong Cửu Tinh, gốc Trung Ngũ; app ký cùng Thiên Nhuế. Không phải lúc nào Thiên Cầm cũng là Trực Phù.</dd>
+              <dt>Tuần Không</dt><dd>Tượng thiếu thực chất, chưa thành hình hoặc chậm; không đủ để khẳng định việc không bao giờ thành.</dd>
+              <dt>Dịch Mã</dt><dd>Tượng di chuyển, thay đổi, bận rộn; không mặc định tốt hay xấu.</dd>
+              <dt>Phục ngâm / phản ngâm</dt><dd>Phục ngâm gợi lặp lại, chậm hoặc giữ nguyên; phản ngâm gợi đảo chiều, dao động. Xem lớp Tinh hay Môn đang mang dấu đó.</dd>
+              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp kiểm tra nâng cao. Bản hướng dẫn này chưa tự tính đầy đủ, nên không phải bộ luận đoán chuyên sâu hoặc máy dự báo.</dd></dl>
+            </details>
+            <p class="source-note">Tham khảo quy tắc nền: <a href="https://www.fatemaster.ai/guides/qimen-dunjia" target="_blank" rel="noreferrer">FateMaster · Thời Gia Chuyển Bàn</a>. Ví dụ và checklist bên trên là hướng dẫn biên soạn cho app, không phải trích nguyên văn cổ thư.</p>
+          </section>
           <section class="reading-strip" aria-labelledby="reading-title">
             <div>
               <p class="eyebrow">Mấu chốt nhập môn</p>

@@ -12,10 +12,19 @@
 - Trực Phù theo thời can; Trực Sử theo thời cung; Trung Ngũ ký Khôn 2; Thiên Cầm đi cùng Thiên Nhuế.
 - Bàn hiển thị đủ địa bàn, thiên bàn, Cửu Tinh, Bát Môn, Bát Thần, Tuần Không và Dịch Mã.
 
-## Kiểm thử
+## Hướng dẫn nhập môn
+
+- Ngũ hành có màu riêng; Kim dùng nền vàng nổi bật với chữ vàng sẫm dễ đọc.
+- Ô sự việc và 16 nhóm chủ đề đi kèm ví dụ, điểm đại diện cần xem và câu hỏi đối chiếu thực tế.
+- Hướng dẫn xác định cung Nhật can, Thời can trên thiên bàn; Giáp tra nghi ẩn theo tuần của từng trụ. Nút hướng dẫn chọn trực tiếp cung trên bàn.
+- Bảng tương sinh/tương khắc hai chiều và sáu bước đọc bàn cơ bản.
+- Câu hỏi chỉ ở phiên trang hiện tại, không lưu tự động và không gửi cho AI. Nội dung luận là hướng dẫn theo mẫu, không tự hiểu câu hỏi hay dự đoán chắc chắn.
+- Không dùng bàn thay thế dữ liệu đầu tư, chẩn đoán y tế hay tư vấn pháp lý.
+
+## Chạy kiểm thử
 
 ```bash
-node tests/qimen.test.mjs
+node --test tests/*.test.mjs
 ```
 
 Tệp xuất bản nằm trong `dist/`. Lịch Can Chi và tiết khí dùng `lunar-javascript` 1.7.7 theo giấy phép MIT.

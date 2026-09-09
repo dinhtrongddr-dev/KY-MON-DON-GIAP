@@ -1,6 +1,7 @@
 import {
   BRANCHES, STAR_QIN, elementSlug, formatInstantAtOffset, formatOffset, generateQimen,
 } from "./qimen.mjs";
+import {TOPICS, GENERATES, CONTROLS, relation, locateStem, locateRef} from './guide.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -19,6 +20,10 @@ const methodCopy = document.querySelector("#method-copy");
 
 let currentChart = null;
 let selectedPalace = null;
+const questionInput = document.querySelector('#question');
+const topicInput = document.querySelector('#topic');
+topicInput.innerHTML = TOPICS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+let currentQuestion = '';
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -75,7 +80,7 @@ function renderSummary(chart) {
 }
 
 function stemHtml(stem) {
-  return `<span class="stem-token" data-element="${elementSlug(stem.element)}"><span class="han">${stem.han}</span><span class="vi">${stem.vi}</span></span>`;
+  return `<span class="stem-token" data-element="${elementSlug(stem.element)}" title="${stem.vi} · ${stem.element}"><span class="han">${stem.han}</span><span class="vi">${stem.vi}</span></span>`;
 }
 
 function palaceAria(palace) {
@@ -241,12 +246,14 @@ function renderChart(chart) {
   renderFlags(chart);
   renderDetail(chart);
   renderMethod(chart);
+  renderGuide(chart);
 }
 
 function generateAndRender({ scroll = false } = {}) {
   resultSection.setAttribute("aria-busy", "true");
   try {
     const chart = generateQimen(parseInputValue(), methodInput.value);
+    currentQuestion = questionInput.value.trim();
     errorBox.hidden = true;
     errorBox.textContent = "";
     renderChart(chart);
@@ -274,7 +281,6 @@ form.addEventListener("submit", (event) => {
 document.querySelector("#now-button").addEventListener("click", setNow);
 
 timezoneInput.addEventListener("change", () => {
-  datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
   selectedPalace = null;
   generateAndRender();
 });
@@ -289,3 +295,41 @@ methodInput.addEventListener("change", () => {
 
 datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
 generateAndRender();
+
+function jumpButton(palace, text) {
+  return palace ? `<button type="button" class="jump-cung" data-jump="${palace.number}" data-element="${elementSlug(palace.element)}">${text} → ${palace.vi} ${palace.number} · ${palace.element}</button>` : '<span>Chưa tìm thấy cung</span>';
+}
+
+function renderGuide(chart) {
+  const topic = TOPICS.find(t=>t.id===topicInput.value) || TOPICS[0];
+  const day = locateStem(chart,chart.pillars.day);
+  const hour = locateStem(chart,chart.pillars.hour);
+  document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi. Bạn vẫn có thể học cách đọc bàn này.';
+  const label = (p,found)=>`${p.stem.han} · ${p.stem.vi}${p.stem.han==='甲'?` (ẩn dưới ${found.effective} theo tuần của trụ này)`:''}`;
+  const refs = topic.refs.map(ref=> {
+    const p = locateRef(chart,ref);
+    const title = ref[0]==='stem' ? `Can ${ref[1]}` : ref[0]==='horse' ? 'Dịch Mã' : p?.[ref[0]]?.vi;
+    return jumpButton(p,title || ref[1]);
+  }).join('');
+  document.querySelector('#live-guide').innerHTML = `
+    <p>Chủ đề: <strong>${topic.name}</strong>. Đổi nhóm sự việc ở ô phía trên để đọc hướng dẫn khác. Đây là hướng dẫn theo mẫu và dữ liệu bàn, không phải AI phân tích nội dung câu hỏi.</p>
+    <div class="locator-grid"><div><strong>1 · Người hỏi — Nhật can</strong><p>${label(chart.pillars.day,day)}</p>${jumpButton(day.palace,'Xem cung người')}</div><div><strong>2 · Sự việc — Thời can</strong><p>${label(chart.pillars.hour,hour)}</p>${jumpButton(hour.palace,'Xem cung việc')}</div></div>
+    <p class="relation-banner"><strong>So hành cung:</strong> ${day.palace.element} / ${hour.palace.element} → ${relation(day.palace.element,hour.palace.element)}${day.palace.number===hour.palace.number?' · người và việc cùng cung':''}. Chỉ là một lớp tham khảo, không phải kết quả thành/bại.</p>
+    <h3>3 · Xem thêm các điểm đại diện</h3><div class="guide-links">${refs || 'Chưa chọn dụng thần phụ; bắt đầu từ hai cung người và việc.'}</div>
+    <p>${topic.read}</p><p><strong>Câu hỏi mẫu:</strong> ${topic.example}</p>
+    <p class="reality-check"><strong>Đối chiếu thực tế:</strong> ${topic.check}</p>
+    <details><summary>4 · Ghi nhận xét thử, không vội kết luận</summary><p>Ví dụ giả định: cung người thuộc Mộc, cung việc thuộc Thủy → việc sinh người, có tượng trợ lực. Nếu điểm đại diện việc lại lâm Không thì ghi “có tượng hỗ trợ nhưng điều kiện có thể chưa rõ”, rồi kiểm tra thông tin thực tế. Đây không phải lời luận của bàn hiện tại.</p><p>Mẫu ghi: Tôi hỏi… trước ngày…; người ở cung…; việc ở cung…; quan hệ hai cung…; yếu tố thuận…; yếu tố cần kiểm tra…; hành động thực tế tiếp theo…</p></details>`;
+  document.querySelectorAll('[data-jump]').forEach(button=>button.addEventListener('click',()=>{
+    selectedPalace=Number(button.dataset.jump);
+    renderBoard(chart); renderDetail(chart);
+    const target=board.querySelector(`[data-palace="${selectedPalace}"]`);
+    target?.focus({preventScroll:true}); target?.scrollIntoView({block:'center',behavior:'smooth'});
+  }));
+  const elements=Object.keys(GENERATES);
+  document.querySelector('#elements-table').innerHTML=`<table><caption>Đọc theo hàng: hành này sinh ai, khắc ai?</caption><thead><tr><th scope="col">Hành</th><th scope="col">Sinh →</th><th scope="col">Được sinh bởi</th><th scope="col">Khắc →</th><th scope="col">Bị khắc bởi</th></tr></thead><tbody>${elements.map(e=>`<tr>${[e,GENERATES[e],elements.find(x=>GENERATES[x]===e),CONTROLS[e],elements.find(x=>CONTROLS[x]===e)].map((x,i)=>i===0?`<th scope="row"><span class="element-chip" data-element="${elementSlug(x)}">${x}</span></th>`:`<td><span class="element-chip" data-element="${elementSlug(x)}">${x}</span></td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+topicInput.addEventListener('change',()=>{if(currentChart)renderGuide(currentChart);});
+questionInput.addEventListener('input',()=>{
+  document.querySelector('#question-summary').textContent = questionInput.value.trim()===currentQuestion ? (currentQuestion?`Câu hỏi của bàn: ${currentQuestion}`:'Chưa ghi câu hỏi.') : 'Bạn đang sửa câu hỏi. Bấm Lập bàn để gắn câu hỏi mới với ngày giờ đã chọn.';
+});
