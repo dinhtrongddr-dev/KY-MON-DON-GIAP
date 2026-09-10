@@ -24,7 +24,7 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
    const path=new URL(req.url,origin).pathname;
    if(path.startsWith('/api/')){
      const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
-     if(value.length!==expected.length||!timingSafeEqual(value,expected))return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server local.'});
+     if(value.length!==expected.length||!timingSafeEqual(value,expected))return send(401,{error:'Mã kết nối không đúng. Nhập mã hiện trong bộ kết nối AI.'});
      if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION});
      if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
@@ -38,7 +38,7 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
          const result=validateReading(await runner(INSTRUCTIONS,prepared.context,readingSchema(prepared.facts),{signal:controller.signal}),prepared.facts);
          send(200,{model:MODEL,rules:RULE_VERSION,reading:result,facts:prepared.facts});
        }finally{busy=false;}
-     }catch(e){if(!res.destroyed)send(502,{error:e.message||'Không kết nối được Codex.'});}
+     }catch(e){if(!res.destroyed)send(502,{error:e.message||'Không kết nối được AI.'});}
      return;
    }
    const file=path==='/'?'/index.html':path;

@@ -66,6 +66,6 @@ test('Codex JSONL handshake and structured answer, without a live model call',as
 });
 test('Codex bridge refuses API-key authentication and unexpected tool execution',async()=>{
  const {context,facts}=prepareReading(payload);
- await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('apiKey')),/đăng nhập bằng ChatGPT/);
+ await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('apiKey')),/đăng nhập đúng tài khoản/);
  await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('chatgpt',true)),/công cụ/);
 });
