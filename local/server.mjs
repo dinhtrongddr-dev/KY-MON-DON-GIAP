@@ -10,7 +10,7 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
  const allowed=new Set([origin,'https://kymon.tkgiongnoi2.chatgpt.site']);
- const files=new Set(['/index.html','/styles.css','/app.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const files=new Set(['/index.html','/styles.css','/app.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -43,7 +43,7 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
    }
    const file=path==='/'?'/index.html':path;
    if(!['GET','HEAD'].includes(req.method)||!files.has(file))return send(404,{error:'Không tìm thấy.'});
-   try{const data=await readFile(resolve(root,'.'+file));res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);}catch{send(404,{error:'Thiếu tệp giao diện.'});}
+   try{const data=await readFile(resolve(root,'.'+file));res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);}catch{send(404,{error:'Thiếu tệp giao diện.'});}
  });
  return {server,token,origin};
 }

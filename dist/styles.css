@@ -572,13 +572,13 @@ textarea:focus { outline:3px solid #bce8ce; }
 }
 .element-diagram { position:relative; width:min(100%,680px); aspect-ratio:600/520; margin:20px auto 8px; isolation:isolate; }
 .element-routes { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
-.element-routes path { fill:none; opacity:1; stroke-linecap:round; stroke-linejoin:round; transition:opacity .2s,stroke-width .2s,filter .2s; }
-.generate-routes path { stroke:#15824a; stroke-width:9; marker-end:url(#arrow-generate); }
-.generate-routes marker path, #arrow-generate path { fill:#15824a; }
-.control-routes path { stroke:#b51f35; stroke-width:7; marker-end:url(#arrow-control); }
-.control-routes marker path, #arrow-control path { fill:#b51f35; }
-.element-diagram[data-active] .element-routes path { opacity:.26; }
-.element-diagram[data-active] .element-routes path.is-related { opacity:1; stroke-width:10; filter:drop-shadow(0 2px 3px rgba(18,32,26,.22)); }
+.element-routes path { fill:none; opacity:.9; stroke-linecap:round; stroke-linejoin:round; transition:opacity .22s ease,filter .22s ease; }
+.generate-routes path { stroke:#208b59; stroke-width:5.5; marker-end:url(#arrow-generate); }
+.generate-routes marker path, #arrow-generate path { fill:#208b59; }
+.control-routes path { stroke:#b83c4c; stroke-width:3.5; marker-end:url(#arrow-control); }
+.control-routes marker path, #arrow-control path { fill:#b83c4c; }
+.element-diagram[data-active] .element-routes path { opacity:.11; }
+.element-diagram[data-active] .element-routes path.is-related { opacity:1; filter:drop-shadow(0 1px 1px rgba(18,32,26,.18)); }
 .element-orb { position:absolute; z-index:2; width:clamp(76px,16%,108px); aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; border:3px solid var(--element-color); border-radius:50%; background:radial-gradient(circle at 38% 30%,#fff 0 18%,var(--element-soft) 70%); color:var(--element-color); box-shadow:0 8px 22px rgba(20,38,30,.14),inset 0 0 0 5px rgba(255,255,255,.72); cursor:pointer; transition:transform .18s,box-shadow .18s; }
 .element-icon { width:clamp(26px,5vw,39px); height:clamp(26px,5vw,39px); fill:currentColor; overflow:visible; }
 .element-icon .icon-detail { fill:none; stroke:#fff; stroke-width:3; stroke-linecap:round; opacity:.88; }
@@ -596,14 +596,18 @@ textarea:focus { outline:3px solid #bce8ce; }
 .orb-water { left:10.5%; bottom:0; }
 .orb-wood { left:1%; top:39.5%; transform:translateY(-50%); }
 .orb-wood.is-active { transform:translateY(-50%) scale(1.1); }
-.diagram-center { position:absolute; z-index:1; left:50%; top:48%; transform:translate(-50%,-50%); width:clamp(92px,19%,126px); aspect-ratio:1; display:grid; place-items:center; border:1px solid #baa360; border-radius:50%; background:rgba(255,253,245,.97); box-shadow:0 5px 18px rgba(79,60,20,.14); color:#26332d; }
-.bagua-icon { width:94%; height:94%; overflow:visible; }
-.bagua-icon polygon { fill:#f7eed4; stroke:#735f2d; stroke-width:2; }
-.bagua-icon circle { fill:#17211d; stroke:#17211d; stroke-width:1.5; }
-.bagua-icon path { fill:#f8f5e9; }
-.bagua-icon .bagua-dot-light { fill:#f8f5e9; stroke:none; }
-.bagua-icon .bagua-dot-dark { fill:#17211d; stroke:none; }
-.bagua-icon text { fill:#17211d; font-family:"Segoe UI Symbol","Noto Sans Symbols 2",sans-serif; font-size:17px; font-weight:700; text-anchor:middle; dominant-baseline:middle; }
+.diagram-center { position:absolute; z-index:1; left:50%; top:48%; transform:translate(-50%,-50%); width:clamp(100px,20%,132px); aspect-ratio:1; display:grid; place-items:center; border:1px solid rgba(104,84,37,.55); border-radius:50%; background:rgba(255,253,246,.97); box-shadow:0 4px 18px rgba(43,34,16,.13),inset 0 0 0 4px rgba(181,151,74,.1); color:#202722; }
+.bagua-frame { position:relative; width:92%; height:92%; border:1px solid rgba(86,68,30,.35); border-radius:50%; background:radial-gradient(circle,#fff 0 36%,#faf4df 37% 64%,#fffdf5 65%); }
+.taiji-ink { position:absolute; z-index:1; left:50%; top:50%; width:61%; height:61%; object-fit:contain; transform:translate(-50%,-50%); filter:contrast(1.08); }
+.bagua-trigram { position:absolute; z-index:2; color:#2d312e; font-family:"Segoe UI Symbol","Noto Sans Symbols 2",sans-serif; font-size:clamp(.65rem,1.7vw,.84rem); font-weight:700; line-height:1; }
+.trigram-n { left:50%; top:2%; transform:translateX(-50%); }
+.trigram-ne { right:12%; top:14%; }
+.trigram-e { right:3%; top:50%; transform:translateY(-50%); }
+.trigram-se { right:12%; bottom:14%; }
+.trigram-s { left:50%; bottom:2%; transform:translateX(-50%); }
+.trigram-sw { left:12%; bottom:14%; }
+.trigram-w { left:3%; top:50%; transform:translateY(-50%); }
+.trigram-nw { left:12%; top:14%; }
 .diagram-legend { display:flex; justify-content:center; flex-wrap:wrap; gap:12px 28px; margin:12px 0 20px; }
 .diagram-legend span { display:flex; align-items:center; gap:7px; font-size:.95rem; }
 .diagram-legend i { width:34px; height:5px; border-radius:9px; }
@@ -627,7 +631,6 @@ textarea:focus { outline:3px solid #bce8ce; }
   .element-orb small { display:none; }
   .element-icon { width:32%; height:32%; }
   .diagram-center { width:19%; }
-  .element-routes path.is-related { stroke-width:9; }
   .relation-cards { grid-template-columns:1fr; }
   .element-reading-head { align-items:flex-start; flex-direction:column; }
 }

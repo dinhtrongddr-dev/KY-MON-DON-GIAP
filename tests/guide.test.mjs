@@ -36,6 +36,7 @@ const jia=generateQimen({year:2024,month:5,day:10,hour:14,minute:30,tzOffset:7})
 assert.equal(jia.pillars.day.han,'甲戌');
 assert.equal(locateStem(jia,jia.pillars.day).effective,'己');
 const html=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');
+const css=await readFile(new URL('../dist/styles.css',import.meta.url),'utf8');
 const diagram=html.match(/<div class="element-diagram"[\s\S]*?<\/div>\s*<div class="diagram-legend"/)?.[0]||'';
 assert.equal((diagram.match(/class="generate-routes"/g)||[]).length,1);
 assert.equal((diagram.match(/class="control-routes"/g)||[]).length,1);
@@ -43,7 +44,12 @@ for(const [from,to] of Object.entries(GENERATES)) assert.match(diagram,new RegEx
 for(const [from,to] of Object.entries(CONTROLS)) assert.match(diagram,new RegExp(`data-from="${from}" data-to="${to}"`));
 for(const element of elements) assert.match(diagram,new RegExp(`data-element-choice="${element}"`));
 assert.equal((diagram.match(/class="element-icon"/g)||[]).length,5);
-assert.match(diagram,/class="bagua-icon"/);
+assert.match(diagram,/class="bagua-frame"/);
+assert.match(diagram,/class="taiji-ink" src="\.\/assets\/taiji-ink\.png"/);
+assert.equal((diagram.match(/class="bagua-trigram/g)||[]).length,8);
+assert.match(diagram,/markerUnits="userSpaceOnUse"/);
+assert.doesNotMatch(css,/\.element-diagram\[data-active\][^{]+\{[^}]*stroke-width/);
+assert.doesNotMatch(css,/\.element-routes path\.is-related\s*\{[^}]*stroke-width/);
 assert.doesNotMatch(diagram,/[火土金水木五行]/);
 assert.match(html,/id="element-reading"[^>]*hidden/);
 assert.doesNotMatch(html,/id="elements-table"/);
