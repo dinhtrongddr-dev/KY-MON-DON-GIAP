@@ -327,8 +327,30 @@ function renderGuide(chart) {
     const target=board.querySelector(`[data-palace="${selectedPalace}"]`);
     target?.focus({preventScroll:true}); target?.scrollIntoView({block:'center',behavior:'smooth'});
   }));
+}
+
+function initElementDiagram() {
+  const diagram=document.querySelector('#element-diagram');
+  const reading=document.querySelector('#element-reading');
   const elements=Object.keys(GENERATES);
-  document.querySelector('#elements-table').innerHTML=`<table><caption>Đọc theo hàng: hành này sinh ai, khắc ai?</caption><thead><tr><th scope="col">Hành</th><th scope="col">Sinh →</th><th scope="col">Được sinh bởi</th><th scope="col">Khắc →</th><th scope="col">Bị khắc bởi</th></tr></thead><tbody>${elements.map(e=>`<tr>${[e,GENERATES[e],elements.find(x=>GENERATES[x]===e),CONTROLS[e],elements.find(x=>CONTROLS[x]===e)].map((x,i)=>i===0?`<th scope="row"><span class="element-chip" data-element="${elementSlug(x)}">${x}</span></th>`:`<td><span class="element-chip" data-element="${elementSlug(x)}">${x}</span></td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const giver=(map,element)=>elements.find(item=>map[item]===element);
+  const select=(element)=>{
+    diagram.dataset.active=element;
+    diagram.querySelectorAll('.element-orb').forEach(button=>{
+      const active=button.dataset.elementChoice===element;
+      button.classList.toggle('is-active',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+    diagram.querySelectorAll('.element-routes path').forEach(path=>path.classList.toggle('is-related',path.dataset.from===element||path.dataset.to===element));
+    reading.innerHTML=`<h3>${element} trong bốn chiều quan hệ</h3><div class="relation-cards">
+      <p><span class="relation-label relation-generate">Sinh ra</span><strong>${element} → ${GENERATES[element]}</strong><small>${element} nuôi dưỡng ${GENERATES[element]}</small></p>
+      <p><span class="relation-label relation-generate">Được sinh</span><strong>${giver(GENERATES,element)} → ${element}</strong><small>${element} nhận sự nâng đỡ từ ${giver(GENERATES,element)}</small></p>
+      <p><span class="relation-label relation-control">Khắc</span><strong>${element} → ${CONTROLS[element]}</strong><small>${element} chế ước ${CONTROLS[element]}</small></p>
+      <p><span class="relation-label relation-control">Bị khắc</span><strong>${giver(CONTROLS,element)} → ${element}</strong><small>${element} chịu sự chế ước của ${giver(CONTROLS,element)}</small></p>
+    </div>`;
+  };
+  diagram.querySelectorAll('.element-orb').forEach(button=>button.addEventListener('click',()=>select(button.dataset.elementChoice)));
+  select('Mộc');
 }
 
 topicInput.addEventListener('change',()=>{if(currentChart)renderGuide(currentChart);});
@@ -341,3 +363,4 @@ initLocalAi({prepare(){
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
   return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input}};
 }});
+initElementDiagram();

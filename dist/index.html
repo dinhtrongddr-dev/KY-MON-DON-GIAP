@@ -129,9 +129,40 @@
             <div id="live-guide"></div>
           </section>
           <section class="learning-panel" aria-labelledby="elements-title">
+            <p class="eyebrow">Sơ đồ quan hệ</p>
             <h2 id="elements-title">Ngũ hành tương sinh · tương khắc</h2>
-            <p>Màu chỉ giúp nhận diện hành, không phải điểm tốt/xấu. Bát Thần dùng chữ tím riêng, không suy ngũ hành của Thần chỉ từ màu.</p>
-            <div id="elements-table" class="table-scroll"></div>
+            <p>Đọc theo chiều mũi tên. Chọn một hành để làm nổi bật bốn quan hệ trực tiếp của hành đó.</p>
+            <div class="element-diagram" id="element-diagram">
+              <svg class="element-routes" viewBox="0 0 600 520" aria-hidden="true" focusable="false">
+                <defs>
+                  <marker id="arrow-generate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker>
+                  <marker id="arrow-control" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker>
+                </defs>
+                <g class="generate-routes">
+                  <path data-from="Mộc" data-to="Hỏa" d="M132 169 Q205 78 252 71" />
+                  <path data-from="Hỏa" data-to="Thổ" d="M348 75 Q445 90 476 165" />
+                  <path data-from="Thổ" data-to="Kim" d="M512 253 Q510 345 458 405" />
+                  <path data-from="Kim" data-to="Thủy" d="M377 455 Q300 500 223 455" />
+                  <path data-from="Thủy" data-to="Mộc" d="M142 404 Q75 340 91 253" />
+                </g>
+                <g class="control-routes">
+                  <path data-from="Mộc" data-to="Thổ" d="M143 205 L457 205" />
+                  <path data-from="Thổ" data-to="Thủy" d="M474 236 L215 408" />
+                  <path data-from="Thủy" data-to="Hỏa" d="M193 394 L280 116" />
+                  <path data-from="Hỏa" data-to="Kim" d="M321 116 L408 394" />
+                  <path data-from="Kim" data-to="Mộc" d="M385 410 L129 236" />
+                </g>
+              </svg>
+              <button class="element-orb orb-fire" data-element-choice="Hỏa" data-element="fire" type="button"><span>火</span><strong>Hỏa</strong><small>Lửa</small></button>
+              <button class="element-orb orb-earth" data-element-choice="Thổ" data-element="earth" type="button"><span>土</span><strong>Thổ</strong><small>Đất</small></button>
+              <button class="element-orb orb-metal" data-element-choice="Kim" data-element="metal" type="button"><span>金</span><strong>Kim</strong><small>Kim loại</small></button>
+              <button class="element-orb orb-water" data-element-choice="Thủy" data-element="water" type="button"><span>水</span><strong>Thủy</strong><small>Nước</small></button>
+              <button class="element-orb orb-wood" data-element-choice="Mộc" data-element="wood" type="button"><span>木</span><strong>Mộc</strong><small>Cây</small></button>
+              <div class="diagram-center" aria-hidden="true"><span>五行</span><strong>NGŨ HÀNH</strong></div>
+            </div>
+            <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>
+            <div class="element-reading" id="element-reading" aria-live="polite"></div>
+            <p class="source-note">Màu dùng để nhận diện hành, không tự biểu thị tốt hoặc xấu. Bát Thần vẫn dùng màu tím riêng.</p>
             <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
             <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
               <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>
