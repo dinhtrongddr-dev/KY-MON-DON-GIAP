@@ -2,7 +2,7 @@ export function initLocalAi({prepare}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel');
  let active=null,version=0;
- const endpoint='http://127.0.0.1:8765';
+ const endpoint='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
  const cancelWork=()=>{version++;active?.abort();active=null;read.disabled=false;cancel.hidden=true;answer.hidden=true;answer.replaceChildren();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
