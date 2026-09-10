@@ -41,7 +41,7 @@
               <textarea id="question" rows="2" maxlength="1500" placeholder="Ví dụ: Trong 30 ngày tới, công ty tôi có nhận được hợp đồng tạp vụ của công ty A không?"></textarea>
               <small>Một việc cụ thể + đối tượng + thời hạn. Chỉ gửi câu hỏi và dữ liệu bàn tới AI khi bạn bấm Luận bằng AI.</small>
             </label>
-            <label class="field question-field"><span>Nhóm sự việc · chọn để xem hướng dẫn</span><select id="topic"></select></label>
+            <label class="field question-field"><span>Nhóm sự việc · dùng khi luận AI</span><select id="topic"></select></label>
             <label class="field field-time">
               <span>Ngày · giờ · phút</span>
               <input id="datetime" name="datetime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" required />
@@ -80,18 +80,6 @@
 
         <section id="result" class="result" aria-live="polite" aria-busy="false">
           <p id="question-summary" class="question-summary"></p>
-          <section class="learning-panel ai-panel" aria-labelledby="ai-title">
-            <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
-            <p>Nhập sự việc ở trên, kết nối AI rồi bấm luận. Kết quả gồm cách chọn dụng thần, điểm thuận–vướng và căn cứ trên bàn.</p>
-            <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI</a> và giải nén.</li><li>Khởi động bộ kết nối theo tệp hướng dẫn đi kèm.</li><li>Nhập mã kết nối được hiển thị vào ô bên dưới. Mã mới được tạo sau mỗi lần khởi động; đây không phải API key.</li><li>Nếu trình duyệt hỏi quyền truy cập mạng cục bộ, chỉ cho phép khi bạn đã chủ động mở bộ kết nối AI.</li></ol>
-              <p>Giữ bộ kết nối AI hoạt động trong suốt lượt luận. Khả năng truy cập và hạn mức phụ thuộc tài khoản AI đang sử dụng.</p>
-            </details>
-            <div class="local-controls"><label class="field"><span>Mã kết nối AI</span><input id="local-token" type="password" autocomplete="off" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label><button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button><button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button><button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button></div>
-            <p id="ai-status" role="status">Chưa kết nối AI.</p>
-            <div id="ai-answer" aria-live="polite" hidden></div>
-            <details><summary>Quy tắc và phạm vi luận</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. AI tính lại bàn từ ngày giờ, đối chiếu Nhật can–Thời can, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm và Môn bức cung. Các nhận xét phải gắn căn cứ có trên bàn.</p><p>Chưa bao quát đầy đủ nhập mộ, kích hình, vượng suy Cửu Tinh, thập can khắc ứng và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. AI có thể diễn giải sai dù trỏ đúng căn cứ; lời luận không bảo đảm sự việc sẽ xảy ra.</p></details>
-          </section>
           <div class="chart-meta">
             <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
             <div class="calculation-summary" id="calculation-summary"></div>
@@ -129,9 +117,17 @@
             </aside>
           </div>
 
-          <section class="learning-panel" aria-labelledby="guide-title">
-            <h2 id="guide-title">Hướng dẫn cho câu hỏi của bạn</h2>
-            <div id="live-guide"></div>
+          <section class="learning-panel ai-panel" aria-labelledby="ai-title">
+            <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
+            <p>Nhập sự việc ở trên, kết nối AI rồi bấm luận. Kết quả gồm cách chọn dụng thần, điểm thuận–vướng và căn cứ trên bàn.</p>
+            <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
+              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI</a> và giải nén.</li><li>Khởi động bộ kết nối theo tệp hướng dẫn đi kèm.</li><li>Nhập mã kết nối được hiển thị vào ô bên dưới. Mã mới được tạo sau mỗi lần khởi động; đây không phải API key.</li><li>Nếu trình duyệt hỏi quyền truy cập mạng cục bộ, chỉ cho phép khi bạn đã chủ động mở bộ kết nối AI.</li></ol>
+              <p>Giữ bộ kết nối AI hoạt động trong suốt lượt luận. Khả năng truy cập và hạn mức phụ thuộc tài khoản AI đang sử dụng.</p>
+            </details>
+            <div class="local-controls"><label class="field"><span>Mã kết nối AI</span><input id="local-token" type="password" autocomplete="off" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label><button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button><button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button><button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button></div>
+            <p id="ai-status" role="status">Chưa kết nối AI.</p>
+            <div id="ai-answer" aria-live="polite" hidden></div>
+            <details><summary>Quy tắc và phạm vi luận</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. AI tính lại bàn từ ngày giờ, đối chiếu Nhật can–Thời can, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm và Môn bức cung. Các nhận xét phải gắn căn cứ có trên bàn.</p><p>Chưa bao quát đầy đủ nhập mộ, kích hình, vượng suy Cửu Tinh, thập can khắc ứng và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. AI có thể diễn giải sai dù trỏ đúng căn cứ; lời luận không bảo đảm sự việc sẽ xảy ra.</p></details>
           </section>
           <section class="learning-panel element-panel" aria-labelledby="elements-title">
             <p class="eyebrow">Sơ đồ quan hệ</p>

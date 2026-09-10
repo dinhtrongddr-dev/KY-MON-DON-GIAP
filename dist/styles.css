@@ -17,7 +17,7 @@
   --fire-soft: #ffe1e5;
   --earth: #86411e;
   --earth-soft: #f5dfce;
-  --metal: #775600;
+  --metal: #b88600;
   --metal-soft: #ffe55b;
   --water: #1557cc;
   --water-soft: #dceaff;
@@ -211,7 +211,8 @@ input:focus, select:focus {
 }
 
 .pillar:last-child { border-right: 0; }
-.pillar small { grid-column: 1 / -1; color: var(--muted); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; }
+.pillar small { grid-column: 1 / -1; display:flex; align-items:baseline; justify-content:space-between; gap:6px; color: var(--muted); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; }
+.pillar small b { color:var(--jade); font-size:.72rem; letter-spacing:0; text-align:right; text-transform:none; }
 .pillar .han { font-family: var(--serif); font-size: clamp(1.5rem, 2.4vw, 2.1rem); font-weight: 700; letter-spacing: 0.04em; line-height: 1; }
 .pillar .vi { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
 
@@ -581,7 +582,7 @@ textarea:focus { outline:3px solid #bce8ce; }
 .stem-token[data-element] .han { color:var(--element-color); }
 .entity[data-element="metal"] .han, .stem-token[data-element="metal"] .han,
 .door-token[data-element="metal"] .han, .earth-stem[data-element="metal"] .han {
-  background:var(--metal-soft); color:var(--metal); border-radius:3px; box-decoration-break:clone; -webkit-box-decoration-break:clone;
+  background:transparent; color:var(--metal); border-radius:0;
 }
 .palace[data-element="metal"] .palace-head { border-top-color:#e5b800; }
 @media(max-width:680px) {

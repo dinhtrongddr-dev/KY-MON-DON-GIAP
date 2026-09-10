@@ -1,7 +1,7 @@
 import {
   BRANCHES, STAR_QIN, elementSlug, formatInstantAtOffset, formatOffset, generateQimen,
 } from "./qimen.mjs";
-import {TOPICS, GENERATES, CONTROLS, relation, locateStem, locateRef} from './guide.mjs';
+import {TOPICS, GENERATES, CONTROLS, locateStem} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
 
 const form = document.querySelector("#chart-form");
@@ -52,10 +52,18 @@ function parseInputValue() {
 }
 
 function renderPillars(chart) {
-  const labels = [["Năm", chart.pillars.year], ["Tháng", chart.pillars.month], ["Ngày", chart.pillars.day], ["Giờ", chart.pillars.hour]];
-  pillars.innerHTML = labels.map(([label, pillar]) => `
+  const two = (value) => String(value).padStart(2, "0");
+  const weekdays = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+  const weekday = weekdays[new Date(Date.UTC(chart.input.year, chart.input.month - 1, chart.input.day)).getUTCDay()];
+  const labels = [
+    ["Năm", chart.pillars.year, String(chart.input.year)],
+    ["Tháng", chart.pillars.month, `Tháng ${two(chart.input.month)}`],
+    ["Ngày", chart.pillars.day, `${weekday} · ${two(chart.input.day)}/${two(chart.input.month)}`],
+    ["Giờ", chart.pillars.hour, `${two(chart.input.hour)}:${two(chart.input.minute)}`],
+  ];
+  pillars.innerHTML = labels.map(([label, pillar, calendar]) => `
     <div class="pillar">
-      <small>${label}</small>
+      <small><span>${label}</span><b>${calendar}</b></small>
       <span class="han" style="color:var(--${elementSlug(pillar.stem.element)})">${pillar.han}</span>
       <span class="vi">${pillar.vi}<br><span style="color:var(--muted);font-weight:500">${pillar.stem.element}</span></span>
     </div>
@@ -64,6 +72,8 @@ function renderPillars(chart) {
 
 function renderSummary(chart) {
   const offset = chart.input.tzOffset;
+  const two = (value) => String(value).padStart(2, "0");
+  const instant = `${two(chart.input.day)}/${two(chart.input.month)}/${chart.input.year} · ${two(chart.input.hour)}:${two(chart.input.minute)}`;
   summary.innerHTML = `
     <div class="summary-item dun">
       <small>Độn · cục</small>
@@ -71,7 +81,7 @@ function renderSummary(chart) {
       <em>${chart.dun.yuan}</em>
     </div>
     <div class="summary-item">
-      <small>Tiết khí hiện hành</small>
+      <small>Tiết khí tại ${instant}</small>
       <strong>${chart.term.han} · ${chart.term.vi}</strong>
       <em>Từ ${formatInstantAtOffset(chart.term.utcMs, offset, true)}</em>
     </div>
@@ -264,7 +274,7 @@ function renderChart(chart) {
   renderFlags(chart);
   renderDetail(chart);
   renderMethod(chart);
-  renderGuide(chart);
+  document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi.';
   document.dispatchEvent(new Event('qimen-chart'));
 }
 
@@ -315,37 +325,6 @@ methodInput.addEventListener("change", () => {
 datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
 generateAndRender();
 
-function jumpButton(palace, text) {
-  return palace ? `<button type="button" class="jump-cung" data-jump="${palace.number}" data-element="${elementSlug(palace.element)}">${text} → ${palace.vi} ${palace.number} · ${palace.element}</button>` : '<span>Chưa tìm thấy cung</span>';
-}
-
-function renderGuide(chart) {
-  const topic = TOPICS.find(t=>t.id===topicInput.value) || TOPICS[0];
-  const day = locateStem(chart,chart.pillars.day);
-  const hour = locateStem(chart,chart.pillars.hour);
-  document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi. Bạn vẫn có thể học cách đọc bàn này.';
-  const label = (p,found)=>`${p.stem.han} · ${p.stem.vi}${p.stem.han==='甲'?` (ẩn dưới ${found.effective} theo tuần của trụ này)`:''}`;
-  const refs = topic.refs.map(ref=> {
-    const p = locateRef(chart,ref);
-    const title = ref[0]==='stem' ? `Can ${ref[1]}` : ref[0]==='horse' ? 'Dịch Mã' : p?.[ref[0]]?.vi;
-    return jumpButton(p,title || ref[1]);
-  }).join('');
-  document.querySelector('#live-guide').innerHTML = `
-    <p>Chủ đề: <strong>${topic.name}</strong>. Đổi nhóm sự việc ở ô phía trên để đọc hướng dẫn khác. Đây là hướng dẫn theo mẫu và dữ liệu bàn, không phải AI phân tích nội dung câu hỏi.</p>
-    <div class="locator-grid"><div><strong>1 · Người hỏi — Nhật can</strong><p>${label(chart.pillars.day,day)}</p>${jumpButton(day.palace,'Xem cung người')}</div><div><strong>2 · Sự việc — Thời can</strong><p>${label(chart.pillars.hour,hour)}</p>${jumpButton(hour.palace,'Xem cung việc')}</div></div>
-    <p class="relation-banner"><strong>So hành cung:</strong> ${day.palace.element} / ${hour.palace.element} → ${relation(day.palace.element,hour.palace.element)}${day.palace.number===hour.palace.number?' · người và việc cùng cung':''}. Chỉ là một lớp tham khảo, không phải kết quả thành/bại.</p>
-    <h3>3 · Xem thêm các điểm đại diện</h3><div class="guide-links">${refs || 'Chưa chọn dụng thần phụ; bắt đầu từ hai cung người và việc.'}</div>
-    <p>${topic.read}</p><p><strong>Câu hỏi mẫu:</strong> ${topic.example}</p>
-    <p class="reality-check"><strong>Đối chiếu thực tế:</strong> ${topic.check}</p>
-    <details><summary>4 · Ghi nhận xét thử, không vội kết luận</summary><p>Ví dụ giả định: cung người thuộc Mộc, cung việc thuộc Thủy → việc sinh người, có tượng trợ lực. Nếu điểm đại diện việc lại lâm Không thì ghi “có tượng hỗ trợ nhưng điều kiện có thể chưa rõ”, rồi kiểm tra thông tin thực tế. Đây không phải lời luận của bàn hiện tại.</p><p>Mẫu ghi: Tôi hỏi… trước ngày…; người ở cung…; việc ở cung…; quan hệ hai cung…; yếu tố thuận…; yếu tố cần kiểm tra…; hành động thực tế tiếp theo…</p></details>`;
-  document.querySelectorAll('[data-jump]').forEach(button=>button.addEventListener('click',()=>{
-    selectedPalace=Number(button.dataset.jump);
-    renderBoard(chart); renderDetail(chart);
-    const target=board.querySelector(`[data-palace="${selectedPalace}"]`);
-    target?.focus({preventScroll:true}); target?.scrollIntoView({block:'center',behavior:'smooth'});
-  }));
-}
-
 function initElementDiagram() {
   const diagram=document.querySelector('#element-diagram');
   const reading=document.querySelector('#element-reading');
@@ -385,7 +364,6 @@ function initElementDiagram() {
   reset();
 }
 
-topicInput.addEventListener('change',()=>{if(currentChart)renderGuide(currentChart);});
 questionInput.addEventListener('input',()=>{
   document.querySelector('#question-summary').textContent = questionInput.value.trim()===currentQuestion ? (currentQuestion?`Câu hỏi của bàn: ${currentQuestion}`:'Chưa ghi câu hỏi.') : 'Bạn đang sửa câu hỏi. Bấm Lập bàn để gắn câu hỏi mới với ngày giờ đã chọn.';
 });
