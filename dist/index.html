@@ -133,24 +133,24 @@
             <h2 id="elements-title">Ngũ hành tương sinh · tương khắc</h2>
             <p>Đọc theo chiều mũi tên. Sơ đồ mặc định hiển thị đầy đủ; bấm vào một hành để xem riêng bốn quan hệ trực tiếp.</p>
             <div class="element-diagram" id="element-diagram">
-              <svg class="element-routes" viewBox="0 0 600 520" aria-hidden="true" focusable="false">
+              <svg class="element-routes" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
                 <defs>
-                  <marker id="arrow-generate" markerUnits="userSpaceOnUse" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1 1 11 6 1 11 3.4 6Z" /></marker>
-                  <marker id="arrow-control" markerUnits="userSpaceOnUse" viewBox="0 0 12 12" refX="10.5" refY="6" markerWidth="10" markerHeight="10" orient="auto"><path d="M1 1 11 6 1 11 3.4 6Z" /></marker>
+                  <marker id="arrow-generate" markerUnits="userSpaceOnUse" viewBox="0 0 16 16" refX="14" refY="8" markerWidth="17" markerHeight="17" orient="auto"><path d="M1 1 15 8 1 15 4.5 8Z" /></marker>
+                  <marker id="arrow-control" markerUnits="userSpaceOnUse" viewBox="0 0 16 16" refX="14" refY="8" markerWidth="14" markerHeight="14" orient="auto"><path d="M1 1 15 8 1 15 4.5 8Z" /></marker>
                 </defs>
                 <g class="generate-routes">
-                  <path data-from="Mộc" data-to="Hỏa" d="M132 169 Q205 78 252 71" />
-                  <path data-from="Hỏa" data-to="Thổ" d="M348 75 Q445 90 476 165" />
-                  <path data-from="Thổ" data-to="Kim" d="M512 253 Q510 345 458 405" />
-                  <path data-from="Kim" data-to="Thủy" d="M377 455 Q300 500 223 455" />
-                  <path data-from="Thủy" data-to="Mộc" d="M142 404 Q75 340 91 253" />
+                  <path data-from="Mộc" data-to="Hỏa" d="M111.3 186.7 A220 220 0 0 1 250.5 85.6" />
+                  <path data-from="Hỏa" data-to="Thổ" d="M349.5 85.6 A220 220 0 0 1 488.7 186.7" />
+                  <path data-from="Thổ" data-to="Kim" d="M519.2 280.8 A220 220 0 0 1 466.1 444.3" />
+                  <path data-from="Kim" data-to="Thủy" d="M386 502.5 A220 220 0 0 1 214 502.5" />
+                  <path data-from="Thủy" data-to="Mộc" d="M133.9 444.3 A220 220 0 0 1 80.8 280.8" />
                 </g>
                 <g class="control-routes">
-                  <path data-from="Mộc" data-to="Thổ" d="M143 205 L457 205" />
-                  <path data-from="Thổ" data-to="Thủy" d="M474 236 L215 408" />
-                  <path data-from="Thủy" data-to="Hỏa" d="M193 394 L280 116" />
-                  <path data-from="Hỏa" data-to="Kim" d="M321 116 L408 394" />
-                  <path data-from="Kim" data-to="Mộc" d="M385 410 L129 236" />
+                  <path data-from="Mộc" data-to="Thổ" d="M119 223 L481 223" />
+                  <path data-from="Thổ" data-to="Thủy" d="M492 256 L199 469" />
+                  <path data-from="Thủy" data-to="Hỏa" d="M171 448 L282 104" />
+                  <path data-from="Hỏa" data-to="Kim" d="M318 104 L429 448" />
+                  <path data-from="Kim" data-to="Mộc" d="M401 469 L108 256" />
                 </g>
               </svg>
               <button class="element-orb orb-fire" data-element-choice="Hỏa" data-element="fire" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Hỏa"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M35 5c3 12-4 16-4 25-4-4-6-9-5-14C15 26 14 36 18 45c4 9 13 14 22 11 10-3 16-13 13-23-2-7-7-13-13-20 1 8-1 13-5 17 0-8 5-14 0-25Z"/></svg><strong>Hỏa</strong><small>Lửa</small></button>
@@ -158,14 +158,8 @@
               <button class="element-orb orb-metal" data-element-choice="Kim" data-element="metal" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Kim"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="m32 5 8 8 11-1 1 11 8 9-8 9-1 11-11-1-8 8-8-8-11 1-1-11-8-9 8-9 1-11 11 1 8-8Z"/><circle class="icon-cutout" cx="32" cy="32" r="10"/></svg><strong>Kim</strong><small>Kim loại</small></button>
               <button class="element-orb orb-water" data-element-choice="Thủy" data-element="water" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Thủy"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5C25 17 13 29 13 41a19 19 0 0 0 38 0C51 29 39 17 32 5Z"/><path class="icon-detail" d="M22 42c2 6 7 9 13 9"/></svg><strong>Thủy</strong><small>Nước</small></button>
               <button class="element-orb orb-wood" data-element-choice="Mộc" data-element="wood" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Mộc"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M29 56V31C13 32 8 22 8 9c14-1 24 4 25 16C36 14 45 9 57 10c0 14-8 23-24 22v24h-4Z"/><path class="icon-detail" d="M18 17c6 2 10 6 14 13m13-12c-5 3-9 7-12 12"/></svg><strong>Mộc</strong><small>Cây</small></button>
-              <div class="diagram-center" aria-label="Bát Quái với Thái Cực nét mực" role="img">
-                <div class="bagua-frame" aria-hidden="true">
-                  <span class="bagua-trigram trigram-n">☲</span><span class="bagua-trigram trigram-ne">☷</span>
-                  <span class="bagua-trigram trigram-e">☱</span><span class="bagua-trigram trigram-se">☰</span>
-                  <span class="bagua-trigram trigram-s">☵</span><span class="bagua-trigram trigram-sw">☶</span>
-                  <span class="bagua-trigram trigram-w">☳</span><span class="bagua-trigram trigram-nw">☴</span>
-                  <img class="taiji-ink" src="./assets/taiji-ink.png" alt="" width="512" height="512">
-                </div>
+              <div class="diagram-center" aria-label="Thái Cực nét mực" role="img">
+                <img class="taiji-ink" src="./assets/taiji-ink.png" alt="" width="512" height="512">
               </div>
             </div>
             <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>

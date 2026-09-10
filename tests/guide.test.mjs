@@ -44,9 +44,10 @@ for(const [from,to] of Object.entries(GENERATES)) assert.match(diagram,new RegEx
 for(const [from,to] of Object.entries(CONTROLS)) assert.match(diagram,new RegExp(`data-from="${from}" data-to="${to}"`));
 for(const element of elements) assert.match(diagram,new RegExp(`data-element-choice="${element}"`));
 assert.equal((diagram.match(/class="element-icon"/g)||[]).length,5);
-assert.match(diagram,/class="bagua-frame"/);
 assert.match(diagram,/class="taiji-ink" src="\.\/assets\/taiji-ink\.png"/);
-assert.equal((diagram.match(/class="bagua-trigram/g)||[]).length,8);
+assert.equal((diagram.match(/class="bagua-trigram/g)||[]).length,0);
+assert.equal((diagram.match(/A220 220 0 0 1/g)||[]).length,5);
+assert.match(diagram,/viewBox="0 0 600 600"/);
 assert.match(diagram,/markerUnits="userSpaceOnUse"/);
 assert.doesNotMatch(css,/\.element-diagram\[data-active\][^{]+\{[^}]*stroke-width/);
 assert.doesNotMatch(css,/\.element-routes path\.is-related\s*\{[^}]*stroke-width/);
