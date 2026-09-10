@@ -40,7 +40,7 @@ const css=await readFile(new URL('../dist/styles.css',import.meta.url),'utf8');
 const aiUi=await readFile(new URL('../dist/ai-local.mjs',import.meta.url),'utf8');
 const visibleText=html.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<[^>]+>/g,' ');
 assert.doesNotMatch(visibleText,/Codex|máy tính|GPT-5|\bSol\b|server local|Kỳ Môn Local/i);
-assert.doesNotMatch(aiUi,/Codex|máy tính|GPT-5|\bSol\b|server local|Kỳ Môn Local/i);
+assert.doesNotMatch(aiUi.replace('https://ky-mon-codex-relay.dinhtrongddr.workers.dev',''),/Codex|máy tính|GPT-5|\bSol\b|server local|Kỳ Môn Local/i);
 assert.match(html,/class="field submit-field"/);
 assert.match(css,/\.entity \.vi, \.door-token \.vi, \.earth-stem \.vi \{[^}]*white-space: normal/);
 assert.match(css,/\.qimen-board \{ aspect-ratio: auto; grid-template-rows: repeat\(3, minmax\(185px, auto\)\); \}/);

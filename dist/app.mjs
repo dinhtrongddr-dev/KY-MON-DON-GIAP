@@ -18,6 +18,9 @@ const flags = document.querySelector("#board-flags");
 const detail = document.querySelector("#palace-detail");
 const inspectorTitle = document.querySelector("#inspector-title");
 const methodCopy = document.querySelector("#method-copy");
+const inspector = document.querySelector(".inspector");
+const elementPanel = document.querySelector(".element-panel");
+if (inspector && elementPanel) inspector.append(elementPanel);
 
 let currentChart = null;
 let selectedPalace = null;
@@ -90,9 +93,23 @@ function palaceAria(palace) {
   return `${palace.vi} cung ${palace.number}, ${palace.spirit.vi}, ${palace.star.vi}, ${palace.door.vi}, thiên bàn ${heaven}, địa bàn ${palace.earthStem.vi}`;
 }
 
+function palaceRoleMarkers(palace, chart) {
+  const dayPalace = locateStem(chart, chart.pillars.day).palace;
+  const hourPalace = locateStem(chart, chart.pillars.hour).palace;
+  return [
+    dayPalace?.number === palace.number
+      ? `<span class="role-symbol role-person" title="Người hỏi · Nhật can ${chart.pillars.day.stem.vi}" aria-label="Người hỏi · Nhật can">◉</span>`
+      : "",
+    hourPalace?.number === palace.number
+      ? `<span class="role-symbol role-event" title="Sự việc · Thời can ${chart.pillars.hour.stem.vi}" aria-label="Sự việc · Thời can">◆</span>`
+      : "",
+  ].join("");
+}
+
 function renderPalace(palace, chart) {
   const palaceElement = elementSlug(palace.element);
   const selected = palace.number === selectedPalace ? " is-selected" : "";
+  const roleMarkers = palaceRoleMarkers(palace, chart);
   const markers = [
     palace.voided ? '<span class="marker marker-void" title="Tuần không">Không</span>' : "",
     palace.horse ? '<span class="marker marker-horse" title="Dịch mã">Mã</span>' : "",
@@ -141,7 +158,7 @@ function renderPalace(palace, chart) {
         </span>
       </span>
       <span class="palace-foot">
-        <span class="palace-number">${palace.number}</span>
+        <span class="palace-number-wrap"><span class="palace-number">${palace.number}</span><span class="role-symbols">${roleMarkers}</span></span>
         <span class="door-token" data-element="${elementSlug(palace.door.element)}">
           <span class="han">${palace.door.han}</span><span class="vi">${palace.door.vi}</span>${dutyDoorBadge}
         </span>
