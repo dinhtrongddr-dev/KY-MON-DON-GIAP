@@ -18,9 +18,9 @@ const flags = document.querySelector("#board-flags");
 const detail = document.querySelector("#palace-detail");
 const inspectorTitle = document.querySelector("#inspector-title");
 const methodCopy = document.querySelector("#method-copy");
-const inspector = document.querySelector(".inspector");
+const workspace = document.querySelector(".workspace");
 const elementPanel = document.querySelector(".element-panel");
-if (inspector && elementPanel) inspector.append(elementPanel);
+if (workspace && elementPanel) workspace.append(elementPanel);
 
 let currentChart = null;
 let selectedPalace = null;
