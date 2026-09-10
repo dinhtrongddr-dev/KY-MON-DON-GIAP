@@ -121,13 +121,13 @@
             <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
             <p>Nhập sự việc ở trên, kết nối AI rồi bấm luận. Kết quả gồm cách chọn dụng thần, điểm thuận–vướng và căn cứ trên bàn.</p>
             <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI</a> và giải nén.</li><li>Khởi động bộ kết nối theo tệp hướng dẫn đi kèm.</li><li>Nhập mã kết nối được hiển thị vào ô bên dưới. Mã mới được tạo sau mỗi lần khởi động; đây không phải API key.</li><li>Nếu trình duyệt hỏi quyền truy cập mạng cục bộ, chỉ cho phép khi bạn đã chủ động mở bộ kết nối AI.</li></ol>
-              <p>Giữ bộ kết nối AI hoạt động trong suốt lượt luận. Khả năng truy cập và hạn mức phụ thuộc tài khoản AI đang sử dụng.</p>
+              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI · TG-CB-2.0</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
+              <p>Bản web chỉ nhận lời luận cùng bộ quy tắc TG-CB-2.0 và đúng mã bàn/câu hỏi. Publish website không tự cập nhật đầu kết nối AI. Giữ bộ kết nối hoạt động; quyền truy cập và hạn mức phụ thuộc tài khoản AI đang sử dụng.</p>
             </details>
             <div class="local-controls"><label class="field"><span>Mã kết nối AI</span><input id="local-token" type="password" autocomplete="off" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label><button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button><button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button><button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button></div>
             <p id="ai-status" role="status">Chưa kết nối AI.</p>
             <div id="ai-answer" aria-live="polite" hidden></div>
-            <details><summary>Quy tắc và phạm vi luận</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. AI tính lại bàn từ ngày giờ, đối chiếu Nhật can–Thời can, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm và Môn bức cung. Các nhận xét phải gắn căn cứ có trên bàn.</p><p>Chưa bao quát đầy đủ nhập mộ, kích hình, vượng suy Cửu Tinh, thập can khắc ứng và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. AI có thể diễn giải sai dù trỏ đúng căn cứ; lời luận không bảo đảm sự việc sẽ xảy ra.</p></details>
+            <details><summary>Quy tắc và phạm vi luận · TG-CB-2.0</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. Mã tính lập bàn độc lập với AI ở hai đầu kết nối; AI chỉ diễn giải dữ liệu đã được đối chiếu. Xét Nhật can–Thời can, dụng thần theo sự việc, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.</p><p>Chưa tính nhập mộ các can ngoài Tam kỳ, vượng suy Cửu Tinh, thập can khắc ứng đầy đủ, ngũ bất ngộ thời và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. Kiểm tra mã bàn và căn cứ không chứng minh câu diễn giải đúng hoặc sự việc sẽ xảy ra.</p><p><a href="./audit.html">Bản kiểm toán v12 · nguồn đối chiếu, kiểm thử và giới hạn</a></p></details>
           </section>
           <section class="learning-panel element-panel" aria-labelledby="elements-title">
             <div class="element-panel-head">
@@ -193,7 +193,7 @@
               <dt>Tuần Không</dt><dd>Tượng thiếu thực chất, chưa thành hình hoặc chậm; không đủ để khẳng định việc không bao giờ thành.</dd>
               <dt>Dịch Mã</dt><dd>Tượng di chuyển, thay đổi, bận rộn; không mặc định tốt hay xấu.</dd>
               <dt>Phục ngâm / phản ngâm</dt><dd>Phục ngâm gợi lặp lại, chậm hoặc giữ nguyên; phản ngâm gợi đảo chiều, dao động. Xem lớp Tinh hay Môn đang mang dấu đó.</dd>
-              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp kiểm tra nâng cao. Bản hướng dẫn này chưa tự tính đầy đủ, nên không phải bộ luận đoán chuyên sâu hoặc máy dự báo.</dd></dl>
+              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp hiệu chỉnh. Bản v12 tự tính Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ trên thiên bàn; chưa tính nhập mộ các can khác hoặc vượng suy Cửu Tinh theo mùa. Đây không phải máy dự báo.</dd></dl>
             </details>
             <p class="source-note">Tham khảo quy tắc nền: <a href="https://www.fatemaster.ai/guides/qimen-dunjia" target="_blank" rel="noreferrer">FateMaster · Thời Gia Chuyển Bàn</a>. Ví dụ và checklist bên trên là hướng dẫn biên soạn cho app, không phải trích nguyên văn cổ thư.</p>
           </section>
@@ -220,7 +220,7 @@
 
       <footer>
         <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
-        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT).</p>
+        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">Kiểm toán v12</a>.</p>
       </footer>
     </div>
 

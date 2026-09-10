@@ -1,7 +1,7 @@
 import {
   BRANCHES, STAR_QIN, elementSlug, formatInstantAtOffset, formatOffset, generateQimen,
 } from "./qimen.mjs";
-import {TOPICS, GENERATES, CONTROLS, locateStem} from './guide.mjs';
+import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
 
 const form = document.querySelector("#chart-form");
@@ -98,7 +98,7 @@ function stemHtml(stem) {
 }
 
 function palaceAria(palace) {
-  if (palace.number === 5) return `${palace.vi}, cung 5, địa bàn ${palace.earthStem.vi}, Thiên Cầm ký Khôn 2`;
+  if (palace.number === 5) return `${palace.vi}, cung 5, địa bàn ${palace.earthStem.vi}, gốc Thiên Cầm; khi chuyển theo Thiên Nhuế`;
   const heaven = palace.heavenStems.map((stem) => stem.vi).join(" và ");
   return `${palace.vi} cung ${palace.number}, ${palace.spirit.vi}, ${palace.star.vi}, ${palace.door.vi}, thiên bàn ${heaven}, địa bàn ${palace.earthStem.vi}`;
 }
@@ -132,7 +132,7 @@ function renderPalace(palace, chart) {
         <span class="palace-body">
           <span>
             <span class="center-seal">奇門</span>
-            <span class="center-note">Thiên Cầm ký Khôn 2</span>
+            <span class="center-note">Thiên Cầm theo Nhuế · cung ${chart.palaces.find(p=>p.carriesQin).number}</span>
           </span>
         </span>
         <span class="palace-foot">
@@ -235,11 +235,15 @@ function renderDetail(chart) {
 
   const heavenText = palace.heavenStems.map((stem) => `${stem.han} ${stem.vi}`).join(" + ");
   const carries = palace.carriesQin ? ` Cung này đồng thời mang ${STAR_QIN.vi}: ${STAR_QIN.meaning}` : "";
+  const conditions = palaceConditions(palace);
   const markerHtml = [
     palace.isDutyStar ? `<span class="detail-marker">Trực Phù: ${chart.duty.star.vi}</span>` : "",
     palace.isDutyDoor ? `<span class="detail-marker">Trực Sử: ${chart.duty.door.vi}</span>` : "",
     palace.voided ? '<span class="detail-marker">Lâm Tuần Không</span>' : "",
     palace.horse ? '<span class="detail-marker">Lâm Dịch Mã</span>' : "",
+    conditions.doorPressure ? '<span class="detail-marker">Môn bức cung</span>' : '',
+    conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
+    conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
   ].join("");
   detail.innerHTML = `${title}
     <div class="detail-list">
@@ -248,7 +252,8 @@ function renderDetail(chart) {
       ${detailItem("door", "Bát môn", `${palace.door.han} · ${palace.door.vi}`, palace.door.quality, palace.door.meaning)}
       ${detailItem("stem", "Thiên–Địa bàn", `${heavenText} / ${palace.earthStem.han} ${palace.earthStem.vi}`, "chủ–khách", `Thiên bàn mang ${heavenText}; địa bàn là ${palace.earthStem.han} ${palace.earthStem.vi}. Cần xét sinh–khắc, nhập mộ và hoàn cảnh hỏi quẻ trước khi kết luận.`)}
     </div>
-    <div class="detail-markers">${markerHtml || '<span class="detail-marker">Không có Không/Mã tại cung</span>'}</div>
+    <div class="detail-markers">${markerHtml || '<span class="detail-marker">Không có dấu bổ sung trong phạm vi đã tính</span>'}</div>
+    <p class="detail-image">Kích hình/nhập mộ chỉ xét can được nêu, kể cả can ký. Chưa bao quát mọi cách cục; không có dấu không đồng nghĩa chắc thuận.</p>
   `;
 }
 
@@ -256,7 +261,7 @@ function renderMethod(chart) {
   const offset = chart.input.tzOffset;
   const methodExplanation = chart.method === "chaibu"
     ? `Nhật trụ ${chart.pillars.day.han} có Phù đầu ${chart.fuHead.han} (${chart.fuHead.vi}), quy về <strong>${chart.dun.yuan}</strong>. Đây là lối Tháo bổ theo Phù đầu Can Chi.`
-    : `Đã qua ${chart.term.elapsedDays.toFixed(2)} ngày kể từ lúc giao tiết, quy về <strong>${chart.dun.yuan}</strong>. Mao Sơn chia mỗi nguyên đúng 5 ngày tính từ giờ giao tiết.`;
+    : `Đã qua ${chart.term.elapsedDays.toFixed(2)} ngày kể từ lúc giao tiết, quy về <strong>${chart.dun.yuan}</strong>. Quy ước Mao Sơn của app: đổi nguyên sau đúng 120 và 240 giờ từ giao tiết; Hạ nguyên giữ đến tiết kế tiếp, không tự lặp sau ngày thứ 15.`;
   methodCopy.innerHTML = `
     <p><strong>Định cục.</strong> ${methodExplanation} ${chart.term.vi} ${chart.dun.yuan.toLowerCase()} tra được ${chart.dun.ju} cục.</p>
     <p><strong>Giao tiết.</strong> Tính theo thời khắc thiên văn: ${chart.term.vi} bắt đầu ${formatInstantAtOffset(chart.term.utcMs, offset, true)}; tiết kế là ${chart.nextTerm.vi} lúc ${formatInstantAtOffset(chart.nextTerm.utcMs, offset, true)} (${formatOffset(offset)}).</p>

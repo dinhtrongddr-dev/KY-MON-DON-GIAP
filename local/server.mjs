@@ -4,13 +4,13 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
 import {runCodex,MODEL} from './codex-client.mjs';
-import {prepareReading,INSTRUCTIONS,readingSchema,validateReading,RULE_VERSION} from './reading.mjs';
+import {prepareReading,INSTRUCTIONS,readingSchema,validateReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 export function createBridge({token=randomBytes(24).toString('hex'),port=8765,runner=runCodex}={}){
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
  const allowed=new Set([origin,'https://kymon.tkgiongnoi2.chatgpt.site']);
- const files=new Set(['/index.html','/styles.css','/app.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const files=new Set(['/index.html','/audit.html','/styles.css','/app.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/reading-core.mjs','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -25,18 +25,22 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
    if(path.startsWith('/api/')){
      const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
      if(value.length!==expected.length||!timingSafeEqual(value,expected))return send(401,{error:'Mã kết nối không đúng. Nhập mã hiện trong bộ kết nối AI.'});
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL});
      if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
      const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
      try{
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
-       let prepared;try{prepared=prepareReading(JSON.parse(Buffer.concat(chunks).toString('utf8')));}catch(e){return send(400,{error:e.message});}
+       let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
+       let prepared;try{prepared=prepareReading(body);}catch(e){return send(400,{error:e.message});}
+       const identity=await readingIdentity(prepared);
+       if(body.rules!==RULE_VERSION || body.protocol!==READING_PROTOCOL || body.chartFingerprint!==identity.chartFingerprint || body.requestFingerprint!==identity.requestFingerprint) return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
        try{
-         const result=validateReading(await runner(INSTRUCTIONS,prepared.context,readingSchema(prepared.facts),{signal:controller.signal}),prepared.facts);
-         send(200,{model:MODEL,rules:RULE_VERSION,reading:result,facts:prepared.facts});
+         const result=validateReading(await runner(INSTRUCTIONS,prepared.context,readingSchema(prepared.facts),{signal:controller.signal}),prepared.facts,body.topic);
+         if(!res.destroyed)send(200,{model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts});
        }finally{busy=false;}
      }catch(e){if(!res.destroyed)send(502,{error:e.message||'Không kết nối được AI.'});}
      return;

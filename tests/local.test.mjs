@@ -4,14 +4,14 @@ import {EventEmitter} from 'node:events';
 import {PassThrough} from 'node:stream';
 import {createInterface} from 'node:readline';
 import {request as httpRequest} from 'node:http';
-import {prepareReading,validateReading,INSTRUCTIONS,readingSchema} from '../local/reading.mjs';
+import {prepareReading,validateReading,INSTRUCTIONS,readingSchema,RULE_VERSION,READING_PROTOCOL,buildReadingRequest,validateReadingResponse} from '../local/reading.mjs';
 import {createBridge} from '../local/server.mjs';
 import {runCodex,MODEL} from '../local/codex-client.mjs';
 const payload={question:'Trong 30 ngày tới tôi có nhận được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:9,hour:15,minute:30,tzOffset:7}};
-const answer={status:'reading',topic_id:'contract',summary:'Kết quả giả lập kiểm thử.',assumptions:[],assessments:[{title:'Đọc hai cung',interpretation:'Nội dung giả lập.',evidence_ids:['day','hour','relation']}],questions:[],next_steps:[]};
+const answer={status:'reading',topic_id:'contract',summary:'Kết quả giả lập kiểm thử.',assumptions:[],assessments:[{title:'Đọc hai cung',interpretation:'Nội dung giả lập.',evidence_ids:['day','hour','relation']},{title:'Dụng thần',interpretation:'Nội dung giả lập.',evidence_ids:['ref_contract_0']},{title:'Điều kiện',interpretation:'Nội dung giả lập.',evidence_ids:['p1','c1']}],questions:[],next_steps:['Bước kiểm thử 1.','Bước kiểm thử 2.']};
 test('server recomputes chart, rejects missing question and invented evidence',()=>{
  const {facts,context}=prepareReading({...payload,facts:{day:'client-forged'}});
- assert.notEqual(facts.day,'client-forged');assert.equal(context.rules,'TG-CB-1.0');
+ assert.notEqual(facts.day,'client-forged');assert.equal(context.rules,RULE_VERSION);
  assert.equal(validateReading(answer,facts),answer);
  assert.throws(()=>prepareReading({...payload,question:''}));
  assert.throws(()=>prepareReading({...payload,method:'invented'}));
@@ -32,8 +32,17 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Origin:'https://evil.example'}})).status,403);
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Host:'evil.example'}})).status,403);
  const preflight=await fetch(url+'/api/read',{method:'OPTIONS',headers});assert.equal(preflight.status,204);assert.equal(preflight.headers.get('access-control-allow-origin'),headers.Origin);
- const read=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(payload)});assert.equal(read.status,200);assert.equal((await read.json()).model,MODEL);assert.equal(called,1);
- assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,1);
+ const legacy=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(payload)});assert.equal(legacy.status,409);assert.equal(called,0);
+ assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
+ const prepared=await buildReadingRequest(payload);
+ const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
+ const data=await v2.json();assert.equal(data.model,MODEL);assert.equal(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
+ for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
+   assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
+ }
+ assert.equal(called,1);
+ const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);
+ assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/local/server.mjs',{headers})).status,404);
  assert.equal((await fetch(url+'/',{headers})).status,200);
 });
@@ -68,4 +77,8 @@ test('Codex bridge refuses API-key authentication and unexpected tool execution'
  const {context,facts}=prepareReading(payload);
  await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('apiKey')),/đăng nhập đúng tài khoản/);
  await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('chatgpt',true)),/công cụ/);
+});
+test('pre-aborted AI invocation never launches a process',async()=>{
+ const controller=new AbortController();controller.abort();
+ await assert.rejects(runCodex(INSTRUCTIONS,{}, {},{signal:controller.signal,spawnProcess(){assert.fail('must not start');}}),/hủy/);
 });

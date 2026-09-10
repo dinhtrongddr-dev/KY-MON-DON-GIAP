@@ -1,5 +1,6 @@
 const mod = (value, size) => ((value % size) + size) % size;
 const wrapPalace = (value) => mod(value - 1, 9) + 1;
+export const ENGINE_VERSION = 'TG-ROTATING-2.0';
 
 export const ELEMENTS = {
   "Mộc": { slug: "wood", color: "#08783c" },
@@ -61,7 +62,7 @@ export const DOORS = [
   { id: "sheng", han: "生", vi: "Sinh Môn", element: "Thổ", quality: "đại cát", meaning: "Tài lộc, sinh trưởng, kinh doanh, hồi phục." },
   { id: "shang", han: "傷", vi: "Thương Môn", element: "Mộc", quality: "hung", meaning: "Tổn thương, cạnh tranh, vận động, đòi hỏi quyết liệt." },
   { id: "du", han: "杜", vi: "Đỗ Môn", element: "Mộc", quality: "bình", meaning: "Kín đáo, kỹ thuật, giữ bí mật; cũng chỉ bế tắc." },
-  { id: "jing", han: "景", vi: "Cảnh Môn", element: "Hỏa", quality: "cát", meaning: "Danh tiếng, văn thư, truyền thông, hình ảnh." },
+  { id: "jing", han: "景", vi: "Cảnh Môn", element: "Hỏa", quality: "bình · tùy việc", meaning: "Danh tiếng, văn thư, truyền thông, hình ảnh; không thuộc ba cát môn Khai–Hưu–Sinh, cần xét việc cụ thể." },
   { id: "si", han: "死", vi: "Tử Môn", element: "Thổ", quality: "hung", meaning: "Kết thúc, đình trệ, bất động, thu hồi việc cũ." },
   { id: "fear", han: "驚", vi: "Kinh Môn", element: "Kim", quality: "hung", meaning: "Bất ngờ, lo lắng, kiện tụng, thị phi." },
   { id: "kai", han: "開", vi: "Khai Môn", element: "Kim", quality: "đại cát", meaning: "Công việc, khai trương, cơ hội, gặp người có quyền." },
@@ -141,11 +142,13 @@ export function sexagenaryIndex(ganzhi) {
 }
 
 export function sexagenaryName(index) {
+  if (!Number.isInteger(index)) throw new Error('Chỉ số Can Chi phải là số nguyên.');
   const normalized = mod(index, 60);
   return `${STEMS[normalized % 10].han}${BRANCHES[normalized % 12].han}`;
 }
 
 export function pillarFromGanzhi(ganzhi) {
+  sexagenaryIndex(ganzhi);
   const stem = stemByHan(ganzhi[0]);
   const branch = branchByHan(ganzhi[1]);
   if (!stem || !branch) throw new Error(`Không đọc được Can Chi: ${ganzhi}`);
@@ -185,7 +188,8 @@ function findEarthPalace(earth, stemHan) {
   throw new Error(`Không tìm thấy ${stemHan} trên địa bàn.`);
 }
 
-function yuanByFuHead(dayIndex) {
+export function yuanByFuHead(dayIndex) {
+  if (!Number.isInteger(dayIndex) || dayIndex < 0 || dayIndex > 59) throw new Error('Chỉ số ngày phải nằm trong 0–59.');
   const fuHeadIndex = Math.floor(dayIndex / 5) * 5;
   const branchIndex = fuHeadIndex % 12;
   let yuanIndex;
@@ -195,7 +199,8 @@ function yuanByFuHead(dayIndex) {
   return { yuanIndex, fuHead: sexagenaryName(fuHeadIndex) };
 }
 
-function yuanByTermElapsed(elapsedDays) {
+export function yuanByTermElapsed(elapsedDays) {
+  if (!Number.isFinite(elapsedDays) || elapsedDays < 0) throw new Error('Số ngày từ giao tiết không hợp lệ.');
   if (elapsedDays < 5) return 0;
   if (elapsedDays < 10) return 1;
   return 2;
@@ -212,7 +217,8 @@ function hostPalace(palace) {
   return palace === 5 ? 2 : palace;
 }
 
-function buildEarthPlate(ju, isYang) {
+export function buildEarthPlate(ju, isYang) {
+  if (!Number.isInteger(ju) || ju < 1 || ju > 9 || typeof isYang !== 'boolean') throw new Error('Độn/cục không hợp lệ.');
   const earth = {};
   const direction = isYang ? 1 : -1;
   QI_YI_SEQUENCE.forEach((stemHan, index) => {
@@ -222,7 +228,11 @@ function buildEarthPlate(ju, isYang) {
   return earth;
 }
 
-function buildRotatingLayers(earth, hourPillar, isYang) {
+export function buildRotatingLayers(earth, hourPillar, isYang) {
+  if (typeof isYang !== 'boolean') throw new Error('Âm/Dương Độn không hợp lệ.');
+  if (Object.keys(earth).length !== 9 || new Set(Object.values(earth).map(s => s?.han)).size !== 9 ||
+      Array.from({length:9}, (_, i) => i + 1).some(n => !QI_YI_SEQUENCE.includes(earth[n]?.han))) throw new Error('Địa bàn phải đủ chín can không trùng.');
+  hourPillar = pillarFromGanzhi(hourPillar?.han);
   const hourIndex = sexagenaryIndex(hourPillar.han);
   const xunNumber = Math.floor(hourIndex / 10);
   const hourOffset = hourIndex % 10;
@@ -275,7 +285,7 @@ function buildRotatingLayers(earth, hourPillar, isYang) {
 
   return {
     xun: { head: pillarFromGanzhi(xunHead), instrument: stemByHan(instrumentHan), instrumentPalace, hourOffset },
-    duty: { star: dutyStar, door: dutyDoor, starPalace: starTargetPalace, doorPalace: doorTargetPalace },
+    duty: { star: dutyStar, door: dutyDoor, starPalace: starTargetPalace, doorPalace: doorTargetPalace, rawStarPalace: rawStarTarget, rawDoorPalace: rawDoorTarget },
     stars, heavenStems, doors, spirits,
     voidBranches, horseBranch, horsePalace,
     patterns: {
@@ -290,9 +300,10 @@ function buildRotatingLayers(earth, hourPillar, isYang) {
 function validateInput(input) {
   const fields = ["year", "month", "day", "hour", "minute", "tzOffset"];
   fields.forEach((field) => {
-    if (!Number.isFinite(Number(input[field]))) throw new Error(`Thiếu dữ liệu ${field}.`);
+    if (typeof input?.[field] !== 'number' || !Number.isFinite(input[field])) throw new Error(`Dữ liệu ${field} phải là số hợp lệ.`);
+    if (field !== 'tzOffset' && !Number.isInteger(input[field])) throw new Error('Năm, tháng, ngày, giờ và phút phải là số nguyên.');
   });
-  const normalized = Object.fromEntries(fields.map((field) => [field, Number(input[field])]));
+  const normalized = Object.fromEntries(fields.map((field) => [field, input[field]]));
   if (normalized.year < 1900 || normalized.year > 2100) throw new Error("App hỗ trợ năm 1900–2100.");
   const check = new Date(Date.UTC(normalized.year, normalized.month - 1, normalized.day));
   if (check.getUTCFullYear() !== normalized.year || check.getUTCMonth() + 1 !== normalized.month || check.getUTCDate() !== normalized.day) {
@@ -300,6 +311,7 @@ function validateInput(input) {
   }
   if (normalized.hour < 0 || normalized.hour > 23 || normalized.minute < 0 || normalized.minute > 59) throw new Error("Giờ hoặc phút không hợp lệ.");
   if (normalized.tzOffset < -12 || normalized.tzOffset > 14) throw new Error("Múi giờ phải nằm trong UTC−12 đến UTC+14.");
+  if (Math.abs(normalized.tzOffset * 60 - Math.round(normalized.tzOffset * 60)) > 1e-8) throw new Error('Múi giờ phải tương ứng số phút nguyên.');
   return normalized;
 }
 
@@ -329,7 +341,8 @@ export function generateQimen(rawInput, method = "chaibu") {
   const nextTerm = normalizeTerm(next.getName());
   const currentTermUtcMs = solarToUtcMs(previous.getSolar(), 8);
   const nextTermUtcMs = solarToUtcMs(next.getSolar(), 8);
-  const elapsedDays = Math.max(0, (utcMs - currentTermUtcMs) / 86_400_000);
+  if (!(currentTermUtcMs <= utcMs && utcMs < nextTermUtcMs)) throw new Error('Khoảng tiết khí không nhất quán; chưa thể lập bàn.');
+  const elapsedDays = (utcMs - currentTermUtcMs) / 86_400_000;
 
   const dayIndex = sexagenaryIndex(pillars.day.han);
   const fu = yuanByFuHead(dayIndex);
@@ -366,7 +379,7 @@ export function generateQimen(rawInput, method = "chaibu") {
   });
 
   return {
-    input, utcMs, method,
+    engineVersion: ENGINE_VERSION, input, utcMs, method,
     methodLabel: method === "chaibu" ? "Tháo bổ · Phù đầu" : "Mao Sơn · 5 ngày/nguyên",
     pillars,
     term: { ...currentTerm, utcMs: currentTermUtcMs, elapsedDays },

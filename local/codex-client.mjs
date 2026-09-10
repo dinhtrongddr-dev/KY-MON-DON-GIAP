@@ -18,6 +18,7 @@ function launcher(){
  return ['codex',[]];
 }
 export async function runCodex(instructions,input,schema,{signal,spawnProcess=spawn}={}) {
+ if(signal?.aborted)throw new Error('Đã hủy.');
  const cwd=await mkdtemp(join(tmpdir(),'qimen-reading-'));
  let proc, timer, seq=0, finished=false;
  const pending=new Map(); let resolveTurn,rejectTurn,lastText='';
@@ -34,6 +35,8 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
    proc.on('error',()=>fail(new Error('Không khởi động được bộ kết nối AI. Xem lại hướng dẫn cài đặt rồi thử lại.')));
    proc.on('exit',()=>{if(!finished)fail(new Error('AI đã dừng trước khi hoàn tất. Kiểm tra kết nối và quyền truy cập rồi thử lại.'));});
    proc.stderr.on('data',()=>{}); // Never expose CLI logs or authentication material to browser.
+   let outputBytes=0;
+   proc.stdout.on('data',chunk=>{outputBytes+=Buffer.byteLength(chunk);if(outputBytes>4*1024*1024){fail(new Error('Phản hồi AI vượt giới hạn an toàn. Hãy rút gọn câu hỏi.'));proc.kill();}});
    const send=(m)=>proc.stdin.write(JSON.stringify(m)+'\n');
    const request=(method,params)=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});send({id,method,params});});
    createInterface({input:proc.stdout}).on('line',line=>{
@@ -47,7 +50,7 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
    });
    timer=setTimeout(abort,180000);signal?.addEventListener('abort',abort,{once:true});
    if(signal?.aborted)throw new Error('Đã hủy.');
-   await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'1.0.0'},capabilities:{experimentalApi:false}});
+   await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'2.0.0'},capabilities:{experimentalApi:false}});
    send({method:'initialized',params:{}});
    const auth=await request('account/read',{refreshToken:false});
    if(auth.account?.type!=='chatgpt')throw new Error('AI chưa được đăng nhập đúng tài khoản. Xem hướng dẫn kết nối rồi thử lại.');

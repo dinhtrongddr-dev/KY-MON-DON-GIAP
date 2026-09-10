@@ -1,4 +1,4 @@
-import {sexagenaryIndex} from './qimen.mjs';
+import {sexagenaryIndex, STEMS} from './qimen.mjs';
 
 export const GENERATES = {Mộc:'Hỏa', Hỏa:'Thổ', Thổ:'Kim', Kim:'Thủy', Thủy:'Mộc'};
 export const CONTROLS = {Mộc:'Thổ', Thổ:'Thủy', Thủy:'Hỏa', Hỏa:'Kim', Kim:'Mộc'};
@@ -22,6 +22,7 @@ export const TOPICS = [
 ];
 
 export function relation(from, to) {
+  if (!Object.hasOwn(GENERATES, from) || !Object.hasOwn(GENERATES, to)) throw new Error('Ngũ hành không hợp lệ.');
   if (from === to) return 'Cùng hành · tỷ hòa';
   if (GENERATES[from] === to) return 'Người sinh việc · cần bỏ nguồn lực';
   if (GENERATES[to] === from) return 'Việc sinh người · tượng hỗ trợ';
@@ -30,13 +31,31 @@ export function relation(from, to) {
 }
 
 export function locateStem(chart, pillar) {
-  const han = typeof pillar === 'string' ? pillar : pillar.stem.han;
-  const effective = han === '甲' ? ['戊','己','庚','辛','壬','癸'][Math.floor(sexagenaryIndex(pillar.han)/10)] : han;
-  return {effective, palace:chart.palaces.find(p=>p.number!==5 && p.heavenStems.some(s=>s.han===effective))};
+  const text = typeof pillar === 'string' ? pillar : pillar?.han;
+  if (typeof text !== 'string' || ![1,2].includes(text.length) || !STEMS.some(s=>s.han===text[0])) throw new Error('Can cần tìm không hợp lệ.');
+  if (text.length === 2) sexagenaryIndex(text);
+  if (text === '甲') throw new Error('Tìm Giáp cần đủ Can Chi để xác định nghi ẩn của chính trụ.');
+  const effective = text[0] === '甲' ? ['戊','己','庚','辛','壬','癸'][Math.floor(sexagenaryIndex(text)/10)] : text[0];
+  const matches=chart.palaces.filter(p=>p.number!==5 && p.heavenStems.some(s=>s.han===effective));
+  if(matches.length!==1) throw new Error('Can cần tìm không nằm duy nhất trên thiên bàn.');
+  return {effective, palace:matches[0]};
 }
 
 export function locateRef(chart, [kind,id]) {
   if (kind==='stem') return locateStem(chart,id).palace;
   if (kind==='horse') return chart.palaces.find(p=>p.horse);
   return chart.palaces.find(p=>p[kind]?.id===id);
+}
+
+// Scope: heavenly stems, including the stem travelling with Tian Qin.
+// Source: 煙波釣叟歌, 六儀擊刑 / 三奇入墓 / 門制其宮.
+export const PUNISHMENT_PALACES = Object.freeze({'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4});
+export const THREE_WONDERS_TOMBS = Object.freeze({'乙':6,'丙':6,'丁':8});
+export function palaceConditions(palace) {
+  if (palace.number === 5) return {doorPressure:false, punishment:[], wonderTombs:[]};
+  return {
+    doorPressure: CONTROLS[palace.door.element] === palace.element,
+    punishment: palace.heavenStems.filter(s=>PUNISHMENT_PALACES[s.han]===palace.number).map(s=>s.vi),
+    wonderTombs: palace.heavenStems.filter(s=>THREE_WONDERS_TOMBS[s.han]===palace.number).map(s=>s.vi),
+  };
 }

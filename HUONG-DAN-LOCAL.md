@@ -28,11 +28,11 @@ Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng 
 - Nếu cài CLI ở vị trí đặc biệt, đặt `QIMEN_CODEX_BIN` thành đường dẫn tuyệt đối đến executable Codex hoặc `codex.js`. Không đặt thành chuỗi lệnh gồm tham số. Windows hỗ trợ npm global bằng cách chạy `codex.js` qua Node, không chuyển câu hỏi vào shell.
 - Các kiểm thử đi kèm dùng Codex giả lập để kiểm tra giao thức và server. Cần thử một câu hỏi thật trên máy bạn để xác nhận CLI/model/tài khoản tương thích.
 
-## Bộ quy tắc TG-CB-1.0
+## Bộ quy tắc TG-CB-2.0
 
-Thời Gia, Chuyển Bàn; dùng đúng pháp Tháo bổ/Mao Sơn đã chọn; 23:00 đổi ngày; Trung Ngũ ký Khôn 2; Thiên Cầm cùng Thiên Nhuế. Nhật/Thời can tìm trên thiên bàn; Giáp theo nghi ẩn của chính trụ. Quan hệ người–việc xét hành cung. Môn bức cung khi Môn khắc hành cung. Cùng đọc Môn–Tinh–Thần, Không/Mã và phục/phản ngâm.
+Thời Gia, Chuyển Bàn; dùng đúng pháp Tháo bổ/Mao Sơn đã chọn; 23:00 đổi ngày; Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can Trung Ngũ cùng chuyển với Thiên Nhuế. Nhật/Thời can tìm trên thiên bàn; Giáp theo nghi ẩn của chính trụ. Quan hệ người–việc xét hành cung. Cùng đọc Môn–Tinh–Thần, Không/Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.
 
-Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Hỏi thay người khác có thể cần làm rõ đại diện. Chưa tính đầy đủ nhập mộ, lục nghi kích hình, thập can khắc ứng, vượng suy Cửu Tinh và ứng kỳ. Không tuyên bố đây là toàn bộ chuẩn mọi phái. Server kiểm tra mã căn cứ tồn tại, không chứng minh mọi câu diễn giải AI là đúng.
+Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Hỏi thay người khác có thể cần làm rõ đại diện. Chưa tính nhập mộ các can ngoài Tam kỳ, thập can khắc ứng đầy đủ, ngũ bất ngộ thời, vượng suy Cửu Tinh và ứng kỳ. Không tuyên bố đây là toàn bộ chuẩn mọi phái. Website và bộ kết nối cùng tính lại bàn, đối chiếu SHA-256 của bàn/câu hỏi/căn cứ và chặn phản hồi lệch TG-CB-2.0; việc đó không chứng minh mọi câu diễn giải AI là đúng.
 
 Nguồn quy ước truyền thống: https://zh.wikisource.org/wiki/煙波釣叟歌 . Tài liệu tích hợp: https://learn.chatgpt.com/docs/app-server và https://learn.chatgpt.com/docs/config-file/config-reference .
 
