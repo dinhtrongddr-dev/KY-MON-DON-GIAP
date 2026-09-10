@@ -334,6 +334,16 @@ function initElementDiagram() {
   const reading=document.querySelector('#element-reading');
   const elements=Object.keys(GENERATES);
   const giver=(map,element)=>elements.find(item=>map[item]===element);
+  const reset=()=>{
+    delete diagram.dataset.active;
+    diagram.querySelectorAll('.element-orb').forEach(button=>{
+      button.classList.remove('is-active');
+      button.setAttribute('aria-pressed','false');
+    });
+    diagram.querySelectorAll('.element-routes path').forEach(path=>path.classList.remove('is-related'));
+    reading.replaceChildren();
+    reading.hidden=true;
+  };
   const select=(element)=>{
     diagram.dataset.active=element;
     diagram.querySelectorAll('.element-orb').forEach(button=>{
@@ -342,15 +352,20 @@ function initElementDiagram() {
       button.setAttribute('aria-pressed',String(active));
     });
     diagram.querySelectorAll('.element-routes path').forEach(path=>path.classList.toggle('is-related',path.dataset.from===element||path.dataset.to===element));
-    reading.innerHTML=`<h3>${element} trong bốn chiều quan hệ</h3><div class="relation-cards">
+    reading.hidden=false;
+    reading.innerHTML=`<div class="element-reading-head"><h3>${element} trong bốn chiều quan hệ</h3><button class="reading-reset" type="button">Xem toàn bộ sơ đồ</button></div><div class="relation-cards">
       <p><span class="relation-label relation-generate">Sinh ra</span><strong>${element} → ${GENERATES[element]}</strong><small>${element} nuôi dưỡng ${GENERATES[element]}</small></p>
       <p><span class="relation-label relation-generate">Được sinh</span><strong>${giver(GENERATES,element)} → ${element}</strong><small>${element} nhận sự nâng đỡ từ ${giver(GENERATES,element)}</small></p>
       <p><span class="relation-label relation-control">Khắc</span><strong>${element} → ${CONTROLS[element]}</strong><small>${element} chế ước ${CONTROLS[element]}</small></p>
       <p><span class="relation-label relation-control">Bị khắc</span><strong>${giver(CONTROLS,element)} → ${element}</strong><small>${element} chịu sự chế ước của ${giver(CONTROLS,element)}</small></p>
     </div>`;
+    reading.querySelector('.reading-reset').addEventListener('click',reset);
   };
-  diagram.querySelectorAll('.element-orb').forEach(button=>button.addEventListener('click',()=>select(button.dataset.elementChoice)));
-  select('Mộc');
+  diagram.querySelectorAll('.element-orb').forEach(button=>button.addEventListener('click',()=>{
+    const element=button.dataset.elementChoice;
+    diagram.dataset.active===element ? reset() : select(element);
+  }));
+  reset();
 }
 
 topicInput.addEventListener('change',()=>{if(currentChart)renderGuide(currentChart);});

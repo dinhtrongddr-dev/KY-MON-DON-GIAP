@@ -131,7 +131,7 @@
           <section class="learning-panel" aria-labelledby="elements-title">
             <p class="eyebrow">Sơ đồ quan hệ</p>
             <h2 id="elements-title">Ngũ hành tương sinh · tương khắc</h2>
-            <p>Đọc theo chiều mũi tên. Chọn một hành để làm nổi bật bốn quan hệ trực tiếp của hành đó.</p>
+            <p>Đọc theo chiều mũi tên. Sơ đồ mặc định hiển thị đầy đủ; bấm vào một hành để xem riêng bốn quan hệ trực tiếp.</p>
             <div class="element-diagram" id="element-diagram">
               <svg class="element-routes" viewBox="0 0 600 520" aria-hidden="true" focusable="false">
                 <defs>
@@ -153,15 +153,24 @@
                   <path data-from="Kim" data-to="Mộc" d="M385 410 L129 236" />
                 </g>
               </svg>
-              <button class="element-orb orb-fire" data-element-choice="Hỏa" data-element="fire" type="button"><span>火</span><strong>Hỏa</strong><small>Lửa</small></button>
-              <button class="element-orb orb-earth" data-element-choice="Thổ" data-element="earth" type="button"><span>土</span><strong>Thổ</strong><small>Đất</small></button>
-              <button class="element-orb orb-metal" data-element-choice="Kim" data-element="metal" type="button"><span>金</span><strong>Kim</strong><small>Kim loại</small></button>
-              <button class="element-orb orb-water" data-element-choice="Thủy" data-element="water" type="button"><span>水</span><strong>Thủy</strong><small>Nước</small></button>
-              <button class="element-orb orb-wood" data-element-choice="Mộc" data-element="wood" type="button"><span>木</span><strong>Mộc</strong><small>Cây</small></button>
-              <div class="diagram-center" aria-hidden="true"><span>五行</span><strong>NGŨ HÀNH</strong></div>
+              <button class="element-orb orb-fire" data-element-choice="Hỏa" data-element="fire" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Hỏa"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M35 5c3 12-4 16-4 25-4-4-6-9-5-14C15 26 14 36 18 45c4 9 13 14 22 11 10-3 16-13 13-23-2-7-7-13-13-20 1 8-1 13-5 17 0-8 5-14 0-25Z"/></svg><strong>Hỏa</strong><small>Lửa</small></button>
+              <button class="element-orb orb-earth" data-element-choice="Thổ" data-element="earth" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Thổ"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 52 24 24l9 12L43 18l16 34H5Z"/><path class="icon-detail" d="M12 52h40M23 43h25"/></svg><strong>Thổ</strong><small>Đất</small></button>
+              <button class="element-orb orb-metal" data-element-choice="Kim" data-element="metal" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Kim"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="m32 5 8 8 11-1 1 11 8 9-8 9-1 11-11-1-8 8-8-8-11 1-1-11-8-9 8-9 1-11 11 1 8-8Z"/><circle class="icon-cutout" cx="32" cy="32" r="10"/></svg><strong>Kim</strong><small>Kim loại</small></button>
+              <button class="element-orb orb-water" data-element-choice="Thủy" data-element="water" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Thủy"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5C25 17 13 29 13 41a19 19 0 0 0 38 0C51 29 39 17 32 5Z"/><path class="icon-detail" d="M22 42c2 6 7 9 13 9"/></svg><strong>Thủy</strong><small>Nước</small></button>
+              <button class="element-orb orb-wood" data-element-choice="Mộc" data-element="wood" type="button" aria-pressed="false" aria-label="Xem quan hệ của hành Mộc"><svg class="element-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M29 56V31C13 32 8 22 8 9c14-1 24 4 25 16C36 14 45 9 57 10c0 14-8 23-24 22v24h-4Z"/><path class="icon-detail" d="M18 17c6 2 10 6 14 13m13-12c-5 3-9 7-12 12"/></svg><strong>Mộc</strong><small>Cây</small></button>
+              <div class="diagram-center" aria-label="Bát Quái" role="img">
+                <svg class="bagua-icon" viewBox="0 0 120 120" aria-hidden="true">
+                  <polygon points="60,4 99,20 116,60 99,100 60,116 21,100 4,60 21,20" />
+                  <circle cx="60" cy="60" r="25" />
+                  <path d="M60 35a12.5 12.5 0 0 1 0 25 12.5 12.5 0 0 0 0 25 25 25 0 0 1 0-50Z" />
+                  <circle class="bagua-dot-light" cx="60" cy="47.5" r="3.2"/><circle class="bagua-dot-dark" cx="60" cy="72.5" r="3.2"/>
+                  <text x="60" y="16">☲</text><text x="96" y="31">☷</text><text x="108" y="65">☱</text><text x="94" y="101">☰</text>
+                  <text x="60" y="112">☵</text><text x="25" y="101">☶</text><text x="12" y="65">☳</text><text x="25" y="31">☴</text>
+                </svg>
+              </div>
             </div>
             <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>
-            <div class="element-reading" id="element-reading" aria-live="polite"></div>
+            <div class="element-reading" id="element-reading" aria-live="polite" hidden></div>
             <p class="source-note">Màu dùng để nhận diện hành, không tự biểu thị tốt hoặc xấu. Bát Thần vẫn dùng màu tím riêng.</p>
             <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
             <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
