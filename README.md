@@ -6,7 +6,9 @@
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Tạo lại gói tải bằng `python scripts/package-local.py` sau mỗi thay đổi. Hai đầu tính lại bàn và khóa SHA-256 của bàn/câu hỏi/căn cứ theo TG-CB-2.0. Server kiểm tra JSON; kiểm thử giao thức dùng mock, chưa thay thế kiểm tra trực tiếp trên tài khoản người dùng. Biên bản công khai: `dist/audit.html`; ma trận đánh giá lời luận: `AI-EVAL.md`.
+Tạo lại gói tải bằng `python scripts/package-local.py` sau mỗi thay đổi. Hai đầu tính lại bàn và khóa SHA-256 của bàn/toàn bộ ngữ cảnh câu hỏi theo TG-CB-3.0 (protocol 3). `reading-focus.mjs` tạo các liên kết cung theo chủ đề; `reading-core.mjs` kiểm tra bốn góc đọc, ba chặng có điều kiện và khả năng khác; `reading-view.mjs` hiển thị đoạn văn và các nút đối chiếu cung. `local/interpret.mjs` cho phép sửa bài không đạt tối đa một lần trong tổng 180 giây, giữ Hủy và không thử lại lỗi xác thực/mạng. Codex dùng cùng model với mức suy luận `high`.
+
+Gói này phải được cài vào bộ kết nối trên máy người dùng; publish web không cập nhật server đó. Các kiểm thử giao thức dùng mock, chưa thay thế kiểm tra trực tiếp trên tài khoản. Biên bản công khai: `dist/audit.html`; ma trận đánh giá lời luận: `AI-EVAL.md`. Các ngưỡng độ dài chỉ chống đầu ra quá sơ lược, không chứng minh lời luận đúng hoặc hay.
 
 ## Khẩu quyết đã mã hóa
 

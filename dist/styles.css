@@ -675,6 +675,26 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-panel p,.ai-panel li { font-size:16px; line-height:1.65; overflow-wrap:anywhere; }
 .ai-panel code { white-space:normal; overflow-wrap:anywhere; }
 .ai-assessment { padding:14px 0; border-top:1px solid var(--line); }
+#ai-answer { max-width:960px; margin:24px auto 0; min-width:0; }
+#ai-answer h3 { font-size:1.2rem; line-height:1.4; margin:18px 0 10px; }
+#ai-answer h4 { font-size:1.08rem; line-height:1.45; margin:6px 0 10px; }
+#ai-answer p { white-space:pre-line; }
+.ai-opening { border-left:4px solid var(--jade); background:#f0f7f2; padding:2px 18px; }
+.ai-scope { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 24px; padding:16px 0; }
+.ai-scope div { min-width:0; }
+.ai-scope dt { font-size:14px; font-weight:700; color:var(--jade-dark); }
+.ai-scope dd { margin:4px 0 0; font-size:16px; line-height:1.5; overflow-wrap:anywhere; }
+.ai-evidence-links { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.ai-evidence-links button { min-height:40px; font-size:14px; padding:8px 12px; }
+.ai-evidence summary { font-size:14px; }
+.ai-development,.ai-alternatives { border-top:1px solid var(--line); padding-top:8px; margin-top:18px; }
+.ai-stages { list-style:none; padding:0 0 0 22px; border-left:2px solid #c39a44; margin:18px 0 24px 8px; }
+.ai-stages>li { position:relative; padding:0 0 22px; min-width:0; }
+.ai-stages>li::before { content:''; position:absolute; left:-30px; top:4px; width:12px; height:12px; border:2px solid white; border-radius:50%; background:var(--jade); }
+.ai-stage-label { color:var(--jade-dark); font-size:14px; font-weight:750; }
+.ai-panel .ai-condition { padding:10px 14px; border-left:3px solid #c39a44; background:#faf7ef; }
+.ai-panel .ai-thread,.ai-panel .ai-note { font-size:14px; color:#526159; line-height:1.6; }
+@media(max-width:560px){.ai-scope{grid-template-columns:1fr}.ai-stages{padding-left:18px;margin-left:4px}.ai-stages>li::before{left:-26px}.ai-opening{padding-inline:12px}}
 #ai-status { font-weight:600; }
 @media(max-width:760px) {
   .local-controls { grid-template-columns:1fr 1fr; }

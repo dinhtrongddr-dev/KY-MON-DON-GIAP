@@ -1,7 +1,21 @@
 # Kỳ Môn • Codex trên máy tính
 
-Luồng: trình duyệt → server Node local → `codex app-server` → GPT-5.6 Sol → kết quả trên bàn.
+Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-5.6 Sol → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
+
+## Cập nhật lên TG-CB-3.0 (website v14)
+
+1. Tải bộ mới tại https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
+2. Xác định đúng thư mục/tiến trình đang phục vụ cổng 8765. Nếu dùng server nguyên bản trong gói, chuyển tiến trình sang thư mục mới rồi khởi động lại. Nếu server đã được tùy biến cho relay/tunnel, tích hợp các module mới và giữ nguyên phần cấu hình riêng; không chép đè cả server một cách máy móc.
+3. Module dùng chung: `dist/reading-core.mjs`, `dist/reading-focus.mjs`, `dist/qimen.mjs`, `dist/guide.mjs`, `dist/vendor/lunar.js`. Bộ chạy: `local/reading.mjs`, `local/interpret.mjs`, `local/codex-client.mjs`, `local/server.mjs`. Dùng nguyên bộ cùng phiên bản; không chỉ đổi chuỗi rules/protocol của server cũ.
+4. Server gọi `prepareReading(body)` và `readingIdentity(prepared)` để đối chiếu request trước khi gọi `interpretReading(prepared,{signal})`. Hàm này kiểm tra nội dung và cho phép viết lại tối đa một lần. Phản hồi giữ các trường `model`, `rules`, `protocol`, `chartFingerprint`, `requestFingerprint`, `reading`, `facts`.
+5. Giữ nguyên endpoint Worker, tunnel và CORS cho website hiện tại. Mã kết nối nhập bằng tay, không đặt vào URL hoặc mã website. Không mở cổng ra LAN/Internet và không tắt kiểm tra Host/Origin.
+6. Khởi động lại đúng server, nhập mã mới trên website rồi bấm Kiểm tra kết nối. `/api/status` qua Worker phải báo `rules: TG-CB-3.0`, `protocol: 3`. Kiểm tra trạng thái thành công chưa chứng minh model đã chạy.
+7. Thử một câu hỏi giả lập qua website: “Báo giá dịch vụ đã nộp, trong tháng này công ty tôi cần làm rõ gì để ký hợp đồng với công ty A?”. Kiểm tra bài có bốn góc đọc, ba chặng, khả năng khác, căn cứ và Hủy hoạt động. Nếu chưa chạy lượt thật thì báo rõ là chưa kiểm chứng trên tài khoản.
+
+Mức suy luận được đặt `high`, model vẫn là `gpt-5.6-sol`. Nếu Codex/tài khoản không hỗ trợ cấu hình này, báo lỗi để kiểm tra phiên bản/quyền; không tự đổi model hoặc dùng API key. Tổng thời gian tối đa cho cả lượt và phần viết lại là 180 giây, phía web chờ 190 giây. Lỗi đăng nhập/mạng không tự thử lại để tránh tạo thêm lượt.
+
+Giao thức 3 bổ sung `scope`, `development`, `alternatives` và `assessments[].aspect`. Fingerprint câu hỏi nay bao gồm toàn bộ `prepared.context`, kể cả khung chủ đề và liên kết cung. Không tự viết lại hàm băm ở relay hoặc bỏ kiểm tra cho tương thích ngược. Backend cũ TG-CB-2.0 sẽ bị chặn trước khi gửi câu hỏi.
 
 ## Chuẩn bị một lần
 
@@ -15,24 +29,26 @@ Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng 
 - Windows: mở `START-WINDOWS.cmd`.
 - macOS/Linux: trong thư mục vừa giải nén chạy `node local/server.mjs` (hoặc `sh START-MAC.command`).
 - Giữ cửa sổ này mở. Sao chép **mã ghép nối** được in ở đây.
-- Mở http://127.0.0.1:8765 trên chính máy đó. Nhập câu hỏi, ngày giờ, chọn pháp và chủ đề, dán mã ghép nối, bấm **Luận bằng AI**.
-- Có thể dùng website https://kymon.tkgiongnoi2.chatgpt.site cùng mã ghép nối khi bản web có nút local. Trình duyệt có thể yêu cầu/chặn truy cập localhost từ HTTPS; khi đó dùng bản local phía trên. Không vô hiệu hóa bảo mật trình duyệt.
+- Mở https://kymon.tkgiongnoi2.chatgpt.site . Nhập câu hỏi, ngày giờ, chọn pháp và chủ đề, dán mã ghép nối, bấm **Luận bằng AI**. Giữ tunnel đã kết nối với Worker hoạt động.
+- Bản giao diện tại http://127.0.0.1:8765 dùng để kiểm tra tệp cục bộ; endpoint AI trong gói vẫn cố định qua Worker. Không thay bằng URL tunnel tạm hoặc vô hiệu hóa bảo mật trình duyệt.
 - Bấm Hủy để ngừng chờ và dừng tiến trình Codex của lượt đó. Mỗi server xử lý một lượt đồng thời. Ctrl+C trong cửa sổ server để đóng hoàn toàn.
 
 ## Điều kiện và giới hạn
 
-- Server chỉ nghe trên `127.0.0.1:8765`, không mở cho LAN/Internet. Điện thoại không dùng được địa chỉ local của máy tính. Muốn dùng điện thoại cần thiết kế kết nối riêng; chưa có trong bản này.
+- Server chỉ nghe trên `127.0.0.1:8765`, không mở cho LAN/Internet. Điện thoại dùng website công khai qua Worker/tunnel đã cấu hình, không dùng địa chỉ localhost của máy tính.
 - Server yêu cầu mã ngẫu nhiên mỗi lần khởi động, kiểm tra Host/Origin, chỉ chấp nhận giao diện local và tên miền website đã nêu. Không chia sẻ mã ghép nối hoặc mở cổng server ra Internet.
 - Mỗi lượt tạo thread mới; không tiếp tục hội thoại Codex đang mở. Câu hỏi gửi tới Codex/nhà cung cấp model theo tài khoản đã đăng nhập. Cầu nối không lưu câu hỏi/lời luận lên đĩa; chính sách nhật ký của Codex vẫn do Codex quản lý.
 - Shell/web search bị tắt cho tiến trình cầu nối; lượt chạy yêu cầu vùng đọc chỉ trong thư mục tạm trống, không cấp ghi hoặc phê duyệt công cụ. Nếu Codex yêu cầu công cụ thì cầu nối dừng lượt đó. Không nới quyền để xử lý lỗi.
 - Nếu cài CLI ở vị trí đặc biệt, đặt `QIMEN_CODEX_BIN` thành đường dẫn tuyệt đối đến executable Codex hoặc `codex.js`. Không đặt thành chuỗi lệnh gồm tham số. Windows hỗ trợ npm global bằng cách chạy `codex.js` qua Node, không chuyển câu hỏi vào shell.
 - Các kiểm thử đi kèm dùng Codex giả lập để kiểm tra giao thức và server. Cần thử một câu hỏi thật trên máy bạn để xác nhận CLI/model/tài khoản tương thích.
 
-## Bộ quy tắc TG-CB-2.0
+## Bộ quy tắc TG-CB-3.0
 
 Thời Gia, Chuyển Bàn; dùng đúng pháp Tháo bổ/Mao Sơn đã chọn; 23:00 đổi ngày; Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can Trung Ngũ cùng chuyển với Thiên Nhuế. Nhật/Thời can tìm trên thiên bàn; Giáp theo nghi ẩn của chính trụ. Quan hệ người–việc xét hành cung. Cùng đọc Môn–Tinh–Thần, Không/Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.
 
-Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Hỏi thay người khác có thể cần làm rõ đại diện. Chưa tính nhập mộ các can ngoài Tam kỳ, thập can khắc ứng đầy đủ, ngũ bất ngộ thời, vượng suy Cửu Tinh và ứng kỳ. Không tuyên bố đây là toàn bộ chuẩn mọi phái. Website và bộ kết nối cùng tính lại bàn, đối chiếu SHA-256 của bàn/câu hỏi/căn cứ và chặn phản hồi lệch TG-CB-2.0; việc đó không chứng minh mọi câu diễn giải AI là đúng.
+Thuật toán an bàn giữ nguyên từ v13. Phần mới tạo `mixN` (tổ hợp Thần–Tinh–Môn) và `link_<topic>_*` (quan hệ giữa vai trò), không cộng điểm tốt/xấu hoặc tự đặt ngày ứng nghiệm. Lời luận thường khoảng 700–1.100 từ; tối thiểu bốn nhận xét, ba chặng có `based_on` trỏ đúng nhận xét/căn cứ, một nhánh thay thế. Dữ liệu thiếu cần làm rõ vẫn được viết ngắn.
+
+Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Hỏi thay người khác có thể cần làm rõ đại diện. Chưa tính nhập mộ các can ngoài Tam kỳ, thập can khắc ứng đầy đủ, ngũ bất ngộ thời, vượng suy Cửu Tinh và ứng kỳ. Không tuyên bố đây là toàn bộ chuẩn mọi phái. Website và bộ kết nối cùng tính lại bàn, đối chiếu SHA-256 của bàn/câu hỏi/căn cứ và chặn phản hồi lệch TG-CB-3.0; việc đó không chứng minh mọi câu diễn giải AI là đúng.
 
 Nguồn quy ước truyền thống: https://zh.wikisource.org/wiki/煙波釣叟歌 . Tài liệu tích hợp: https://learn.chatgpt.com/docs/app-server và https://learn.chatgpt.com/docs/config-file/config-reference .
 
@@ -42,5 +58,5 @@ Nguồn quy ước truyền thống: https://zh.wikisource.org/wiki/煙波釣叟
 - Chưa đăng nhập ChatGPT: chạy `codex login` trong Terminal rồi thử lại.
 - Lỗi model/quota: kiểm tra Sol trong Codex và hạn mức tài khoản; không có chế độ lách hạn mức.
 - Lỗi giao thức/sandbox: cập nhật Codex CLI, không bỏ restricted read access.
-- Không ghép nối: dùng mã mới nhất, đúng máy, và bản local nếu website HTTPS bị trình duyệt chặn.
-- Căn cứ sai hoặc JSON chưa đúng: cầu nối không hiển thị lời luận đó; thử lại một lần và giữ câu hỏi cụ thể.
+- Không ghép nối: dùng mã mới nhất, kiểm tra Worker/tunnel đang trỏ tới đúng server mới và CORS vẫn cho phép domain website.
+- Căn cứ sai hoặc bài sơ lược: server yêu cầu viết lại một lần trong cùng thời gian chờ; nếu vẫn không đạt, không hiển thị lời luận thiếu căn cứ. Lỗi đăng nhập/mạng không tự thử lại.

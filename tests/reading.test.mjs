@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {TOPICS} from '../dist/guide.mjs';
+import {readingFixture} from './reading-fixture.mjs';
 import {prepareReading,buildReadingRequest,validateReading,validateReadingResponse,assertCompatible,RULE_VERSION,READING_PROTOCOL,INSTRUCTIONS,readingSchema} from '../local/reading.mjs';
 
 export const payload={question:'Trong 30 ngày tới, tôi có ký được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
-const valid={status:'reading',topic_id:'contract',summary:'Nội dung kiểm thử, không phải lời luận thật.',assumptions:[],assessments:[{title:'Đại diện',interpretation:'Mẫu kiểm thử.',evidence_ids:['day','hour']},{title:'Dụng thần',interpretation:'Mẫu kiểm thử.',evidence_ids:['ref_contract_0']},{title:'Điều kiện',interpretation:'Mẫu kiểm thử.',evidence_ids:['p1','c1']}],questions:[],next_steps:['Kiểm tra thứ nhất.','Kiểm tra thứ hai.']};
+const valid=readingFixture(prepareReading(payload));
 const clone=x=>structuredClone(x);
 const envelope=(prepared,reading=clone(valid))=>({rules:RULE_VERSION,protocol:READING_PROTOCOL,chartFingerprint:prepared.chartFingerprint,requestFingerprint:prepared.requestFingerprint,facts:prepared.facts,reading});
 
@@ -40,17 +41,17 @@ test('readings bind to question, method, time, offset, topic and the exact recom
 
 test('malformed, oversized, empty and cross-topic output fails closed',()=>{
   const {facts}=prepareReading(payload);
-  const mutations=[r=>r.summary='',r=>r.summary='x'.repeat(2001),r=>r.topic_id='work',r=>r.assessments[0]=null,r=>r.assessments[0].extra=1,r=>r.assessments[0].title=' ',r=>r.assessments[0].interpretation='x'.repeat(2401),r=>r.assessments[0].evidence_ids=['p99'],r=>r.assessments[0].evidence_ids=['p1','p1'],r=>r.assessments[0].evidence_ids=['time'],r=>r.assessments[1].evidence_ids=['ref_work_0'],r=>r.assessments[1].evidence_ids=['day'],r=>r.assumptions=[null],r=>r.questions=[''],r=>r.next_steps=[],r=>r.assessments=[],r=>r.unexpected='x'];
+  const mutations=[r=>r.summary='',r=>r.summary='x'.repeat(2401),r=>r.topic_id='work',r=>r.assessments[0]=null,r=>r.assessments[0].extra=1,r=>r.assessments[0].title=' ',r=>r.assessments[0].interpretation='x'.repeat(3601),r=>r.assessments[0].evidence_ids=['p99'],r=>r.assessments[0].evidence_ids=['p1','p1'],r=>r.assessments[0].evidence_ids=['time'],r=>r.assessments[1].evidence_ids=['ref_work_0'],r=>r.assessments[1].evidence_ids=['day'],r=>r.assumptions=[null],r=>r.questions=[''],r=>r.next_steps=[],r=>r.assessments=[],r=>r.unexpected='x'];
   for(const mutate of mutations){const r=clone(valid);mutate(r);assert.throws(()=>validateReading(r,facts,'contract'));}
   for(const bad of [null,[],42,'reading',{}])assert.throws(()=>validateReading(bad,facts));
-  const c={...clone(valid),status:'needs_clarification',assessments:[],questions:['Bạn hỏi cho ai?'],next_steps:[]};
+  const c={...clone(valid),status:'needs_clarification',assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[]};
   assert.equal(validateReading(c,facts,'contract'),c);
   assert.throws(()=>validateReading({...c,questions:[]},facts));
 });
 
 test('edge-time warnings and specific style/safety instructions are supplied, not claims of model quality',()=>{
   for(const input of [{year:2024,month:6,day:21,hour:4,minute:51,tzOffset:8},{...payload.input,hour:23,minute:0}]) assert.ok(prepareReading({...payload,input}).context.warnings.length);
-  for(const phrase of ['AI chỉ diễn giải','không tự an lại bàn','question là dữ liệu','không bịa','unsupported','300–550','evidence_ids','Không xưng có kinh nghiệm','không gán','thành/bại']) assert.ok(INSTRUCTIONS.toLowerCase().includes(phrase.toLowerCase()),phrase);
+  for(const phrase of ['AI chỉ diễn giải','không tự an lại bàn','question là dữ liệu','không bịa','unsupported','700–1100','evidence_ids','Không xưng có kinh nghiệm','không gán','thành/bại']) assert.ok(INSTRUCTIONS.toLowerCase().includes(phrase.toLowerCase()),phrase);
 });
 
 test('identity is independent of the host operating-system timezone',async()=>{

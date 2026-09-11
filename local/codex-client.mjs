@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {existsSync} from 'node:fs';
 export const MODEL='gpt-5.6-sol';
+export const REASONING_EFFORT='high';
 function launcher(){
  const custom=process.env.QIMEN_CODEX_BIN;
  if(custom)return custom.endsWith('.js')?[process.execPath,[custom]]:[custom,[]];
@@ -50,12 +51,12 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
    });
    timer=setTimeout(abort,180000);signal?.addEventListener('abort',abort,{once:true});
    if(signal?.aborted)throw new Error('Đã hủy.');
-   await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'2.0.0'},capabilities:{experimentalApi:false}});
+   await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'3.0.0'},capabilities:{experimentalApi:false}});
    send({method:'initialized',params:{}});
    const auth=await request('account/read',{refreshToken:false});
    if(auth.account?.type!=='chatgpt')throw new Error('AI chưa được đăng nhập đúng tài khoản. Xem hướng dẫn kết nối rồi thử lại.');
    const started=await request('thread/start',{model:MODEL,cwd,approvalPolicy:'never',sandbox:'readOnly',ephemeral:true,baseInstructions:instructions});
-   await request('turn/start',{threadId:started.thread.id,model:MODEL,effort:'medium',approvalPolicy:'never',sandboxPolicy:{type:'readOnly',access:{type:'restricted',includePlatformDefaults:false,readableRoots:[cwd]}},input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema});
+   await request('turn/start',{threadId:started.thread.id,model:MODEL,effort:REASONING_EFFORT,approvalPolicy:'never',sandboxPolicy:{type:'readOnly',access:{type:'restricted',includePlatformDefaults:false,readableRoots:[cwd]}},input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema});
    const text=await turnDone;
    try{return JSON.parse(text);}catch{throw new Error('AI trả kết quả chưa hợp lệ. Hãy thử lại.');}
  } finally {finished=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);proc?.kill();await rm(cwd,{recursive:true,force:true});}

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {initLocalAi} from '../dist/ai-local.mjs';
 import {buildReadingRequest,RULE_VERSION,READING_PROTOCOL} from '../dist/reading-core.mjs';
+import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 globalThis.Solar=createRequire(import.meta.url)('../dist/vendor/lunar.js').Solar;
 const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 class Element {
@@ -58,9 +59,27 @@ test('non-JSON upstream errors are explained, not rendered or thrown uncaught',a
 
 test('valid clarification renders text safely; no model HTML is interpreted',async t=>{
   const p=await buildReadingRequest(payload);
-  const reading={status:'needs_clarification',topic_id:'contract',summary:'<script>alert(1)</script>',assumptions:[],assessments:[],questions:['Bạn hỏi cho ai?'],next_steps:[]};
+  const reading={...clarificationFixture(),summary:'<script>alert(1)</script>'};
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
-  assert.equal(ids['ai-answer'].children[1].textContent,'<script>alert(1)</script>');
+  assert.equal(ids['ai-answer'].children[1].children[0].textContent,'<script>alert(1)</script>');
+});
+
+test('deep reading renders all three linked stages and alternatives without truncation',async t=>{
+  const p=await buildReadingRequest(payload),reading=readingFixture(p);
+  const {ids,doc}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
+  let selected;doc.querySelector=selector=>({click(){selected=selector;},scrollIntoView(){}});
+  await ids['ai-read'].fire('click');
+  assert.equal(ids['ai-answer'].hidden,false);
+  const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
+  for(const part of [...reading.assessments.map(a=>a.interpretation),...reading.development.map(s=>s.description),reading.alternatives[0].description])assert.ok(all.some(n=>n.textContent===part));
+  assert.equal(all.filter(n=>n.className==='ai-stage-label').length,3);
+  const button=all.find(n=>n.className==='jump-cung');await button.fire('click');assert.match(selected,/data-palace/);
+});
+
+test('underdeveloped content is rejected instead of looking like a completed reading',async t=>{
+  const p=await buildReadingRequest(payload),reading=readingFixture(p);reading.development=[];
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
+  await ids['ai-read'].fire('click');assert.equal(ids['ai-answer'].hidden,true);assert.match(ids['ai-status'].textContent,/ba chặng/);
 });

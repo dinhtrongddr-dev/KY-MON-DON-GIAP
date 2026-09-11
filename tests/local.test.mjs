@@ -6,9 +6,10 @@ import {createInterface} from 'node:readline';
 import {request as httpRequest} from 'node:http';
 import {prepareReading,validateReading,INSTRUCTIONS,readingSchema,RULE_VERSION,READING_PROTOCOL,buildReadingRequest,validateReadingResponse} from '../local/reading.mjs';
 import {createBridge} from '../local/server.mjs';
-import {runCodex,MODEL} from '../local/codex-client.mjs';
+import {runCodex,MODEL,REASONING_EFFORT} from '../local/codex-client.mjs';
+import {readingFixture} from './reading-fixture.mjs';
 const payload={question:'Trong 30 ngày tới tôi có nhận được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:9,hour:15,minute:30,tzOffset:7}};
-const answer={status:'reading',topic_id:'contract',summary:'Kết quả giả lập kiểm thử.',assumptions:[],assessments:[{title:'Đọc hai cung',interpretation:'Nội dung giả lập.',evidence_ids:['day','hour','relation']},{title:'Dụng thần',interpretation:'Nội dung giả lập.',evidence_ids:['ref_contract_0']},{title:'Điều kiện',interpretation:'Nội dung giả lập.',evidence_ids:['p1','c1']}],questions:[],next_steps:['Bước kiểm thử 1.','Bước kiểm thử 2.']};
+const answer=readingFixture(prepareReading(payload));
 test('server recomputes chart, rejects missing question and invented evidence',()=>{
  const {facts,context}=prepareReading({...payload,facts:{day:'client-forged'}});
  assert.notEqual(facts.day,'client-forged');assert.equal(context.rules,RULE_VERSION);
@@ -58,6 +59,7 @@ function mockCodex(auth='chatgpt',tool=false){
      if(m.method==='account/read')send({id:m.id,result:{account:{type:auth}}});
      if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-5.6-sol');assert.equal(m.params.sandbox,'readOnly');send({id:m.id,result:{thread:{id:'test-thread'}}});}
      if(m.method==='turn/start'){
+       assert.equal(m.params.effort,REASONING_EFFORT);assert.equal(REASONING_EFFORT,'high');
        assert.equal(m.params.sandboxPolicy.access.type,'restricted');assert.equal(m.params.approvalPolicy,'never');
        send({id:m.id,result:{turn:{id:'test-turn'}}});
        if(tool)send({method:'item/started',params:{item:{type:'commandExecution'}}});

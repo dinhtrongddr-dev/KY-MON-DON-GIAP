@@ -1,0 +1,91 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {TOPICS,GENERATES,CONTROLS} from '../dist/guide.mjs';
+import {elementLink} from '../dist/reading-focus.mjs';
+import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,INSTRUCTIONS} from '../local/reading.mjs';
+import {interpretReading} from '../local/interpret.mjs';
+import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
+const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
+
+test('all 25 element directions remain neutral between two business roles',()=>{
+  for(const from of Object.keys(GENERATES))for(const to of Object.keys(GENERATES)){
+    const expected=from===to?'same':GENERATES[from]===to?'generates':GENERATES[to]===from?'generated_by':CONTROLS[from]===to?'controls':'controlled_by';
+    const actual=elementLink(from,to);assert.equal(actual.kind,expected);assert.doesNotMatch(actual.text,/người|việc|thắng|thua/i);
+  }
+});
+
+test('all topics and both methods have resolved roles, directional links and valid narrative references',()=>{
+  for(const topic of TOPICS)for(const method of ['chaibu','maoshan']){
+    const p=prepareReading({...body,topic:topic.id,method});
+    for(const t of p.context.topics){
+      const roles=t.focus.roles;
+      assert.equal(t.focus.links.length,roles.length*(roles.length-1)/2);
+      for(const link of t.focus.links){
+        const from=roles.find(r=>r.id===link.from),to=roles.find(r=>r.id===link.to);
+        assert.equal(link.fromPalace,from.palace);assert.equal(link.toPalace,to.palace);
+        assert.ok(p.facts[link.id]);assert.equal(link.samePalace,from.palace===to.palace);
+      }
+      const context={...p.context,topics:[t]};
+      const reading=readingFixture({...p,context});
+      assert.equal(validateReading(reading,p.facts,topic.id,context),reading);
+    }
+  }
+});
+
+test('ordered stages require distinct explanations, actual assessments and shared concrete evidence',()=>{
+  const p=prepareReading(body),valid=readingFixture(p);
+  const mutations=[
+    r=>r.assessments[0].interpretation='Một câu rất ngắn.',
+    r=>r.assessments[1].aspect='overview',
+    r=>r.development.reverse(),
+    r=>r.development[0].based_on=['not-present'],
+    r=>r.development[0].condition='',
+    r=>r.development[0].description=r.development[1].description,
+    r=>r.development[0].evidence_ids=['time'],
+    r=>r.development[0].evidence_ids=['mix5'],
+    r=>r.development[0].evidence_ids=['c'+p.context.topics[0].focus.roles[0].palace],
+    r=>r.alternatives=[],
+    r=>r.alternatives[0].condition='Không rõ.',
+    r=>r.scope=null,
+  ];
+  for(const mutate of mutations){const r=structuredClone(valid);mutate(r);assert.throws(()=>validateReading(r,p.facts,body.topic,p.context));}
+  const generic=prepareReading({...body,topic:'general'}),r=readingFixture({...generic,context:{...generic.context,topics:generic.context.topics.filter(t=>t.id==='contract')}});
+  r.assessments[2].evidence_ids=['ref_work_0','p1'];
+  assert.throws(()=>validateReading(r,generic.facts,'general',generic.context),/căn cứ/);
+});
+
+test('brief content gets exactly one bounded rewrite with the same facts and question',async()=>{
+  const p=prepareReading(body),seen=[];
+  const output=await interpretReading(p,{runner:async(instructions,context,schema,{signal})=>{
+    seen.push(context);assert.equal(instructions,INSTRUCTIONS);assert.equal(signal.aborted,false);assert.ok(schema.properties.development);
+    const r=readingFixture(p);if(seen.length===1)r.assessments[0].interpretation='Quá ngắn.';return r;
+  }});
+  assert.equal(seen.length,2);assert.equal(output.status,'reading');assert.equal(seen[0].revision,undefined);
+  assert.ok(seen[1].revision.issue);assert.equal(seen[1].facts,p.facts);assert.equal(seen[1].question,body.question);
+});
+
+test('a second inadequate reading fails closed; authentication or transport errors are never retried',async()=>{
+  const p=prepareReading(body);let count=0;
+  await assert.rejects(interpretReading(p,{runner:async()=>{count++;return {};}}),/sau một lượt/);assert.equal(count,2);
+  count=0;await assert.rejects(interpretReading(p,{runner:async()=>{count++;throw new Error('Không có quyền truy cập model');}}),/quyền truy cập/);assert.equal(count,1);
+});
+
+test('cancel during rewrite aborts the same request; late output never succeeds',async()=>{
+  const p=prepareReading(body),controller=new AbortController();let count=0;
+  await assert.rejects(interpretReading(p,{signal:controller.signal,runner:async(_i,_c,_s,{signal})=>{
+    count++;if(count===1)return {};
+    controller.abort();assert.equal(signal.aborted,true);return readingFixture(p);
+  }}),{name:'AbortError'});assert.equal(count,2);
+  count=0;await assert.rejects(interpretReading(p,{signal:controller.signal,runner:async()=>{count++;}}),{name:'AbortError'});assert.equal(count,0);
+});
+
+test('clarification stays short and never fabricates a three-stage outcome',async()=>{
+  const p=prepareReading(body);let count=0;
+  const r=await interpretReading(p,{runner:async()=>{count++;return clarificationFixture();}});
+  assert.equal(count,1);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
+});
+
+test('v3 request fingerprint also binds topic lenses; v2 cannot masquerade as deep reading',async()=>{
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,3);assert.equal(READING_PROTOCOL,3);assert.equal(RULE_VERSION,'TG-CB-3.0');
+  assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
+});
