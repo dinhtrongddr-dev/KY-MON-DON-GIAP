@@ -45,6 +45,27 @@
               <small>Một việc cụ thể + đối tượng + thời hạn. Chỉ gửi câu hỏi và dữ liệu bàn tới AI khi bạn bấm Luận bằng AI.</small>
             </label>
             <label class="field question-field"><span>Nhóm sự việc · dùng khi luận AI</span><select id="topic"></select></label>
+            <div class="mode-controls question-field">
+              <label class="field"><span>Bạn muốn xem gì?</span><select id="qimen-mode" aria-describedby="mode-explanation"></select></label>
+              <p id="mode-explanation" class="source-note" role="status"></p>
+              <details class="actor-options"><summary>Đại diện bổ sung · chỉ nhập khi đã xác định</summary>
+                <p>Nếu đã xác định Can Chi đại diện theo cách luận đang dùng, chọn tại đây. Không phải yêu cầu ngày sinh. Để trống nếu chưa rõ; AI sẽ không tự gán khách hàng hay đối thủ vào một cung.</p>
+                <div class="actor-fields">
+                  <label class="field"><span>Khách hàng / đối phương</span><select id="actor-customer"><option value="">Chưa xác định</option></select></label>
+                  <label class="field"><span>Đối thủ</span><select id="actor-competitor"><option value="">Chưa xác định</option></select></label>
+                  <label class="field"><span>Người có quyền duyệt</span><select id="actor-decisionMaker"><option value="">Chưa xác định</option></select></label>
+                </div>
+              </details>
+              <div id="action-options" hidden><label class="field"><span>Mục tiêu hành động để so sánh</span><select id="qimen-action"><option value="general">Mở việc nói chung</option><option value="quote">Gửi báo giá / hồ sơ</option><option value="sign">Ký / thống nhất hợp đồng</option><option value="meet">Gặp khách / gọi điện</option><option value="launch">Triển khai công việc</option></select></label></div>
+              <div id="timing-options" hidden>
+                <p>Nhập từ 2 đến 12 thời điểm muốn so sánh, cùng múi giờ và pháp định cục bên dưới. Đây là chọn thời điểm hành động, không phải dự báo ngày có kết quả.</p>
+                <div id="timing-candidates" class="candidate-fields">
+                  <label class="field"><span>Thời điểm 1</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
+                  <label class="field"><span>Thời điểm 2</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
+                </div>
+                <button id="add-candidate" class="button button-quiet" type="button">Thêm thời điểm</button>
+              </div>
+            </div>
             <label class="field field-time">
               <span>Ngày · giờ · phút</span>
               <input id="datetime" name="datetime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" required />
@@ -124,13 +145,21 @@
             <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
             <p>Luận đúng việc đang hỏi: phối hợp các tượng, làm rõ điểm thuận–vướng và nối thành diễn biến có điều kiện. Mỗi nhận định đều có căn cứ để đối chiếu ngay trên bàn.</p>
             <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI chuyên sâu · TG-CB-3.0</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
-              <p>Chế độ chuyên sâu cần cập nhật bộ kết nối AI lên TG-CB-3.0. Cập nhật website không tự cập nhật bộ kết nối. Giữ bộ kết nối hoạt động; quyền truy cập và hạn mức phụ thuộc tài khoản AI đang sử dụng.</p>
+              <ol><li><a href="https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI · TG-CB-4.0</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
+              <p>All-in-One cần bộ kết nối AI TG-CB-4.0. Website không tự cập nhật bộ kết nối. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
             </details>
             <div class="local-controls"><label class="field"><span>Mã kết nối AI</span><input id="local-token" type="password" autocomplete="off" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label><button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button><button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button><button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button></div>
             <p id="ai-status" role="status">Chưa kết nối AI.</p>
+            <button id="rule-analyze" class="button button-quiet" type="button">Xem phân tích quy tắc · không cần kết nối AI</button>
+            <div id="rule-preview" class="rule-preview" hidden></div>
             <div id="ai-answer" aria-live="polite" hidden></div>
-            <details><summary>Quy tắc và phạm vi luận · TG-CB-3.0</summary><p>Thời Gia · Chuyển Bàn; dùng đúng Tháo bổ hoặc Mao Sơn đã chọn. Mã tính lập bàn độc lập với AI ở hai đầu kết nối; AI chỉ diễn giải dữ liệu đã được đối chiếu. Xét Nhật can–Thời can, dụng thần theo sự việc, hành cung, Môn–Tinh–Thần, Tuần Không, Dịch Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.</p><p>Bài chuyên sâu thường khoảng 700–1.100 từ, gồm bốn góc đọc, ba chặng diễn biến và khả năng khác. Các chặng là giả thuyết có điều kiện, không phải lịch ứng nghiệm. Nếu bài thiếu căn cứ hoặc quá sơ lược, AI được yêu cầu bổ sung tối đa một lần trong cùng thời gian chờ; bạn vẫn có thể Hủy.</p><p>Chưa tính nhập mộ các can ngoài Tam kỳ, vượng suy Cửu Tinh, thập can khắc ứng đầy đủ, ngũ bất ngộ thời và ứng kỳ. Dụng thần theo chủ đề là quy ước của bản này, không phải chuẩn duy nhất mọi phái. Kiểm tra mã bàn và căn cứ không chứng minh câu diễn giải đúng hoặc sự việc sẽ xảy ra.</p><p><a href="./audit.html">Kiểm toán thuật toán và cập nhật luận chuyên sâu</a></p></details>
+            <details><summary>Quy tắc và phạm vi luận · TG-CB-4.0</summary>
+              <p>Một lõi Thời Gia · Chuyển Bàn, giữ đúng Tháo bổ hoặc Mao Sơn đã chọn. Sáu chế độ có quy tắc phân tích riêng; Tự động chọn theo ý định câu hỏi và bạn có thể đổi lại. AI nhận bàn JSON, dụng thần, quan hệ, điều kiện và chuỗi phân tích đã tính bằng mã.</p>
+              <p>Kết luận nhanh và Diễn biến thực tế dành cho người mới. Phân tích Kỳ Môn cho xem chuỗi đầy đủ, mạng quan hệ, căn cứ từng cung và QimenBoard JSON. Chiến lược đề xuất nêu bước làm tiếp; Ứng kỳ tách thời hạn câu hỏi với việc so sánh thời điểm hành động.</p>
+              <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, Ngũ bất ngộ thời và một số tổ hợp can được khai báo. Chưa hỗ trợ nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hoặc dự báo ngày ứng nghiệm chắc chắn. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>
+              <p>Lời luận phải nối các tượng thành giả thuyết có điều kiện, không tự tạo danh tính hoặc tâm ý khách hàng/đối thủ. Kiểm tra cấu trúc không chứng minh diễn giải đúng. AI được bổ sung tối đa một lần nếu bài thiếu căn cứ; nút Hủy luôn có hiệu lực.</p>
+              <p><a href="./audit.html">Kiểm toán và phạm vi All-in-One v15</a></p>
+            </details>
           </section>
           <section class="learning-panel element-panel" aria-labelledby="elements-title">
             <div class="element-panel-head">
@@ -196,7 +225,7 @@
               <dt>Tuần Không</dt><dd>Tượng thiếu thực chất, chưa thành hình hoặc chậm; không đủ để khẳng định việc không bao giờ thành.</dd>
               <dt>Dịch Mã</dt><dd>Tượng di chuyển, thay đổi, bận rộn; không mặc định tốt hay xấu.</dd>
               <dt>Phục ngâm / phản ngâm</dt><dd>Phục ngâm gợi lặp lại, chậm hoặc giữ nguyên; phản ngâm gợi đảo chiều, dao động. Xem lớp Tinh hay Môn đang mang dấu đó.</dd>
-              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp hiệu chỉnh. Bản v12 tự tính Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ trên thiên bàn; chưa tính nhập mộ các can khác hoặc vượng suy Cửu Tinh theo mùa. Đây không phải máy dự báo.</dd></dl>
+              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp hiệu chỉnh. App tính Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ trên thiên bàn; bổ sung vượng suy Cửu Tinh theo tháng tiết khí với quy ước ghi trong Phân tích Kỳ Môn. Không áp bảng vượng suy của Tinh cho Can/Môn/cung; chưa tính nhập mộ các can ngoài Tam kỳ.</dd></dl>
             </details>
             <p class="source-note">Tham khảo quy tắc nền: <a href="https://www.fatemaster.ai/guides/qimen-dunjia" target="_blank" rel="noreferrer">FateMaster · Thời Gia Chuyển Bàn</a>. Ví dụ và checklist bên trên là hướng dẫn biên soạn cho app, không phải trích nguyên văn cổ thư.</p>
           </section>
@@ -223,7 +252,7 @@
 
       <footer>
         <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
-        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">Kiểm toán v12</a>.</p>
+        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">All-in-One v15 · kiểm toán</a>.</p>
       </footer>
     </div>
 

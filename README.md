@@ -6,7 +6,9 @@
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Tạo lại gói tải bằng `python scripts/package-local.py` sau mỗi thay đổi. Hai đầu tính lại bàn và khóa SHA-256 của bàn/toàn bộ ngữ cảnh câu hỏi theo TG-CB-3.0 (protocol 3). `reading-focus.mjs` tạo các liên kết cung theo chủ đề; `reading-core.mjs` kiểm tra bốn góc đọc, ba chặng có điều kiện và khả năng khác; `reading-view.mjs` hiển thị đoạn văn và các nút đối chiếu cung. `local/interpret.mjs` cho phép sửa bài không đạt tối đa một lần trong tổng 180 giây, giữ Hủy và không thử lại lỗi xác thực/mạng. Codex dùng cùng model với mức suy luận `high`.
+All-in-One v15 dùng TG-CB-4.0 (protocol 4). Một Core giữ nguyên v14; QimenBoard JSON và Analysis Engine nằm trong `dist/qimen/`. Sáu mode có quy tắc riêng, Auto phân loại ý định, graph nối đại diện và synthesis ghép diễn biến. Timing so sánh 2–12 thời điểm; Direction so tám phương vị theo mục tiêu. Năm tab kết quả và nút xem dữ kiện không cần AI. Chi tiết: `QIMEN-ARCHITECTURE.md`.
+
+Tạo lại gói bằng `python scripts/package-local.py`; phải đóng kèm toàn bộ `dist/qimen/`. Hai đầu khóa SHA-256 của bàn và toàn bộ ngữ cảnh (mode, graph, ứng viên, đại diện). `local/interpret.mjs` vẫn cho phép sửa bài tối đa một lần trong tổng 180 giây; giữ Hủy, không thử lại lỗi xác thực/mạng, không đổi model hoặc mức suy luận.
 
 Gói này phải được cài vào bộ kết nối trên máy người dùng; publish web không cập nhật server đó. Các kiểm thử giao thức dùng mock, chưa thay thế kiểm tra trực tiếp trên tài khoản. Biên bản công khai: `dist/audit.html`; ma trận đánh giá lời luận: `AI-EVAL.md`. Các ngưỡng độ dài chỉ chống đầu ra quá sơ lược, không chứng minh lời luận đúng hoặc hay.
 

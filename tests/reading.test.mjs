@@ -44,7 +44,7 @@ test('malformed, oversized, empty and cross-topic output fails closed',()=>{
   const mutations=[r=>r.summary='',r=>r.summary='x'.repeat(2401),r=>r.topic_id='work',r=>r.assessments[0]=null,r=>r.assessments[0].extra=1,r=>r.assessments[0].title=' ',r=>r.assessments[0].interpretation='x'.repeat(3601),r=>r.assessments[0].evidence_ids=['p99'],r=>r.assessments[0].evidence_ids=['p1','p1'],r=>r.assessments[0].evidence_ids=['time'],r=>r.assessments[1].evidence_ids=['ref_work_0'],r=>r.assessments[1].evidence_ids=['day'],r=>r.assumptions=[null],r=>r.questions=[''],r=>r.next_steps=[],r=>r.assessments=[],r=>r.unexpected='x'];
   for(const mutate of mutations){const r=clone(valid);mutate(r);assert.throws(()=>validateReading(r,facts,'contract'));}
   for(const bad of [null,[],42,'reading',{}])assert.throws(()=>validateReading(bad,facts));
-  const c={...clone(valid),status:'needs_clarification',assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[]};
+  const c={...clone(valid),status:'needs_clarification',assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[],synthesis:{...clone(valid.synthesis),mode_chain:[],story_links:[]}};
   assert.equal(validateReading(c,facts,'contract'),c);
   assert.throws(()=>validateReading({...c,questions:[]},facts));
 });

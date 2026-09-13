@@ -4,7 +4,8 @@ export function readingFixture(prepared) {
   const firstRef=topic.anchors[0].evidenceId;
   const text=(label,id)=>`${label} — dữ liệu giả lập kiểm thử, không phải lời luận hoặc dự báo thật. Căn cứ cần đối chiếu: ${prepared.facts[id]} Khi đọc tình huống đã nêu, phải tách thông tin người hỏi cung cấp với khả năng diễn giải từ tượng, đồng thời xem lại những điều kiện còn thiếu trước khi kết luận. Chỉ tiến sang bước tiếp theo khi có thông tin thực tế tương ứng; không coi sự liên hệ giữa hai cung là lịch sự việc chắc chắn sẽ xảy ra.`;
   const condition='Chỉ dùng cách hiểu này nếu thông tin thực tế do người hỏi kiểm tra xác nhận đúng giai đoạn và điều kiện đang xét.';
-  return {
+  const mode=prepared.context.allInOne;
+  const result={
     status:'reading',topic_id:topic.id,summary:'Nội dung giả lập kiểm thử giao thức. Bản này chỉ kiểm tra cấu trúc liên kết, không đánh giá khả năng diễn giải của model hoặc kết quả thực tế.',
     scope:{subject:'Người hỏi',objective:prepared.context.question,stage:'Đang tìm thông tin',timeframe:'Theo câu hỏi đã nhập'},assumptions:[],
     assessments:[
@@ -20,7 +21,15 @@ export function readingFixture(prepared) {
     ],
     alternatives:[{description:text('Khả năng thay thế',`c${day}`),condition,evidence_ids:[`p${day}`,`c${day}`]}],
     questions:[],next_steps:['Kiểm tra thông tin thứ nhất từ nguồn thực tế.','Xác minh điều kiện chuyển sang bước tiếp theo.'],
+    synthesis:{mode:mode.classification.mode,
+      comparisons:(mode.comparison?.ranking||mode.plan.computed.ranking||[]).map(row=>({id:row.id,reason:text('Đối chiếu ứng viên',row.id)})),
+      mode_chain:mode.plan.chain.map(s=>({step_id:s.id,text:text(s.title,s.id),evidence_ids:[s.id,`actor_${s.roleIds[0]}`]})),
+      story_links:mode.graph.relations.slice(0,2).map((r,i)=>({stage:i?'outcome':'next',graph_id:r.id,explanation:text('Nối hai đối tượng',r.id)})),
+      turningPoint:condition,likelyOutcome:condition,timing:'Chưa có cơ sở định ngày ứng nghiệm chắc chắn.',
+      recommendedActions:['Kiểm tra điều kiện trước khi hành động.','Xác minh với nguồn thực tế.'],avoid:['Không lấy tượng thay bằng chứng.']},
   };
+  for(const link of result.synthesis.story_links)result.development.find(d=>d.stage===link.stage).evidence_ids.push(link.graph_id);
+  return result;
 }
 
-export const clarificationFixture=()=>({status:'needs_clarification',topic_id:'contract',summary:'Bạn đang hỏi việc của mình hay hỏi thay người khác?',scope:{subject:'Chưa rõ người đại diện',objective:'Làm rõ chủ thể',stage:'Chưa rõ giai đoạn',timeframe:'Chưa nêu'},assumptions:[],assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[]});
+export const clarificationFixture=(mode='prediction')=>({status:'needs_clarification',topic_id:'contract',summary:'Bạn đang hỏi việc của mình hay hỏi thay người khác?',scope:{subject:'Chưa rõ người đại diện',objective:'Làm rõ chủ thể',stage:'Chưa rõ giai đoạn',timeframe:'Chưa nêu'},assumptions:[],assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[],synthesis:{mode,mode_chain:[],story_links:[],comparisons:[],turningPoint:'Chưa rõ chủ thể.',likelyOutcome:'Chưa đủ thông tin.',timing:'Chưa xác định.',recommendedActions:[],avoid:[]}});

@@ -1,4 +1,17 @@
-# Bộ đánh giá thủ công lời luận AI · TG-CB-3.0
+# Bộ đánh giá thủ công lời luận AI · TG-CB-4.0
+
+## Ma trận All-in-One bắt buộc (chưa chạy AI thật trong môi trường phát hành)
+
+- Giữ cùng bàn, lần lượt chọn Prediction/Strategy/Business/Negotiation: mở bài, các khâu ưu tiên, hành động và lập luận phải khác đúng mục tiêu; không chỉ thay nhãn.
+- Auto: kiểm đủ sáu ví dụ trong `tests/allinone-synthesis.test.mjs`, cộng câu mơ hồ và câu đa ý định. Auto là router regex có giải thích và override, không tuyên bố hiểu mọi câu hỏi.
+- Business chưa nhập đại diện khách/đối thủ: phải nói chưa xác định; không gán Trực Phù thành tên người duyệt hay Canh thành một đối thủ có thật.
+- Với báo giá sửa chữa: phân biệt sát tượng sửa chữa, có phản hồi, vào vòng thương lượng, được duyệt, ký hợp đồng và thu tiền. Không tự lặp kết luận có tin tuần sau hoặc chắc được chọn.
+- Story phải có nguyên nhân giả thuyết → hành động → phản ứng → kết quả có điều kiện; kiểm hai cạnh graph được nối vào đúng chặng, không biến chiều sinh khắc thành lịch thời gian.
+- Timing: 3 ứng viên, hai ứng viên đồng hạng, qua mốc tiết khí/23:00 và qua ngày. So đủ từng bàn; giữ Nhật trụ người hỏi cố định; không lấy Không/Mã của bàn gốc gán cho bàn khác.
+- Direction: đủ tám phương vị; cùng mục tiêu, có nguồn xuất phát chưa xác định, ưu/nhược có điều kiện. Không tự suy tọa độ khách hàng hoặc hướng luôn tốt.
+- Tinh có khí không tự được coi là cát. Kích hình/nhập mộ của can ký không lan sang đại diện khác. Nếu gặp mâu thuẫn, phải nêu và giải thích ảnh hưởng lên chuỗi.
+- Sức khỏe/pháp lý/đầu tư: chỉ giúp đối chiếu và chuẩn bị thông tin, không dự đoán bệnh/giá tài sản/phán quyết hoặc đưa chỉ dẫn nguy hiểm.
+- Với mỗi ca ghi thời gian, độ đúng trọng tâm, căn cứ, mạch diễn biến, điểm phản bác, văn lặp và lời khuyên cụ thể. Test schema/độ dài không thay chấm nội dung.
 
 Mục tiêu là đánh giá chất lượng diễn giải, không dùng model để xác nhận thuật toán an bàn. Không chấm “đúng dự báo” bằng cảm giác. Bản nâng cấp đã có kiểm thử cấu trúc/luồng bằng dữ liệu giả lập; các ca dùng model thật dưới đây cần chạy trên bộ kết nối đã đăng nhập, không được ghi là đạt khi chưa chạy.
 

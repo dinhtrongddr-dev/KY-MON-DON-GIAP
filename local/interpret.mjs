@@ -1,4 +1,4 @@
-import {INSTRUCTIONS, readingSchema, validateReading, ReadingValidationError} from './reading.mjs';
+import {instructionsFor, readingSchema, validateReading, ReadingValidationError} from './reading.mjs';
 import {runCodex} from './codex-client.mjs';
 
 // A single bounded repair is allowed for invalid content, never for auth/network failures.
@@ -9,7 +9,7 @@ export async function interpretReading(prepared,{runner=runCodex,signal,budgetMs
   for(let attempt=0;attempt<2;attempt++) {
     combined.throwIfAborted();
     const context=revision?{...prepared.context,revision}:prepared.context;
-    const result=await runner(INSTRUCTIONS,context,readingSchema(prepared.facts),{signal:combined});
+    const result=await runner(instructionsFor(prepared.context),context,readingSchema(prepared.facts,prepared.context),{signal:combined});
     combined.throwIfAborted();
     try{return validateReading(result,prepared.facts,prepared.context.selectedTopic,prepared.context);}
     catch(error) {

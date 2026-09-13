@@ -3,19 +3,19 @@
 Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-5.6 Sol → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
 
-## Cập nhật lên TG-CB-3.0 (website v14)
+## Cập nhật lên TG-CB-4.0 (All-in-One, website v15)
 
 1. Tải bộ mới tại https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
 2. Xác định đúng thư mục/tiến trình đang phục vụ cổng 8765. Nếu dùng server nguyên bản trong gói, chuyển tiến trình sang thư mục mới rồi khởi động lại. Nếu server đã được tùy biến cho relay/tunnel, tích hợp các module mới và giữ nguyên phần cấu hình riêng; không chép đè cả server một cách máy móc.
-3. Module dùng chung: `dist/reading-core.mjs`, `dist/reading-focus.mjs`, `dist/qimen.mjs`, `dist/guide.mjs`, `dist/vendor/lunar.js`. Bộ chạy: `local/reading.mjs`, `local/interpret.mjs`, `local/codex-client.mjs`, `local/server.mjs`. Dùng nguyên bộ cùng phiên bản; không chỉ đổi chuỗi rules/protocol của server cũ.
+3. Dùng nguyên bộ `dist/`, đặc biệt toàn bộ thư mục mới `dist/qimen/` và các module `reading-*.mjs`; giữ `dist/vendor/lunar.js`. Bộ chạy: `local/reading.mjs`, `local/interpret.mjs`, `local/codex-client.mjs`, `local/server.mjs`. Không chỉ sửa số rules/protocol trên server cũ: mode, graph, schema, context và validation phải đồng bộ.
 4. Server gọi `prepareReading(body)` và `readingIdentity(prepared)` để đối chiếu request trước khi gọi `interpretReading(prepared,{signal})`. Hàm này kiểm tra nội dung và cho phép viết lại tối đa một lần. Phản hồi giữ các trường `model`, `rules`, `protocol`, `chartFingerprint`, `requestFingerprint`, `reading`, `facts`.
 5. Giữ nguyên endpoint Worker, tunnel và CORS cho website hiện tại. Mã kết nối nhập bằng tay, không đặt vào URL hoặc mã website. Không mở cổng ra LAN/Internet và không tắt kiểm tra Host/Origin.
-6. Khởi động lại đúng server, nhập mã mới trên website rồi bấm Kiểm tra kết nối. `/api/status` qua Worker phải báo `rules: TG-CB-3.0`, `protocol: 3`. Kiểm tra trạng thái thành công chưa chứng minh model đã chạy.
-7. Thử một câu hỏi giả lập qua website: “Báo giá dịch vụ đã nộp, trong tháng này công ty tôi cần làm rõ gì để ký hợp đồng với công ty A?”. Kiểm tra bài có bốn góc đọc, ba chặng, khả năng khác, căn cứ và Hủy hoạt động. Nếu chưa chạy lượt thật thì báo rõ là chưa kiểm chứng trên tài khoản.
+6. Khởi động lại đúng server, nhập mã mới trên website rồi bấm Kiểm tra kết nối. `/api/status` qua Worker phải báo `rules: TG-CB-4.0`, `protocol: 4`. Kiểm tra trạng thái thành công chưa chứng minh model đã chạy.
+7. Thử các mode với cùng một câu hỏi giả lập. Kiểm tra năm tab, chuỗi luận riêng và căn cứ graph; Hủy/đổi mode không để lời luận cũ xuất hiện. Timing cần 2–12 thời điểm. Ma trận thử AI thật nằm trong `AI-EVAL.md`; không ghi các ca này đã đạt nếu chỉ chạy mock.
 
 Mức suy luận được đặt `high`, model vẫn là `gpt-5.6-sol`. Nếu Codex/tài khoản không hỗ trợ cấu hình này, báo lỗi để kiểm tra phiên bản/quyền; không tự đổi model hoặc dùng API key. Tổng thời gian tối đa cho cả lượt và phần viết lại là 180 giây, phía web chờ 190 giây. Lỗi đăng nhập/mạng không tự thử lại để tránh tạo thêm lượt.
 
-Giao thức 3 bổ sung `scope`, `development`, `alternatives` và `assessments[].aspect`. Fingerprint câu hỏi nay bao gồm toàn bộ `prepared.context`, kể cả khung chủ đề và liên kết cung. Không tự viết lại hàm băm ở relay hoặc bỏ kiểm tra cho tương thích ngược. Backend cũ TG-CB-2.0 sẽ bị chặn trước khi gửi câu hỏi.
+Giao thức 4 thêm đầu vào `mode`, `actors`, `action`, `candidates`; server tự lập QimenBoard và Analysis, không tin kết quả tính từ client. Đầu ra giữ các phần v3 và thêm `synthesis` với chuỗi mode, liên kết graph và so sánh. Fingerprint khóa toàn bộ context, kể cả từng ứng viên, mục tiêu và đại diện bổ sung. Không tự viết lại hàm băm ở relay hoặc bỏ validation để tương thích ngược. Backend TG-CB-3.0 trở về trước bị chặn trước khi gửi câu hỏi. Worker chỉ chuyển tiếp JSON nguyên vẹn, không cần key/model mới.
 
 ## Chuẩn bị một lần
 
@@ -42,13 +42,13 @@ Giao thức 3 bổ sung `scope`, `development`, `alternatives` và `assessments[
 - Nếu cài CLI ở vị trí đặc biệt, đặt `QIMEN_CODEX_BIN` thành đường dẫn tuyệt đối đến executable Codex hoặc `codex.js`. Không đặt thành chuỗi lệnh gồm tham số. Windows hỗ trợ npm global bằng cách chạy `codex.js` qua Node, không chuyển câu hỏi vào shell.
 - Các kiểm thử đi kèm dùng Codex giả lập để kiểm tra giao thức và server. Cần thử một câu hỏi thật trên máy bạn để xác nhận CLI/model/tài khoản tương thích.
 
-## Bộ quy tắc TG-CB-3.0
+## Bộ quy tắc TG-CB-4.0
 
 Thời Gia, Chuyển Bàn; dùng đúng pháp Tháo bổ/Mao Sơn đã chọn; 23:00 đổi ngày; Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can Trung Ngũ cùng chuyển với Thiên Nhuế. Nhật/Thời can tìm trên thiên bàn; Giáp theo nghi ẩn của chính trụ. Quan hệ người–việc xét hành cung. Cùng đọc Môn–Tinh–Thần, Không/Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.
 
-Thuật toán an bàn giữ nguyên từ v13. Phần mới tạo `mixN` (tổ hợp Thần–Tinh–Môn) và `link_<topic>_*` (quan hệ giữa vai trò), không cộng điểm tốt/xấu hoặc tự đặt ngày ứng nghiệm. Lời luận thường khoảng 700–1.100 từ; tối thiểu bốn nhận xét, ba chặng có `based_on` trỏ đúng nhận xét/căn cứ, một nhánh thay thế. Dữ liệu thiếu cần làm rõ vẫn được viết ngắn.
+Thuật toán an bàn của v14 giữ nguyên hoàn toàn; kiểm thử khóa SHA-256 của 480 bàn đối chiếu. Các lớp mới đặt trong `dist/qimen/`: Core facade → QimenBoard → Analysis → Mode → Graph → Synthesis. Xem `QIMEN-ARCHITECTURE.md` để debug và mở rộng. Bài giữ mạch chính, ba chặng và nhánh khác; thêm chuỗi đầy đủ của mode ở tab kỹ thuật. Dữ liệu chưa rõ vẫn được trả lời ngắn, không cố bịa diễn biến.
 
-Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Hỏi thay người khác có thể cần làm rõ đại diện. Chưa tính nhập mộ các can ngoài Tam kỳ, thập can khắc ứng đầy đủ, ngũ bất ngộ thời, vượng suy Cửu Tinh và ứng kỳ. Không tuyên bố đây là toàn bộ chuẩn mọi phái. Website và bộ kết nối cùng tính lại bàn, đối chiếu SHA-256 của bàn/câu hỏi/căn cứ và chặn phản hồi lệch TG-CB-3.0; việc đó không chứng minh mọi câu diễn giải AI là đúng.
+Các chủ đề hiện đại dùng bảng dụng thần minh bạch của app. Khách hàng, đối thủ, người duyệt để unresolved nếu không có Can Chi đại diện được người dùng xác nhận. Đã tính Tinh vượng suy theo tháng tiết khí (phép Yên Ba Điếu Tẩu Ca), Ngũ bất ngộ thời và các tổ hợp được khai báo. Chưa tính nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hoặc ngày ứng nghiệm chắc chắn. Bộ lọc Timing/Direction là heuristic công khai của app, không phải thang điểm cổ điển hoặc xác suất thành công. Căn cứ khớp không chứng minh lời AI đúng.
 
 Nguồn quy ước truyền thống: https://zh.wikisource.org/wiki/煙波釣叟歌 . Tài liệu tích hợp: https://learn.chatgpt.com/docs/app-server và https://learn.chatgpt.com/docs/config-file/config-reference .
 

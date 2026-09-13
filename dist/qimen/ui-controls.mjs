@@ -1,0 +1,31 @@
+import {MODES,MODE_LABELS} from './modes/shared.mjs';
+import {classifyQuestion} from './ai/classifier.mjs';
+import {sexagenaryName,pillarFromGanzhi} from './core/calendar.mjs';
+export function initModeControls(doc=document) {
+  const $=id=>doc.getElementById(id),mode=$('qimen-mode'),question=$('question');
+  for(const id of MODES){const option=doc.createElement('option');option.value=id;option.textContent=MODE_LABELS[id];mode.append(option);}
+  for(const id of ['customer','competitor','decisionMaker']) {
+    const select=$('actor-'+id);
+    for(let i=0;i<60;i++){const p=pillarFromGanzhi(sexagenaryName(i)),option=doc.createElement('option');option.value=p.han;option.textContent=p.vi;select.append(option);}
+  }
+  const update=()=>{
+    const c=classifyQuestion(question.value,mode.value);$('mode-explanation').textContent=`${MODE_LABELS[c.mode]} · ${c.reason}`;
+    $('timing-options').hidden=c.mode!=='timing';$('action-options').hidden=!['timing','direction'].includes(c.mode);
+  };
+  mode.addEventListener('change',update);question.addEventListener('input',update);
+  $('add-candidate').addEventListener('click',()=>{
+    const list=$('timing-candidates');if(list.children.length>=12)return;
+    const row=doc.createElement('div');row.className='candidate-row';
+    const label=doc.createElement('label');label.className='field';const title=doc.createElement('span');title.textContent='Thời điểm bổ sung';
+    const input=doc.createElement('input');input.type='datetime-local';input.min='1900-01-01T00:00';input.max='2100-12-31T23:59';input.className='timing-candidate';label.append(title,input);
+    const remove=doc.createElement('button');remove.type='button';remove.className='button button-quiet';remove.textContent='Bỏ';remove.addEventListener('click',()=>{row.remove();$('chart-form').dispatchEvent(new Event('change',{bubbles:true}));});
+    row.append(label,remove);list.append(row);input.focus();
+  });
+  update();
+  return ()=>{
+    const actual=classifyQuestion(question.value,mode.value).mode;
+    return {mode:mode.value,actors:Object.fromEntries(['customer','competitor','decisionMaker'].map(k=>[k,$('actor-'+k).value]).filter(([,v])=>v)),
+      action:['timing','direction'].includes(actual)?$('qimen-action').value:'general',
+      candidates:actual==='timing'?[...doc.querySelectorAll('.timing-candidate')].map(el=>el.value).filter(Boolean):[]};
+  };
+}

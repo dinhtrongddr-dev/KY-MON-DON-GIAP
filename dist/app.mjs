@@ -1,8 +1,11 @@
-import {
-  BRANCHES, STAR_QIN, elementSlug, formatInstantAtOffset, formatOffset, generateQimen,
-} from "./qimen.mjs";
+import {BRANCHES, STAR_QIN, elementSlug} from './qimen/core/palace.mjs';
+import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
+import {generateQimen} from './qimen/core/board.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
+import {initModeControls} from './qimen/ui-controls.mjs';
+import {prepareReading} from './reading-core.mjs';
+import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -373,9 +376,18 @@ questionInput.addEventListener('input',()=>{
   document.querySelector('#question-summary').textContent = questionInput.value.trim()===currentQuestion ? (currentQuestion?`Câu hỏi của bàn: ${currentQuestion}`:'Chưa ghi câu hỏi.') : 'Bạn đang sửa câu hỏi. Bấm Lập bàn để gắn câu hỏi mới với ngày giờ đã chọn.';
 });
 
-initLocalAi({prepare(){
+const readingOptions=initModeControls();
+function prepareAiInput(){
   generateAndRender();
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
-  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input}};
-}});
+  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input},...readingOptions()};
+}
+initLocalAi({prepare:prepareAiInput});
+const rulePreview=document.getElementById('rule-preview');
+const clearRules=()=>{rulePreview.replaceChildren();rulePreview.hidden=true;};
+form.addEventListener('input',clearRules);form.addEventListener('change',clearRules);document.addEventListener('qimen-chart',clearRules);
+document.getElementById('rule-analyze').addEventListener('click',()=>{
+  clearRules();try{const p=prepareReading(prepareAiInput());renderComparison(rulePreview,p);renderTechnical(rulePreview,p);rulePreview.hidden=false;}
+  catch(e){rulePreview.textContent=e.message;rulePreview.hidden=false;}
+});
 initElementDiagram();

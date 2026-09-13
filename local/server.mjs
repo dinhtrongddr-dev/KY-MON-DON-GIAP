@@ -47,7 +47,8 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
      return;
    }
    const file=path==='/'?'/index.html':path;
-   if(!['GET','HEAD'].includes(req.method)||!files.has(file))return send(404,{error:'Không tìm thấy.'});
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs'].includes(file);
+   if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule))return send(404,{error:'Không tìm thấy.'});
    try{const data=await readFile(resolve(root,'.'+file));res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);}catch{send(404,{error:'Thiếu tệp giao diện.'});}
  });
  return {server,token,origin};

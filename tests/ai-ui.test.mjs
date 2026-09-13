@@ -13,6 +13,8 @@ class Element {
   fire(event){return Promise.all((this.listeners[event]??[]).map(fn=>fn()));}
   append(el){this.children.push(el);}
   replaceChildren(){this.children=[];}
+  setAttribute(name,value){(this.attributes??={})[name]=value;}
+  focus(){this.focused=true;}
 }
 function setup(t,fetcher){
   const original={document:globalThis.document,fetch:globalThis.fetch};
@@ -59,7 +61,7 @@ test('non-JSON upstream errors are explained, not rendered or thrown uncaught',a
 
 test('valid clarification renders text safely; no model HTML is interpreted',async t=>{
   const p=await buildReadingRequest(payload);
-  const reading={...clarificationFixture(),summary:'<script>alert(1)</script>'};
+  const reading={...clarificationFixture(p.context.allInOne.classification.mode),summary:'<script>alert(1)</script>'};
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
@@ -82,4 +84,16 @@ test('underdeveloped content is rejected instead of looking like a completed rea
   const p=await buildReadingRequest(payload),reading=readingFixture(p);reading.development=[];
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');assert.equal(ids['ai-answer'].hidden,true);assert.match(ids['ai-status'].textContent,/ba chặng/);
+});
+test('five result tabs preserve full text, support keyboard navigation and show only the selected panel',async t=>{
+  const p=await buildReadingRequest(payload),reading=readingFixture(p);
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
+  await ids['ai-read'].fire('click');
+  const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
+  const buttons=all.filter(n=>n.attributes?.role==='tab'),panels=all.filter(n=>n.attributes?.role==='tabpanel');
+  assert.equal(buttons.length,5);assert.equal(panels.filter(n=>!n.hidden).length,1);
+  await buttons[1].fire('click');assert.equal(panels[1].hidden,false);assert.equal(panels[0].hidden,true);
+  let prevented=false;buttons[1].listeners.keydown[0]({key:'End',preventDefault(){prevented=true;}});
+  assert.equal(prevented,true);assert.equal(buttons[4].focused,true);assert.equal(panels[4].hidden,false);
+  assert.equal(panels.filter(n=>!n.hidden).length,1);
 });

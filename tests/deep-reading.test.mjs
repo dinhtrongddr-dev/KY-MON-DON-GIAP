@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {TOPICS,GENERATES,CONTROLS} from '../dist/guide.mjs';
 import {elementLink} from '../dist/reading-focus.mjs';
-import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,INSTRUCTIONS} from '../local/reading.mjs';
+import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,instructionsFor} from '../local/reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
@@ -57,7 +57,7 @@ test('ordered stages require distinct explanations, actual assessments and share
 test('brief content gets exactly one bounded rewrite with the same facts and question',async()=>{
   const p=prepareReading(body),seen=[];
   const output=await interpretReading(p,{runner:async(instructions,context,schema,{signal})=>{
-    seen.push(context);assert.equal(instructions,INSTRUCTIONS);assert.equal(signal.aborted,false);assert.ok(schema.properties.development);
+    seen.push(context);assert.equal(instructions,instructionsFor(p.context));assert.equal(signal.aborted,false);assert.ok(schema.properties.development);
     const r=readingFixture(p);if(seen.length===1)r.assessments[0].interpretation='Quá ngắn.';return r;
   }});
   assert.equal(seen.length,2);assert.equal(output.status,'reading');assert.equal(seen[0].revision,undefined);
@@ -85,7 +85,7 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
   assert.equal(count,1);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
 });
 
-test('v3 request fingerprint also binds topic lenses; v2 cannot masquerade as deep reading',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,3);assert.equal(READING_PROTOCOL,3);assert.equal(RULE_VERSION,'TG-CB-3.0');
+test('v4 request fingerprint binds modes, analysis and graph; v3 cannot masquerade as All-in-One',async()=>{
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,4);assert.equal(READING_PROTOCOL,4);assert.equal(RULE_VERSION,'TG-CB-4.0');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
 });
