@@ -33,6 +33,8 @@ export function verifyRelease(directory = root) {
   const pins = JSON.parse(readFileSync(join(directory, 'scripts/windows-dependencies.json'), 'utf8'));
   const launcher = readFileSync(join(directory, pins.launcher.path));
   if (createHash('sha256').update(launcher).digest('hex') !== pins.launcher.sha256) throw new Error('Launcher checksum mismatch');
+  const launcherSource = readFileSync(join(directory, pins.launcher.source), 'utf8').replaceAll('\r\n', '\n');
+  if (createHash('sha256').update(launcherSource).digest('hex') !== pins.launcher.sourceSha256) throw new Error('Launcher source checksum mismatch');
   const pkg = JSON.parse(readFileSync(join(directory, 'package.json'), 'utf8'));
   if (pkg.type !== 'commonjs' || Object.keys(pkg.dependencies || {}).length) throw new Error('Keep the vendored lunar CommonJS boundary and dependency-free app runtime');
   const versionChecks = [

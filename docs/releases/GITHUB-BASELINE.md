@@ -4,10 +4,10 @@ The user-designated backup repository is `E:/kymon-site`. It preserves the full
 Sites history ending at `6cb83092d388f8acb072e1a92417706a04c79061`, corresponding
 to published Site deployment 17 and app v16 / TG-CB-5.0 / protocol 5.
 
-The intended immutable release tag is `v16.0.0-frozen.20260914`. Confirm it with
-`git show --no-patch v16.0.0-frozen.20260914` and the adjacent checksums report.
+The intended immutable release tag is `v16.0.1-frozen.20260914`. Confirm it with
+`git show --no-patch v16.0.1-frozen.20260914` and the adjacent checksums report.
 `sites-upstream` records the original source; `origin` is reserved for GitHub.
-The preparation task does not publish a GitHub repository or deploy the Site.
+The owner subsequently selected the GitHub repository and requested the custom domain kymon.pp.ua. Upload the verified source and tag to that existing repository when GitHub authentication is available. See DOMAIN-MIGRATION.md for domain activation.
 
 ## Restore Without The Original Server
 
@@ -17,10 +17,10 @@ artifacts to a separate disk or backup service to protect against loss of drive 
 The repository directory alone is not protection against disk failure.
 
 ```powershell
-Get-FileHash E:/kymon-site/.backups/kymon-v16.0.0-frozen.20260914.bundle -Algorithm SHA256
-git bundle verify E:/kymon-site/.backups/kymon-v16.0.0-frozen.20260914.bundle
-git clone E:/kymon-site/.backups/kymon-v16.0.0-frozen.20260914.bundle E:/kymon-restored
-git -C E:/kymon-restored switch --detach v16.0.0-frozen.20260914
+Get-FileHash E:/kymon-site/.backups/kymon-v16.0.1-frozen.20260914.bundle -Algorithm SHA256
+git bundle verify E:/kymon-site/.backups/kymon-v16.0.1-frozen.20260914.bundle
+git clone E:/kymon-site/.backups/kymon-v16.0.1-frozen.20260914.bundle E:/kymon-restored
+git -C E:/kymon-restored switch --detach v16.0.1-frozen.20260914
 ```
 
 Compare the hash to `.release/SHA256SUMS.txt`, then in the restored directory:
@@ -45,15 +45,11 @@ account access. The original private runtime configuration remains outside Git.
 
 ## Future GitHub Upload
 
-Create an empty repository under the owner's chosen GitHub account. Keep it
-private until the license/artwork decisions in `THIRD-PARTY-NOTICES.md` are made.
-Do not initialize a competing README/history on GitHub. After substituting the
-real owner/repository URL, run these commands from `E:/kymon-site`:
+The owner selected `dinhtrongddr-dev/KY-MON-DON-GIAP`. Preserve its existing visibility and history; fetch and inspect remote refs before the first push. The `origin` remote is already configured. After authenticating with permission to write that repository, run from `E:/kymon-site`:
 
 ```powershell
-git remote add origin https://github.com/OWNER/REPOSITORY.git
 git push -u origin main
-git push origin refs/tags/v16.0.0-frozen.20260914
+git push origin refs/tags/v16.0.1-frozen.20260914
 ```
 
 Only these explicit refs need publishing. Avoid `--mirror`, `--force`, or uploading
@@ -70,7 +66,7 @@ not tamper-proof or cryptographically signed.
 ## Upgrade From The Frozen Original
 
 ```powershell
-git switch -c codex/upgrade-description v16.0.0-frozen.20260914
+git switch -c codex/upgrade-description v16.0.1-frozen.20260914
 npm run check
 ```
 

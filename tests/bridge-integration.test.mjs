@@ -5,7 +5,7 @@ import {createBridge} from '../local/server.mjs';
 import {buildReadingRequest,prepareReading,validateReadingResponse} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 
-const origin='https://kymon.tkgiongnoi2.chatgpt.site';
+const origin='https://kymon.pp.ua';
 const relay='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
 const payload={question:'Trong 30 ngay toi toi co nhan duoc hop dong A khong?',topic:'contract',mode:'prediction',method:'chaibu',input:{year:2026,month:9,day:14,hour:9,minute:0,tzOffset:7}};
 

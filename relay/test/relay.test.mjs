@@ -11,7 +11,7 @@ class MemoryKv {
   async put(key, value) { this.values.set(key, value); }
 }
 
-const officialOrigin = 'https://kymon.tkgiongnoi2.chatgpt.site';
+const officialOrigin = 'https://kymon.pp.ua';
 const tunnel = 'https://unit-test.trycloudflare.com';
 
 test('relay authenticates updates and proxies only the Ky Mon API', async () => {

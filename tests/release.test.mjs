@@ -32,6 +32,8 @@ test('an unverified tunnel binary is never installed or silently overwritten', a
   const directory = await mkdtemp(join(tmpdir(), 'kymon-dependency-'));
   t.after(() => rm(directory, {recursive: true, force: true}));
   await copyFile(join(root, 'KyMonTray.exe'), join(directory, 'KyMonTray.exe'));
+  await mkdir(join(directory, 'local'));
+  await copyFile(join(root, 'local/KyMonTray.cs'), join(directory, 'local/KyMonTray.cs'));
   const source = join(directory, 'unverified.exe');
   await writeFile(source, 'unverified-download');
   await assert.rejects(prepareWindows({directory, source}), /Checksum mismatch/);
@@ -39,4 +41,6 @@ test('an unverified tunnel binary is never installed or silently overwritten', a
   await writeFile(join(directory, 'tools/cloudflared.exe'), 'existing-unverified-file');
   await assert.rejects(prepareWindows({directory, source}), /Checksum mismatch/);
   assert.equal(await readFile(join(directory, 'tools/cloudflared.exe'), 'utf8'), 'existing-unverified-file');
+  await appendFile(join(directory, 'local/KyMonTray.cs'), '\n// source changed after the binary was built\n');
+  await assert.rejects(prepareWindows({directory, source}), /Launcher source changed/);
 });

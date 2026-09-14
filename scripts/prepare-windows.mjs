@@ -18,6 +18,10 @@ export async function verifyArtifact(path, pin) {
 }
 
 export async function prepareWindows({directory = root, source} = {}) {
+  const launcherSource = (await readFile(join(directory, pins.launcher.source), 'utf8')).replaceAll('\r\n', '\n');
+  if (createHash('sha256').update(launcherSource).digest('hex') !== pins.launcher.sourceSha256) {
+    throw new Error('Launcher source changed: rebuild and review the source/binary checksums together.');
+  }
   await verifyArtifact(join(directory, pins.launcher.path), pins.launcher);
   const target = join(directory, 'tools/cloudflared.exe');
   if (await exists(target)) {

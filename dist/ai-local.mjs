@@ -1,10 +1,11 @@
 import {buildReadingRequest,assertCompatible,validateReadingResponse,RULE_VERSION} from './reading-core.mjs';
 import {renderReading} from './reading-view.mjs';
+import {AI_RELAY_ORIGIN} from './site-config.mjs';
 export function initLocalAi({prepare}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel');
  let active=null,version=0;
- const endpoint='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
+ const endpoint=AI_RELAY_ORIGIN;
  const cancelWork=()=>{version++;active?.abort();active=null;read.disabled=false;cancel.hidden=true;answer.hidden=true;answer.replaceChildren();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);

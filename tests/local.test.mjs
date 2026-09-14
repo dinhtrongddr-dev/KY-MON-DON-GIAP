@@ -30,7 +30,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  t.after(()=>{server.closeAllConnections();server.close();});
  const url=`http://127.0.0.1:${server.address().port}`;
- const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'test-pair-token',Origin:'https://kymon.tkgiongnoi2.chatgpt.site','Content-Type':'application/json'};
+ const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'test-pair-token',Origin:'https://kymon.pp.ua','Content-Type':'application/json'};
  assert.equal((await fetch(url+'/api/status',{headers:{Host:headers.Host}})).status,401);
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Origin:'https://evil.example'}})).status,403);
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Host:'evil.example'}})).status,403);

@@ -48,3 +48,7 @@ are generated after the source commit and cannot be embedded in that same commit
 ## Validation Records
 
 Store raw logs under ignored `.verification/`; store the human-readable result and reproducible commands in `docs/releases/`. Never label a passing hash as proof that all schools of Qimen use the same rules, or synthetic writer fixtures as successful real AI readings.
+
+## User Steering: Custom Domain And GitHub
+
+The user now requests kymon.pp.ua as the app domain and upload to https://github.com/dinhtrongddr-dev/KY-MON-DON-GIAP. This supersedes the earlier local-only destination constraint. The pre-domain tag is already verified and preserved. Work on codex/domain-kymon-pp-ua; create a new immutable v16.0.1-frozen.20260914 tag after domain-origin tests, launcher rebuild, package validation and restored bundle tests. Configure the custom domain on the existing Site, supply provider DNS records and push to the specified GitHub repository when authenticated. Do not change visibility or overwrite remote history. Keep the original published origin available during DNS migration.

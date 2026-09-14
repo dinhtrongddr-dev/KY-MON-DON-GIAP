@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = "https://kymon.tkgiongnoi2.chatgpt.site";
+import {ALLOWED_WEB_ORIGINS} from '../../dist/site-config.mjs';
 const ORIGIN_KEY = "active_tunnel";
 const TUNNEL_SUFFIX = ".trycloudflare.com";
 
@@ -14,9 +14,9 @@ function json(status, data, extraHeaders = {}) {
   });
 }
 
-function corsHeaders() {
+function corsHeaders(origin) {
   return {
-    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Qimen-Token",
     "Access-Control-Max-Age": "600",
@@ -92,10 +92,10 @@ async function updateTunnel(request, env) {
 
 async function proxyApi(request, env, url) {
   const origin = request.headers.get("Origin");
-  const cors = corsHeaders();
-  if (origin !== ALLOWED_ORIGIN) {
+  if (!ALLOWED_WEB_ORIGINS.includes(origin)) {
     return json(403, { error: "Nguon truy cap khong duoc phep." });
   }
+  const cors = corsHeaders(origin);
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: cors });
   }
@@ -125,7 +125,7 @@ async function proxyApi(request, env, url) {
 
   const target = new URL(url.pathname, record.url);
   const headers = new Headers({
-    Origin: ALLOWED_ORIGIN,
+    Origin: origin,
     "X-Qimen-Token": request.headers.get("X-Qimen-Token"),
     "X-Qimen-Client": await clientIdentity(request, env),
   });

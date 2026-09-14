@@ -13,7 +13,7 @@ Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng 
 
 ## Cập nhật lên TG-CB-5.0 (All-in-One, website v16)
 
-1. Tải bộ mới tại https://kymon.tkgiongnoi2.chatgpt.site/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
+1. Tải bộ mới tại https://kymon.pp.ua/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
 2. Xác định đúng thư mục/tiến trình đang phục vụ cổng 8765. Nếu dùng server nguyên bản trong gói, chuyển tiến trình sang thư mục mới rồi khởi động lại. Nếu server đã được tùy biến cho relay/tunnel, tích hợp các module mới và giữ nguyên phần cấu hình riêng; không chép đè cả server một cách máy móc.
 3. Dùng nguyên bộ `dist/`, đặc biệt toàn bộ thư mục mới `dist/qimen/` và các module `reading-*.mjs`; giữ `dist/vendor/lunar.js`. Bộ chạy: `local/reading.mjs`, `local/interpret.mjs`, `local/codex-client.mjs`, `local/server.mjs`. Không chỉ sửa số rules/protocol trên server cũ: mode, graph, schema, context và validation phải đồng bộ.
 4. Server gọi `prepareReading(body)` và `readingIdentity(prepared)` để đối chiếu request trước khi gọi `interpretReading(prepared,{signal})`. Hàm này kiểm tra nội dung và cho phép viết lại tối đa một lần. Phản hồi giữ các trường `model`, `rules`, `protocol`, `chartFingerprint`, `requestFingerprint`, `reading`, `facts`.
@@ -70,3 +70,7 @@ Nguồn quy ước truyền thống: https://zh.wikisource.org/wiki/煙波釣叟
 - Lỗi giao thức/sandbox: cập nhật Codex CLI, không bỏ restricted read access.
 - Không ghép nối: dùng mã mới nhất, kiểm tra Worker/tunnel đang trỏ tới đúng server mới và CORS vẫn cho phép domain website.
 - Căn cứ sai hoặc bài sơ lược: server yêu cầu viết lại một lần trong cùng thời gian chờ; nếu vẫn không đạt, không hiển thị lời luận thiếu căn cứ. Lỗi đăng nhập/mạng không tự thử lại.
+
+## Domain riêng 16.0.1
+
+Địa chỉ chính được cấu hình là https://kymon.pp.ua. Domain cũ vẫn được chấp nhận chính xác trong giai đoạn chuyển đổi. DNS/HTTPS, Worker và bộ kết nối local phải cập nhật đồng bộ; đổi mã nguồn không tự thay DNS. Xem `docs/releases/DOMAIN-MIGRATION.md`.

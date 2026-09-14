@@ -2,6 +2,8 @@
 
 Ứng dụng web tĩnh lập bàn **Thời Gia Kỳ Môn Độn Giáp – Chuyển Bàn** từ ngày, giờ, phút và múi giờ.
 
+Domain chính được cấu hình: [kymon.pp.ua](https://kymon.pp.ua). Repo nguồn: [KY-MON-DON-GIAP](https://github.com/dinhtrongddr-dev/KY-MON-DON-GIAP). Bản 16.0.1 cập nhật domain, giữ nguyên lõi và TG-CB-5.0; trạng thái DNS/triển khai và phạm vi chuyển đổi xem `docs/releases/DOMAIN-MIGRATION.md`.
+
 ## Luận bằng AI
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
@@ -46,6 +48,6 @@ npm run verify:package
 
 ## Bản gốc và nâng cấp
 
-Bản nguồn độc lập ở `E:/kymon-site`, nguồn cũ giữ trong remote `sites-upstream`; `origin` dành cho GitHub sau này. Quy trình backup, phục hồi, upload GitHub và nâng cấp từ tag: `docs/releases/GITHUB-BASELINE.md`. Bộ quy tắc và mức độ bằng chứng: `docs/releases/RULE-COVERAGE.md`. Không đưa mã ghép nối, khóa relay hoặc hồ sơ đăng nhập vào Git. Mã ứng dụng chưa có giấy phép nguồn mở; xem `THIRD-PARTY-NOTICES.md` trước khi công khai repo.
+Bản nguồn độc lập ở `E:/kymon-site`, nguồn cũ giữ trong remote `sites-upstream`; `origin` trỏ tới repo GitHub đã chọn. Quy trình backup, phục hồi, upload GitHub và nâng cấp từ tag: `docs/releases/GITHUB-BASELINE.md`. Bộ quy tắc và mức độ bằng chứng: `docs/releases/RULE-COVERAGE.md`. Không đưa mã ghép nối, khóa relay hoặc hồ sơ đăng nhập vào Git. Mã ứng dụng chưa có giấy phép nguồn mở; xem `THIRD-PARTY-NOTICES.md` trước khi công khai repo.
 
 Tệp xuất bản nằm trong `dist/`. Lịch Can Chi và tiết khí dùng `lunar-javascript` 1.7.7 theo giấy phép MIT.

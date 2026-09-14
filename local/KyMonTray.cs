@@ -490,7 +490,7 @@ internal static class Program
 {
     private const string MutexName = "Local\\KyMonCodexLauncher";
     private const string RestoreEventName = "Local\\KyMonCodexRestore";
-    internal const string OfficialSite = "https://kymon.tkgiongnoi2.chatgpt.site/";
+    internal const string OfficialSite = "https://kymon.pp.ua/";
     private const string RelayEndpoint = "https://ky-mon-codex-relay.dinhtrongddr.workers.dev/admin/origin";
     private static KyMonApplicationContext currentContext;
     private static NativeMethods.ConsoleCtrlHandler controlHandler;

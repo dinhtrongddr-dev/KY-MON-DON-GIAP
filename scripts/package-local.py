@@ -44,6 +44,9 @@ def source_files(root):
         if path.is_symlink() or not path.resolve().is_relative_to(root.resolve()):
             raise ValueError('Package input must be a regular in-repository file: ' + str(path))
     pins = json.loads((root / 'scripts/windows-dependencies.json').read_text(encoding='utf-8'))
+    launcher_source = (root / pins['launcher']['source']).read_bytes().replace(b'\r\n', b'\n')
+    if hashlib.sha256(launcher_source).hexdigest() != pins['launcher']['sourceSha256']:
+        raise ValueError('Launcher source checksum mismatch; rebuild and review both checksums')
     for name, pin in [('tools/cloudflared.exe', pins['cloudflared']),
                       ('KyMonTray.exe', pins['launcher'])]:
         content = (root / name).read_bytes()

@@ -7,6 +7,7 @@ import {resolve,extname} from 'node:path';
 import {runCodex,MODEL} from './codex-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
+import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
@@ -31,7 +32,7 @@ export function parseAllowedHost(value,port=8765){
  }catch{return false;}
 }
 export function isAllowedOrigin(value,port,host){
- if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||value==='https://kymon.tkgiongnoi2.chatgpt.site')return true;
+ if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||ALLOWED_WEB_ORIGINS.includes(value))return true;
  return false;
 }
 export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000}={}){
@@ -116,11 +117,11 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
      return;
    }
    if(host.type==='tunnel'){
-     res.writeHead(302,{Location:'https://kymon.tkgiongnoi2.chatgpt.site/','Cache-Control':'no-store'});
+     res.writeHead(302,{Location:SITE_ORIGIN+'/','Cache-Control':'no-store'});
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));
@@ -135,7 +136,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  bridge.server.listen(8765,'127.0.0.1',()=>{
    console.log('Kỳ Môn Local • GPT-5.6 Sol\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nĐang tạo link HTTPS công khai qua Cloudflare Tunnel...\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
    if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
-     const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler','https://kymon.tkgiongnoi2.chatgpt.site/'],{detached:true,stdio:'ignore',windowsHide:true});
+     const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler',SITE_ORIGIN+'/'],{detached:true,stdio:'ignore',windowsHide:true});
      browser.unref();
    }
  });

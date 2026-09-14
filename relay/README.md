@@ -8,8 +8,9 @@ namespace ID. Those identifiers are public deployment configuration, not access
 credentials. A future independent fork must use its own Worker/KV and explicitly
 coordinate its website Origin, browser endpoint and local launcher settings.
 
-The relay only forwards `/api/status` and `/api/read` for the configured website
-Origin. It preserves the response stream, JSON whitespace keepalive, status,
+The relay only forwards `/api/status` and `/api/read` for the exact configured
+website Origins in `dist/site-config.mjs`: kymon.pp.ua and the old Sites origin
+during migration. It preserves the response stream, JSON whitespace keepalive, status,
 Retry-After and cancellation signal. The local bridge remains responsible for
 pairing, protocol/fingerprints, chart recomputation and writer validation.
 
