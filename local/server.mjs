@@ -1,4 +1,5 @@
 import http from 'node:http';
+import {spawn} from 'node:child_process';
 import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
@@ -7,26 +8,68 @@ import {runCodex,MODEL} from './codex-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
-export function createBridge({token=randomBytes(24).toString('hex'),port=8765,runner=runCodex}={}){
+const TUNNEL_SUFFIX='.trycloudflare.com';
+const KEEPALIVE_CHUNK=' '.repeat(2048);
+
+function defaultPairingToken(){
+ const configured=process.env.QIMEN_PAIRING_TOKEN?.trim();
+ if(configured){
+   if(configured.length<6||configured.length>128)throw new Error('Mã ghép nối cấu hình phải dài từ 6 đến 128 ký tự.');
+   return configured;
+ }
+ return randomBytes(24).toString('hex');
+}
+
+export function parseAllowedHost(value,port=8765){
+ if(typeof value!=='string')return false;
+ try{
+   const parsed=new URL('http://'+value);
+   const hostname=parsed.hostname.toLowerCase();
+   if((hostname==='127.0.0.1'||hostname==='localhost')&&parsed.port===String(port))return {type:'local',hostname};
+   if(hostname.length>TUNNEL_SUFFIX.length&&hostname.endsWith(TUNNEL_SUFFIX)&&(parsed.port===''||parsed.port==='443'))return {type:'tunnel',hostname};
+   return false;
+ }catch{return false;}
+}
+export function isAllowedOrigin(value,port,host){
+ if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||value==='https://kymon.tkgiongnoi2.chatgpt.site')return true;
+ return false;
+}
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000}={}){
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
- const allowed=new Set([origin,'https://kymon.tkgiongnoi2.chatgpt.site']);
+ const failures=new Map();
  const files=new Set(['/index.html','/audit.html','/styles.css','/app.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/reading-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
-   if(req.headers.host!==`127.0.0.1:${port}`)return send(403,{error:'Host không hợp lệ.'});
+   res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Frame-Options','DENY');
+   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
+   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ky-mon-codex-relay.dinhtrongddr.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+   const host=parseAllowedHost(req.headers.host,port);
+   if(!host)return send(403,{error:'Host không hợp lệ.'});
+   const path=new URL(req.url,origin).pathname;
    const requestOrigin=req.headers.origin;
-   if(requestOrigin && !allowed.has(requestOrigin))return send(403,{error:'Nguồn truy cập không được phép.'});
+   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
      res.setHeader('Access-Control-Allow-Methods','POST, GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
    }
-   const path=new URL(req.url,origin).pathname;
    if(path.startsWith('/api/')){
      const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
-     if(value.length!==expected.length||!timingSafeEqual(value,expected))return send(401,{error:'Mã kết nối không đúng. Nhập mã hiện trong bộ kết nối AI.'});
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL});
+     const relayClient=String(req.headers['x-qimen-client']||'');
+     const client=/^[a-f0-9]{64}$/i.test(relayClient)?relayClient:String(req.headers['cf-connecting-ip']||req.socket.remoteAddress||'unknown').slice(0,128);
+     const now=Date.now();let failure=failures.get(client);
+     if(failure&&failure.blockedUntil>now){res.setHeader('Retry-After','600');return send(429,{error:'Quá nhiều lần nhập sai mã. Thử lại sau 10 phút.'});}
+     if(failure&&now-failure.startedAt>300000){failures.delete(client);failure=null;}
+     if(value.length!==expected.length||!timingSafeEqual(value,expected)){
+       failure=failure||{startedAt:now,count:0,blockedUntil:0};failure.count++;
+       if(failure.count>=8)failure.blockedUntil=now+600000;
+       failures.set(client,failure);
+       if(failure.blockedUntil){res.setHeader('Retry-After','600');return send(429,{error:'Quá nhiều lần nhập sai mã. Thử lại sau 10 phút.'});}
+       return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
+     }
+     failures.delete(client);
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
      if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
@@ -36,20 +79,53 @@ export function createBridge({token=randomBytes(24).toString('hex'),port=8765,ru
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
        let prepared;try{prepared=prepareReading(body);}catch(e){return send(400,{error:e.message});}
        const identity=await readingIdentity(prepared);
-       if(body.rules!==RULE_VERSION || body.protocol!==READING_PROTOCOL || body.chartFingerprint!==identity.chartFingerprint || body.requestFingerprint!==identity.requestFingerprint) return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       if(body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
-       try{
-         const result=await interpretReading(prepared,{runner,signal:controller.signal});
-         if(!res.destroyed)send(200,{model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts});
-       }finally{busy=false;}
-     }catch(e){if(!res.destroyed)send(502,{error:e.message||'Không kết nối được AI.'});}
+        let keepAliveTimer,keepAliveInterval,streaming=false;
+        const stopKeepAlive=()=>{clearTimeout(keepAliveTimer);clearInterval(keepAliveInterval);};
+        if(host.type==='tunnel'){
+          // Leading JSON whitespace keeps the tunnel stream alive without changing the final response document.
+          keepAliveTimer=setTimeout(()=>{
+            if(res.destroyed||res.writableEnded)return;
+            streaming=true;
+            res.writeHead(200,{'Content-Type':'application/json; charset=utf-8'});
+            res.write(KEEPALIVE_CHUNK);
+            keepAliveInterval=setInterval(()=>{if(!res.destroyed&&!res.writableEnded)res.write(KEEPALIVE_CHUNK);},keepAliveEveryMs);
+            keepAliveInterval.unref?.();
+          },keepAliveAfterMs);
+          keepAliveTimer.unref?.();
+          res.once('close',stopKeepAlive);
+        }
+        try{
+          const result=await interpretReading(prepared,{runner,signal:controller.signal});
+          if(!res.destroyed){
+            const data={model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+            stopKeepAlive();
+            streaming?res.end(JSON.stringify(data)):send(200,data);
+          }
+        }finally{stopKeepAlive();busy=false;}
+      }catch(e){
+        if(!res.destroyed){
+          const data={error:e.message||'Không kết nối được Codex.'};
+          // Keepalive already sent HTTP 200; finish the JSON document with the actual error.
+          if(res.headersSent)res.end(JSON.stringify(data));
+          else send(502,data);
+        }
+      }
      return;
+   }
+   if(host.type==='tunnel'){
+     res.writeHead(302,{Location:'https://kymon.tkgiongnoi2.chatgpt.site/','Cache-Control':'no-store'});
+     return res.end();
    }
    const file=path==='/'?'/index.html':path;
    const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs'].includes(file);
-   if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule))return send(404,{error:'Không tìm thấy.'});
-   try{const data=await readFile(resolve(root,'.'+file));res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);}catch{send(404,{error:'Thiếu tệp giao diện.'});}
+   if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
+   try{
+     const data=await readFile(resolve(root,'.'+file));
+     res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.zip':'application/zip'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);
+   }catch{send(404,{error:'Thiếu tệp giao diện.'});}
  });
  return {server,token,origin};
 }
@@ -57,6 +133,10 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const bridge=createBridge();
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
-   console.log('Kỳ Môn Local • GPT-5.6 Sol\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
+   console.log('Kỳ Môn Local • GPT-5.6 Sol\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nĐang tạo link HTTPS công khai qua Cloudflare Tunnel...\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
+   if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
+     const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler','https://kymon.tkgiongnoi2.chatgpt.site/'],{detached:true,stdio:'ignore',windowsHide:true});
+     browser.unref();
+   }
  });
 }

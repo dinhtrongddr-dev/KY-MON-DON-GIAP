@@ -4,6 +4,7 @@ import {EventEmitter} from 'node:events';
 import {PassThrough} from 'node:stream';
 import {createInterface} from 'node:readline';
 import {request as httpRequest} from 'node:http';
+import {join,resolve} from 'node:path';
 import {prepareReading,validateReading,INSTRUCTIONS,readingSchema,RULE_VERSION,READING_PROTOCOL,buildReadingRequest,validateReadingResponse} from '../local/reading.mjs';
 import {createBridge} from '../local/server.mjs';
 import {runCodex,MODEL,REASONING_EFFORT} from '../local/codex-client.mjs';
@@ -52,33 +53,79 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/local/server.mjs',{headers})).status,404);
  assert.equal((await fetch(url+'/',{headers})).status,200);
 });
-function mockCodex(auth='chatgpt',tool=false){
+function mockCodex(auth='chatgpt',tool=false,{models,alterConfig,hold=false,result=answer,turnError}={}){
  const seen=[];
+ let notifyStarted;const started=new Promise(resolve=>{notifyStarted=resolve;});
  const spawnProcess=(binary,args,options)=>{
-   assert.equal(options.shell,false);assert.equal(options.env.OPENAI_API_KEY,undefined);assert.equal(options.env.CODEX_API_KEY,undefined);
-   const p=new EventEmitter();p.stdin=new PassThrough();p.stdout=new PassThrough();p.stderr=new PassThrough();p.kill=()=>{p.stdin.end();p.stdout.end();p.emit('exit',0);};
+   assert.equal(options.shell,false);assert.equal(options.env.OPENAI_API_KEY,undefined);assert.equal(options.env.CODEX_API_KEY,undefined);assert.equal(options.env.QIMEN_PAIRING_TOKEN,undefined);
+   if(process.platform==='win32')assert.equal(options.env.CODEX_HOME,process.env.QIMEN_CODEX_HOME?resolve(process.env.QIMEN_CODEX_HOME):join(process.env.LOCALAPPDATA,'KyMonCodex','codex-home'));
+   assert.ok(args.includes('default_permissions="qimen-reader"'));
+   assert.ok(!args.some(arg=>arg.startsWith('sandbox_mode=')));
+   assert.ok(args.includes('permissions.qimen-reader.network.enabled=false'));
+   assert.ok(args.includes('permissions.qimen-reader.filesystem={'+JSON.stringify(options.cwd.replaceAll('\\','/'))+'="read"}'));
+   const p=new EventEmitter();p.stdin=new PassThrough();p.stdout=new PassThrough();p.stderr=new PassThrough();p.exitCode=null;p.kill=()=>{if(p.exitCode===null){p.exitCode=0;p.stdin.end();p.stdout.end();setImmediate(()=>p.emit('exit',0));}};
    const send=m=>p.stdout.write(JSON.stringify(m)+'\n');
    createInterface({input:p.stdin}).on('line',line=>{
      const m=JSON.parse(line);seen.push(m);
      if(m.method==='initialize')send({id:m.id,result:{}});
      if(m.method==='account/read')send({id:m.id,result:{account:{type:auth}}});
-     if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-5.6-sol');assert.equal(m.params.sandbox,'readOnly');send({id:m.id,result:{thread:{id:'test-thread'}}});}
+     if(m.method==='config/read'){
+       const config={default_permissions:'qimen-reader',sandbox_mode:null,permissions:{'qimen-reader':{extends:null,workspace_roots:null,filesystem:{[options.cwd.replaceAll('\\','/')]: 'read',glob_scan_max_depth:null},network:{enabled:false}}},windows:{sandbox:'elevated'}};
+       alterConfig?.(config);send({id:m.id,result:{config}});
+     }
+     if(m.method==='model/list')send({id:m.id,result:{data:models??[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'high'}]}],nextCursor:null}});
+     if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-5.6-sol');assert.equal(m.params.sandbox,undefined);send({id:m.id,result:{thread:{id:'test-thread'},model:MODEL,sandbox:{type:'readOnly',networkAccess:false}}});}
      if(m.method==='turn/start'){
        assert.equal(m.params.effort,REASONING_EFFORT);assert.equal(REASONING_EFFORT,'high');
-       assert.equal(m.params.sandboxPolicy.access.type,'restricted');assert.equal(m.params.approvalPolicy,'never');
+       assert.equal(m.params.sandboxPolicy,undefined);assert.equal(m.params.approvalPolicy,'never');
        send({id:m.id,result:{turn:{id:'test-turn'}}});
+       if(turnError){send({method:'error',params:{error:turnError,willRetry:true}});return;}
+       if(hold){setImmediate(notifyStarted);return;}
        if(tool)send({method:'item/started',params:{item:{type:'commandExecution'}}});
-       else{send({method:'item/completed',params:{item:{type:'agentMessage',text:JSON.stringify(answer)}}});send({method:'turn/completed',params:{turn:{status:'completed'}}});}
+       else{send({method:'item/completed',params:{item:{type:'agentMessage',text:JSON.stringify(result)}}});send({method:'turn/completed',params:{turn:{status:'completed'}}});}
      }
    });
    return p;
  };
- return {spawnProcess,seen};
+ return {spawnProcess,seen,started};
 }
 test('Codex JSONL handshake and structured answer, without a live model call',async()=>{
  const {context,facts}=prepareReading(payload);const mock=mockCodex();
  const result=await runCodex(INSTRUCTIONS,context,readingSchema(facts,context),mock);assert.deepEqual(result,answer);
- assert.deepEqual(mock.seen.filter(m=>m.method).map(m=>m.method),['initialize','initialized','account/read','thread/start','turn/start']);
+ assert.deepEqual(mock.seen.filter(m=>m.method).map(m=>m.method),['initialize','initialized','account/read','config/read','model/list','thread/start','turn/start']);
+ assert.equal(mock.seen.find(m=>m.method==='turn/start').params.input[0].text,JSON.stringify(context));
+ assert.deepEqual(mock.seen.find(m=>m.method==='turn/start').params.outputSchema,readingSchema(facts,context));
+});
+test('Codex refuses a missing model or unsupported high effort before a turn',async()=>{
+ for(const models of [[],[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'medium'}]}]]){
+   const mock=mockCodex('chatgpt',false,{models});
+   await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),/GPT-5\.6 Sol/);
+   assert.ok(!mock.seen.some(m=>m.method==='turn/start'));
+ }
+});
+test('Codex rejects legacy or broadened filesystem configuration before sending the question',async()=>{
+ for(const alterConfig of [c=>{c.sandbox_mode='read-only';},c=>{c.permissions['qimen-reader'].filesystem[':root']='read';},c=>{c.permissions['qimen-reader'].extends=':read-only';},c=>{c.permissions['qimen-reader'].network.enabled=true;}]){
+   const mock=mockCodex('chatgpt',false,{alterConfig});
+   await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),/quyền|sandbox/);
+   assert.ok(!mock.seen.some(m=>m.method==='thread/start'));
+ }
+});
+test('invalid claim identifiers reach the validator unchanged instead of being relabeled',async()=>{
+ const invalid=structuredClone(answer);invalid.summary.claim_ids=['invented-claim'];
+ const mock=mockCodex('chatgpt',false,{result:invalid});
+ const result=await runCodex(INSTRUCTIONS,{}, {},mock);
+ assert.deepEqual(result,invalid);
+});
+test('cancellation interrupts the active turn before ending its dedicated process',async()=>{
+ const mock=mockCodex('chatgpt',false,{hold:true}),controller=new AbortController();
+ const pending=runCodex(INSTRUCTIONS,{}, {},{...mock,signal:controller.signal});
+ await mock.started;controller.abort();await assert.rejects(pending,/hủy/);
+ assert.deepEqual(mock.seen.find(m=>m.method==='turn/interrupt')?.params,{threadId:'test-thread',turnId:'test-turn'});
+});
+test('quota failure is reported clearly without forwarding provider details or retrying',async()=>{
+ const mock=mockCodex('chatgpt',false,{turnError:{codexErrorInfo:'usageLimitExceeded',message:'private-provider-detail'}});
+ await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),error=>/^Tài khoản.*đã hết hạn mức/.test(error.message)&&!error.message.includes('private-provider-detail'));
+ assert.equal(mock.seen.filter(m=>m.method==='turn/start').length,1);
 });
 test('Codex bridge refuses API-key authentication and unexpected tool execution',async()=>{
  const {context,facts}=prepareReading(payload);

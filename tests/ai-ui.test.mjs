@@ -60,6 +60,16 @@ test('non-JSON upstream errors are explained, not rendered or thrown uncaught',a
   assert.equal(ids['ai-answer'].hidden,true);
 });
 
+for(const status of [200,502]) test(`AI errors remain visible when the response status is ${status}`,async t=>{
+  const error='Provider usage limit reached.';
+  const {ids}=setup(t,async url=>url.endsWith('/api/status')?response(health):new Response(' '.repeat(2048)+JSON.stringify({error}),{status,headers:{'Content-Type':'application/json'}}));
+  await ids['ai-read'].fire('click');
+  assert.equal(ids['ai-status'].textContent,error);
+  assert.equal(ids['ai-answer'].hidden,true);
+  assert.equal(ids['ai-read'].disabled,false);
+  assert.equal(ids['ai-cancel'].hidden,true);
+});
+
 test('valid clarification renders text safely; no model HTML is interpreted',async t=>{
   const p=await buildReadingRequest(payload);
   const reading={...clarificationFixture(p),summary:{text:'<script>alert(1)</script>',claim_ids:[]}};

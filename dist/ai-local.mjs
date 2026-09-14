@@ -16,7 +16,8 @@ export function initLocalAi({prepare}) {
    if(!token.value.trim())throw new Error('Nhập mã kết nối AI. Mở hướng dẫn kết nối nếu cần trợ giúp.');
    let response;try{response=await fetch(endpoint+path,{method:body?'POST':'GET',headers:{'X-Qimen-Token':token.value.trim(),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),signal,credentials:'omit',cache:'no-store'});}catch(e){if(e.name==='AbortError'||signal?.aborted)throw e;throw new Error('Không kết nối được AI. Kiểm tra bộ kết nối rồi thử lại.');}
    let data;try{data=await response.json();}catch{throw new Error('Kết nối AI trả dữ liệu không đọc được. Kiểm tra kết nối rồi thử lại.');}
-   if(!response.ok)throw new Error(typeof data?.error==='string'?data.error:'AI báo lỗi.');return data;
+   if(typeof data?.error==='string'&&data.error.trim())throw new Error(data.error);
+   if(!response.ok)throw new Error('AI báo lỗi.');return data;
  }
  $('local-check').addEventListener('click',async()=>{
    const v=++version;active?.abort();active=null;answer.hidden=true;read.disabled=false;cancel.hidden=true;

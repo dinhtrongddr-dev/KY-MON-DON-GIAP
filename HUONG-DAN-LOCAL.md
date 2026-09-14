@@ -1,5 +1,13 @@
 # Kỳ Môn • Codex trên máy tính
 
+## Bản tích hợp Windows ngày 14/09/2026
+
+Đây là v16 / TG-CB-5.0, protocol 5, đã tích hợp với launcher và relay hiện có. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
+
+Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` cũ. Cầu nối chọn `qimen-reader`, chỉ cho đọc thư mục tạm trống của từng lượt, tắt mạng công cụ và dùng sandbox Windows `elevated`. Cầu nối kiểm tra cấu hình hiệu lực trước khi gửi câu hỏi và dừng nếu cấu hình mở rộng quyền hoặc dùng `sandbox_mode` cũ. Không cần thay Codex CLI toàn máy. Nếu Windows yêu cầu thiết lập sandbox, hoàn tất thiết lập chính thức; không chuyển sang full access.
+
+Mã ghép nối lấy từ tệp cấu hình riêng `%LOCALAPPDATA%\KyMonCodex\pairing-code.txt`, được launcher truyền vào server; nhập bằng tay trên giao diện. Gói tải xuống không chứa mã này, khóa quản trị relay hoặc thông tin đăng nhập. Giữ nguyên các tệp cấu hình riêng khi cập nhật.
+
 Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-5.6 Sol → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
 
@@ -38,7 +46,7 @@ Giao thức 5 giữ đầu vào `mode`, `actors`, `action`, `candidates` và th�
 ## Điều kiện và giới hạn
 
 - Server chỉ nghe trên `127.0.0.1:8765`, không mở cho LAN/Internet. Điện thoại dùng website công khai qua Worker/tunnel đã cấu hình, không dùng địa chỉ localhost của máy tính.
-- Server yêu cầu mã ngẫu nhiên mỗi lần khởi động, kiểm tra Host/Origin, chỉ chấp nhận giao diện local và tên miền website đã nêu. Không chia sẻ mã ghép nối hoặc mở cổng server ra Internet.
+- Server dùng mã ghép nối từ cấu hình riêng (hoặc mã ngẫu nhiên nếu chạy độc lập), kiểm tra Host/Origin, chỉ chấp nhận giao diện local và tên miền website đã nêu. Không chia sẻ mã ghép nối hoặc mở cổng server ra Internet.
 - Mỗi lượt tạo thread mới; không tiếp tục hội thoại Codex đang mở. Câu hỏi gửi tới Codex/nhà cung cấp model theo tài khoản đã đăng nhập. Cầu nối không lưu câu hỏi/lời luận lên đĩa; chính sách nhật ký của Codex vẫn do Codex quản lý.
 - Shell/web search bị tắt cho tiến trình cầu nối; lượt chạy yêu cầu vùng đọc chỉ trong thư mục tạm trống, không cấp ghi hoặc phê duyệt công cụ. Nếu Codex yêu cầu công cụ thì cầu nối dừng lượt đó. Không nới quyền để xử lý lỗi.
 - Nếu cài CLI ở vị trí đặc biệt, đặt `QIMEN_CODEX_BIN` thành đường dẫn tuyệt đối đến executable Codex hoặc `codex.js`. Không đặt thành chuỗi lệnh gồm tham số. Windows hỗ trợ npm global bằng cách chạy `codex.js` qua Node, không chuyển câu hỏi vào shell.
