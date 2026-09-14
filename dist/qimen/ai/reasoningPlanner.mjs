@@ -9,7 +9,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
   const candidates=buildEvidenceBundles(analysis,questionContext,graph);
   const selected=scoreEvidence(candidates,questionContext,graph).map(b=>({...b,translation:translateToRealWorld(b,questionContext)}));
   const interactions=analyzeInteractions(graph,selected);
-  const likelyScenario=buildScenario(selected,questionContext,graph,interactions);
+  const likelyScenario=buildScenario(selected,questionContext,graph,interactions,modePlan);
   const claims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
     mechanism:b.translation.mechanism,interpretation:b.translation.interaction,
     realWorldManifestation:b.translation.manifestation,implication:b.translation.implication,

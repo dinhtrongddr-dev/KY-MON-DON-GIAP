@@ -1,7 +1,7 @@
 export function buildRecommendations(scenario,selected,context) {
   const isStrategy=context.questionType==='strategy';
   return selected.slice(0,4).map((b,i)=>({id:`action_${b.palace}`,claimId:`claim_${b.palace}`,order:i+1,
-    operation:isStrategy?b.translation.action.verb:i===0?'observe_before_conclude':b.translation.action.verb,
+    operation:i===0?scenario.modeDecision.operation:isStrategy?b.translation.action.verb:'observe_before_conclude',
     objective:b.translation.action.object,focus:b.translation.action.focus,
     counterpartCheck:b.translation.action.counterpartCheck,relationshipChecks:(scenario.agency||[]).filter(r=>b.actorIds.includes(r.from)||b.actorIds.includes(r.to)).map(r=>r.check),doneWhen:b.translation.action.completionEvidence,
     requires:b.conflicts[0]?.resolution||scenario.turningPoint,

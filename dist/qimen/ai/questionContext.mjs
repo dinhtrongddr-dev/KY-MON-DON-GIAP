@@ -16,7 +16,8 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
     else if(/\b(tuyen dung|ung vien|nhan su|tuyen nguoi)\b/.test(q))domain='recruitment';
     else if(/\b(du an|tien do|nghiem thu)\b/.test(q)&&!/\b(hop dong|bao gia|dau thau|khach hang)\b/.test(q))domain='project';
   }
-  const questionType=classification.mode==='strategy'||classification.mode==='negotiation'?'strategy':
+  const inferredMode=classifyQuestion(source,'auto').mode;
+  const questionType=classification.mode==='strategy'||classification.mode==='negotiation'||classification.mode==='business'&&['strategy','negotiation'].includes(inferredMode)?'strategy':
     ['timing','direction'].includes(classification.mode)?'decision':
     /\b(so sanh|so voi|loi the hon|manh hon|phuong an nao)\b/.test(q)?'comparison':
     /\b(tai sao|nguyen nhan|van de nam|nut that)\b/.test(q)?'diagnosis':

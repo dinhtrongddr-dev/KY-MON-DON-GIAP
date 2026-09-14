@@ -34,23 +34,10 @@ test('all topics and both methods have resolved roles, directional links and val
 
 test('ordered stages require distinct explanations, actual assessments and shared concrete evidence',()=>{
   const p=prepareReading(body),valid=readingFixture(p);
-  const mutations=[
-    r=>r.assessments[0].interpretation='Một câu rất ngắn.',
-    r=>r.assessments[1].aspect='overview',
-    r=>r.development.reverse(),
-    r=>r.development[0].based_on=['not-present'],
-    r=>r.development[0].condition='',
-    r=>r.development[0].description=r.development[1].description,
-    r=>r.development[0].evidence_ids=['time'],
-    r=>r.development[0].evidence_ids=['mix5'],
-    r=>r.development[0].evidence_ids=['c'+p.context.topics[0].focus.roles[0].palace],
-    r=>r.alternatives=[],
-    r=>r.alternatives[0].condition='Không rõ.',
-    r=>r.scope=null,
-  ];
+  const mutations=[r=>r.summary.text='Một câu rất ngắn.',r=>r.summary.claim_ids=['unknown'],r=>r.development.reverse(),r=>r.development[0].claim_ids=['not-present'],r=>r.development[0].condition='',r=>r.development[0].text=r.development[1].text,r=>r.development[0].interaction_ids=['graph_unknown'],r=>r.alternative.id='',r=>r.bottleneck.resolution='Không rõ.',r=>r.situation=null];
   for(const mutate of mutations){const r=structuredClone(valid);mutate(r);assert.throws(()=>validateReading(r,p.facts,body.topic,p.context));}
-  const generic=prepareReading({...body,topic:'general'}),r=readingFixture({...generic,context:{...generic.context,topics:generic.context.topics.filter(t=>t.id==='contract')}});
-  r.assessments[2].evidence_ids=['ref_work_0','p1'];
+  const generic=prepareReading({...body,topic:'general'}),r=readingFixture(generic);
+  r.situation.claim_ids=['ref_work_0'];
   assert.throws(()=>validateReading(r,generic.facts,'general',generic.context),/căn cứ/);
 });
 
@@ -58,10 +45,10 @@ test('brief content gets exactly one bounded rewrite with the same facts and que
   const p=prepareReading(body),seen=[];
   const output=await interpretReading(p,{runner:async(instructions,context,schema,{signal})=>{
     seen.push(context);assert.equal(instructions,instructionsFor(p.context));assert.equal(signal.aborted,false);assert.ok(schema.properties.development);
-    const r=readingFixture(p);if(seen.length===1)r.assessments[0].interpretation='Quá ngắn.';return r;
+    const r=readingFixture(p);if(seen.length===1)r.summary.text='Quá ngắn.';return r;
   }});
   assert.equal(seen.length,2);assert.equal(output.status,'reading');assert.equal(seen[0].revision,undefined);
-  assert.ok(seen[1].revision.issue);assert.equal(seen[1].facts,p.facts);assert.equal(seen[1].question,body.question);
+  assert.ok(seen[1].revision.issue);assert.deepEqual(seen[1].evidence,seen[0].evidence);assert.deepEqual(seen[1].readingGraph,seen[0].readingGraph);assert.equal(seen[1].question,body.question);
 });
 
 test('a second inadequate reading fails closed; authentication or transport errors are never retried',async()=>{
@@ -81,11 +68,11 @@ test('cancel during rewrite aborts the same request; late output never succeeds'
 
 test('clarification stays short and never fabricates a three-stage outcome',async()=>{
   const p=prepareReading(body);let count=0;
-  const r=await interpretReading(p,{runner:async()=>{count++;return clarificationFixture();}});
+  const r=await interpretReading(p,{runner:async()=>{count++;return clarificationFixture(p);}});
   assert.equal(count,1);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
 });
 
-test('v4 request fingerprint binds modes, analysis and graph; v3 cannot masquerade as All-in-One',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,4);assert.equal(READING_PROTOCOL,4);assert.equal(RULE_VERSION,'TG-CB-4.0');
+test('v5 request fingerprint binds the planner, mode and depth',async()=>{
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-5.0');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
 });

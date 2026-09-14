@@ -1,35 +1,28 @@
-// Synthetic content to exercise the contract, not a sample of live model quality.
+// Handwritten synthetic prose for contract/integration tests, NOT output from a live model.
 export function readingFixture(prepared) {
-  const topic=prepared.context.topics[0],focus=topic.focus,day=focus.roles[0].palace,anchor=topic.anchors[0].palace;
-  const firstRef=topic.anchors[0].evidenceId;
-  const text=(label,id)=>`${label} — dữ liệu giả lập kiểm thử, không phải lời luận hoặc dự báo thật. Căn cứ cần đối chiếu: ${prepared.facts[id]} Khi đọc tình huống đã nêu, phải tách thông tin người hỏi cung cấp với khả năng diễn giải từ tượng, đồng thời xem lại những điều kiện còn thiếu trước khi kết luận. Chỉ tiến sang bước tiếp theo khi có thông tin thực tế tương ứng; không coi sự liên hệ giữa hai cung là lịch sự việc chắc chắn sẽ xảy ra.`;
-  const condition='Chỉ dùng cách hiểu này nếu thông tin thực tế do người hỏi kiểm tra xác nhận đúng giai đoạn và điều kiện đang xét.';
-  const mode=prepared.context.allInOne;
-  const result={
-    status:'reading',topic_id:topic.id,summary:'Nội dung giả lập kiểm thử giao thức. Bản này chỉ kiểm tra cấu trúc liên kết, không đánh giá khả năng diễn giải của model hoặc kết quả thực tế.',
-    scope:{subject:'Người hỏi',objective:prepared.context.question,stage:'Đang tìm thông tin',timeframe:'Theo câu hỏi đã nhập'},assumptions:[],
-    assessments:[
-      {aspect:'overview',title:'Thế toàn cục',interpretation:text('Toàn cục','patterns'),evidence_ids:['patterns',`p${day}`,`mix${day}`]},
-      {aspect:'people',title:'Người và việc',interpretation:text('Đại diện','relation'),evidence_ids:['day','hour','relation',`p${day}`,focus.links[0].id]},
-      {aspect:'opportunity',title:'Khâu cần phối hợp',interpretation:text('Dụng thần',firstRef),evidence_ids:[firstRef,`p${anchor}`,`mix${anchor}`]},
-      {aspect:'obstacle',title:'Điều kiện còn vướng',interpretation:text('Điều kiện',`c${day}`),evidence_ids:[`p${day}`,`c${day}`]},
-    ],
-    development:[
-      {stage:'current',title:'Tình huống xuất phát',description:text('Chặng hiện tại','day'),condition,based_on:['people'],evidence_ids:[`p${day}`]},
-      {stage:'next',title:'Chuyển biến cần xác nhận',description:text('Chặng tiếp theo',firstRef),condition,based_on:['opportunity'],evidence_ids:[firstRef,`p${anchor}`]},
-      {stage:'outcome',title:'Kết quả có điều kiện',description:text('Chặng kết quả',`c${day}`),condition,based_on:['opportunity','obstacle'],evidence_ids:[`p${day}`,`c${day}`]},
-    ],
-    alternatives:[{description:text('Khả năng thay thế',`c${day}`),condition,evidence_ids:[`p${day}`,`c${day}`]}],
-    questions:[],next_steps:['Kiểm tra thông tin thứ nhất từ nguồn thực tế.','Xác minh điều kiện chuyển sang bước tiếp theo.'],
-    synthesis:{mode:mode.classification.mode,
-      comparisons:(mode.comparison?.ranking||mode.plan.computed.ranking||[]).map(row=>({id:row.id,reason:text('Đối chiếu ứng viên',row.id)})),
-      mode_chain:mode.plan.chain.map(s=>({step_id:s.id,text:text(s.title,s.id),evidence_ids:[s.id,`actor_${s.roleIds[0]}`]})),
-      story_links:mode.graph.relations.slice(0,2).map((r,i)=>({stage:i?'outcome':'next',graph_id:r.id,explanation:text('Nối hai đối tượng',r.id)})),
-      turningPoint:condition,likelyOutcome:condition,timing:'Chưa có cơ sở định ngày ứng nghiệm chắc chắn.',
-      recommendedActions:['Kiểm tra điều kiện trước khi hành động.','Xác minh với nguồn thực tế.'],avoid:['Không lấy tượng thay bằng chứng.']},
-  };
-  for(const link of result.synthesis.story_links)result.development.find(d=>d.stage===link.stage).evidence_ids.push(link.graph_id);
-  return result;
+  const c=prepared.context.allInOne,g=c.reasoning,s=g.likelyScenario,ids=g.claims.map(x=>x.id),primary=s.primaryJudgment.claimIds;
+  const section=(text,claim_ids=primary)=>({text,claim_ids});
+  return {status:'reading',topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:c.questionContext.questionType,
+    summary:section('Chưa đủ căn cứ để đồng nhất một tín hiệu thuận với việc đã đạt mục tiêu. Điểm cần chú ý là điều kiện khiến sự việc chuyển được sang bước tiếp theo. Nếu xác nhận được điều kiện đó, bạn mới có cơ sở tăng mức cam kết; nếu chưa, nên giữ nhận định ở dạng có điều kiện.'),
+    situation:section('Bạn đang hỏi: '+prepared.context.question+' Trong phạm vi này, cần tách phần mình có thể làm với phần còn phụ thuộc vào phía liên quan. Một lời trao đổi, sự quan tâm hoặc mong muốn đi tiếp chỉ phản ánh một giai đoạn. Nó chưa xác nhận người có trách nhiệm đã đồng ý hoặc nguồn lực đã sẵn sàng. Đây là những điểm cần đối chiếu từ thông tin bạn đang có, không phải sự kiện đã được bàn chứng minh.',ids.slice(0,3)),
+    development:s.stages.map((stage,i)=>({...section([
+      'Điểm xuất phát là làm rõ việc đang dừng ở khâu nào. Bạn có thể đã nắm một phần thông tin, nhưng chưa nên lấy phần đó thay cho toàn bộ quá trình. Hãy xác định điều gì đã được xác nhận trực tiếp, điều gì mới là dự định và điều gì còn phải hỏi lại người có liên quan.',
+      'Từ trạng thái trên, bước chuyển cần được nhận biết bằng một phản hồi cụ thể. Nếu phía liên quan đưa ra yêu cầu rõ hơn, hãy đối chiếu yêu cầu đó với khả năng thực hiện trước khi trả lời. Nếu họ vẫn chưa xác nhận, sự việc có thể quay lại khâu làm rõ; khi ấy tăng lời hứa chưa chắc giúp tiến nhanh hơn.',
+      'Sau bước làm rõ, hướng kết quả phụ thuộc vào việc các điều kiện đã thật sự được đáp ứng hay chưa. Có xác nhận nhất quán thì mới nâng mức kỳ vọng; thông tin trái chiều thì cần điều chỉnh cách hiểu. Tiến thêm một khâu và đạt mục tiêu cuối là hai mốc khác nhau, nên kiểm tra từng mốc trước khi quyết định.'
+    ][i],stage.claimIds),stage:stage.stage,interaction_ids:stage.relationshipIds,condition:i===0?'Đối chiếu giai đoạn thực tế trước khi diễn giải tiếp.':stage.condition})),
+    bottleneck:{...section('Nút thắt nằm ở khoảng cách giữa khả năng được gợi ra và điều kiện để khả năng ấy thành việc. Cần kiểm tra ai có trách nhiệm xác nhận, phần việc nào còn vướng và dấu hiệu nào chứng tỏ vướng mắc đã được gỡ. Khi dữ kiện chưa rõ, không nên kết luận phía bên kia đã đổi ý hoặc cố gây khó.',[s.mainConflict?.claimId||primary[0]]),resolution:s.turningPoint},
+    actions:g.recommendations.slice(0,3).map((r,i)=>({recommendation_id:r.id,text:[
+      'Ghi lại bước đang chờ và người có thể xác nhận bước đó. Trao đổi một câu hỏi cụ thể để biết điều kiện còn thiếu, rồi giữ lại phản hồi làm mốc đối chiếu.',
+      'Chuẩn bị phần thông tin phục vụ trực tiếp yêu cầu vừa xác nhận. Chỉ cam kết trong phạm vi mình kiểm soát được; nếu có thay đổi thì làm rõ trước khi chuyển sang bước sau.',
+      'Theo dõi kết quả của hành động đã thực hiện. Nếu không có phản hồi như dự kiến, quay lại kiểm tra giả định ban đầu và điều chỉnh cách tiếp cận trước khi đầu tư thêm nguồn lực.'
+    ][i]})),
+    alternative:{...section('Nếu điều kiện chuyển vẫn chưa được xác nhận, khả năng khác là sự việc tiếp tục ở khâu chuẩn bị hoặc phải sửa phương án. Khi đó nên giảm mức kỳ vọng và xác minh lại thông tin, thay vì xem tiến độ chậm là một quyết định cuối cùng.'),id:s.alternative.id},
+    timing:section('Thời hạn người hỏi nêu là phạm vi quan sát. Chưa có cơ sở trong dữ liệu này để ấn định một ngày xảy ra kết quả; cần theo dõi dấu hiệu chuyển bước thực tế.'),
+    comparisons:(c.comparison?.ranking||c.plan.computed.ranking||[]).map(row=>({id:row.id,reason:'Đối chiếu ứng viên này theo các điều kiện cản và mức phù hợp đã tính. Thứ hạng chỉ giúp so sánh tương đối trong danh sách, cần xác nhận điều kiện thực tế trước khi lựa chọn.'})),questions:[]};
 }
-
-export const clarificationFixture=(mode='prediction')=>({status:'needs_clarification',topic_id:'contract',summary:'Bạn đang hỏi việc của mình hay hỏi thay người khác?',scope:{subject:'Chưa rõ người đại diện',objective:'Làm rõ chủ thể',stage:'Chưa rõ giai đoạn',timeframe:'Chưa nêu'},assumptions:[],assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[],synthesis:{mode,mode_chain:[],story_links:[],comparisons:[],turningPoint:'Chưa rõ chủ thể.',likelyOutcome:'Chưa đủ thông tin.',timing:'Chưa xác định.',recommendedActions:[],avoid:[]}});
+export function clarificationFixture(prepared) {
+  const c=prepared?.context?.allInOne,empty=()=>({text:'',claim_ids:[]});
+  return {status:'needs_clarification',topic_id:c?.resolvedTopic||'contract',mode:c?.classification.mode||'prediction',questionType:c?.questionContext.questionType||'prediction',
+    summary:{text:'Bạn đang hỏi việc của mình hay hỏi thay người khác?',claim_ids:[]},situation:empty(),development:[],bottleneck:{...empty(),resolution:''},actions:[],
+    alternative:{...empty(),id:''},timing:empty(),comparisons:[],questions:['Bạn hỏi cho ai?']};
+}

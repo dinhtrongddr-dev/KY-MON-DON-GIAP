@@ -14,7 +14,7 @@ test('timing computes multiple distinct boards with one preserved core and a fix
       assert.deepEqual(candidate.board.palaces.map(x=>x.heavenStems),legacy.palaces.map(x=>x.heavenStems.map(s=>s.han)));
       assert.equal(candidate.rolePalaces.find(r=>r.id==='self').basis,p.chart.pillars.day.han);
     }
-    assert.equal(validateReading(readingFixture(p),p.facts,'contract',p.context).synthesis.comparisons.length,3);
+    assert.equal(validateReading(readingFixture(p),p.facts,'contract',p.context).comparisons.length,3);
   }
 });
 test('changing candidates/action changes request identity but not the question board',async()=>{
@@ -36,11 +36,11 @@ test('direction compares all eight directions with explicit tie ranks and no cen
   const tied=rankCandidates([{id:'a',blockers:[],fit:2},{id:'b',blockers:[],fit:2},{id:'c',blockers:['x'],fit:3}]);
   assert.deepEqual(tied.map(r=>r.rank),[1,1,2]);
   const valid=readingFixture(p);assert.equal(validateReading(valid,p.facts,'contract',p.context),valid);
-  valid.synthesis.comparisons[0].id='direction_5';assert.throws(()=>validateReading(valid,p.facts,'contract',p.context));
+  valid.comparisons[0].id='direction_5';assert.throws(()=>validateReading(valid,p.facts,'contract',p.context));
 });
 test('AI cannot omit other candidate comparisons or add a fabricated time',()=>{
   const p=prepareReading(body);
-  for(const mutate of [r=>r.synthesis.comparisons.pop(),r=>r.synthesis.comparisons[0].id='timing_99']) {
+  for(const mutate of [r=>r.comparisons.pop(),r=>r.comparisons[0].id='timing_99']) {
     const r=readingFixture(p);mutate(r);assert.throws(()=>validateReading(r,p.facts,'contract',p.context));
   }
 });

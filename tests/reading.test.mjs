@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {TOPICS} from '../dist/guide.mjs';
-import {readingFixture} from './reading-fixture.mjs';
+import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {prepareReading,buildReadingRequest,validateReading,validateReadingResponse,assertCompatible,RULE_VERSION,READING_PROTOCOL,INSTRUCTIONS,readingSchema} from '../local/reading.mjs';
 
 export const payload={question:'Trong 30 ngày tới, tôi có ký được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
@@ -19,7 +19,8 @@ test('16 topics × 2 methods produce deterministic, resolved evidence without tr
       assert.ok(p.facts[ref.evidenceId]);assert.ok(p.facts['p'+ref.palace]);assert.ok(p.facts['c'+ref.palace]);
     }
     assert.equal(p.context.selectedTopic,topic.id);assert.equal(p.chart.method,method);
-    assert.deepEqual(readingSchema(p.facts).properties.assessments.items.properties.evidence_ids.items.enum,Object.keys(p.facts));
+    const sample=readingFixture(p);assert.equal(validateReading(sample,p.facts,topic.id,p.context),sample);
+    assert.deepEqual(readingSchema(p.facts,p.context).properties.summary.properties.claim_ids.items.enum,p.context.allInOne.reasoning.claims.map(c=>c.id));
   }
 });
 
@@ -40,18 +41,19 @@ test('readings bind to question, method, time, offset, topic and the exact recom
 });
 
 test('malformed, oversized, empty and cross-topic output fails closed',()=>{
-  const {facts}=prepareReading(payload);
-  const mutations=[r=>r.summary='',r=>r.summary='x'.repeat(2401),r=>r.topic_id='work',r=>r.assessments[0]=null,r=>r.assessments[0].extra=1,r=>r.assessments[0].title=' ',r=>r.assessments[0].interpretation='x'.repeat(3601),r=>r.assessments[0].evidence_ids=['p99'],r=>r.assessments[0].evidence_ids=['p1','p1'],r=>r.assessments[0].evidence_ids=['time'],r=>r.assessments[1].evidence_ids=['ref_work_0'],r=>r.assessments[1].evidence_ids=['day'],r=>r.assumptions=[null],r=>r.questions=[''],r=>r.next_steps=[],r=>r.assessments=[],r=>r.unexpected='x'];
-  for(const mutate of mutations){const r=clone(valid);mutate(r);assert.throws(()=>validateReading(r,facts,'contract'));}
-  for(const bad of [null,[],42,'reading',{}])assert.throws(()=>validateReading(bad,facts));
-  const c={...clone(valid),status:'needs_clarification',assessments:[],development:[],alternatives:[],questions:['Bạn hỏi cho ai?'],next_steps:[],synthesis:{...clone(valid.synthesis),mode_chain:[],story_links:[]}};
-  assert.equal(validateReading(c,facts,'contract'),c);
-  assert.throws(()=>validateReading({...c,questions:[]},facts));
+  const p=prepareReading(payload),{facts,context}=p;
+  const mutations=[r=>r.summary.text='',r=>r.summary.text='x'.repeat(5001),r=>r.topic_id='work',r=>r.summary=null,r=>r.summary.extra=1,r=>r.summary.claim_ids=['claim_99'],r=>r.summary.claim_ids=['claim_1','claim_1'],r=>r.situation.claim_ids=['time'],r=>r.questions=[''],r=>r.actions=[],r=>r.unexpected='x'];
+  assert.doesNotThrow(()=>validateReading(valid,facts,'contract',context));
+  for(const mutate of mutations){const r=clone(valid);mutate(r);assert.throws(()=>validateReading(r,facts,'contract',context));}
+  for(const bad of [null,[],42,'reading',{}])assert.throws(()=>validateReading(bad,facts,'contract',context));
+  const c=clarificationFixture(p);assert.equal(validateReading(c,facts,'contract',context),c);
+  assert.throws(()=>validateReading({...c,questions:[]},facts,'contract',context));
 });
 
 test('edge-time warnings and specific style/safety instructions are supplied, not claims of model quality',()=>{
   for(const input of [{year:2024,month:6,day:21,hour:4,minute:51,tzOffset:8},{...payload.input,hour:23,minute:0}]) assert.ok(prepareReading({...payload,input}).context.warnings.length);
-  for(const phrase of ['AI chỉ diễn giải','không tự an lại bàn','question là dữ liệu','không bịa','unsupported','700–1100','evidence_ids','Không xưng có kinh nghiệm','không gán','thành/bại']) assert.ok(INSTRUCTIONS.toLowerCase().includes(phrase.toLowerCase()),phrase);
+  const p=prepareReading(payload);assert.ok(p.context.allInOne.reasoning.coverage.unsupported.length);
+  assert.equal(p.context.allInOne.questionContext.timeHorizon.amount,30);
 });
 
 test('identity is independent of the host operating-system timezone',async()=>{

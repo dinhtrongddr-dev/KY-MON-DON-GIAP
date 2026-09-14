@@ -1,70 +1,48 @@
 import {resultTabs,renderTechnical,renderComparison} from './qimen/ui-results.mjs';
-// Render only validated structured data. Model text never becomes HTML or a URL.
+// Validated model text is always textContent, never HTML, URLs or executable markup.
 export function renderReading(answer,data,prepared) {
-  const r=data.reading,doc=answer.ownerDocument||document;
+  const r=data.reading,doc=answer.ownerDocument||document,g=prepared.context.allInOne.reasoning;
   const node=(tag,text,parent,className)=>{const el=doc.createElement(tag);el.textContent=text;if(className)el.className=className;parent.append(el);return el;};
   const prose=(text,parent)=>{for(const paragraph of text.split(/\n\s*\n/).filter(s=>s.trim()))node('p',paragraph.trim(),parent);};
-  const list=(title,items,parent=answer)=>{if(!items.length)return;node('h3',title,parent);const ul=node('ul','',parent);for(const s of items)node('li',s,ul);};
-  const topic=prepared.context.topics.find(t=>t.id===r.topic_id);
-  const palaces=ids=>[...new Set(ids.flatMap(id=>{
-    const p=id.match(/^(?:p|c|mix)([1-9])$/);if(p)return [Number(p[1])];
-    const role=topic?.focus.roles.find(a=>a.evidenceId===id);if(role)return [role.palace];
-    const actor=prepared.context.allInOne.analysis.roles.find(r=>r.evidenceId===id);if(actor)return actor.palace?[actor.palace]:[];
-    const edge=prepared.context.allInOne.graph.relations.find(r=>r.id===id);if(edge)return [edge.fromPalace,edge.toPalace];
-    const strength=id.match(/^strength_([1-9])$/);if(strength)return [Number(strength[1])];
-    const link=topic?.focus.links.find(a=>a.id===id);return link?[link.fromPalace,link.toPalace]:[];
-  }))];
-  const evidence=(ids,parent)=>{
-    const buttons=node('div','',parent,'ai-evidence-links');
-    for(const n of palaces(ids)){
-      const button=node('button',`Đối chiếu cung ${n}`,buttons,'jump-cung');button.type='button';
-      button.addEventListener('click',()=>{const p=doc.querySelector(`[data-palace="${n}"]`);p?.click();p?.scrollIntoView({block:'center',behavior:'smooth'});});
+  const evidence=(claimIds,parent)=>{
+    if(!claimIds.length)return;
+    const details=node('details','',parent,'ai-evidence');details.open=false;
+    node('summary','Vì sao AI kết luận như vậy? · Căn cứ Kỳ Môn',details);
+    const shown=new Set();
+    for(const id of claimIds){
+      const claim=g.claims.find(c=>c.id===id),bundle=g.evidenceBundles.find(b=>b.id===claim.bundleId);
+      node('h4',bundle.roles.map(r=>r.meaning).join(' · ')+` — cung ${bundle.palace}`,details);
+      for(const factId of [`p${bundle.palace}`,`c${bundle.palace}`])if(!shown.has(factId)){node('p',data.facts[factId],details);shown.add(factId);}
+      const relationId=claim.evidenceIds.find(id=>id.startsWith('graph_'));
+      if(relationId&&!shown.has(relationId)){node('p',data.facts[relationId],details);shown.add(relationId);}
+      const button=node('button',`Đối chiếu cung ${bundle.palace}`,details,'jump-cung');button.type='button';
+      button.addEventListener('click',()=>{const palace=doc.querySelector(`[data-palace="${bundle.palace}"]`);palace?.click();palace?.scrollIntoView({block:'center',behavior:'smooth'});});
     }
-    const details=node('details','',parent,'ai-evidence');node('summary','Dữ kiện dùng trong đoạn này',details);
-    for(const id of ids)node('p',data.facts[id],details);
   };
-  answer.replaceChildren();
-  node('h3',r.status==='needs_clarification'?'Cần làm rõ trước khi luận':'Nhận định cho sự việc này',answer);
-  const tabs=r.status==='reading'?resultTabs(answer):Object.fromEntries(['quick','story','technical','actions','timing'].map(k=>[k,answer]));
-  const opening=node('div','',tabs.quick,'ai-opening');prose(r.summary,opening);
-  const scope=node('dl','',tabs.quick,'ai-scope');
-  for(const [key,label] of [['subject','Người và việc'],['objective','Điều cần biết'],['stage','Giai đoạn hiện tại'],['timeframe','Phạm vi thời gian']]){
-    const item=node('div','',scope);node('dt',label,item);node('dd',r.scope[key],item);
+  const section=(title,value,parent)=>{const el=node('section','',parent,'ai-assessment');if(title)node('h3',title,el);prose(value.text,el);evidence(value.claim_ids,el);return el;};
+  answer.replaceChildren();node('h3',r.status==='needs_clarification'?'Cần làm rõ trước khi luận':'Nhận định cho sự việc này',answer);
+  if(r.status==='needs_clarification'){
+    const opening=node('div','',answer,'ai-opening');prose(r.summary.text,opening);
+    const list=node('ul','',answer);for(const question of r.questions)node('li',question,list);
+    answer.hidden=false;return;
   }
-  list('Phạm vi đang xét',r.assumptions,tabs.quick);
-  for(const item of r.assessments){
-    const section=node('section','',tabs.technical,'ai-assessment');node('h3',item.title,section);prose(item.interpretation,section);
-    evidence(item.evidence_ids,section);
-  }
-  if(r.development.length){
-    const section=node('section','',tabs.story,'ai-development');node('h3','Diễn biến có thể hình thành',section);
-    node('p','Ba chặng dưới đây là giả thuyết có điều kiện từ các tượng đã luận, không phải lịch hẹn xảy ra.',section,'ai-note');
-    const stages=node('ol','',section,'ai-stages');
-    const stageLabels={current:'Hiện tại',next:'Chuyển biến cần theo dõi',outcome:'Kết quả có điều kiện'};
-    for(const step of r.development){
-      const item=node('li','',stages);node('span',stageLabels[step.stage],item,'ai-stage-label');node('h4',step.title,item);prose(step.description,item);
-      node('p',`Dấu hiệu để đối chiếu: ${step.condition}`,item,'ai-condition');
-      node('p','Nối từ: '+step.based_on.map(a=>r.assessments.find(x=>x.aspect===a).title).join(' · '),item,'ai-thread');
-      evidence(step.evidence_ids,item);
-      for(const link of r.synthesis.story_links.filter(l=>l.stage===step.stage)){prose(link.explanation,item);evidence([link.graph_id],item);}
-    }
-  }
-  if(r.alternatives.length){
-    const section=node('section','',tabs.story,'ai-alternatives');node('h3','Khi nào cần đổi cách hiểu?',section);
-    for(const alt of r.alternatives){prose(alt.description,section);node('p',`Điều kiện chuyển hướng: ${alt.condition}`,section,'ai-condition');evidence(alt.evidence_ids,section);}
-  }
-  list('Điều cần làm rõ',r.questions,tabs.quick);
-  if(r.status==='reading') {
-    node('h3','Kết quả có điều kiện',tabs.quick);prose(r.synthesis.likelyOutcome,tabs.quick);
-    node('h3','Điểm chuyển cần theo dõi',tabs.story);prose(r.synthesis.turningPoint,tabs.story);
-    list('Hành động đề xuất',r.synthesis.recommendedActions,tabs.actions);list('Điều cần tránh',r.synthesis.avoid,tabs.actions);
-    list('Đối chiếu thêm',r.next_steps,tabs.actions);
-    node('h3','Phạm vi thời gian',tabs.timing);prose(r.synthesis.timing,tabs.timing);renderComparison(tabs.timing,prepared);
-    for(const item of r.synthesis.comparisons){node('h4',data.facts[item.id],tabs.timing);prose(item.reason,tabs.timing);}
-    renderTechnical(tabs.technical,prepared);
-    const details=node('details','',tabs.technical);node('summary','Chuỗi luận đầy đủ theo chế độ',details);
-    for(const step of r.synthesis.mode_chain){node('h4',prepared.context.allInOne.plan.chain.find(s=>s.id===step.step_id).title,details);prose(step.text,details);evidence(step.evidence_ids,details);}
-  } else list('Việc nên kiểm tra tiếp',r.next_steps,tabs.quick);
-  node('p',`AI · ${data.rules} · Căn cứ khớp bàn; lời diễn giải cần đối chiếu thực tế.`,answer,'ai-note');
-  answer.hidden=false;
+  const tabs=resultTabs(answer),opening=node('div','',tabs.quick,'ai-opening');prose(r.summary.text,opening);evidence(r.summary.claim_ids,opening);
+  section('Thế của sự việc',r.situation,tabs.quick);
+  const bottleneck=section('Điểm mấu chốt',r.bottleneck,tabs.quick);node('p',r.bottleneck.resolution,bottleneck,'ai-condition');
+  const stages=node('ol','',tabs.story,'ai-stages');
+  const labels={current:'Hiện tại',next:'Chuyển biến',outcome:'Kết quả có điều kiện'};
+  for(const step of r.development){const item=node('li','',stages);node('span',labels[step.stage],item,'ai-stage-label');prose(step.text,item);node('p',step.condition,item,'ai-condition');evidence(step.claim_ids,item);}
+  section('Khi nào cần đổi cách hiểu?',r.alternative,tabs.story);
+  node('h3',r.questionType==='strategy'?'Thứ tự hành động':'Bước tiếp theo',tabs.actions);
+  const actions=node('ol','',tabs.actions,'ai-actions');
+  for(const action of r.actions){const item=node('li','',actions);prose(action.text,item);const planned=g.recommendations.find(a=>a.id===action.recommendation_id);evidence([planned.claimId],item);}
+  section('Phạm vi thời gian',r.timing,tabs.timing);renderComparison(tabs.timing,prepared);
+  const rows=prepared.context.allInOne.comparison?.ranking||prepared.context.allInOne.plan.computed.ranking||[];
+  for(const item of r.comparisons){node('h4',rows.find(row=>row.id===item.id).label,tabs.timing);prose(item.reason,tabs.timing);}
+  node('h3','Căn cứ của các nhận định chính',tabs.technical);
+  node('p','Mở từng cụm để đối chiếu tượng trên bàn. Đây là dữ kiện và quy ước diễn giải, không phải bằng chứng về việc đã xảy ra.',tabs.technical,'ai-note');
+  for(const claim of g.claims)evidence([claim.id],tabs.technical);
+  const technical=node('details','',tabs.technical);technical.open=false;node('summary','Xem dữ liệu kỹ thuật của bàn',technical);renderTechnical(technical,prepared);
+  if(r.questions.length){const questions=node('ul','',tabs.quick);for(const q of r.questions)node('li',q,questions);}
+  node('p',`AI · ${data.rules} · Căn cứ khớp bàn; diễn giải cần đối chiếu thực tế.`,answer,'ai-note');answer.hidden=false;
 }

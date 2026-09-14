@@ -13,10 +13,11 @@ const answer=readingFixture(prepareReading(payload));
 test('server recomputes chart, rejects missing question and invented evidence',()=>{
  const {facts,context}=prepareReading({...payload,facts:{day:'client-forged'}});
  assert.notEqual(facts.day,'client-forged');assert.equal(context.rules,RULE_VERSION);
- assert.equal(validateReading(answer,facts),answer);
+ assert.equal(validateReading(answer,facts,payload.topic,context),answer);
  assert.throws(()=>prepareReading({...payload,question:''}));
  assert.throws(()=>prepareReading({...payload,method:'invented'}));
- assert.throws(()=>validateReading({...answer,assessments:[{...answer.assessments[0],evidence_ids:['p99']}]},facts));
+ const p=prepareReading(payload);assert.equal(validateReading(answer,p.facts,payload.topic,p.context),answer);
+ assert.throws(()=>validateReading({...answer,summary:{...answer.summary,claim_ids:['claim_99']}},p.facts,payload.topic,p.context));
 });
 test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  const fetch=(url,options={})=>new Promise((resolve,reject)=>{
@@ -37,7 +38,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
  const prepared=await buildReadingRequest(payload);
  const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
- const data=await v2.json();assert.equal(data.model,MODEL);assert.equal(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
+ const data=await v2.json();assert.equal(data.model,MODEL);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
  for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
  }
@@ -76,13 +77,13 @@ function mockCodex(auth='chatgpt',tool=false){
 }
 test('Codex JSONL handshake and structured answer, without a live model call',async()=>{
  const {context,facts}=prepareReading(payload);const mock=mockCodex();
- const result=await runCodex(INSTRUCTIONS,context,readingSchema(facts),mock);assert.deepEqual(result,answer);
+ const result=await runCodex(INSTRUCTIONS,context,readingSchema(facts,context),mock);assert.deepEqual(result,answer);
  assert.deepEqual(mock.seen.filter(m=>m.method).map(m=>m.method),['initialize','initialized','account/read','thread/start','turn/start']);
 });
 test('Codex bridge refuses API-key authentication and unexpected tool execution',async()=>{
  const {context,facts}=prepareReading(payload);
- await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('apiKey')),/đăng nhập đúng tài khoản/);
- await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts),mockCodex('chatgpt',true)),/công cụ/);
+ await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts,context),mockCodex('apiKey')),/đăng nhập đúng tài khoản/);
+ await assert.rejects(runCodex(INSTRUCTIONS,context,readingSchema(facts,context),mockCodex('chatgpt',true)),/công cụ/);
 });
 test('pre-aborted AI invocation never launches a process',async()=>{
  const controller=new AbortController();controller.abort();

@@ -8,7 +8,7 @@ import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 globalThis.Solar=createRequire(import.meta.url)('../dist/vendor/lunar.js').Solar;
 const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 class Element {
-  constructor(){this.listeners={};this.hidden=true;this.disabled=false;this.value='test-token';this.textContent='';this.children=[];}
+  constructor(tag='div'){this.tag=tag;this.listeners={};this.hidden=false;this.disabled=false;this.value='test-token';this.textContent='';this.children=[];}
   addEventListener(event,fn){(this.listeners[event]??=[]).push(fn);}
   fire(event){return Promise.all((this.listeners[event]??[]).map(fn=>fn()));}
   append(el){this.children.push(el);}
@@ -19,7 +19,8 @@ class Element {
 function setup(t,fetcher){
   const original={document:globalThis.document,fetch:globalThis.fetch};
   const ids=Object.fromEntries(['local-token','ai-status','ai-answer','ai-read','ai-cancel','local-check','chart-form'].map(id=>[id,new Element()]));
-  const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=()=>new Element();
+  ids['ai-answer'].hidden=true;ids['ai-cancel'].hidden=true;
+  const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
   globalThis.document=doc;globalThis.fetch=fetcher;
   t.after(()=>Object.assign(globalThis,original));
   initLocalAi({prepare:()=>structuredClone(payload)});
@@ -61,7 +62,7 @@ test('non-JSON upstream errors are explained, not rendered or thrown uncaught',a
 
 test('valid clarification renders text safely; no model HTML is interpreted',async t=>{
   const p=await buildReadingRequest(payload);
-  const reading={...clarificationFixture(p.context.allInOne.classification.mode),summary:'<script>alert(1)</script>'};
+  const reading={...clarificationFixture(p),summary:{text:'<script>alert(1)</script>',claim_ids:[]}};
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
@@ -75,7 +76,7 @@ test('deep reading renders all three linked stages and alternatives without trun
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
   const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
-  for(const part of [...reading.assessments.map(a=>a.interpretation),...reading.development.map(s=>s.description),reading.alternatives[0].description])assert.ok(all.some(n=>n.textContent===part));
+  for(const part of [reading.situation.text,...reading.development.map(s=>s.text),reading.alternative.text])assert.ok(all.some(n=>n.textContent===part));
   assert.equal(all.filter(n=>n.className==='ai-stage-label').length,3);
   const button=all.find(n=>n.className==='jump-cung');await button.fire('click');assert.match(selected,/data-palace/);
 });
@@ -90,10 +91,21 @@ test('five result tabs preserve full text, support keyboard navigation and show 
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');
   const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
+  assert.equal(ids['ai-answer'].hidden,false);
   const buttons=all.filter(n=>n.attributes?.role==='tab'),panels=all.filter(n=>n.attributes?.role==='tabpanel');
   assert.equal(buttons.length,5);assert.equal(panels.filter(n=>!n.hidden).length,1);
   await buttons[1].fire('click');assert.equal(panels[1].hidden,false);assert.equal(panels[0].hidden,true);
   let prevented=false;buttons[1].listeners.keydown[0]({key:'End',preventDefault(){prevented=true;}});
   assert.equal(prevented,true);assert.equal(buttons[4].focused,true);assert.equal(panels[4].hidden,false);
   assert.equal(panels.filter(n=>!n.hidden).length,1);
+});
+
+test('evidence is collapsed and every displayed basis comes from the verified planner',async t=>{
+  const p=await buildReadingRequest(payload),reading=readingFixture(p);
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
+  await ids['ai-read'].fire('click');
+  const all=[];const walk=e=>{all.push(e);e.children.forEach(walk);};walk(ids['ai-answer']);
+  const evidence=all.filter(n=>n.tag==='details'&&n.className==='ai-evidence');
+  assert.ok(evidence.length>=3);assert.ok(evidence.every(n=>n.open===false));
+  assert.ok(all.some(n=>n.textContent===p.facts[p.context.allInOne.reasoning.claims[0].evidenceIds[0]]));
 });

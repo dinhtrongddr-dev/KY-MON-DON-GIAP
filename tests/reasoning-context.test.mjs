@@ -33,3 +33,9 @@ test('domain roles differ without inventing a known counterparty palace',()=>{
   assert.notEqual(lr.semanticRole,br.semanticRole);
   assert.equal(business.analysis.roles.find(r=>r.id==='customer').palace,null);
 });
+test('explicit business mode still distinguishes a request for strategy from a prediction',()=>{
+  const strategy=prepareReading({...base,mode:'business',question:'Tôi phải làm gì để giành hợp đồng?'});
+  const prediction=prepareReading({...base,mode:'business',question:'Tôi có nhận được hợp đồng không?'});
+  assert.equal(strategy.context.allInOne.questionContext.questionType,'strategy');
+  assert.equal(prediction.context.allInOne.questionContext.questionType,'prediction');
+});

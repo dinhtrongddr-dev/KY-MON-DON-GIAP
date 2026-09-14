@@ -32,10 +32,9 @@ test('four modes bind different plans/prompts to the same board and produce vali
 });
 test('wrong mode, reordered steps, unrelated evidence and invented graph links fail closed',()=>{
   const p=prepareReading({...body,mode:'business'});
-  for(const mutate of [r=>r.synthesis.mode='strategy',r=>r.synthesis.mode_chain.reverse(),r=>r.synthesis.mode_chain.pop(),
-    r=>r.synthesis.story_links[0].graph_id='graph_customer_competitor',r=>r.synthesis.story_links=[],
-    r=>r.synthesis.mode_chain[0].evidence_ids=[r.synthesis.mode_chain[0].step_id,'time'],
-    r=>r.synthesis.confidence=99]) {
+  for(const mutate of [r=>r.mode='strategy',r=>r.development.reverse(),r=>r.development.pop(),
+    r=>r.development[0].interaction_ids=['graph_customer_competitor'],r=>r.summary.claim_ids=['time'],
+    r=>r.confidence=99]) {
     const r=readingFixture(p);mutate(r);assert.throws(()=>validateReading(r,p.facts,'contract',p.context));
   }
 });

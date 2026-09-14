@@ -63,3 +63,11 @@ test('directional graph analysis changes agency and required checks instead of t
   assert.equal(pressed.interactions.find(i=>i.edgeId===edge.id).mechanism,'external_condition');
   assert.notDeepEqual(fed.likelyScenario.agency,pressed.likelyScenario.agency);
 });
+test('explicit business and negotiation modes choose different operations before any AI prompt',()=>{
+  const business=prepareReading({...body,mode:'business'}).context.allInOne.reasoning;
+  const negotiation=prepareReading({...body,mode:'negotiation'}).context.allInOne.reasoning;
+  assert.ok(business.likelyScenario.modeDecision,'mode engine decisions must reach the scenario');
+  assert.notEqual(business.likelyScenario.modeDecision.operation,negotiation.likelyScenario.modeDecision.operation);
+  assert.ok(business.likelyScenario.modeDecision.inputs.closing);
+  assert.ok(negotiation.likelyScenario.modeDecision.inputs.concessions);
+});
