@@ -16,6 +16,29 @@ test('relevance audit blocks repeated passages and invented numerical certainty'
     const r=readingFixture(p);mutate(r);assert.throws(()=>validateReading(r,p.facts,'general',p.context));
   }
 });
+
+test('certainty audit distinguishes explicit cautions from promised outcomes',()=>{
+  const p=prepareReading(body);
+  for(const caution of [
+    'Không nên diễn giải sự im lặng, một cuộc trao đổi hay lời hẹn phản hồi thành dấu hiệu chắc chắn sẽ nhận hợp đồng.',
+    'Chưa đủ căn cứ để khẳng định chắc chắn sẽ ký được hợp đồng.',
+    'Không thể khẳng định chắc chắn sẽ thành công.'
+  ]){
+    const r=readingFixture(p);r.alternative.text+=' '+caution;
+    assert.doesNotThrow(()=>validateReading(r,p.facts,'general',p.context),caution);
+  }
+  for(const promise of [
+    'Công ty chắc chắn sẽ nhận hợp đồng.',
+    'Không cần thêm điều kiện, công ty chắc chắn sẽ nhận hợp đồng.',
+    'Không phải không chắc chắn sẽ nhận hợp đồng.',
+    'Không nên diễn giải sự im lặng thành dấu hiệu. Công ty chắc chắn sẽ nhận hợp đồng.',
+    'Không thể khẳng định chắc chắn sẽ thắng; tuy nhiên công ty chắc chắn sẽ nhận hợp đồng.',
+    'Không thể khẳng định chắc chắn sẽ thắng, nhưng công ty chắc chắn sẽ nhận hợp đồng.'
+  ]){
+    const r=readingFixture(p);r.alternative.text+=' '+promise;
+    assert.throws(()=>validateReading(r,p.facts,'general',p.context),/chắc chắn/,promise);
+  }
+});
 test('every rendered condition, resolution, comparison and clarification is checked for invented claims',()=>{
   for(const mode of ['auto','direction']) {
     const p=prepareReading({...body,mode});
@@ -36,14 +59,15 @@ test('every rendered condition, resolution, comparison and clarification is chec
   }
 });
 test('writer receives a compact planner and one repair preserves its facts, identity and cancellation budget',async()=>{
-  const p=prepareReading(body),seen=[];
+  const p=prepareReading(body),seen=[];let firstReading;
   const result=await interpretReading(p,{runner:async(_instructions,context,_schema,{signal})=>{
     seen.push(context);assert.equal(signal.aborted,false);
-    const r=readingFixture(p);if(seen.length===1)r.summary.claim_ids=['invented'];return r;
+    const r=readingFixture(p);if(seen.length===1){r.summary.claim_ids=['invented'];firstReading=structuredClone(r);}return r;
   }});
   assert.equal(result.status,'reading');assert.equal(seen.length,2);
   assert.ok(seen[0].readingGraph);assert.equal(seen[0].allInOne,undefined);assert.equal(seen[0].board,undefined);
   assert.deepEqual(seen[0].readingGraph,seen[1].readingGraph);assert.equal(seen[0].question,p.context.question);
+  assert.deepEqual(seen[1].revision.previousReading,firstReading,'the repair needs the rejected reading to correct it without losing valid sections');
   assert.ok(JSON.stringify(seen[0]).length<JSON.stringify(p.context).length/2);
 });
 test('depth changes reading identity while preserving the board; clarification stays short',async()=>{

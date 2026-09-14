@@ -13,9 +13,17 @@ function repeated(a,b){
   const grams=w=>new Set(w.slice(0,-3).map((_,i)=>w.slice(i,i+4).join(' '))),gx=grams(x),gy=grams(y);
   return [...gx].filter(g=>gy.has(g)).length/Math.min(gx.size,gy.size)>0.82;
 }
+function negatesCertainty(prefix) {
+  // A caution about certainty is not a promise; stop its scope at a new clause.
+  const clause=prefix.split(/[.!?;]|\b(?:nhung|tuy nhien|song)\b/).at(-1);
+  return /\bkhong (?:the|nen|duoc) (?:khang dinh|ket luan|noi)(?: rang)?\s*$/.test(clause)||
+    /\b(?:chua|khong) (?:co )?du can cu de (?:khang dinh|ket luan|noi)(?: rang)?\s*$/.test(clause)||
+    /\bkhong (?:nen|duoc|the) (?:dien giai|coi|xem) [^.!?;]{1,160} (?:la|thanh)(?: dau hieu)?\s*$/.test(clause);
+}
 function auditClaims(passages,context,rows=[]) {
   const prose=passages.join(' '),normalized=normalizeQuestion(prose),source=normalizeQuestion(context.question);
-  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)|\b(chac chan (se|thang|trung|ky duoc)|dam bao (thang|loi nhuan))\b/.test(normalized))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
+  const certainty=[...normalized.matchAll(/\b(chac chan (se|thang|trung|ky duoc)|dam bao (thang|loi nhuan))\b/g)];
+  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)/.test(normalized)||certainty.some(m=>!negatesCertainty(normalized.slice(0,m.index))))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
   for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g))if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
   const allowedDates=new Set([context.question,...rows.map(x=>x.label)].join(' ').match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[]);
   for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
