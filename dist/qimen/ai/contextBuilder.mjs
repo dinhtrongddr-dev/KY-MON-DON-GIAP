@@ -6,10 +6,12 @@ import {analyzeMode} from '../modes/index.mjs';
 import {classifyQuestion,classifyTopic} from './classifier.mjs';
 import {normalizeAction} from '../modes/actionRules.mjs';
 import {compareTimes} from './timingComparison.mjs';
+import {buildQuestionContext} from './questionContext.mjs';
 export function buildAnalysisContext(chart,body,facts) {
-  const classification=classifyQuestion(body.question,body.mode??'auto'),actors=normalizeActors(body.actors??{});
+  const questionContext=buildQuestionContext(body.question,{mode:body.mode??'auto',topic:body.topic,depth:body.depth??'standard'});
+  const classification=questionContext.classification,actors=normalizeActors(body.actors??{});
   const resolvedTopic=body.topic==='general'?classifyTopic(body.question):body.topic;
-  const board=toQimenBoard(chart),analysis=analyzeBoard(board,{topic:resolvedTopic,actors});
+  const board=toQimenBoard(chart),analysis=analyzeBoard(board,{topic:resolvedTopic,actors,questionContext});
   const action=normalizeAction(['timing','direction'].includes(classification.mode)?body.action??'general':'general');
   const plan=analyzeMode(classification.mode,analysis,{action});
   const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors}):null;
@@ -24,7 +26,7 @@ export function buildAnalysisContext(chart,body,facts) {
   for(const row of comparison?.ranking||plan.computed.ranking||[])facts[row.id]=`${row.label}: nhóm ${row.rank}, ${row.blockers.length} điều kiện cản; ${row.fit} dấu hiệu hợp mục tiêu theo bộ lọc app. ${row.blockers.join('; ')}. ${row.supports.join('; ')}. ${row.note} Không phải xác suất thành công.`;
   const relevantPalaces=classification.mode==='direction'?analysis.palaces.map(p=>p.number):[...new Set(graph.nodes.map(n=>n.palace).filter(Boolean))];
   const known=graph.nodes.filter(n=>n.status!=='unresolved').length;
-  return {board,analysis,plan,graph,classification,actors,resolvedTopic,relevantPalaces,action,comparison,
+  return {board,analysis,plan,graph,classification,actors,resolvedTopic,relevantPalaces,action,comparison,questionContext,
     coverage:{resolvedActors:known,totalActors:graph.nodes.length,confidence:null,
       meaning:'Độ đủ đại diện chỉ mô tả dữ liệu; chưa có xác suất dự báo được hiệu chuẩn.'}};
 }

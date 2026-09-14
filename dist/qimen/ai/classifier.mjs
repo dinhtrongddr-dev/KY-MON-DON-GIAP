@@ -18,8 +18,8 @@ export function classifyQuestion(question,requested='auto') {
   return {requested,mode,reason:requested==='auto'?(matches[0]?.[2]||'Chưa rõ ý định; tạm đọc diễn biến, bạn có thể đổi chế độ.'):'Theo chế độ bạn chọn.',
     alternatives:[...new Set(matches.map(m=>m[0]))].filter(m=>m!==mode),fallback:!matches.length&&requested==='auto'};
 }
-const DOMAINS=[['health',/suc khoe|benh|dieu tri/],['investment',/dau tu|co phieu|chung khoan|tien ao/],['dispute',/kien|tranh chap|toa an/],
+const DOMAINS=[['health',/\b(suc khoe|benh|dieu tri|dau nguc|kho tho)\b/],['investment',/\b(dau tu|co phieu|chung khoan|tien ao|coin)\b/],['dispute',/\b(khoi kien|kien tung|tranh chap|toa an)\b/],
   ['contract',/bao gia|hop dong|dau thau|du an/],['debt',/doi no|tra no|thu hoi no/],['study',/hoc|thi cu|chung chi/],['love',/tinh yeu|nguoi yeu|hen ho/],
-  ['family',/gia dinh|cha me|vo chong|con cai/],['property',/nha dat|bat dong san|mua nha/],['lost',/mat do|tim do|that lac/],
+  ['family',/gia dinh|cha me|vo chong|con cai/],['property',/nha dat|bat dong san|mua nha/],['lost',/mat do|tim do|tim nguoi|that lac/],
   ['travel',/di xa|chuyen di|du lich/],['launch',/khai truong|ra mat/],['money',/tien|loi nhuan|kinh doanh/],['social',/ban be|quan he xa hoi/]];
 export function classifyTopic(question) {return DOMAINS.find(([,r])=>r.test(normalizeQuestion(question)))?.[0]||'work';}

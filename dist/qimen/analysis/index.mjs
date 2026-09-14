@@ -4,9 +4,9 @@ import {palaceConditions,specialPatterns} from './specialPatterns.mjs';
 import {seasonalStrength} from './strength.mjs';
 import {palaceRelationships,elementLink} from './relationships.mjs';
 import {usefulGods,normalizeActors} from './usefulGod.mjs';
-export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.pillars.day}={}) {
+export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.pillars.day,questionContext=null}={}) {
   validateBoard(board);
-  const roles=usefulGods(board,topic,normalizeActors(actors),selfPillar);
+  const roles=usefulGods(board,topic,normalizeActors(actors),selfPillar,questionContext);
   const palaces=board.palaces.filter(p=>p.number!==5).map(p=>({...p,conditions:palaceConditions(p),strength:seasonalStrength(board,p),
     starDoor:elementLink(p.star.element,p.door.element),doorPalace:elementLink(p.door.element,p.element),
     stemPairs:p.heavenStems.map((s,i)=>({heaven:s,earth:p.earthStem,carried:i>0,relation:elementLink(s.element,p.earthStem.element),
