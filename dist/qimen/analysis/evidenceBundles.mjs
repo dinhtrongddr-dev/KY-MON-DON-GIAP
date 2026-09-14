@@ -1,0 +1,29 @@
+import {resolveContradictions} from './contradictions.mjs';
+import {domainSemantics} from '../modes/semantics.mjs';
+const symbol=s=>s?{id:s.id,han:s.han,vi:s.vi,element:s.element}:null;
+export function buildEvidenceBundles(analysis,context,graph) {
+  const relevant=new Set([...domainSemantics(context.domain).roles,'self','event',...analysis.roles.filter(r=>r.id.startsWith('topic_')).map(r=>r.id)]);
+  const bundles=[];
+  for(const p of analysis.palaces) {
+    const roles=analysis.roles.filter(r=>r.palace===p.number&&relevant.has(r.id));if(!roles.length)continue;
+    const actorIds=roles.map(r=>r.id),states=[],layers=analysis.patterns.layers;
+    const add=(code,ids=actorIds,detail=null)=>states.push({code,actorIds:ids,detail});
+    if(p.voided)add('void');if(p.horse)add('horse');if(p.conditions.doorPressure)add('door_pressure');
+    if(layers.starFanYin||layers.doorFanYin)add('fan_yin',actorIds,{stars:layers.starFanYin,doors:layers.doorFanYin});
+    if(layers.starFuYin||layers.doorFuYin)add('fu_yin',actorIds,{stars:layers.starFuYin,doors:layers.doorFuYin});
+    for(const r of roles.filter(r=>r.stem)) {
+      const own=p.stemPairs.find(s=>s.heaven.han===r.stem);
+      if(own?.punishment)add('punishment',[r.id],r.stem);if(own?.wonderTomb)add('tomb',[r.id],r.stem);
+    }
+    const edges=graph.relations.filter(e=>actorIds.includes(e.from)||actorIds.includes(e.to));
+    const special=analysis.patterns.matches.map((m,i)=>({...m,evidenceId:`special_${i}`})).filter(m=>m.palace===p.number);
+    const b={id:`bundle_${p.number}`,palace:p.number,element:p.element,actorIds,
+      roles:roles.map(r=>({id:r.id,meaning:r.semanticRole,status:r.status,stem:r.stem||null})),
+      symbols:{door:symbol(p.door),star:symbol(p.star),deity:symbol(p.spirit),heavenStems:p.heavenStems.map(s=>({han:s.han,vi:s.vi,element:s.element})),earthStem:{han:p.earthStem.han,vi:p.earthStem.vi,element:p.earthStem.element}},
+      strength:p.strength.star,states,specialPatterns:special.map(m=>({name:m.name,carried:m.carried,evidenceId:m.evidenceId})),
+      structuralRelations:{starDoor:p.starDoor,doorPalace:p.doorPalace,stemPairs:p.stemPairs},
+      relationshipIds:edges.map(e=>e.id),evidenceIds:[`p${p.number}`,`c${p.number}`,`mix${p.number}`,`strength_${p.number}`,...roles.map(r=>r.evidenceId),...(states.some(s=>['fan_yin','fu_yin'].includes(s.code))?['patterns']:[]),...special.map(m=>m.evidenceId)]};
+    b.conflicts=resolveContradictions(b,context);bundles.push(b);
+  }
+  return bundles;
+}
