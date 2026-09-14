@@ -1,8 +1,9 @@
 import {resolveContradictions} from './contradictions.mjs';
 import {domainSemantics} from '../modes/semantics.mjs';
 const symbol=s=>s?{id:s.id,han:s.han,vi:s.vi,element:s.element}:null;
-export function buildEvidenceBundles(analysis,context,graph) {
-  const relevant=new Set([...domainSemantics(context.domain).roles,'self','event',...analysis.roles.filter(r=>r.id.startsWith('topic_')).map(r=>r.id)]);
+export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
+  const relevant=new Set([...domainSemantics(context.domain).roles,...(modePlan.roleIds||[]),'self','event',
+    ...analysis.roles.filter(r=>r.id.startsWith('topic_')||r.status==='user_supplied').map(r=>r.id)]);
   const bundles=[];
   for(const p of analysis.palaces) {
     const roles=analysis.roles.filter(r=>r.palace===p.number&&relevant.has(r.id));if(!roles.length)continue;

@@ -27,11 +27,11 @@ buildQuestionContext(question, {mode, topic, depth}) // structured source-aware 
 domainSemantics(domain) // roles, implications, vocabulary and cautions
 // prepareReading(body).context.allInOne.questionContext
 ```
-- [ ] Add a failing test: same board contract prediction/strategy yields questionType prediction/strategy, same domain business, same board.
-- [ ] Add literal cases for duration 1 month, explicit company subject, find-person vs romance Khai semantics, unknown customer, and user facts retained verbatim.
-- [ ] Run `node --test tests/reasoning-context.test.mjs` and observe missing-context assertions.
-- [ ] Implement structured extraction, domain/intent separation, source provenance and resolver integration; run those tests plus the 480-board test.
-- [ ] Commit context and registry slice.
+- [x] Add a failing test: same board contract prediction/strategy yields questionType prediction/strategy, same domain business, same board.
+- [x] Add literal cases for duration 1 month, explicit company subject, find-person vs romance Khai semantics, unknown customer, and user facts retained verbatim.
+- [x] Run `node --test tests/reasoning-context.test.mjs` and observe missing-context assertions.
+- [x] Implement structured extraction, domain/intent separation, source provenance and resolver integration; run those tests plus the 480-board test.
+- [x] Commit context and registry slice.
 
 ### Task 2: Evidence bundles and deterministic scenario
 
@@ -46,10 +46,10 @@ translateToRealWorld(bundle, context)
 buildScenario(selected, context, graph)
 buildRecommendations(scenario, selected, context)
 ```
-- [ ] Test that Khai+Void has a conditional opportunity and realization blocker; removing Void removes that blocker.
-- [ ] Test four symbols yield one bundle; own-stem tomb does not leak from carried stem; unresolved actors have no fabricated edges; rank deduplicates same-palace evidence.
-- [ ] Test prediction vs strategy changes scenario objective and recommendation ordering, not only prompt text.
-- [ ] Implement pure modules and expose `allInOne.reasoning` with claims and recommendation IDs; verify new tests and regression; commit.
+- [x] Test that Khai+Void has a conditional opportunity and realization blocker; removing Void removes that blocker.
+- [x] Test four symbols yield one bundle; own-stem tomb does not leak from carried stem; unresolved actors have no fabricated edges; rank deduplicates same-palace evidence.
+- [x] Test prediction vs strategy changes scenario objective and recommendation ordering, not only prompt text.
+- [x] Implement pure modules and expose `allInOne.reasoning` with claims and recommendation IDs; verify new tests and regression; commit.
 
 ### Task 3: Writer, contract, audit and UI
 
@@ -63,19 +63,27 @@ validateReading(result, facts, topic, context)
 // result: status/topic_id/mode/questionType/summary/situation/development/bottleneck/actions/alternative/timing/comparisons/questions
 // substantive prose nodes: text + claim_ids; action nodes: text + recommendation_id
 ```
-- [ ] Test fabricated claim/action/candidate IDs fail, omitted dominant conflict fails, repeated paragraph fails, prediction template cannot satisfy strategy, and short clarification succeeds.
-- [ ] Test invalid writer response triggers exactly one repair with unchanged planner; abort covers repair and stale results.
-- [ ] Implement compact request, strict schema and audit, explicit depth input bound into request identity, safe DOM renderer with collapsed evidence; keep candidate comparisons.
-- [ ] Migrate old tests from retired schema to equivalent v5 invariants, keeping core/security/cancellation tests; verify and commit.
+- [x] Test fabricated claim/action/candidate IDs fail, omitted dominant conflict fails, repeated paragraph fails, prediction template cannot satisfy strategy, and short clarification succeeds.
+- [x] Test invalid writer response triggers exactly one repair with unchanged planner; abort covers repair and stale results.
+- [x] Implement compact request, strict schema and audit, explicit depth input bound into request identity, safe DOM renderer with collapsed evidence; keep candidate comparisons.
+- [x] Migrate old tests from retired schema to equivalent v5 invariants, keeping core/security/cancellation tests; verify and commit.
 
 ### Task 4: Release verification and publication
 
 Files: update QIMEN-ARCHITECTURE.md, AI-EVAL.md, HUONG-DAN-LOCAL.md, audit.html and package manifest script as needed; regenerate downloads/ky-mon-ai.zip.
-- [ ] Run `node --test tests/*.test.mjs`, `node scripts/verify-assets.mjs`, `git diff --check`.
-- [ ] Compare core paths to v15; require zero diff. Inspect zipped module coverage and run bridge tests from extracted archive.
-- [ ] Document limitations of heuristic audits and unexecuted live-model evaluation; update installation instructions and rules labels.
+- [x] Run `node --test tests/*.test.mjs`, `node scripts/verify-assets.mjs`, `git diff --check`.
+- [x] Compare core paths to v15; require zero diff. Inspect zipped module coverage and run bridge tests from extracted archive.
+- [x] Document limitations of heuristic audits and unexecuted live-model evaluation; update installation instructions and rules labels.
 - [ ] Commit and push exact source to existing Site branch, package validated dist, save/deploy through Sites, wait for terminal status, report version and bridge update requirement.
 
 ## Self review
 
 All user requirements map to the four tasks above. Domain registry is finite and extensible, unknown facts are retained as unknown; no claim of universal traditional consensus. Timing and direction reuse their existing comparison engine. Work occurs in the owner worktree; no delegated implementation or additional approval round.
+
+## Release verification · 2026-09-14
+
+- 76/76 Node tests passed in the worktree and again from the extracted 84-file bridge archive.
+- Static module syntax, NFC, duplicate IDs and 116 local references passed.
+- Zero diff against v15 in the core, calendar vendor, App Server client and HTTP server.
+- Read-only review findings fixed with failing-then-passing regression cases: all rendered prose audited; supplied actors retained; no dangling writer edges; goal-specific dominant conflict; action retains that exact conflict resolution.
+- Live-model prose evaluation and actual browser rendering have not been performed. Production completion is recorded by the native Site deployment status, not inferred from these tests.

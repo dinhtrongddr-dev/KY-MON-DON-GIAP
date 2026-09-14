@@ -26,7 +26,7 @@ export function initLocalAi({prepare}) {
  read.addEventListener('click',async()=>{
    cancelWork();let body;try{body=prepare();if(!body.question)throw new Error('Hãy nhập sự việc cần hỏi trước khi luận.');}catch(e){status.textContent=e.message;return;}
    const v=++version;active=new AbortController();const controller=active;
-   const timeout=setTimeout(()=>controller.abort(),190000);read.disabled=true;cancel.hidden=false;status.textContent='AI đang phối hợp các tượng và kiểm tra diễn biến theo câu hỏi. Bài chuyên sâu có thể mất vài phút; bạn có thể Hủy.';
+   const timeout=setTimeout(()=>controller.abort(),190000);read.disabled=true;cancel.hidden=false;status.textContent='AI đang ghép các căn cứ thành diễn biến cho sự việc đang hỏi. Bạn có thể Hủy trong lúc chờ.';
    try{
      const prepared=await buildReadingRequest(body);
      if(v!==version)return;

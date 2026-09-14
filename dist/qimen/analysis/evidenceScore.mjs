@@ -13,6 +13,9 @@ export function scoreEvidence(bundles,context,graph) {
     const score=Number((questionRelevance*actorRelevance*structuralStrength*corroboration*stateModifier).toFixed(3));
     return {...b,relevance:{score,questionRelevance,actorRelevance,structuralStrength,corroboration,stateModifier,meaning:'Mức ưu tiên giải thích; điều kiện cản tăng nhu cầu xem xét, không tăng xác suất tốt.'}};
   }).sort((a,b)=>b.relevance.score-a.relevance.score||a.palace-b.palace);
-  const primary=ranked.filter(b=>b.actorIds.some(id=>['self','event'].includes(id)));
-  return [...primary,...ranked.filter(b=>!primary.includes(b))].slice(0,context.depth==='deep'?6:4);
+  const primary=ranked.filter(b=>b.actorIds.some(id=>['self','event'].includes(id))||b.roles.some(r=>r.status==='user_supplied'));
+  // At most five distinct required palaces: self, event and three supplied actors.
+  // Leave a place for the goal mechanism without dropping a known counterpart.
+  const limit=context.depth==='deep'?6:Math.min(6,Math.max(4,primary.length+1));
+  return [...primary,...ranked.filter(b=>!primary.includes(b))].slice(0,limit);
 }

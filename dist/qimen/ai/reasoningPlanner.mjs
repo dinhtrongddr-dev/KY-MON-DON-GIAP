@@ -6,7 +6,7 @@ import {buildRecommendations} from './recommendations.mjs';
 import {freezeData} from '../schemas/board.mjs';
 import {analyzeInteractions} from '../analysis/interactions.mjs';
 export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,graph) {
-  const candidates=buildEvidenceBundles(analysis,questionContext,graph);
+  const candidates=buildEvidenceBundles(analysis,questionContext,graph,modePlan);
   const selected=scoreEvidence(candidates,questionContext,graph).map(b=>({...b,translation:translateToRealWorld(b,questionContext)}));
   const interactions=analyzeInteractions(graph,selected);
   const likelyScenario=buildScenario(selected,questionContext,graph,interactions,modePlan);

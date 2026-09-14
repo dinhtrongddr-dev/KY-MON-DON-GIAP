@@ -1,3 +1,5 @@
-// Public synthesis contract; execution/credentials remain exclusively in the bridge.
+// Public writer contract; execution and credentials remain in the bridge.
 export {synthesisInstructions} from './prompts.mjs';
-export {synthesisSchema,validateSynthesis} from '../schemas/result.mjs';
+export {readingSchema} from '../schemas/reading.mjs';
+export {validateReading,ReadingValidationError} from './readingAudit.mjs';
+export {buildWriterContext} from './writerContext.mjs';

@@ -16,6 +16,25 @@ test('relevance audit blocks repeated passages and invented numerical certainty'
     const r=readingFixture(p);mutate(r);assert.throws(()=>validateReading(r,p.facts,'general',p.context));
   }
 });
+test('every rendered condition, resolution, comparison and clarification is checked for invented claims',()=>{
+  for(const mode of ['auto','direction']) {
+    const p=prepareReading({...body,mode});
+    assert.doesNotThrow(()=>validateReading(readingFixture(p),p.facts,'general',p.context));
+    const slots=[r=>r.development[1],r=>r.bottleneck,...(mode==='direction'?[r=>r.comparisons[0]]:[])];
+    const keys=['condition','resolution',...(mode==='direction'?['reason']:[])];
+    for(const [i,slot] of slots.entries())for(const claim of ['Khách sẽ thanh toán 850 triệu đồng sau khi các bên xác nhận đầy đủ điều kiện.',
+      'Hai bên sẽ ký kết vào 30/12/2027 sau khi thống nhất các đầu mục.',
+      'Khả năng chốt thành công có xác suất 99% khi điều kiện được đáp ứng.']) {
+      const r=readingFixture(p);slot(r)[keys[i]]=claim;
+      assert.throws(()=>validateReading(r,p.facts,'general',p.context),undefined,`${mode}: ${keys[i]} must be audited`);
+    }
+    for(const field of ['summary','questions']) {
+      const r=clarificationFixture(p),claim='Khách sẽ trả 850 triệu đồng; bạn đang hỏi cho ai?';
+      if(field==='summary')r.summary.text=claim;else r.questions[0]=claim;
+      assert.throws(()=>validateReading(r,p.facts,'general',p.context));
+    }
+  }
+});
 test('writer receives a compact planner and one repair preserves its facts, identity and cancellation budget',async()=>{
   const p=prepareReading(body),seen=[];
   const result=await interpretReading(p,{runner:async(_instructions,context,_schema,{signal})=>{

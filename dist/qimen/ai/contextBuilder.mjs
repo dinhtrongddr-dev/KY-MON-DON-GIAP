@@ -3,7 +3,7 @@ import {analyzeBoard} from '../analysis/index.mjs';
 import {normalizeActors} from '../analysis/usefulGod.mjs';
 import {relationGraph} from '../analysis/relationGraph.mjs';
 import {analyzeMode} from '../modes/index.mjs';
-import {classifyQuestion,classifyTopic} from './classifier.mjs';
+import {classifyTopic} from './classifier.mjs';
 import {normalizeAction} from '../modes/actionRules.mjs';
 import {compareTimes} from './timingComparison.mjs';
 import {buildQuestionContext} from './questionContext.mjs';
@@ -18,7 +18,7 @@ export function buildAnalysisContext(chart,body,facts) {
   const action=normalizeAction(['timing','direction'].includes(classification.mode)?body.action??'general':'general');
   const plan=analyzeMode(classification.mode,analysis,{action});
   const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors}):null;
-  const graph=relationGraph(analysis,[...new Set([...plan.roleIds,...domainSemantics(questionContext.domain).roles,...analysis.roles.filter(r=>r.id.startsWith('topic_')).map(r=>r.id)])]);
+  const graph=relationGraph(analysis,[...new Set([...plan.roleIds,...domainSemantics(questionContext.domain).roles,...analysis.roles.filter(r=>r.id.startsWith('topic_')||r.status==='user_supplied').map(r=>r.id)])]);
   for(const role of analysis.roles)facts[role.evidenceId]=`${role.label}: ${role.palace===null?'chưa xác định cung':`cung ${role.palace}`}; ${role.status}; căn cứ ${role.basis}. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.`;
   for(const p of analysis.palaces)facts[`strength_${p.number}`]=`Cung ${p.number}: ${p.star.vi} ${p.strength.star.status} theo tháng ${board.pillars.month.vi} (${p.strength.monthElement}). ${p.strength.convention}`;
   facts.special=`Ngũ bất ngộ thời: ${analysis.patterns.wuBuYuShi?'có':'không'} (Thời can khắc Nhật can cùng âm/dương). ${analysis.patterns.coverage}`;

@@ -768,3 +768,9 @@ textarea:focus { outline:3px solid #bce8ce; }
   .board-column, .pillars, .calculation-summary { box-shadow: none; }
   .qimen-board { aspect-ratio: 1 / 0.9; }
 }
+
+/* Reading controls and evidence retain the existing responsive layout. */
+.reading-depth { margin-top:12px; max-width:26rem; }
+.ai-evidence { margin:12px 0; overflow-wrap:anywhere; }
+.ai-evidence .jump-cung { min-height:44px; margin:8px 8px 4px 0; padding:8px 12px; font-size:14px; }
+.ai-actions > li { margin-bottom:18px; }

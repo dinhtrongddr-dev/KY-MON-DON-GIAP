@@ -1,8 +1,19 @@
+import {domainSemantics} from '../modes/semantics.mjs';
 export function buildScenario(selected,context,graph,interactions=[],modePlan={computed:{}}) {
   const primary=selected.filter(b=>b.actorIds.some(id=>['self','event'].includes(id))),main=primary.length?primary:selected.slice(0,1);
-  const conflicts=main.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`})));
-  const principal=conflicts.find(c=>['opening_unrealized','tomb','action_environment_mismatch','punishment'].includes(c.code))||conflicts[0]||null;
-  const claims=main.map(b=>`claim_${b.palace}`),other=selected.filter(b=>!main.includes(b)).slice(0,2).map(b=>`claim_${b.palace}`);
+  const relevantRoles=new Set([...domainSemantics(context.domain).roles,...(modePlan.roleIds||[])]);
+  const conditionWeight={realization_condition:4,actor_specific_condition:4,execution_condition:3,decision_stability:2,activation_condition:2};
+  // A blocked goal or known decision maker may govern the next step even when
+  // self/event are in a different palace. This ranks attention, not probability.
+  const conflicts=selected.flatMap(b=>b.conflicts.map(c=>{
+    const mainActor=c.actorIds.some(id=>['self','event'].includes(id)||b.roles.some(r=>r.id===id&&r.status==='user_supplied'));
+    const questionRelevance=mainActor?1:c.actorIds.some(id=>relevantRoles.has(id)||id.startsWith('topic_'))?0.9:0.5;
+    const priority=(conditionWeight[c.dominant]||1)*questionRelevance+b.relevance.score/10;
+    return {...c,claimId:`claim_${b.palace}`,priority,priorityBasis:{questionRelevance,conditionWeight:conditionWeight[c.dominant]||1,evidenceRelevance:b.relevance.score}};
+  })).sort((a,b)=>b.priority-a.priority);
+  const principal=conflicts[0]||null;
+  const claims=[...new Set([...main.map(b=>`claim_${b.palace}`),...(principal?[principal.claimId]:[])])];
+  const other=selected.filter(b=>!claims.includes(`claim_${b.palace}`)).slice(0,2).map(b=>`claim_${b.palace}`);
   const strategy=context.questionType==='strategy';
   const selectedPalaces=new Set(selected.map(b=>b.palace));
   const edges=graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace));

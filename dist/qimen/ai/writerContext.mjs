@@ -4,13 +4,15 @@ export function buildWriterContext(context) {
   const ids=new Set(g.claims.flatMap(x=>x.evidenceIds));
   for(const id of ['patterns','duty','day','hour','relation','time','method','boundary'])if(context.facts[id])ids.add(id);
   const evidence=Object.fromEntries([...ids].filter(id=>context.facts[id]).map(id=>[id,context.facts[id]]));
-  const actors=new Set(g.evidenceBundles.flatMap(b=>b.actorIds));
+  const relationships=g.relationships.filter(e=>wantedEdges.has(e.id));
+  const actors=new Set([...g.evidenceBundles.flatMap(b=>b.actorIds),...relationships.flatMap(e=>[e.from,e.to])]);
   const readingGraph={schemaVersion:g.schemaVersion,
     questionContext:{domain:q.domain,domainLabel:q.domainLabel,questionType:q.questionType,intent:q.intent,desiredOutcome:q.desiredOutcome,
       subject:{kind:q.subject.kind,text:q.subject.text,status:q.subject.status},stage:q.stage,timeHorizon:q.timeHorizon,
       constraints:q.constraints,vocabulary:q.vocabulary,needsClarification:q.needsClarification},
-    mode:g.mode,nodes:g.nodes.filter(n=>actors.has(n.id)).map(n=>({id:n.id,role:n.semanticRole,palace:n.palace,stem:n.stem||null,status:n.status})),
-    relationships:g.relationships.filter(e=>wantedEdges.has(e.id)),interactions:g.interactions.filter(i=>wantedEdges.has(i.edgeId)),
+    mode:g.mode,nodes:g.nodes.filter(n=>actors.has(n.id)).map(n=>({id:n.id,role:n.semanticRole,palace:n.palace,stem:n.stem||null,status:n.status,
+      element:n.element,door:n.door,star:n.star,deity:n.deity,strength:n.strength,specialStates:n.specialStates})),
+    relationships,interactions:g.interactions.filter(i=>wantedEdges.has(i.edgeId)),
     evidenceBundles:g.evidenceBundles.map(b=>({id:b.id,palace:b.palace,actorIds:b.actorIds,symbols:b.symbols,strength:b.strength,states:b.states,specialPatterns:b.specialPatterns})),
     claims:g.claims.map(claim=>({...claim,realWorldManifestation:{status:claim.realWorldManifestation.status,concepts:claim.realWorldManifestation.concepts}})),
     likelyScenario:g.likelyScenario,recommendations:g.recommendations,unresolved:g.unresolved,coverage:g.coverage};

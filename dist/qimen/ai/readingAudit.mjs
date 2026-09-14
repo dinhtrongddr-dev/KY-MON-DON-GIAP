@@ -13,6 +13,13 @@ function repeated(a,b){
   const grams=w=>new Set(w.slice(0,-3).map((_,i)=>w.slice(i,i+4).join(' '))),gx=grams(x),gy=grams(y);
   return [...gx].filter(g=>gy.has(g)).length/Math.min(gx.size,gy.size)>0.82;
 }
+function auditClaims(passages,context,rows=[]) {
+  const prose=passages.join(' '),normalized=normalizeQuestion(prose),source=normalizeQuestion(context.question);
+  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)|\b(chac chan (se|thang|trung|ky duoc)|dam bao (thang|loi nhuan))\b/.test(normalized))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
+  for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g))if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
+  const allowedDates=new Set([context.question,...rows.map(x=>x.label)].join(' ').match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[]);
+  for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
+}
 export function validateReading(r,facts,selectedTopic='general',context) {
   const c=context?.allInOne,g=c?.reasoning;
   if(!g||!exact(r,RESULT_KEYS)||!['reading','needs_clarification'].includes(r.status))reject('AI trả kết quả chưa đúng cấu trúc luận có căn cứ.');
@@ -27,6 +34,7 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   for(const k of ['development','actions','comparisons'])if(!Array.isArray(r[k]))reject('Thiếu phần diễn biến hoặc hành động.');
   if(clarification){
     if(!r.questions.length||r.development.length||r.actions.length||r.comparisons.length||[r.situation,r.bottleneck,r.alternative,r.timing].some(s=>s.text||s.claim_ids.length)||r.bottleneck.resolution||r.alternative.id)reject('Chưa rõ chủ thể thì chưa dựng diễn biến hoặc kết quả.');
+    auditClaims([r.summary.text,...r.questions],context);
     return r;
   }
   if(g.questionContext.needsClarification)reject('Chưa xác nhận chủ thể hỏi thay; cần làm rõ trước khi dựng kịch bản.');
@@ -52,12 +60,10 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   const used=new Set(sections.flatMap(s=>s.claim_ids));if(used.size<Math.min(3,g.claims.length))reject('Bài luận chưa phối hợp đủ các cụm tượng trọng tâm.');
   const passages=[...sections.map(s=>s.text),...r.actions.map(a=>a.text)];
   for(let i=0;i<passages.length;i++)for(let j=i+1;j<passages.length;j++)if(passages[i].trim()===passages[j].trim()||repeated(passages[i],passages[j]))reject('Các phần đang lặp ý hoặc lặp đoạn; cần viết lại cho mỗi chặng.');
-  const prose=passages.join(' '),normalized=normalizeQuestion(prose),source=normalizeQuestion(context.question);
-  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)|\b(chac chan (se|thang|trung|ky duoc)|dam bao (thang|loi nhuan))\b/.test(normalized))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
-  for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g))if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
-  const allowedDates=[context.question,...rows.map(x=>x.label)].join(' ');
-  for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.includes(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
-  const budget=buildWriterContext(context).length,count=words([prose,r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' ')).length;
+  // Audit every user-visible string, even when it sits outside the prose budget.
+  const prose=[...passages,r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' ');
+  auditClaims([prose,...r.comparisons.map(r=>r.reason),...r.questions],context,rows);
+  const budget=buildWriterContext(context).length,count=words(prose).length;
   if(count<budget.minWords)reject('Bài luận còn quá sơ lược; cần làm rõ cơ chế và diễn biến thay vì thêm lời chung chung.');
   if(count>budget.maxWords)reject('Bài luận vượt độ dài đã chọn; rút gọn phần lặp và giữ trọng tâm.');
   return r;
