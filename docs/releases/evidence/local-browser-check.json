@@ -1,0 +1,29 @@
+{
+  "realModel": false,
+  "browser": "152.0.7977.83",
+  "boardCases": 8,
+  "modes": [
+    "auto",
+    "prediction",
+    "strategy",
+    "business",
+    "negotiation",
+    "timing",
+    "direction"
+  ],
+  "tabs": [
+    "Kết luận nhanh",
+    "Diễn biến thực tế",
+    "Phân tích Kỳ Môn",
+    "Chiến lược đề xuất",
+    "Ứng kỳ"
+  ],
+  "errors": [],
+  "mobile": {
+    "viewport": 390,
+    "content": 390
+  },
+  "streamedErrorShown": true,
+  "changedInputInvalidatesAnswer": true,
+  "passed": true
+}

@@ -6,11 +6,11 @@
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-All-in-One v15 dùng TG-CB-4.0 (protocol 4). Một Core giữ nguyên v14; QimenBoard JSON và Analysis Engine nằm trong `dist/qimen/`. Sáu mode có quy tắc riêng, Auto phân loại ý định, graph nối đại diện và synthesis ghép diễn biến. Timing so sánh 2–12 thời điểm; Direction so tám phương vị theo mục tiêu. Năm tab kết quả và nút xem dữ kiện không cần AI. Chi tiết: `QIMEN-ARCHITECTURE.md`.
+All-in-One v16 dùng TG-CB-5.0 (protocol 5), Engine TG-ROTATING-2.0. Bản nguồn này lấy từ lần xuất bản Sites 17; số lần xuất bản không phải phiên bản của bộ quy tắc. Một Core dùng chung; QimenBoard JSON và Analysis Engine nằm trong `dist/qimen/`. Sáu mode có quy tắc riêng, Auto phân loại ý định, graph nối đại diện và planner ghép diễn biến. Timing so sánh 2–12 thời điểm; Direction so tám phương vị theo mục tiêu. Năm tab kết quả và nút xem dữ kiện không cần AI. Chi tiết: `QIMEN-ARCHITECTURE.md`.
 
-Tạo lại gói bằng `python scripts/package-local.py`; phải đóng kèm toàn bộ `dist/qimen/`. Hai đầu khóa SHA-256 của bàn và toàn bộ ngữ cảnh (mode, graph, ứng viên, đại diện). `local/interpret.mjs` vẫn cho phép sửa bài tối đa một lần trong tổng 180 giây; giữ Hủy, không thử lại lỗi xác thực/mạng, không đổi model hoặc mức suy luận.
+Chạy `npm run prepare:windows` trước `npm run package:local`. Bước chuẩn bị kiểm SHA-256 của launcher và tải hoặc dùng lại đúng cloudflared 2026.9.0 đã xác minh. Đóng gói phải có đủ Windows/tunnel và toàn bộ `dist/qimen/`; thiếu tệp hoặc sai checksum sẽ dừng, giữ nguyên ZIP cũ. Hai đầu khóa SHA-256 của bàn và toàn bộ ngữ cảnh (mode, graph, ứng viên, đại diện). `local/interpret.mjs` vẫn cho phép sửa bài tối đa một lần trong tổng 180 giây; giữ Hủy, không thử lại lỗi xác thực/mạng, không đổi model hoặc mức suy luận.
 
-Gói này phải được cài vào bộ kết nối trên máy người dùng; publish web không cập nhật server đó. Các kiểm thử giao thức dùng mock, chưa thay thế kiểm tra trực tiếp trên tài khoản. Biên bản công khai: `dist/audit.html`; ma trận đánh giá lời luận: `AI-EVAL.md`. Các ngưỡng độ dài chỉ chống đầu ra quá sơ lược, không chứng minh lời luận đúng hoặc hay.
+Gói này phải được cài vào bộ kết nối trên máy người dùng; publish web không cập nhật server đó. Ngày 14/09/2026 đã kiểm tra một lượt AI thật qua website, Worker và tunnel: 146,326 giây, kết quả qua xác thực và hiển thị đủ năm tab. Kiểm thử giao thức tự động dùng mock; chưa hoàn tất toàn bộ ma trận chất lượng AI trong `AI-EVAL.md`. Bằng chứng và phạm vi kiểm tra: `docs/releases/BASELINE-2026-09-14.md`. Các ngưỡng độ dài chỉ chống đầu ra quá sơ lược, không chứng minh lời luận đúng hoặc hay.
 
 ## Khẩu quyết đã mã hóa
 
@@ -33,8 +33,19 @@ Gói này phải được cài vào bộ kết nối trên máy người dùng; 
 
 ## Chạy kiểm thử
 
+Yêu cầu Node.js 22 hoặc 24 và Python 3.10 trở lên. Repo không có thư viện npm cần cho app lúc chạy; thư viện lịch đã được lưu kèm. `lunar.js` giữ CommonJS trên Node; riêng Worker dùng ES module.
+
 ```bash
-node --test tests/*.test.mjs
+npm ci --ignore-scripts --no-audit --no-fund
+npm run check
+npm run prepare:windows
+npm run verify:package
 ```
+
+`npm run check` chạy kiểm thử lõi, AI contract, giao diện giả lập, bridge, relay, đóng gói và kiểm tra manifest lõi/tài nguyên. Nó không gọi AI thật, không cần tài khoản và không deploy. Có workflow Windows/Linux với Node 22/24 trong `.github/workflows/verify.yml`. Trên Windows, `npm run build:launcher` biên dịch C# và kiểm tra icon ở thư mục tạm; bản executable đã khóa checksum vẫn được giữ.
+
+## Bản gốc và nâng cấp
+
+Bản nguồn độc lập ở `E:/kymon-site`, nguồn cũ giữ trong remote `sites-upstream`; `origin` dành cho GitHub sau này. Quy trình backup, phục hồi, upload GitHub và nâng cấp từ tag: `docs/releases/GITHUB-BASELINE.md`. Bộ quy tắc và mức độ bằng chứng: `docs/releases/RULE-COVERAGE.md`. Không đưa mã ghép nối, khóa relay hoặc hồ sơ đăng nhập vào Git. Mã ứng dụng chưa có giấy phép nguồn mở; xem `THIRD-PARTY-NOTICES.md` trước khi công khai repo.
 
 Tệp xuất bản nằm trong `dist/`. Lịch Can Chi và tiết khí dùng `lunar-javascript` 1.7.7 theo giấy phép MIT.

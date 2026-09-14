@@ -1,0 +1,18 @@
+{
+  "schema": "QimenCoreBaseline/1",
+  "upstreamCommit": "6cb83092d388f8acb072e1a92417706a04c79061",
+  "engineVersion": "TG-ROTATING-2.0",
+  "textEncoding": "UTF-8 with LF (Git canonical form)",
+  "goldenBoards": {
+    "count": 480,
+    "sha256": "d384c9f4d42a94bd80d709eac2c865943ac5ac4f7e86489d84b003edd2b465ea"
+  },
+  "files": {
+    "dist/qimen.mjs": "f967840e97ff367823e92ad36aad9fdc381a689e6d8b01b29827f4b184acdd89",
+    "dist/vendor/lunar.js": "9750324bfe1aa63c146f8c72b1143df924466c11c8a5277d7d9225c541a18aaa",
+    "dist/qimen/core/board.mjs": "fb0850075045c488deadce0f4f4a65b2a5640d21dcdbd3688138879442ff4104",
+    "dist/qimen/core/calendar.mjs": "7f3236f9d23f07557e91fc9dae7d7503084418def83bfebe0839e80e5bdbda2e",
+    "dist/qimen/core/palace.mjs": "2bb50ede22c2226686fa655e26b1494448423e152b32ad5e7ccf2ede2f1c153e",
+    "dist/qimen/core/patterns.mjs": "40caa37e8dc27c291bff67f88d6b3bb85f57841a91d96e1e35e7aa30f035795a"
+  }
+}

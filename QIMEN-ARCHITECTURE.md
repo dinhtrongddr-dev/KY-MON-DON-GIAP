@@ -55,6 +55,8 @@ Giữ relay `https://ky-mon-codex-relay.dinhtrongddr.workers.dev`, model `gpt-5.
 
 ## Kiểm tra và triển khai
 
-`node --test tests/*.test.mjs`; `node scripts/verify-assets.mjs`; `python scripts/package-local.py`. Ca mới nằm trong reasoning-context/planner/writer; ca bridge/DOM được chuyển sang contract v5, vẫn giữ bảo vệ cũ. Chưa gọi model thật hoặc chạy browser thật trong phát hành này. Fixture chữ chỉ để kiểm contract, không phải bằng chứng chất lượng AI.
+`npm run check`; `npm run prepare:windows`; `npm run package:local`; `npm run verify:package`. Ca mới nằm trong reasoning-context/planner/writer; ca bridge/DOM được chuyển sang contract v5, vẫn giữ bảo vệ cũ. Ngày 14/09/2026 đã chạy AI thật qua Chrome, website, Worker và tunnel, xác nhận một bài hợp lệ với năm tab. Ma trận đánh giá nội dung AI đầy đủ vẫn chưa hoàn tất. Fixture chữ chỉ để kiểm contract, không phải bằng chứng chất lượng AI. Bản ghi và quy trình tái lập nằm trong `docs/releases/`.
+
+Repo gốc đóng kèm `relay/`, mã nguồn launcher, cấu hình đóng gói và workflow kiểm thử. Manifest `docs/releases/core-baseline.json` khóa sáu tệp lõi theo UTF-8/LF; test 480 bàn vẫn kiểm độc lập hash đầu ra cũ. `scripts/package-local.py` dùng danh sách tệp cho phép, timestamp cố định và checksum Windows, xác minh nội dung trước khi thay ZIP. Lịch sử Git và source archive được sao lưu riêng với bộ cài local; cấu hình đăng nhập/ghép nối nằm ngoài cả ba.
 
 Publish đúng Site hiện tại và gói `downloads/ky-mon-ai.zip`. Người dùng cần cập nhật/restart bộ kết nối; website không có quyền thay tiến trình trên máy họ. Hướng dẫn migration trong HUONG-DAN-LOCAL.md. Không tạo app, key, secret hoặc model mới.

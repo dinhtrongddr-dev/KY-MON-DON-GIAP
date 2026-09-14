@@ -1,0 +1,27 @@
+{
+  "realModel": true,
+  "transport": "public-browser",
+  "startedAt": "2026-09-14T07:04:08.318Z",
+  "publicAssetsMatch": true,
+  "streamedErrorShown": true,
+  "httpStatus": 200,
+  "readingMs": 146326,
+  "leadingWhitespace": 10240,
+  "tabs": [
+    "Kết luận nhanh",
+    "Diễn biến thực tế",
+    "Phân tích Kỳ Môn",
+    "Chiến lược đề xuất",
+    "Ứng kỳ"
+  ],
+  "validated": true,
+  "model": "gpt-5.6-sol",
+  "rules": "TG-CB-5.0",
+  "protocol": 5,
+  "stages": 3,
+  "mobile": {
+    "viewport": 390,
+    "content": 390
+  },
+  "durationMs": 158457
+}

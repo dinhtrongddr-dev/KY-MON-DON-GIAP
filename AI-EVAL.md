@@ -1,6 +1,6 @@
 # Đánh giá lời luận AI · v16 / TG-CB-5.0
 
-Đây là ma trận nghiệm thu với model thật. Chưa chạy các ca này trên tài khoản người dùng trong môi trường phát hành. Test Node/DOM/runner giả lập không thay việc đọc và chấm nội dung; không ghi là đã đạt dự báo hoặc chất lượng văn chỉ vì schema hợp lệ.
+Đây là ma trận nghiệm thu với model thật. Ngày 14/09/2026 đã kiểm tra thành công một lượt dự đoán hợp đồng qua website với GPT-5.6 Sol/high trong 146,326 giây; kết quả qua validator, đủ ba chặng và năm tab. Chưa hoàn tất các ca so sánh và chấm điểm nhiều lượt trong ma trận này. Bằng chứng kỹ thuật ở `docs/releases/evidence/public-browser-check.json`. Test Node/DOM/runner giả lập không thay việc đọc và chấm nội dung; không ghi là đã đạt dự báo hoặc chất lượng văn chỉ vì schema hợp lệ.
 
 ## Ca so sánh bắt buộc
 

@@ -1,0 +1,20 @@
+{
+  "name": "kymon-site",
+  "version": "16.0.0",
+  "private": true,
+  "type": "commonjs",
+  "license": "UNLICENSED",
+  "description": "Thoi Gia Ky Mon rotating-board app and local Codex bridge",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "verify": "node scripts/verify-release.mjs",
+    "check": "npm test && npm run verify",
+    "prepare:windows": "node scripts/prepare-windows.mjs",
+    "build:launcher": "node scripts/build-launcher.mjs",
+    "verify:package": "python scripts/package-local.py --check",
+    "package:local": "python scripts/package-local.py"
+  }
+}
