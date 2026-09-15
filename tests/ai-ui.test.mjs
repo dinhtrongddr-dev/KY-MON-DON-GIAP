@@ -265,11 +265,17 @@ for(const kind of ['reading','connection']) test(`${kind} timeout clears progres
     if(kind==='reading'&&url.endsWith('/api/status'))return response(health);
     return new Promise((resolve,reject)=>{
       signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
-      ready();
+      ready(signal);
     });
   });
-  const work=ids[kind==='reading'?'ai-read':'local-check'].fire('click');await started;
-  t.mock.timers.tick(kind==='reading'?190000:8000);await work;
+  const work=ids[kind==='reading'?'ai-read':'local-check'].fire('click'),signal=await started;
+  if(kind==='reading'){
+    t.mock.timers.tick(600000);
+    assert.equal(signal.aborted,false);
+    assert.equal(ids['ai-read'].disabled,true);
+    assert.equal(ids['ai-progress'].hidden,false);
+  }
+  t.mock.timers.tick(kind==='reading'?10000:8000);await work;
   assert.match(ids['ai-status'].textContent,/hết thời gian/i);
   assert.equal(ids['ai-progress'].hidden,true);
   assert.equal(ids['ai-elapsed'].hidden,true);

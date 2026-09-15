@@ -5,7 +5,8 @@ import {homedir,tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {existsSync} from 'node:fs';
 export const MODEL='gpt-6-astra';
-export const REASONING_EFFORT='high';
+export const REASONING_EFFORT='ultra';
+export const READING_TIMEOUT_MS=600000;
 function codexHome(){
  if(process.env.QIMEN_CODEX_HOME)return resolve(process.env.QIMEN_CODEX_HOME);
  if(process.platform==='win32'&&process.env.LOCALAPPDATA)return join(process.env.LOCALAPPDATA,'KyMonCodex','codex-home');
@@ -33,7 +34,7 @@ async function requireModel(request){
    const result=await request('model/list',{cursor,includeHidden:true,limit:100});
    const model=result.data?.find(item=>item.model===MODEL||item.id===MODEL);
    if(model){
-     if(!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===REASONING_EFFORT))throw new Error('GPT-6 Astra không hỗ trợ mức suy luận high trên tài khoản/CLI này.');
+     if(!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===REASONING_EFFORT))throw new Error(`GPT-6 Astra không hỗ trợ mức suy luận ${REASONING_EFFORT} trên tài khoản/CLI này.`);
      return;
    }
    cursor=result.nextCursor;if(!cursor)break;
@@ -102,7 +103,7 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
      if(m.method==='item/completed' && item?.type==='agentMessage')lastText=item.text||lastText;
      if(m.method==='turn/completed'){if(m.params?.turn?.status==='completed')resolveTurn(lastText);else fail(turnFailure(m.params?.turn?.error));}
    });
-   timer=setTimeout(abort,180000);signal?.addEventListener('abort',abort,{once:true});
+   timer=setTimeout(abort,READING_TIMEOUT_MS);signal?.addEventListener('abort',abort,{once:true});
    if(signal?.aborted)throw new Error('Đã hủy.');
    await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'5.0.0'},capabilities:{experimentalApi:false}});
    send({method:'initialized',params:{}});

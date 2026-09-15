@@ -1,0 +1,303 @@
+{
+  "syntheticQuestion": true,
+  "liveModel": true,
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "body": {
+    "question": "Công ty tôi cung cấp dịch vụ vệ sinh văn phòng. Khách hàng A đã nhận báo giá, ngân sách họ chưa xác nhận. Tôi nên thương lượng phạm vi công việc thế nào để tiến tới hợp đồng trong tháng này?",
+    "topic": "contract",
+    "mode": "negotiation",
+    "method": "chaibu",
+    "input": {
+      "year": 2026,
+      "month": 9,
+      "day": 15,
+      "hour": 10,
+      "minute": 0,
+      "tzOffset": 7
+    }
+  },
+  "chartFingerprint": "374a0a2cc4abd92434cba2497a7b59de9e9bca55abd9033c95500b3b9322a733",
+  "requestFingerprint": "24c606c8fb514b499ad0a1ca8e23ec5ad577d7fcec51f67d50c3b174eaf455db",
+  "seconds": 204.677,
+  "attempts": [
+    {
+      "seconds": 204.603,
+      "issue": null
+    }
+  ],
+  "reading": {
+    "status": "reading",
+    "topic_id": "contract",
+    "mode": "negotiation",
+    "questionType": "strategy",
+    "summary": {
+      "text": "**Nên tách phạm vi vệ sinh thiết yếu khỏi phần có thể điều chỉnh**, thay vì giảm giá cho nguyên khối lượng. Trước khi nhượng bộ, hãy kiểm tra nguồn lực, nhu cầu ưu tiên và người có quyền duyệt.",
+      "claim_ids": [
+        "claim_6",
+        "claim_7"
+      ]
+    },
+    "situation": {
+      "text": "Ngân sách chưa xác nhận nên **chưa đủ cơ sở chốt mức nhượng bộ**. Đây là giả thuyết diễn giải theo quy ước ứng dụng, không xác minh tâm ý hay quyền quyết định của A.",
+      "claim_ids": [
+        "claim_6",
+        "claim_7"
+      ]
+    },
+    "development": [
+      {
+        "text": "Ưu tiên **rà phần báo giá cần sửa hoặc bổ sung**: công việc, nhân lực và đầu mối chấp thuận. Quan hệ cùng hành giữa công ty và sự việc chỉ gợi sự tương thích về nguồn lực, không thay thế xác nhận của khách.",
+        "claim_ids": [
+          "claim_6",
+          "claim_7"
+        ],
+        "stage": "current",
+        "condition": "**Chưa xác nhận thỏa thuận.**",
+        "interaction_ids": [
+          "graph_self_event"
+        ]
+      },
+      {
+        "text": "Đưa ra **hai phương án: phần thiết yếu và phần bổ sung**. Nếu A cần giảm phí, trao đổi việc giảm tần suất hoặc hoãn hạng mục phù hợp, không tự hạ tiêu chuẩn đã cam kết. Chứng minh phương án vẫn làm được ổn định, rồi yêu cầu A xác nhận lựa chọn và trách nhiệm; sự quan tâm thôi chưa đủ chuyển bước.",
+        "claim_ids": [
+          "claim_6",
+          "claim_7",
+          "claim_3",
+          "claim_4"
+        ],
+        "stage": "next",
+        "condition": "**Chỉ nhượng bộ sau khi kiểm tra nguồn lực, phạm vi trách nhiệm và quyền duyệt.**",
+        "interaction_ids": [
+          "graph_self_event",
+          "graph_self_quote"
+        ]
+      },
+      {
+        "text": "**Chỉ chuyển sang dự thảo hợp đồng khi phương án được xác nhận và đủ nguồn lực**. Báo giá có thể gây áp lực lên bước thỏa thuận nếu hạ giá nhưng giữ khối lượng vượt khả năng thực hiện; cần sửa điểm này trước khi chốt. Trao đổi thuận lợi chưa phải hợp đồng.",
+        "claim_ids": [
+          "claim_6",
+          "claim_7"
+        ],
+        "stage": "outcome",
+        "condition": "**Nếu điều kiện bước trước chưa được xác nhận, kết quả vẫn chưa hoàn tất.**",
+        "interaction_ids": [
+          "graph_topic_1_topic_2"
+        ]
+      }
+    ],
+    "bottleneck": {
+      "text": "Ý định tiến tới hợp đồng là điểm hỗ trợ, nhưng **điều kiện triển khai mới là nút chi phối**. Nhập mộ ở đại diện sự việc/dịch vụ gợi khả năng chưa thực hiện được; Môn bức bổ sung cảnh báo cách làm có thể chưa hợp hoàn cảnh. Không thể từ đó kết luận A cố tình trì hoãn.",
+      "claim_ids": [
+        "claim_6"
+      ],
+      "resolution": "**Đối chiếu từng hạng mục với nguồn lực và trách nhiệm**; chỉ tăng cam kết khi chỗ thiếu được xử lý và khách xác nhận phạm vi phù hợp."
+    },
+    "actions": [
+      {
+        "recommendation_id": "action_6",
+        "text": "Sau khi kiểm tra khả năng cung ứng, gửi A **bảng khu vực, tần suất và tiêu chí nghiệm thu**. Hoàn tất khi A phản hồi phần bắt buộc, phần có thể bỏ hoặc hoãn."
+      },
+      {
+        "recommendation_id": "action_7",
+        "text": "Rà **chi phí thực và giới hạn công ty chấp nhận**; hỏi A khoảng ngân sách dự kiến, ai duyệt và hồ sơ còn thiếu gì. Hoàn tất khi A phản hồi về ngân sách, xác nhận đầu mối duyệt và phần cần bổ sung."
+      },
+      {
+        "recommendation_id": "action_3",
+        "text": "Gửi phương án bố trí dịch vụ; **chỉ đổi phí lấy thay đổi phạm vi đã tính lại chi phí**, giữ giới hạn đã thống nhất nội bộ. Hoàn tất khi người có thẩm quyền xác nhận phương án bằng văn bản."
+      },
+      {
+        "recommendation_id": "action_4",
+        "text": "Đặt buổi rà soát với A để **xác nhận trách nhiệm hai bên và bước tiếp theo**. Hoàn tất khi A phản hồi các điểm đã thống nhất và phần cần bổ sung trước hợp đồng."
+      }
+    ],
+    "alternative": {
+      "text": "**Nếu quyền duyệt, ngân sách hoặc khả năng cung ứng vẫn chưa rõ**, giữ bước xác minh và sửa phương án; không tiếp tục nhượng bộ vô điều kiện để chạy theo hạn tháng.",
+      "claim_ids": [
+        "claim_6",
+        "claim_7"
+      ],
+      "id": "alternative_conditions_unmet"
+    },
+    "timing": {
+      "text": "**Tháng này là mục tiêu, không phải thời điểm ký được dự báo**. Chưa có phép ứng kỳ định ngày; tiến độ phụ thuộc việc xác nhận điều kiện triển khai.",
+      "claim_ids": [
+        "claim_6"
+      ]
+    },
+    "comparisons": [],
+    "questions": []
+  },
+  "facts": {
+    "time": "Giờ hỏi dân dụng: 15/09/2026 · 10:00 UTC+07:00. Tiết Bạch Lộ, từ 07/09/2026 · 21:41 đến trước 23/09/2026 · 07:05. Các mốc hiển thị đến phút; phép tính giữ giây của thư viện lịch.",
+    "pillars": "Năm Bính Ngọ; tháng Đinh Dậu; ngày Nhâm Thìn; giờ Ất Tỵ. Năm đổi ở Lập Xuân, tháng đổi ở 12 tiết, nhật trụ đổi lúc 23:00 địa phương; không phải tháng âm lịch.",
+    "method": "Tháo bổ · Phù đầu; Âm Độn 6 cục, Hạ nguyên. Phù đầu Kỷ Sửu.",
+    "day": "Nhật trụ Nhâm Thìn; Nhật can Nhâm, tìm 壬 trên thiên bàn cung Đoài 7 (Kim). Chỉ quy ước Nhật can là người hỏi khi hỏi việc của chính mình; hỏi thay cần xác định lại đại diện.",
+    "hour": "Thời trụ Ất Tỵ; Thời can Ất, tìm 乙 trên thiên bàn cung Càn 6 (Kim), điểm tham khảo bối cảnh sự việc; không thay mọi dụng thần chuyên đề.",
+    "relation": "So hành CUNG Nhật can → CUNG Thời can: Cùng hành · tỷ hòa. Hai đại diện khác cung. Đây là quan hệ giữa hành cung, không phải hành của hai can; tự nó không kết luận thành/bại.",
+    "duty": "Tuần thủ Giáp Thìn ẩn Nhâm, gốc địa bàn cung 2; giờ thứ 2/10 trong tuần. Trực Phù TINH: Thiên Nhuế cung 7; Trực Sử: Tử Môn cung 1. Đích trước ký cung: tinh 7, môn 1; 5 ký 2. Không nhầm Trực Phù tinh với thần Trực Phù.",
+    "patterns": "Toàn lớp Cửu Tinh: phục ngâm không, phản ngâm không. Toàn lớp Bát Môn: phục ngâm không, phản ngâm không. Không gọi mọi thiên/địa can giống nhau là toàn bàn phục ngâm.",
+    "p5": "Trung Ngũ: địa can Kỷ; không có Môn/Thần độc lập. Thiên Cầm và can ký đang theo Thiên Nhuế tại cung Đoài 7 (Kim), không cố định ở Khôn sau khi chuyển.",
+    "p4": "Tốn 4 (Mộc): Hưu Môn (Thủy); Thiên Xung (Mộc); thần Lục Hợp; thiên can Tân, địa can Canh; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c4": "Điều kiện tại Tốn 4 (Mộc): Môn bức cung không (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix4": "Phối hợp tại Tốn 4 (Mộc): Lục Hợp + Thiên Xung + Hưu Môn. Hành Tinh → Môn: Mộc được Thủy sinh; Môn → cung: Thủy sinh Mộc. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p9": "Ly 9 (Hỏa): Sinh Môn (Thổ); Thiên Phụ (Mộc); thần Thái Âm; thiên can Canh, địa can Đinh; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c9": "Điều kiện tại Ly 9 (Hỏa): Môn bức cung không (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix9": "Phối hợp tại Ly 9 (Hỏa): Thái Âm + Thiên Phụ + Sinh Môn. Hành Tinh → Môn: Mộc khắc Thổ; Môn → cung: Thổ được Hỏa sinh. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p2": "Khôn 2 (Thổ): Thương Môn (Mộc); Thiên Anh (Hỏa); thần Đằng Xà; thiên can Đinh, địa can Nhâm; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c2": "Điều kiện tại Khôn 2 (Thổ): Môn bức cung có (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix2": "Phối hợp tại Khôn 2 (Thổ): Đằng Xà + Thiên Anh + Thương Môn. Hành Tinh → Môn: Hỏa được Mộc sinh; Môn → cung: Mộc khắc Thổ. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p3": "Chấn 3 (Mộc): Khai Môn (Kim); Thiên Nhậm (Thổ); thần Bạch Hổ; thiên can Bính, địa can Tân; Tuần Không theo tuần giờ có; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c3": "Điều kiện tại Chấn 3 (Mộc): Môn bức cung có (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix3": "Phối hợp tại Chấn 3 (Mộc): Bạch Hổ + Thiên Nhậm + Khai Môn. Hành Tinh → Môn: Thổ sinh Kim; Môn → cung: Kim khắc Mộc. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p7": "Đoài 7 (Kim): Đỗ Môn (Mộc); Thiên Nhuế (Thổ); thần Trực Phù; thiên can Nhâm + Kỷ, địa can Ất; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; mang Thiên Cầm và can ký từ Trung Ngũ.",
+    "c7": "Điều kiện tại Đoài 7 (Kim): Môn bức cung không (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix7": "Phối hợp tại Đoài 7 (Kim): Trực Phù + Thiên Nhuế + Đỗ Môn. Hành Tinh → Môn: Thổ bị Mộc khắc; Môn → cung: Mộc bị Kim khắc. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p8": "Cấn 8 (Thổ): Kinh Môn (Kim); Thiên Bồng (Thủy); thần Huyền Vũ; thiên can Quý, địa can Bính; Tuần Không theo tuần giờ có; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c8": "Điều kiện tại Cấn 8 (Thổ): Môn bức cung không (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix8": "Phối hợp tại Cấn 8 (Thổ): Huyền Vũ + Thiên Bồng + Kinh Môn. Hành Tinh → Môn: Thủy được Kim sinh; Môn → cung: Kim được Thổ sinh. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p1": "Khảm 1 (Thủy): Tử Môn (Thổ); Thiên Tâm (Kim); thần Cửu Địa; thiên can Mậu, địa can Quý; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+    "c1": "Điều kiện tại Khảm 1 (Thủy): Môn bức cung có (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: không. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix1": "Phối hợp tại Khảm 1 (Thủy): Cửu Địa + Thiên Tâm + Tử Môn. Hành Tinh → Môn: Kim được Thổ sinh; Môn → cung: Thổ khắc Thủy. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "p6": "Càn 6 (Kim): Cảnh Môn (Hỏa); Thiên Trụ (Kim); thần Cửu Thiên; thiên can Ất, địa can Mậu; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ có; không mang Thiên Cầm.",
+    "c6": "Điều kiện tại Càn 6 (Kim): Môn bức cung có (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: không; Tam kỳ nhập mộ: Ất. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.",
+    "mix6": "Phối hợp tại Càn 6 (Kim): Cửu Thiên + Thiên Trụ + Cảnh Môn. Hành Tinh → Môn: Kim bị Hỏa khắc; Môn → cung: Hỏa khắc Kim. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.",
+    "actor_self": "Ta / người hỏi (khi hỏi việc của mình): cung 7; convention; căn cứ 壬辰. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_event": "Sự việc: cung 6; convention; căn cứ 乙巳. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_opportunity": "Cơ hội mở việc: cung 3; proxy; căn cứ door:kai. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_quote": "Hồ sơ / báo giá: cung 6; proxy; căn cứ door:jing. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_money": "Lợi ích / dòng tiền: cung 9; proxy; căn cứ door:sheng. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_capital": "Vốn bỏ ra: cung 1; proxy; căn cứ stem:戊. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_contract": "Thỏa thuận / hợp đồng: cung 4; proxy; căn cứ spirit:harmony. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_authority": "Đầu mối quyền quyết định (biểu tượng): cung 7; proxy; căn cứ spirit:chief. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_service": "Sản phẩm / dịch vụ đang hỏi: cung 6; proxy; căn cứ 乙巳. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_customer": "Khách hàng / đối phương: chưa xác định cung; unresolved; căn cứ Chưa cung cấp Can Chi đại diện; không tự gán một người từ một sao/thần.. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_competitor": "Đối thủ: chưa xác định cung; unresolved; căn cứ Chưa cung cấp Can Chi đại diện; không tự gán một người từ một sao/thần.. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_decisionMaker": "Người có quyền duyệt: chưa xác định cung; unresolved; căn cứ Chưa cung cấp Can Chi đại diện; không tự gán một người từ một sao/thần.. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_topic_0": "Dụng thần chuyên đề 1: cung 3; convention; căn cứ door:kai. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_topic_1": "Dụng thần chuyên đề 2: cung 6; convention; căn cứ door:jing. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_topic_2": "Dụng thần chuyên đề 3: cung 4; convention; căn cứ spirit:harmony. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_execution": "Khâu thực hiện: cung 1; proxy; căn cứ Trực Sử (Môn). Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "actor_movement": "Dấu hiệu thay đổi: cung 6; proxy; căn cứ Dịch Mã theo chi giờ. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.",
+    "strength_4": "Cung 4: Thiên Xung tù theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_9": "Cung 9: Thiên Phụ tù theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_2": "Cung 2: Thiên Anh hưu theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_3": "Cung 3: Thiên Nhậm vượng theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_7": "Cung 7: Thiên Nhuế vượng theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_8": "Cung 8: Thiên Bồng phế theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_1": "Cung 1: Thiên Tâm tướng theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "strength_6": "Cung 6: Thiên Trụ tướng theo tháng Đinh Dậu (Kim). Cửu Tinh theo Yên Ba Điếu Tẩu Ca; tháng tiết khí, Thìn–Tuất–Sửu–Mùi quy Thổ. Không dùng bảng này cho Can/Môn/cung; không áp phép Thổ vượng 18 ngày.",
+    "special": "Ngũ bất ngộ thời: không (Thời can khắc Nhật can cùng âm/dương). Sáu tổ hợp can, Thiên/Địa/Nhân độn và Ngũ bất ngộ thời; không phải toàn bộ thập can khắc ứng.",
+    "conflict_3_opening_blocked": "Cung 3: Có cửa thuận theo quy ước nhưng gặp Không hoặc Môn bức; chưa thể kết luận cơ hội thành hiện thực.",
+    "graph_self_event": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Sự việc (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_authority": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Đầu mối quyền quyết định (biểu tượng) (cung 7): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_quote": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Hồ sơ / báo giá (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_service": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Sản phẩm / dịch vụ đang hỏi (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_capital": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Vốn bỏ ra (cung 1): Kim sinh Thủy; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_contract": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Thỏa thuận / hợp đồng (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_opportunity": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Cơ hội mở việc (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_money": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Lợi ích / dòng tiền (cung 9): Kim bị Hỏa khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_topic_0": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Dụng thần chuyên đề 1 (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_topic_1": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Dụng thần chuyên đề 2 (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_self_topic_2": "Ta / người hỏi (khi hỏi việc của mình) (cung 7) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_authority": "Sự việc (cung 6) → Đầu mối quyền quyết định (biểu tượng) (cung 7): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_quote": "Sự việc (cung 6) → Hồ sơ / báo giá (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_service": "Sự việc (cung 6) → Sản phẩm / dịch vụ đang hỏi (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_capital": "Sự việc (cung 6) → Vốn bỏ ra (cung 1): Kim sinh Thủy; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_contract": "Sự việc (cung 6) → Thỏa thuận / hợp đồng (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_opportunity": "Sự việc (cung 6) → Cơ hội mở việc (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_money": "Sự việc (cung 6) → Lợi ích / dòng tiền (cung 9): Kim bị Hỏa khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_topic_0": "Sự việc (cung 6) → Dụng thần chuyên đề 1 (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_topic_1": "Sự việc (cung 6) → Dụng thần chuyên đề 2 (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_event_topic_2": "Sự việc (cung 6) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_quote": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Hồ sơ / báo giá (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_service": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Sản phẩm / dịch vụ đang hỏi (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_capital": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Vốn bỏ ra (cung 1): Kim sinh Thủy; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_contract": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Thỏa thuận / hợp đồng (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_opportunity": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Cơ hội mở việc (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_money": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Lợi ích / dòng tiền (cung 9): Kim bị Hỏa khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_topic_0": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Dụng thần chuyên đề 1 (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_topic_1": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Dụng thần chuyên đề 2 (cung 6): Kim cùng hành Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_authority_topic_2": "Đầu mối quyền quyết định (biểu tượng) (cung 7) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_service": "Hồ sơ / báo giá (cung 6) → Sản phẩm / dịch vụ đang hỏi (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_capital": "Hồ sơ / báo giá (cung 6) → Vốn bỏ ra (cung 1): Kim sinh Thủy; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_contract": "Hồ sơ / báo giá (cung 6) → Thỏa thuận / hợp đồng (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_opportunity": "Hồ sơ / báo giá (cung 6) → Cơ hội mở việc (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_money": "Hồ sơ / báo giá (cung 6) → Lợi ích / dòng tiền (cung 9): Kim bị Hỏa khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_topic_0": "Hồ sơ / báo giá (cung 6) → Dụng thần chuyên đề 1 (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_topic_1": "Hồ sơ / báo giá (cung 6) → Dụng thần chuyên đề 2 (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_quote_topic_2": "Hồ sơ / báo giá (cung 6) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_capital": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Vốn bỏ ra (cung 1): Kim sinh Thủy; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_contract": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Thỏa thuận / hợp đồng (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_opportunity": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Cơ hội mở việc (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_money": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Lợi ích / dòng tiền (cung 9): Kim bị Hỏa khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_topic_0": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Dụng thần chuyên đề 1 (cung 3): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_topic_1": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Dụng thần chuyên đề 2 (cung 6): Kim cùng hành Kim; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_service_topic_2": "Sản phẩm / dịch vụ đang hỏi (cung 6) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_contract": "Vốn bỏ ra (cung 1) → Thỏa thuận / hợp đồng (cung 4): Thủy sinh Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_opportunity": "Vốn bỏ ra (cung 1) → Cơ hội mở việc (cung 3): Thủy sinh Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_money": "Vốn bỏ ra (cung 1) → Lợi ích / dòng tiền (cung 9): Thủy khắc Hỏa; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_topic_0": "Vốn bỏ ra (cung 1) → Dụng thần chuyên đề 1 (cung 3): Thủy sinh Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_topic_1": "Vốn bỏ ra (cung 1) → Dụng thần chuyên đề 2 (cung 6): Thủy được Kim sinh; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_capital_topic_2": "Vốn bỏ ra (cung 1) → Dụng thần chuyên đề 3 (cung 4): Thủy sinh Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_contract_opportunity": "Thỏa thuận / hợp đồng (cung 4) → Cơ hội mở việc (cung 3): Mộc cùng hành Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_contract_money": "Thỏa thuận / hợp đồng (cung 4) → Lợi ích / dòng tiền (cung 9): Mộc sinh Hỏa; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_contract_topic_0": "Thỏa thuận / hợp đồng (cung 4) → Dụng thần chuyên đề 1 (cung 3): Mộc cùng hành Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_contract_topic_1": "Thỏa thuận / hợp đồng (cung 4) → Dụng thần chuyên đề 2 (cung 6): Mộc bị Kim khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_contract_topic_2": "Thỏa thuận / hợp đồng (cung 4) → Dụng thần chuyên đề 3 (cung 4): Mộc cùng hành Mộc; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_opportunity_money": "Cơ hội mở việc (cung 3) → Lợi ích / dòng tiền (cung 9): Mộc sinh Hỏa; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_opportunity_topic_0": "Cơ hội mở việc (cung 3) → Dụng thần chuyên đề 1 (cung 3): Mộc cùng hành Mộc; đồng cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_opportunity_topic_1": "Cơ hội mở việc (cung 3) → Dụng thần chuyên đề 2 (cung 6): Mộc bị Kim khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_opportunity_topic_2": "Cơ hội mở việc (cung 3) → Dụng thần chuyên đề 3 (cung 4): Mộc cùng hành Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_money_topic_0": "Lợi ích / dòng tiền (cung 9) → Dụng thần chuyên đề 1 (cung 3): Hỏa được Mộc sinh; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_money_topic_1": "Lợi ích / dòng tiền (cung 9) → Dụng thần chuyên đề 2 (cung 6): Hỏa khắc Kim; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_money_topic_2": "Lợi ích / dòng tiền (cung 9) → Dụng thần chuyên đề 3 (cung 4): Hỏa được Mộc sinh; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_topic_0_topic_1": "Dụng thần chuyên đề 1 (cung 3) → Dụng thần chuyên đề 2 (cung 6): Mộc bị Kim khắc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_topic_0_topic_2": "Dụng thần chuyên đề 1 (cung 3) → Dụng thần chuyên đề 3 (cung 4): Mộc cùng hành Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "graph_topic_1_topic_2": "Dụng thần chuyên đề 2 (cung 6) → Dụng thần chuyên đề 3 (cung 4): Kim khắc Mộc; khác cung. Không suy chiều thời gian từ cạnh này.",
+    "mode_negotiation_self": "Đàm phán / Ta: Mục tiêu và giới hạn của người hỏi. Đại diện cần nối: self. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_other": "Đàm phán / Đối phương: Những gì đã biết, chưa biết và cần hỏi trực tiếp. Đại diện cần nối: customer. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_goals": "Đàm phán / Mục tiêu hai bên: Không mặc định hai bên đều chỉ muốn giảm giá. Đại diện cần nối: event, customer. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_power": "Đàm phán / Quyền lực: Phân biệt sức ép với thẩm quyền thực tế. Đại diện cần nối: decisionMaker, authority, self. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_weakness": "Đàm phán / Điểm yếu: Nêu rủi ro của mình trước; không suy bí mật đối phương. Đại diện cần nối: self, customer. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_give": "Đàm phán / Điểm có thể nhượng: Chỉ nhượng có điều kiện đổi lại, do người hỏi xác nhận giới hạn. Đại diện cần nối: quote, service. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_hold": "Đàm phán / Điểm không nên nhượng: Không đoán giá sàn; bảo vệ khả năng thực hiện, chứng từ và điều khoản thiết yếu. Đại diện cần nối: capital, contract. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_tactic": "Đàm phán / Chiến thuật: Hỏi rõ nhu cầu và người duyệt trước khi đề nghị đổi điều kiện. Đại diện cần nối: self, contract. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "mode_negotiation_time": "Đàm phán / Thời điểm: Chỉ chốt khi nhu cầu, thẩm quyền và giới hạn được làm rõ. Đại diện cần nối: event. Đây là khâu phân tích, không phải sự kiện đã xảy ra.",
+    "ref_contract_0": "Dụng thần tham khảo cho Hợp đồng · đấu thầu · nhận dự án: Khai Môn ở Chấn 3 (Mộc). Nhật can → cung này: Người khắc việc · tượng kiểm soát. Dùng kèm p3 và c3; chỉ áp dụng khi đại diện Nhật can đã phù hợp câu hỏi.",
+    "ref_contract_1": "Dụng thần tham khảo cho Hợp đồng · đấu thầu · nhận dự án: Cảnh Môn ở Càn 6 (Kim). Nhật can → cung này: Cùng hành · tỷ hòa. Dùng kèm p6 và c6; chỉ áp dụng khi đại diện Nhật can đã phù hợp câu hỏi.",
+    "ref_contract_2": "Dụng thần tham khảo cho Hợp đồng · đấu thầu · nhận dự án: Lục Hợp ở Tốn 4 (Mộc). Nhật can → cung này: Người khắc việc · tượng kiểm soát. Dùng kèm p4 và c4; chỉ áp dụng khi đại diện Nhật can đã phù hợp câu hỏi.",
+    "link_contract_0_1": "Người hỏi (khi hỏi việc của chính mình) tại Đoài 7 → Bối cảnh sự việc tại Càn 6: Kim cùng hành Kim; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_0_2": "Người hỏi (khi hỏi việc của chính mình) tại Đoài 7 → Cơ hội nhận việc tại Chấn 3: Kim khắc Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_0_3": "Người hỏi (khi hỏi việc của chính mình) tại Đoài 7 → Hồ sơ và báo giá tại Càn 6: Kim cùng hành Kim; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_0_4": "Người hỏi (khi hỏi việc của chính mình) tại Đoài 7 → Thỏa thuận và phối hợp tại Tốn 4: Kim khắc Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_1_2": "Bối cảnh sự việc tại Càn 6 → Cơ hội nhận việc tại Chấn 3: Kim khắc Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_1_3": "Bối cảnh sự việc tại Càn 6 → Hồ sơ và báo giá tại Càn 6: Kim cùng hành Kim; đồng cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_1_4": "Bối cảnh sự việc tại Càn 6 → Thỏa thuận và phối hợp tại Tốn 4: Kim khắc Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_2_3": "Cơ hội nhận việc tại Chấn 3 → Hồ sơ và báo giá tại Càn 6: Mộc bị Kim khắc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_2_4": "Cơ hội nhận việc tại Chấn 3 → Thỏa thuận và phối hợp tại Tốn 4: Mộc cùng hành Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại.",
+    "link_contract_3_4": "Hồ sơ và báo giá tại Càn 6 → Thỏa thuận và phối hợp tại Tốn 4: Kim khắc Mộc; khác cung. Đây là quan hệ hành cung, không phải thứ tự thời gian hoặc kết luận thành/bại."
+  },
+  "ui": {
+    "checkedAt": "2026-09-15T12:50:34.731Z",
+    "replayedUneditedLiveModelResponse": true,
+    "liveTransportTest": false,
+    "model": "gpt-6-astra",
+    "reasoningEffort": "ultra",
+    "rules": "TG-CB-5.1",
+    "protocol": 5,
+    "status": "reading",
+    "tabs": 5,
+    "strong": 31,
+    "rawMarkers": false,
+    "fit": true,
+    "mobileTabsFit": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "pageErrors": []
+  }
+}

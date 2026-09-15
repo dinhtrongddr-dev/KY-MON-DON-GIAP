@@ -45,3 +45,7 @@
 ## Đợt nâng cấp 15/09/2026: Astra
 
 Bản 16.1.0 / TG-CB-5.1 chuyển sang GPT-6 Astra/high theo yêu cầu. Đã xác nhận model qua tài khoản ChatGPT hiện có. Lượt thử báo giá thực bị chặn do hết hạn mức Codex; chưa có bài Astra hoàn chỉnh và chưa chấm ma trận này. Kiểm thử Node/Chrome mới dùng fixture chỉ xác minh luồng, dữ kiện và trình bày. Khi hạn mức được đặt lại, chạy các ca trên với Astra. Không sửa bằng chứng Sol lịch sử thành kết quả Astra.
+
+### Lượt tiếp theo: Astra/ultra
+
+Theo yêu cầu nâng suy luận lên cao nhất, cấu hình hiện tại là `ultra`, được `model/list` xác nhận trên hồ sơ ChatGPT của Kỳ Môn. Ca đàm phán phạm vi vệ sinh văn phòng đã chạy model thật: 204,677 giây, một lượt, không cần sửa, trạng thái `reading`; validator đạt. Đã đọc đối chiếu các dữ kiện kỹ thuật được nêu và kiểm tra hiển thị nguyên bài trên Chrome desktop/mobile. Không coi một ca này là hoàn thành cả ma trận. Bài luận, dữ kiện và phạm vi kiểm tra tại `docs/releases/AI-ULTRA-TEST-2026-09-15.md`.

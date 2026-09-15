@@ -70,7 +70,7 @@ export function initLocalAi({prepare}) {
  });
  read.addEventListener('click',async()=>{
    cancelWork();let body;try{body=prepare();if(!body.question)throw new Error('Hãy nhập sự việc cần hỏi trước khi luận.');}catch(e){status.textContent=e.message;return;}
-   const v=version,controller=startWork('Đang chuẩn bị dữ liệu bàn và câu hỏi…',true,190000);
+   const v=version,controller=startWork('Đang chuẩn bị dữ liệu bàn và câu hỏi…',true,610000);
    try{
      const prepared=await buildReadingRequest(body);
      if(v!==version)return;

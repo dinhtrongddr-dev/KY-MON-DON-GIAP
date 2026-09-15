@@ -39,12 +39,12 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
  const prepared=await buildReadingRequest(payload);
  const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
- const data=await v2.json();assert.equal(data.model,MODEL);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
+ const data=await v2.json();assert.equal(data.model,MODEL);assert.equal(data.reasoningEffort,'ultra');assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
  for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
  }
  assert.equal(called,1);
- const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);
+ const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,'ultra');
  assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ai/contextBuilder.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ui-controls.mjs',{headers})).status,200);
@@ -73,10 +73,10 @@ function mockCodex(auth='chatgpt',tool=false,{models,alterConfig,hold=false,resu
        const config={default_permissions:'qimen-reader',sandbox_mode:null,permissions:{'qimen-reader':{extends:null,workspace_roots:null,filesystem:{[options.cwd.replaceAll('\\','/')]: 'read',glob_scan_max_depth:null},network:{enabled:false}}},windows:{sandbox:'elevated'}};
        alterConfig?.(config);send({id:m.id,result:{config}});
      }
-     if(m.method==='model/list')send({id:m.id,result:{data:models??[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'high'}]}],nextCursor:null}});
+     if(m.method==='model/list')send({id:m.id,result:{data:models??[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'ultra'}]}],nextCursor:null}});
      if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-6-astra');assert.equal(m.params.sandbox,undefined);send({id:m.id,result:{thread:{id:'test-thread'},model:MODEL,sandbox:{type:'readOnly',networkAccess:false}}});}
      if(m.method==='turn/start'){
-       assert.equal(m.params.effort,REASONING_EFFORT);assert.equal(REASONING_EFFORT,'high');
+       assert.equal(m.params.effort,'ultra');
        assert.equal(m.params.sandboxPolicy,undefined);assert.equal(m.params.approvalPolicy,'never');
        send({id:m.id,result:{turn:{id:'test-turn'}}});
        if(turnError){send({method:'error',params:{error:turnError,willRetry:true}});return;}
@@ -96,8 +96,8 @@ test('Codex JSONL handshake and structured answer, without a live model call',as
  assert.equal(mock.seen.find(m=>m.method==='turn/start').params.input[0].text,JSON.stringify(context));
  assert.deepEqual(mock.seen.find(m=>m.method==='turn/start').params.outputSchema,readingSchema(facts,context));
 });
-test('Codex refuses a missing model or unsupported high effort before a turn',async()=>{
- for(const models of [[],[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'medium'}]}]]){
+test('Codex refuses a missing model or unsupported ultra effort before a turn',async()=>{
+ for(const models of [[],[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'high'},{reasoningEffort:'max'}]}]]){
    const mock=mockCodex('chatgpt',false,{models});
    await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),/GPT-6 Astra/);
    assert.ok(!mock.seen.some(m=>m.method==='turn/start'));

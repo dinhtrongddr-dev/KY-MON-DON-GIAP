@@ -1,5 +1,7 @@
 # Nâng cấp tầng AI 16.1.0 / TG-CB-5.1
 
+Đây là báo cáo đợt nâng cấp Astra/high ban đầu. Cấu hình hiện tại đã tăng lên `ultra` và có một bài model thật hoàn chỉnh; xem [báo cáo tiếp theo](AI-ULTRA-TEST-2026-09-15.md). Trạng thái hết hạn mức bên dưới mô tả lần thử trước đó.
+
 Nguồn chính: GitHub `dinhtrongddr-dev/KY-MON-DON-GIAP`, nền `5f1a9c92b8fdca21c6823f8f5d9a48366a33a23a`, checkout `E:/kymon-site`; host production là Cloudflare Pages tại https://kymon.pp.ua. Protocol 5 giữ lại, phiên bản quy tắc tăng để chặn bộ kết nối cũ trước khi gọi model.
 
 **Đã bổ sung và kiểm thử các lỗi tái hiện trong phần mềm. Chất lượng bài Astra thực chưa nghiệm thu vì tài khoản hết hạn mức Codex.** Kiểm thử schema, mock và hash không chứng minh mọi diễn giải đúng hoặc dự báo đã được xác thực.

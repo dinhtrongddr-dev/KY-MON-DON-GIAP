@@ -4,7 +4,7 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runCodex,MODEL} from './codex-client.mjs';
+import {runCodex,MODEL,REASONING_EFFORT} from './codex-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
@@ -70,7 +70,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
        return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
      }
      failures.delete(client);
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
      if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
@@ -101,7 +101,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
         try{
           const result=await interpretReading(prepared,{runner,signal:controller.signal});
           if(!res.destroyed){
-            const data={model:MODEL,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+            const data={model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }
