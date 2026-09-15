@@ -2,7 +2,7 @@
 
 Ứng dụng web tĩnh lập bàn **Thời Gia Kỳ Môn Độn Giáp – Chuyển Bàn** từ ngày, giờ, phút và múi giờ.
 
-Domain chính được cấu hình: [kymon.pp.ua](https://kymon.pp.ua). Repo nguồn: [KY-MON-DON-GIAP](https://github.com/dinhtrongddr-dev/KY-MON-DON-GIAP). Bản 16.0.1 cập nhật domain, giữ nguyên lõi và TG-CB-5.0; trạng thái DNS/triển khai và phạm vi chuyển đổi xem `docs/releases/DOMAIN-MIGRATION.md`.
+Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự động xuất bản từ GitHub `main` của repo [KY-MON-DON-GIAP](https://github.com/dinhtrongddr-dev/KY-MON-DON-GIAP). Bản ChatGPT Sites cũ tạm thời vẫn được giữ làm đường lui, không còn là host production. Bản 16.0.1 cập nhật domain, giữ nguyên lõi và TG-CB-5.0; trạng thái DNS/triển khai và phạm vi chuyển đổi xem `docs/releases/DOMAIN-MIGRATION.md` và `docs/releases/CLOUDFLARE-PAGES.md`.
 
 ## Luận bằng AI
 

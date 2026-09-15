@@ -29,17 +29,27 @@ Sol/high model and 180-second/one-repair budget remain unchanged.
 
 ## Activation
 
-The domain has been registered with the existing Sites project. At preparation
-time its A record still points to NIC.UA's parked page at 135.181.41.169. It is not
-yet an active HTTPS app domain. Required apex targets returned by Sites are
-162.159.143.30 and 172.66.3.26, plus the ownership/provider TXT records listed in
-the local release handoff `E:/kymon-site/.release/DOMAIN-DNS.md`.
+On 15/09/2026, GitHub `main` became the production source for the Cloudflare
+Pages project `ky-mon-don-giap`, published at
+`https://ky-mon-don-giap.pages.dev`. The production deployment for the cutover
+used commit `ea9df4f05d87790c9f4306ece3e7339be697ff93`, ran `npm run check`,
+and published `dist` successfully.
 
-Changing application source or uploading it to GitHub does not change DNS. The
-owner must apply these DNS records at the provider, then refresh the custom
-domain status in Sites. The relay and local bridge must also run the matching
-domain-aware version before AI requests from the new origin can succeed.
-Keep account, pairing and admin credentials outside source control.
+Cloudflare DNS is authoritative through `aspen.ns.cloudflare.com` and
+`quincy.ns.cloudflare.com`. The apex is a proxied Pages-managed CNAME to
+`ky-mon-don-giap.pages.dev`; mail, MX, `www`, `ftp`, and both verification TXT
+records remain in place. The Pages custom domain, certificate validation, and
+domain verification are active. Public Cloudflare DNS resolves the apex to the
+current Pages route, although individual ISP resolvers can continue returning
+the former Sites addresses until their cached TTL expires.
+
+HTTPS, all 59 deployed files, the audit route, a 390px browser layout, browser
+console and network activity, and one controlled production AI reading all
+passed. The AI request still follows Worker -> Tunnel -> local Codex bridge and
+therefore still requires the local connector to be running. The legacy ChatGPT
+Sites deployment remains available for rollback. Full production evidence and
+rollback instructions are in `docs/releases/CLOUDFLARE-PAGES.md`; generated DNS
+evidence remains local under `.release/`.
 
 ## Validation And Release Records
 
@@ -60,3 +70,9 @@ Final test counts, GitHub push/CI state, domain status, archive checksums and
 restore result are written to `.release/RELEASE.json` and accompanying generated
 records. The local browser check uses controlled AI responses; the older public
 real-AI evidence remains explicitly attached to the original published domain.
+
+The Cloudflare Pages completion check added 99 passing Node tests, the Python
+packaging regression, a 59-file production byte comparison, and a real
+production-origin AI request with matching protocol-5 fingerprints. This
+hosting migration does not change the frozen Qimen core or the earlier release
+evidence.
