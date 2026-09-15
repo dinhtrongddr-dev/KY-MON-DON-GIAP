@@ -71,7 +71,7 @@ restore result are written to `.release/RELEASE.json` and accompanying generated
 records. The local browser check uses controlled AI responses; the older public
 real-AI evidence remains explicitly attached to the original published domain.
 
-The Cloudflare Pages completion check added 99 passing Node tests, the Python
+The Cloudflare Pages completion check ran 99 passing Node tests, the Python
 packaging regression, a 59-file production byte comparison, and a real
 production-origin AI request with matching protocol-5 fingerprints. This
 hosting migration does not change the frozen Qimen core or the earlier release
