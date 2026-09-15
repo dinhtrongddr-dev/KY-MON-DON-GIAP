@@ -41,7 +41,7 @@ test('certainty audit distinguishes explicit cautions from promised outcomes',()
 });
 test('every rendered condition, resolution, comparison and clarification is checked for invented claims',()=>{
   for(const mode of ['auto','direction']) {
-    const p=prepareReading({...body,mode});
+    const p=prepareReading({...body,mode,...(mode==='direction'?{direction:{origin:'Văn phòng',kind:'movement'}}:{})});
     assert.doesNotThrow(()=>validateReading(readingFixture(p),p.facts,'general',p.context));
     const slots=[r=>r.development[1],r=>r.bottleneck,...(mode==='direction'?[r=>r.comparisons[0]]:[])];
     const keys=['condition','resolution',...(mode==='direction'?['reason']:[])];

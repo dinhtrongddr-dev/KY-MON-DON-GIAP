@@ -5,14 +5,16 @@ import {sexagenaryName,pillarFromGanzhi} from './core/calendar.mjs';
 export function initModeControls(doc=document) {
   const $=id=>doc.getElementById(id),mode=$('qimen-mode'),question=$('question');
   for(const id of MODES){const option=doc.createElement('option');option.value=id;option.textContent=MODE_LABELS[id];mode.append(option);}
-  for(const id of ['customer','competitor','decisionMaker']) {
+  for(const id of ['customer','competitor','decisionMaker','subject']) {
     const select=$('actor-'+id);
+    if(!select)continue;
     for(let i=0;i<60;i++){const p=pillarFromGanzhi(sexagenaryName(i)),option=doc.createElement('option');option.value=p.han;option.textContent=p.vi;select.append(option);}
   }
   const update=()=>{
     const q=buildQuestionContext(question.value,{mode:mode.value,topic:$('topic')?.value||'general'}),c=q.classification;
-    $('mode-explanation').textContent=`${q.domainLabel} · ${MODE_LABELS[c.mode]} · ${c.reason}`;
+    $('mode-explanation').textContent=`${q.domainLabel} · ${MODE_LABELS[c.mode]} · ${c.reason}`+(c.ambiguous?' Ý định còn mơ hồ; hãy kiểm tra chế độ đã chọn hoặc chọn lại.':'');
     $('timing-options').hidden=c.mode!=='timing';$('action-options').hidden=!['timing','direction'].includes(c.mode);
+    if($('direction-options'))$('direction-options').hidden=c.mode!=='direction';
   };
   $('topic')?.addEventListener('change',update);mode.addEventListener('change',update);question.addEventListener('input',update);
   $('add-candidate').addEventListener('click',()=>{
@@ -27,6 +29,8 @@ export function initModeControls(doc=document) {
   return ()=>{
     const actual=classifyQuestion(question.value,mode.value).mode;
     return {mode:mode.value,depth:$('reading-depth')?.value||'standard',actors:Object.fromEntries(['customer','competitor','decisionMaker'].map(k=>[k,$('actor-'+k).value]).filter(([,v])=>v)),
+      subject:$('subject-label')?.value.trim()&&$('actor-subject')?.value?{label:$('subject-label').value.trim(),pillar:$('actor-subject').value}:null,
+      direction:actual==='direction'?{origin:$('direction-origin')?.value||'',kind:$('direction-kind')?.value||''}:null,
       action:['timing','direction'].includes(actual)?$('qimen-action').value:'general',
       candidates:actual==='timing'?[...doc.querySelectorAll('.timing-candidate')].map(el=>el.value).filter(Boolean):[]};
   };

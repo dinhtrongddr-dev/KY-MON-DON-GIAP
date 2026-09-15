@@ -51,9 +51,10 @@ test('brief content gets exactly one bounded rewrite with the same facts and que
   assert.ok(seen[1].revision.issue);assert.deepEqual(seen[1].evidence,seen[0].evidence);assert.deepEqual(seen[1].readingGraph,seen[0].readingGraph);assert.equal(seen[1].question,body.question);
 });
 
-test('a second inadequate reading fails closed; authentication or transport errors are never retried',async()=>{
+test('a second inadequate reading returns verified facts; authentication or transport errors are never retried',async()=>{
   const p=prepareReading(body);let count=0;
-  await assert.rejects(interpretReading(p,{runner:async()=>{count++;return {};}}),/sau một lượt/);assert.equal(count,2);
+  const fallback=await interpretReading(p,{runner:async()=>{count++;return {};}});assert.equal(fallback.status,'verified_fallback');assert.equal(count,2);
+  assert.doesNotThrow(()=>validateReading(fallback,p.facts,body.topic,p.context));
   count=0;await assert.rejects(interpretReading(p,{runner:async()=>{count++;throw new Error('Không có quyền truy cập model');}}),/quyền truy cập/);assert.equal(count,1);
 });
 
@@ -73,6 +74,6 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
 });
 
 test('v5 request fingerprint binds the planner, mode and depth',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-5.0');
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-5.1');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
 });

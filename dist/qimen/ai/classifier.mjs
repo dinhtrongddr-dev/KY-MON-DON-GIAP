@@ -12,11 +12,15 @@ const INTENTS=[
 export function classifyQuestion(question,requested='auto') {
   if(!MODES.includes(requested))throw new Error('Chế độ luận không hợp lệ.');
   const q=normalizeQuestion(question),matches=INTENTS.filter(([,r])=>r.test(q));
+  if(/\bphuong huong (kinh doanh|phat trien|xu ly|hanh dong|su nghiep)\b/.test(q)&&!/(di huong|ngoi|quay mat|phuong vi|dong nam|tay bac)/.test(q)){
+    const index=matches.findIndex(([id])=>id==='direction');if(index>=0)matches.splice(index,1);
+    matches.unshift(['strategy',null,'Phương hướng ở đây là cách hành động, chưa phải phương vị địa lý.']);
+  }
   // A competitor comparison is business even when phrased as a yes/no question.
   if(/doi thu/.test(q)&&/loi the|manh|hon|so voi/.test(q)&&!matches.some(([id])=>['strategy','negotiation','timing'].includes(id)))matches.unshift(['business',null,'Câu hỏi so sánh vị thế đối thủ.']);
   const mode=requested==='auto'?(matches[0]?.[0]||'prediction'):requested;
   return {requested,mode,reason:requested==='auto'?(matches[0]?.[2]||'Chưa rõ ý định; tạm đọc diễn biến, bạn có thể đổi chế độ.'):'Theo chế độ bạn chọn.',
-    alternatives:[...new Set(matches.map(m=>m[0]))].filter(m=>m!==mode),fallback:!matches.length&&requested==='auto'};
+    alternatives:[...new Set(matches.map(m=>m[0]))].filter(m=>m!==mode),fallback:!matches.length&&requested==='auto',ambiguous:requested==='auto'&&(!matches.length||matches.some(([id])=>id==='timing')&&matches.some(([id])=>id==='direction'))};
 }
 const DOMAINS=[['health',/\b(suc khoe|benh|dieu tri|dau nguc|kho tho)\b/],['investment',/\b(dau tu|co phieu|chung khoan|tien ao|coin)\b/],['dispute',/\b(khoi kien|kien tung|tranh chap|toa an)\b/],
   ['contract',/bao gia|hop dong|dau thau|du an/],['debt',/doi no|tra no|thu hoi no/],['study',/hoc|thi cu|chung chi/],['love',/\b(tinh cam|tinh yeu|nguoi yeu|hen ho)\b/],

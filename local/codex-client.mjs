@@ -4,7 +4,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {homedir,tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {existsSync} from 'node:fs';
-export const MODEL='gpt-5.6-sol';
+export const MODEL='gpt-6-astra';
 export const REASONING_EFFORT='high';
 function codexHome(){
  if(process.env.QIMEN_CODEX_HOME)return resolve(process.env.QIMEN_CODEX_HOME);
@@ -33,12 +33,12 @@ async function requireModel(request){
    const result=await request('model/list',{cursor,includeHidden:true,limit:100});
    const model=result.data?.find(item=>item.model===MODEL||item.id===MODEL);
    if(model){
-     if(!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===REASONING_EFFORT))throw new Error('GPT-5.6 Sol không hỗ trợ mức suy luận high trên tài khoản/CLI này.');
+     if(!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===REASONING_EFFORT))throw new Error('GPT-6 Astra không hỗ trợ mức suy luận high trên tài khoản/CLI này.');
      return;
    }
    cursor=result.nextCursor;if(!cursor)break;
  }
- throw new Error('Tài khoản Codex hiện không có quyền dùng GPT-5.6 Sol. Cầu nối không tự đổi model.');
+ throw new Error('Tài khoản Codex hiện không có quyền dùng GPT-6 Astra. Cầu nối không tự đổi model.');
 }
 function verifyPermissions(config,cwd){
  const profile=config?.permissions?.['qimen-reader'];

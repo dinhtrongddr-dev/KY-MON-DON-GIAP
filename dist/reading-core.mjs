@@ -10,7 +10,7 @@ import {BASE_WRITER_INSTRUCTIONS} from './qimen/ai/prompts.mjs';
 import {synthesisInstructions} from './qimen/ai/prompts.mjs';
 
 // One deterministic contract is used by the browser and the AI bridge.
-export const RULE_VERSION = 'TG-CB-5.0';
+export const RULE_VERSION = 'TG-CB-5.1';
 export const READING_PROTOCOL = 5;
 const UPGRADE_MESSAGE = `Bộ kết nối AI chưa cùng bộ quy tắc ${RULE_VERSION}. Hãy cập nhật bộ kết nối theo hướng dẫn; chưa thể nhận lời luận khác phiên bản.`;
 const named = p => `${p.vi} ${p.number} (${p.element})`;
@@ -91,6 +91,8 @@ export async function buildReadingRequest(body) {
   const identity = await readingIdentity(prepared);
   return {...prepared, ...identity, request:{question:prepared.context.question,topic:prepared.context.selectedTopic,
     mode:prepared.context.allInOne.classification.requested,actors:prepared.context.allInOne.actors,
+    subject:prepared.context.allInOne.questionContext.subject.mapping,
+    direction:prepared.context.allInOne.questionContext.direction?{origin:prepared.context.allInOne.questionContext.direction.origin,kind:prepared.context.allInOne.questionContext.direction.kind}:null,
     depth:prepared.context.allInOne.questionContext.depth,action:prepared.context.allInOne.action,candidates:prepared.context.allInOne.comparison?.values||[],
     method:prepared.chart.method,input:prepared.chart.input,protocol:READING_PROTOCOL,rules:RULE_VERSION,...identity}};
 }

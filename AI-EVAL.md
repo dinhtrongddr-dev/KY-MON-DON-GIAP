@@ -41,3 +41,7 @@
 - Planner giữ nguyên qua một lượt rewrite; auth/network không thử lại; Hủy bao trùm rewrite.
 - Browser/server cùng protocol 5, đổi depth/câu hỏi/pháp/giờ/mode/ứng viên làm thay fingerprint. Phản hồi cũ không render; textContent không thực thi HTML.
 - Core giữ hash 480 bàn, bộ lịch/an bàn cũ vẫn chạy. Heuristic lexical/schema không chứng minh bài đủ ý nghĩa; không xem fixture giả lập là lời của model.
+
+## Đợt nâng cấp 15/09/2026: Astra
+
+Bản 16.1.0 / TG-CB-5.1 chuyển sang GPT-6 Astra/high theo yêu cầu. Đã xác nhận model qua tài khoản ChatGPT hiện có. Lượt thử báo giá thực bị chặn do hết hạn mức Codex; chưa có bài Astra hoàn chỉnh và chưa chấm ma trận này. Kiểm thử Node/Chrome mới dùng fixture chỉ xác minh luồng, dữ kiện và trình bày. Khi hạn mức được đặt lại, chạy các ca trên với Astra. Không sửa bằng chứng Sol lịch sử thành kết quả Astra.

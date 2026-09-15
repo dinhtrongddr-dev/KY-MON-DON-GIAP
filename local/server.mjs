@@ -121,7 +121,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));
@@ -134,7 +134,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const bridge=createBridge();
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
-   console.log('Kỳ Môn Local • GPT-5.6 Sol\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nĐang tạo link HTTPS công khai qua Cloudflare Tunnel...\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
+   console.log('Kỳ Môn Local • GPT-6 Astra\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nĐang tạo link HTTPS công khai qua Cloudflare Tunnel...\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
    if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
      const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler',SITE_ORIGIN+'/'],{detached:true,stdio:'ignore',windowsHide:true});
      browser.unref();

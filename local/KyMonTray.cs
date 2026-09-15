@@ -154,7 +154,7 @@ internal sealed class KyMonApplicationContext : ApplicationContext
 
         trayIcon = new NotifyIcon();
         trayIcon.Icon = TrayIconFactory.Create();
-        trayIcon.Text = "Ky Mon Local - GPT-5.6 Sol";
+        trayIcon.Text = "Ky Mon Local - GPT-6 Astra";
         trayIcon.Visible = false;
         trayIcon.DoubleClick += delegate { RestoreConsole(); };
 
@@ -519,7 +519,7 @@ internal static class Program
         {
             Console.OutputEncoding = new UTF8Encoding(false);
             Console.InputEncoding = new UTF8Encoding(false);
-            Console.Title = "Ky Mon Local - GPT-5.6 Sol";
+            Console.Title = "Ky Mon Local - GPT-6 Astra";
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
         }
         catch { }
@@ -539,7 +539,7 @@ internal static class Program
             using (NotifyIcon notify = new NotifyIcon())
             {
                 notify.Icon = icon;
-                notify.Text = "Ky Mon Local - GPT-5.6 Sol";
+                notify.Text = "Ky Mon Local - GPT-6 Astra";
                 notify.Visible = true;
                 Application.DoEvents();
                 notify.Visible = false;

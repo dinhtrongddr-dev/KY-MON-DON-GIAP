@@ -53,6 +53,8 @@
               <details class="actor-options"><summary>Đại diện bổ sung · chỉ nhập khi đã xác định</summary>
                 <p>Nếu đã xác định Can Chi đại diện theo cách luận đang dùng, chọn tại đây. Không phải yêu cầu ngày sinh. Để trống nếu chưa rõ; AI sẽ không tự gán khách hàng hay đối thủ vào một cung.</p>
                 <div class="actor-fields">
+                  <label class="field"><span>Người được hỏi thay · tên / vai trò</span><input id="subject-label" type="text" maxlength="120" placeholder="Chỉ nhập khi hỏi thay" /></label>
+                  <label class="field"><span>Can Chi đại diện người được hỏi thay</span><select id="actor-subject"><option value="">Chưa xác định</option></select></label>
                   <label class="field"><span>Khách hàng / đối phương</span><select id="actor-customer"><option value="">Chưa xác định</option></select></label>
                   <label class="field"><span>Đối thủ</span><select id="actor-competitor"><option value="">Chưa xác định</option></select></label>
                   <label class="field"><span>Người có quyền duyệt</span><select id="actor-decisionMaker"><option value="">Chưa xác định</option></select></label>
@@ -66,6 +68,11 @@
                   <label class="field"><span>Thời điểm 2</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
                 </div>
                 <button id="add-candidate" class="button button-quiet" type="button">Thêm thời điểm</button>
+              </div>
+              <div id="direction-options" class="candidate-fields" hidden>
+                <label class="field"><span>Điểm quy chiếu phương hướng</span><input id="direction-origin" type="text" maxlength="240" placeholder="Ví dụ: cửa chính văn phòng" /></label>
+                <label class="field"><span>Bạn dùng hướng để làm gì?</span><select id="direction-kind"><option value="">Chọn cách dùng hướng</option><option value="movement">Di chuyển từ điểm quy chiếu</option><option value="seating">Hướng ngồi · phía lưng / tựa</option><option value="facing">Hướng nhìn · phía mặt nhìn</option></select></label>
+                <p>So sánh phương vị địa lý từ điểm đã nêu, tại thời điểm lập bàn. Chọn mục tiêu hành động ở trên; đối chiếu đường đi và điều kiện thực tế trước khi dùng.</p>
               </div>
             </div>
             <label class="field field-time">
@@ -147,8 +154,8 @@
             <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
             <p>Luận đúng việc đang hỏi: phối hợp các tượng, làm rõ điểm thuận–vướng và nối thành diễn biến có điều kiện. Mỗi nhận định đều có căn cứ để đối chiếu ngay trên bàn.</p>
             <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI · TG-CB-5.0</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
-              <p>All-in-One cần bộ kết nối AI TG-CB-5.0. Website không tự cập nhật bộ kết nối. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
+              <ol><li><a href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI · TG-CB-5.1</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
+              <p>All-in-One cần bộ kết nối AI TG-CB-5.1. Website không tự cập nhật bộ kết nối. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
             </details>
             <div class="local-controls">
               <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label>
@@ -167,7 +174,7 @@
             <button id="rule-analyze" class="button button-quiet" type="button">Xem phân tích quy tắc · không cần kết nối AI</button>
             <div id="rule-preview" class="rule-preview" hidden></div>
             <div id="ai-answer" aria-live="polite" aria-busy="false" hidden></div>
-            <details><summary>Quy tắc và phạm vi luận · TG-CB-5.0</summary>
+            <details><summary>Quy tắc và phạm vi luận · TG-CB-5.1</summary>
               <p>Một lõi Thời Gia · Chuyển Bàn, giữ đúng Tháo bổ hoặc Mao Sơn đã chọn. Sáu chế độ có quy tắc phân tích riêng; Tự động chọn theo ý định câu hỏi và bạn có thể đổi lại. Trước khi gọi AI, app xác định ngữ cảnh, gom cụm tượng, chọn căn cứ trọng tâm và lập diễn biến có điều kiện.</p>
               <p>Kết luận nhanh và Diễn biến thực tế dành cho người mới. Căn cứ Kỳ Môn được thu gọn, có thể mở để đối chiếu ngay với cung trên bàn. Chiến lược đề xuất nêu bước làm tiếp; Ứng kỳ tách thời hạn câu hỏi với việc so sánh thời điểm hành động.</p>
               <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, Ngũ bất ngộ thời và một số tổ hợp can được khai báo. Chưa hỗ trợ nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hoặc dự báo ngày ứng nghiệm chắc chắn. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>

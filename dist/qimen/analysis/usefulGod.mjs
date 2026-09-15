@@ -1,6 +1,7 @@
 import {locateStem,locateRef,TOPICS} from '../../guide.mjs';
 import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {TOPIC_DOMAINS,semanticRoles} from '../modes/semantics.mjs';
+import {selectionProvenance} from './ruleRegistry.mjs';
 const ACTOR_KEYS=['customer','competitor','decisionMaker'];
 export function normalizeActors(raw={}) {
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!ACTOR_KEYS.includes(k)))throw new Error('Đại diện bổ sung không hợp lệ.');
@@ -12,6 +13,10 @@ export function usefulGods(board,topic='general',actors={},selfPillar=board.pill
     const found=locateStem(board,pillar);return {id,label,palace:found.palace.number,stem:found.effective,status,basis:pillar.han,evidenceId:`actor_${id}`};
   };
   const roles=[stemRole('self','Ta / người hỏi (khi hỏi việc của mình)',selfPillar),stemRole('event','Sự việc',board.pillars.hour)];
+  if(questionContext?.subject.kind==='on_behalf'){
+    if(questionContext.subject.mapping){roles[0].label=questionContext.subject.text;roles[0].status='user_supplied';}
+    else{roles[0].palace=null;roles[0].stem=null;roles[0].status='unresolved';roles[0].basis='Chưa xác nhận Can Chi đại diện người được hỏi thay.';}
+  }
   const refs=[['opportunity','Cơ hội mở việc',['door','kai']],['quote','Hồ sơ / báo giá',['door','jing']],
     ['money','Lợi ích / dòng tiền',['door','sheng']],['capital','Vốn bỏ ra',['stem','戊']],
     ['contract','Thỏa thuận / hợp đồng',['spirit','harmony']],['authority','Đầu mối quyền quyết định (biểu tượng)',['spirit','chief']]];
@@ -26,5 +31,5 @@ export function usefulGods(board,topic='general',actors={},selfPillar=board.pill
   const moving=board.palaces.find(p=>p.horse);
   roles.push({id:'movement',label:'Dấu hiệu thay đổi',palace:moving?.number??null,status:moving?'proxy':'unresolved',basis:'Dịch Mã theo chi giờ',evidenceId:'actor_movement'});
   const meanings=semanticRoles(questionContext?.domain||TOPIC_DOMAINS[topic]);
-  return roles.map(r=>({...r,semanticRole:meanings[r.id]||r.label,provenance:r.status==='user_supplied'?'user_mapping':r.status==='unresolved'?'unknown':'interpretation_convention'}));
+  return roles.map(r=>({...r,...selectionProvenance(r),semanticRole:meanings[r.id]||r.label,provenance:r.status==='user_supplied'?'user_mapping':r.status==='unresolved'?'unknown':'interpretation_convention'}));
 }

@@ -25,7 +25,7 @@ export function renderTechnical(root,prepared,{includeJson=true}={}) {
   node('p',c.classification.reason,root);
   node('p',`${c.coverage.resolvedActors}/${c.coverage.totalActors} đại diện có cung theo quy ước hoặc khai báo. Đây không phải độ chính xác dự báo.`,root,'ai-note');
   const roles=node('div','',root,'rule-actors');
-  for(const r of c.graph.nodes){const item=node('div','',roles);node('strong',r.label,item);node('span',r.palace?`Cung ${r.palace} · ${r.status==='proxy'?'biểu tượng tham khảo':r.status==='user_supplied'?'người dùng khai báo':'quy ước'}`:'Chưa xác định đại diện',item);}
+  for(const r of c.graph.nodes){const item=node('div','',roles);node('strong',r.label,item);node('span',r.palace?`Cung ${r.palace} · ${r.status==='proxy'?'biểu tượng tham khảo':r.status==='user_supplied'?'người dùng khai báo':'quy ước'}`:'Chưa xác định đại diện',item);node('p',`${r.selectionRule.id} · ${r.selectionRule.verification}. Nguồn: ${r.selectionRule.source}. ${r.limitations.join(' ')}`,item,'ai-note');}
   const links=node('details','',root);node('summary','Mạng quan hệ giữa các đối tượng',links);
   node('p',c.graph.meaning,links,'ai-note');
   const ul=node('ul','',links);
@@ -44,9 +44,10 @@ export function renderComparison(root,prepared) {
   const c=prepared.context.allInOne,doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);
   const comparison=c.comparison;
   const rows=comparison?.ranking||c.plan.computed.ranking;
-  if(!rows)return;
+  if(!rows?.length)return;
   node('h3',comparison?'So sánh các thời điểm đã nhập':'So sánh tám phương vị',root);
   node('p',comparison?.convention||c.plan.computed.convention,root,'ai-note');
+  if(c.questionContext.direction)node('p',`Điểm quy chiếu: ${c.questionContext.direction.origin}. Cách dùng: ${{movement:'hướng di chuyển',seating:'hướng ngồi (phía lưng/tựa)',facing:'hướng nhìn'}[c.questionContext.direction.kind]}. Áp dụng tại thời điểm lập bàn.`,root);
   const grid=node('div','',root,'comparison-grid');
   for(const item of rows){
     const section=node('section','',grid,'comparison-item');node('h4',`Nhóm ${item.rank} · ${item.label}`,section);

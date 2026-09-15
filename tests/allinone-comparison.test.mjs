@@ -30,7 +30,7 @@ test('candidate validation rejects missing, duplicate, impossible dates and unbo
   assert.throws(()=>prepareReading({...body,action:'invented'}));
 });
 test('direction compares all eight directions with explicit tie ranks and no centre direction',()=>{
-  const p=prepareReading({...body,mode:'direction'}),rows=p.context.allInOne.plan.computed.ranking;
+  const p=prepareReading({...body,mode:'direction',direction:{origin:'Văn phòng',kind:'movement'}}),rows=p.context.allInOne.plan.computed.ranking;
   assert.equal(rows.length,8);assert.ok(rows.every(r=>r.palace!==5));
   assert.equal(new Set(rows.map(r=>r.label)).size,8);
   const tied=rankCandidates([{id:'a',blockers:[],fit:2},{id:'b',blockers:[],fit:2},{id:'c',blockers:['x'],fit:3}]);

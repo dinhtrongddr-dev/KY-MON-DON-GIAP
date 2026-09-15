@@ -82,7 +82,7 @@ export function initLocalAi({prepare}) {
      if(v!==version)return;
      status.textContent='Đang kiểm tra căn cứ và hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);
-     status.textContent='Đã nhận lời luận AI; căn cứ và mã bàn khớp lượt hỏi này. Nội dung diễn giải vẫn cần đối chiếu thực tế.';
+     status.textContent=data.reading.status==='verified_fallback'?'AI chưa hoàn tất bài luận đủ căn cứ. Đang hiển thị phần dữ kiện đã tính để bạn đối chiếu.':data.reading.status==='needs_clarification'?'Cần bổ sung thông tin ảnh hưởng cách luận.':'Đã nhận lời luận AI; căn cứ và mã bàn khớp lượt hỏi này. Nội dung diễn giải vẫn cần đối chiếu thực tế.';
    }catch(e){if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });
 }

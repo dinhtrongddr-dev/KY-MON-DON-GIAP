@@ -2,7 +2,7 @@ import {createQimenBoard} from '../core/board.mjs';
 import {formatInstantAtOffset} from '../core/calendar.mjs';
 import {analyzeBoard} from '../analysis/index.mjs';
 import {ACTIONS,actionMetrics,rankCandidates,RANK_CONVENTION} from '../modes/actionRules.mjs';
-export function compareTimes(base,rawCandidates,{action='general',topic='general',actors={}}={}) {
+export function compareTimes(base,rawCandidates,{action='general',topic='general',actors={},selfPillar=base.pillars.day}={}) {
   if(!Array.isArray(rawCandidates)||rawCandidates.length<2||rawCandidates.length>12)throw new Error('Chọn từ 2 đến 12 thời điểm để so sánh.');
   const inputs=rawCandidates.map(value=>{
     if(typeof value!=='string')throw new Error('Thời điểm ứng viên không hợp lệ.');
@@ -15,7 +15,7 @@ export function compareTimes(base,rawCandidates,{action='general',topic='general
   const candidates=inputs.map((input,i)=>{
     // Base reuse avoids recalculating an identical instant. Each other candidate is computed once.
     const b=JSON.stringify(input)===JSON.stringify(base.input)?base:createQimenBoard(input,base.method);
-    const a=analyzeBoard(b,{topic,actors,selfPillar:base.pillars.day});
+    const a=analyzeBoard(b,{topic,actors,selfPillar});
     const roles=['self',...ACTIONS[action].roles],numbers=[...new Set(roles.map(id=>a.roles.find(r=>r.id===id).palace))];
     const targetNumbers=[...new Set(ACTIONS[action].roles.map(id=>a.roles.find(r=>r.id===id).palace))];
     const details=numbers.map(n=>{const p=a.palaces.find(p=>p.number===n);return {number:n,metrics:actionMetrics(p,action)};});
@@ -32,5 +32,5 @@ export function compareTimes(base,rawCandidates,{action='general',topic='general
       rolePalaces:roles.map(id=>{const r=a.roles.find(r=>r.id===id);return {id,palace:r.palace,basis:r.basis};}),details};
   });
   return {action,values,candidates,ranking:rankCandidates(candidates.map(({board,details,rolePalaces,...rest})=>rest)),
-    convention:RANK_CONVENTION+' Giữ Nhật trụ của bàn hỏi làm đại diện người hỏi xuyên các ứng viên (Giáp dùng cùng nghi ẩn); Thời can thuộc từng bàn ứng viên. Không đổi người hỏi theo ngày ứng viên. Múi giờ cố định; chưa áp giờ mùa hè hoặc chân thái dương.'};
+    convention:RANK_CONVENTION+' Giữ đại diện đã chọn ở bàn hỏi xuyên các ứng viên: Nhật trụ khi hỏi việc mình, hoặc Can Chi được xác nhận khi hỏi thay (Giáp dùng cùng nghi ẩn); Thời can thuộc từng bàn ứng viên. Không đổi người hỏi theo ngày ứng viên. Múi giờ cố định; chưa áp giờ mùa hè hoặc chân thái dương.'};
 }

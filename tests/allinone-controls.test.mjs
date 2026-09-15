@@ -10,7 +10,7 @@ class Element {
   focus(){this.focused=true;}
 }
 function setup(){
-  const ids=Object.fromEntries(['reading-depth','qimen-mode','question','mode-explanation','timing-options','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
+  const ids=Object.fromEntries(['reading-depth','qimen-mode','question','mode-explanation','timing-options','direction-options','direction-origin','direction-kind','subject-label','actor-subject','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
   ids['reading-depth'].value='standard';ids['qimen-mode'].tag='select';ids['qimen-action'].value='general';
   for(const id of ['customer','competitor','decisionMaker']){const el=ids['actor-'+id];el.tag='select';el.append(new Element('option'));}
   for(let i=0;i<2;i++){const input=new Element('input');input.className='timing-candidate';ids['timing-candidates'].append(input);}
@@ -34,3 +34,14 @@ test('additional timing rows are bounded, removable and changes invalidate previ
 });
 
 test('depth selection is returned with reading options',()=>{const {ids,options}=setup();assert.equal(options().depth,'standard');ids['reading-depth'].value='deep';assert.equal(options().depth,'deep');});
+
+test('direction and confirmed subject inputs are carried into requests and hidden outside direction mode',()=>{
+  const {ids,options}=setup();ids['qimen-mode'].value='direction';ids['qimen-mode'].fire('change');
+  assert.equal(ids['direction-options'].hidden,false);
+  ids['direction-origin'].value='Cửa chính';ids['direction-kind'].value='facing';
+  ids['subject-label'].value='Em trai';ids['actor-subject'].value='甲子';
+  assert.deepEqual(options().direction,{origin:'Cửa chính',kind:'facing'});
+  assert.deepEqual(options().subject,{label:'Em trai',pillar:'甲子'});
+  ids['qimen-mode'].value='prediction';ids['qimen-mode'].fire('change');
+  assert.equal(ids['direction-options'].hidden,true);assert.equal(options().direction,null);
+});

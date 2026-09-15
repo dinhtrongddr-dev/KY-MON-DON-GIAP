@@ -6,9 +6,9 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 ## Luận bằng AI
 
-Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
+Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model `gpt-6-astra` theo yêu cầu cập nhật ngày 15/09/2026 và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Giao diện 15/09/2026 hiển thị mã kết nối rõ, cho phép chọn ghi nhớ mã trên trình duyệt và xóa mã đã lưu ngay khi bỏ chọn. Lúc chờ kết nối/luận AI có vòng xoay cùng thời gian đã chờ; trạng thái dọn sạch khi xong, lỗi, hủy hoặc đổi dữ liệu. Không thay lõi, model hay giao thức.
+Bản 16.1.0 / TG-CB-5.1 (protocol 5) hiển thị mã kết nối rõ, cho phép chọn ghi nhớ mã trên trình duyệt và xóa mã đã lưu ngay khi bỏ chọn. Lúc chờ kết nối/luận AI có vòng xoay cùng thời gian đã chờ; trạng thái dọn sạch khi xong, lỗi, hủy hoặc đổi dữ liệu. Giữ nguyên lõi lập bàn; bổ sung kiểm tra văn luận, nguồn/giới hạn quy tắc, đầu vào phương hướng, chữ đậm an toàn, bài ngắn và dữ kiện dự phòng. Tài khoản có Astra/high, nhưng lượt thử thực ngày 15/09 bị chặn do hết hạn mức; xem `docs/releases/AI-REQUIREMENTS-2026-09-15.md`.
 
 All-in-One v16 dùng TG-CB-5.0 (protocol 5), Engine TG-ROTATING-2.0. Bản nguồn này lấy từ lần xuất bản Sites 17; số lần xuất bản không phải phiên bản của bộ quy tắc. Một Core dùng chung; QimenBoard JSON và Analysis Engine nằm trong `dist/qimen/`. Sáu mode có quy tắc riêng, Auto phân loại ý định, graph nối đại diện và planner ghép diễn biến. Timing so sánh 2–12 thời điểm; Direction so tám phương vị theo mục tiêu. Năm tab kết quả và nút xem dữ kiện không cần AI. Chi tiết: `QIMEN-ARCHITECTURE.md`.
 

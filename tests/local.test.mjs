@@ -74,7 +74,7 @@ function mockCodex(auth='chatgpt',tool=false,{models,alterConfig,hold=false,resu
        alterConfig?.(config);send({id:m.id,result:{config}});
      }
      if(m.method==='model/list')send({id:m.id,result:{data:models??[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'high'}]}],nextCursor:null}});
-     if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-5.6-sol');assert.equal(m.params.sandbox,undefined);send({id:m.id,result:{thread:{id:'test-thread'},model:MODEL,sandbox:{type:'readOnly',networkAccess:false}}});}
+     if(m.method==='thread/start'){assert.equal(m.params.model,'gpt-6-astra');assert.equal(m.params.sandbox,undefined);send({id:m.id,result:{thread:{id:'test-thread'},model:MODEL,sandbox:{type:'readOnly',networkAccess:false}}});}
      if(m.method==='turn/start'){
        assert.equal(m.params.effort,REASONING_EFFORT);assert.equal(REASONING_EFFORT,'high');
        assert.equal(m.params.sandboxPolicy,undefined);assert.equal(m.params.approvalPolicy,'never');
@@ -99,7 +99,7 @@ test('Codex JSONL handshake and structured answer, without a live model call',as
 test('Codex refuses a missing model or unsupported high effort before a turn',async()=>{
  for(const models of [[],[{id:MODEL,model:MODEL,supportedReasoningEfforts:[{reasoningEffort:'medium'}]}]]){
    const mock=mockCodex('chatgpt',false,{models});
-   await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),/GPT-5\.6 Sol/);
+   await assert.rejects(runCodex(INSTRUCTIONS,{}, {},mock),/GPT-6 Astra/);
    assert.ok(!mock.seen.some(m=>m.method==='turn/start'));
  }
 });

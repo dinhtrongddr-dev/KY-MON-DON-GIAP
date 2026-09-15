@@ -10,6 +10,8 @@ const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong t
 class Element {
   constructor(tag='div'){this.tag=tag;this.listeners={};this.hidden=false;this.disabled=false;this.checked=false;this.value='test-token';this.textContent='';this.children=[];}
   addEventListener(event,fn){(this.listeners[event]??=[]).push(fn);}
+  set textContent(value){this._text=String(value);this.children=[];}
+  get textContent(){return (this._text||'')+(this.children||[]).map(n=>n.textContent).join('');}
   fire(event){return Promise.all((this.listeners[event]??[]).map(fn=>fn()));}
   append(el){this.children.push(el);}
   replaceChildren(){this.children=[];}

@@ -701,6 +701,11 @@ textarea:focus { outline:3px solid #bce8ce; }
 .local-preference .ai-note { margin:0; }
 .ai-feedback { display:flex; align-items:flex-start; gap:12px; margin:16px 0; }
 .ai-feedback > div { min-width:0; }
+.ai-prose { white-space:pre-wrap; }
+.ai-prose strong,.ai-prose-table strong { font-weight:750; color:var(--ink); }
+.ai-table-wrap { max-width:100%; overflow-x:auto; }
+.ai-prose-table { width:100%; border-collapse:collapse; }
+.ai-prose-table th,.ai-prose-table td { border:1px solid var(--line); padding:10px; text-align:left; }
 .ai-feedback #ai-status { margin:0; }
 .ai-feedback .ai-elapsed { margin:4px 0 0; font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; }
 .ai-spinner { width:22px; height:22px; margin-top:3px; flex-shrink:0; border:3px solid var(--line); border-top-color:var(--jade); border-radius:50%; animation:ai-spin .8s linear infinite; }
