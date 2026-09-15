@@ -8,6 +8,15 @@ Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` c�
 
 Mã ghép nối lấy từ tệp cấu hình riêng `%LOCALAPPDATA%\KyMonCodex\pairing-code.txt`, được launcher truyền vào server; nhập bằng tay trên giao diện. Gói tải xuống không chứa mã này, khóa quản trị relay hoặc thông tin đăng nhập. Giữ nguyên các tệp cấu hình riêng khi cập nhật.
 
+## Trạng thái AI và ghi nhớ mã · cập nhật 15/09/2026
+
+- Ô **Mã kết nối AI** hiển thị đầy đủ ký tự để dễ kiểm tra và sao chép.
+- Chọn **Ghi nhớ mã trên thiết bị này** để trình duyệt tự điền mã ở lần mở sau. Mã được lưu trong localStorage của chính trình duyệt và địa chỉ trang đang dùng. Bỏ chọn xóa mã đã lưu ngay, vẫn giữ mã trong ô nhập cho lượt hiện tại. Xóa hết ô nhập cũng xóa mã đã lưu.
+- Khi kiểm tra kết nối hoặc luận AI, vòng xoay và **Đã chờ … giây** cho biết trang đang chờ xử lý. Đây là thời gian đã chờ, không phải phần trăm hoàn thành hoặc xác nhận máy chủ vẫn đang chạy. Bấm **Hủy** để dừng; biểu tượng tắt khi hoàn tất, lỗi, hết thời gian hoặc thay đổi dữ liệu.
+- Nếu trình duyệt không cho phép ghi nhớ, thông báo xuất hiện dưới tùy chọn; bạn vẫn nhập mã và kết nối như thường.
+
+Bản này giữ TG-CB-5.0 / protocol 5 và bộ tính bàn hiện có. Sau khi ghép vào bản dùng domain kymon.pp.ua, đã chạy 107 kiểm thử Node và 1 kiểm thử Python; kiểm tra Chrome ở màn hình máy tính và điện thoại 390px dùng phản hồi AI giả lập. Lần cập nhật này chưa gọi model thực. Xuất bản website không tự cài gói vào bộ kết nối trên máy. Phạm vi yêu cầu AI chưa hoàn tất được ghi rõ tại `docs/releases/AI-REQUIREMENTS-2026-09-15.md`.
+
 Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-5.6 Sol → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
 

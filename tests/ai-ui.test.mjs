@@ -8,7 +8,7 @@ import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 globalThis.Solar=createRequire(import.meta.url)('../dist/vendor/lunar.js').Solar;
 const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 class Element {
-  constructor(tag='div'){this.tag=tag;this.listeners={};this.hidden=false;this.disabled=false;this.value='test-token';this.textContent='';this.children=[];}
+  constructor(tag='div'){this.tag=tag;this.listeners={};this.hidden=false;this.disabled=false;this.checked=false;this.value='test-token';this.textContent='';this.children=[];}
   addEventListener(event,fn){(this.listeners[event]??=[]).push(fn);}
   fire(event){return Promise.all((this.listeners[event]??[]).map(fn=>fn()));}
   append(el){this.children.push(el);}
@@ -16,15 +16,26 @@ class Element {
   setAttribute(name,value){(this.attributes??={})[name]=value;}
   focus(){this.focused=true;}
 }
-function setup(t,fetcher){
-  const original={document:globalThis.document,fetch:globalThis.fetch};
-  const ids=Object.fromEntries(['local-token','ai-status','ai-answer','ai-read','ai-cancel','local-check','chart-form'].map(id=>[id,new Element()]));
-  ids['ai-answer'].hidden=true;ids['ai-cancel'].hidden=true;
-  const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
-  globalThis.document=doc;globalThis.fetch=fetcher;
+class MemoryStorage {
+  constructor(){this.values=new Map();}
+  getItem(key){return this.values.get(key)??null;}
+  setItem(key,value){this.values.set(key,String(value));}
+  removeItem(key){this.values.delete(key);}
+}
+function setup(t,fetcher,{storage=new MemoryStorage()}={}){
+  const original={document:globalThis.document,fetch:globalThis.fetch,localStorage:globalThis.localStorage};
+  globalThis.fetch=fetcher;globalThis.localStorage=storage;
   t.after(()=>Object.assign(globalThis,original));
-  initLocalAi({prepare:()=>structuredClone(payload)});
-  return {ids,doc};
+  const mount=()=>{
+    const ids=Object.fromEntries(['local-token','local-remember','local-remember-hint','ai-progress','ai-elapsed','ai-status','ai-answer','ai-read','ai-cancel','local-check','chart-form'].map(id=>[id,new Element()]));
+    ids['ai-answer'].hidden=true;ids['ai-cancel'].hidden=true;ids['ai-progress'].hidden=true;
+    ids['ai-read'].textContent='Luận bằng AI';
+    const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
+    globalThis.document=doc;
+    initLocalAi({prepare:()=>structuredClone(payload)});
+    return {ids,doc};
+  };
+  return {...mount(),storage,reload:mount};
 }
 const response=data=>new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json'}});
 const health={rules:RULE_VERSION,protocol:READING_PROTOCOL};
@@ -49,6 +60,7 @@ for(const event of ['cancel','question','chart','token']) test(`${event} change 
   if(event==='chart')await doc.fire('qimen-chart');
   if(event==='token')await ids['local-token'].fire('input');
   assert.equal(signal.aborted,true);
+  assert.equal(ids['ai-progress'].hidden,true);
   release(response({malformed:'must never render'}));await work;
   assert.equal(ids['ai-answer'].hidden,true);assert.equal(ids['ai-read'].disabled,false);assert.equal(ids['ai-cancel'].hidden,true);
   assert.doesNotMatch(ids['ai-status'].textContent,/Đã nhận/);
@@ -68,6 +80,7 @@ for(const status of [200,502]) test(`AI errors remain visible when the response 
   assert.equal(ids['ai-answer'].hidden,true);
   assert.equal(ids['ai-read'].disabled,false);
   assert.equal(ids['ai-cancel'].hidden,true);
+  assert.equal(ids['ai-progress'].hidden,true);
 });
 
 test('valid clarification renders text safely; no model HTML is interpreted',async t=>{
@@ -76,6 +89,7 @@ test('valid clarification renders text safely; no model HTML is interpreted',asy
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
+  assert.equal(ids['ai-progress'].hidden,true);
   assert.equal(ids['ai-answer'].children[1].children[0].textContent,'<script>alert(1)</script>');
 });
 
@@ -118,4 +132,146 @@ test('evidence is collapsed and every displayed basis comes from the verified pl
   const evidence=all.filter(n=>n.tag==='details'&&n.className==='ai-evidence');
   assert.ok(evidence.length>=3);assert.ok(evidence.every(n=>n.open===false));
   assert.ok(all.some(n=>n.textContent===p.facts[p.context.allInOne.reasoning.claims[0].evidenceIds[0]]));
+});
+
+test('reading shows elapsed progress, then clears it when a validated answer arrives',async t=>{
+  t.mock.timers.enable({apis:['Date','setInterval'],now:1000});
+  const prepared=await buildReadingRequest(payload);
+  let release,ready;const started=new Promise(resolve=>ready=resolve);
+  const {ids}=setup(t,async url=>{
+    if(url.endsWith('/api/status'))return response(health);
+    ready();return new Promise(resolve=>release=resolve);
+  });
+  const work=ids['ai-read'].fire('click');await started;
+  try{
+    assert.equal(ids['ai-progress'].hidden,false);
+    assert.equal(ids['ai-answer'].attributes['aria-busy'],'true');
+    assert.equal(ids['ai-read'].disabled,true);
+    assert.equal(ids['local-check'].disabled,true);
+    assert.equal(ids['ai-cancel'].hidden,false);
+    assert.match(ids['ai-read'].textContent,/Đang/);
+    assert.match(ids['ai-elapsed'].textContent,/0 giây/);
+    t.mock.timers.tick(3000);
+    assert.match(ids['ai-elapsed'].textContent,/3 giây/);
+  }finally{
+    release(response({...health,chartFingerprint:prepared.chartFingerprint,requestFingerprint:prepared.requestFingerprint,facts:prepared.facts,reading:clarificationFixture(prepared)}));
+    await work;
+  }
+  assert.equal(ids['ai-progress'].hidden,true);
+  assert.equal(ids['ai-answer'].attributes['aria-busy'],'false');
+  assert.equal(ids['ai-read'].textContent,'Luận bằng AI');
+  assert.equal(ids['local-check'].disabled,false);
+  const elapsed=ids['ai-elapsed'].textContent;t.mock.timers.tick(5000);
+  assert.equal(ids['ai-elapsed'].textContent,elapsed);
+});
+
+test('cancel hides progress immediately and a late reply cannot stop the next reading',async t=>{
+  const releases=[];let ready;let started=new Promise(resolve=>ready=resolve);
+  const {ids}=setup(t,async url=>{
+    if(url.endsWith('/api/status'))return response(health);
+    ready();return new Promise(resolve=>releases.push(resolve));
+  });
+  const first=ids['ai-read'].fire('click');await started;
+  await ids['ai-cancel'].fire('click');
+  assert.equal(ids['ai-progress'].hidden,true);
+  started=new Promise(resolve=>ready=resolve);
+  const second=ids['ai-read'].fire('click');await started;
+  try{
+    releases[0](response({error:'Old request'}));await first;
+    assert.equal(ids['ai-progress'].hidden,false);
+    assert.equal(ids['ai-read'].disabled,true);
+    assert.doesNotMatch(ids['ai-status'].textContent,/Old request/);
+  }finally{releases[1](response({error:'Current request'}));await second;}
+  assert.equal(ids['ai-progress'].hidden,true);
+  assert.equal(ids['ai-status'].textContent,'Current request');
+});
+
+test('connection check shows progress and can be cancelled without a late success message',async t=>{
+  let release;const {ids}=setup(t,async()=>new Promise(resolve=>release=resolve));
+  const work=ids['local-check'].fire('click');
+  try{
+    assert.equal(ids['ai-progress'].hidden,false);
+    assert.equal(ids['local-check'].disabled,true);
+    await ids['ai-cancel'].fire('click');
+    assert.equal(ids['ai-progress'].hidden,true);
+  }finally{release(response(health));await work;}
+  assert.equal(ids['local-check'].disabled,false);
+  assert.doesNotMatch(ids['ai-status'].textContent,/sẵn sàng/);
+});
+
+test('pairing code remains unsaved until remembering is selected',async t=>{
+  const {ids,storage}=setup(t,async()=>response(health));
+  ids['local-token'].value='session-only';await ids['local-token'].fire('input');
+  await ids['local-check'].fire('click');
+  assert.equal(ids['local-remember'].checked,false);
+  assert.equal(storage.values.size,0);
+});
+
+test('remembered code survives reload, tracks edits and is forgotten immediately when unchecked',async t=>{
+  const {ids,storage,reload}=setup(t,async()=>response(health));
+  storage.setItem('unrelated-setting','keep');
+  ids['local-token'].value='  first-code  ';ids['local-remember'].checked=true;
+  await ids['local-remember'].fire('change');
+  let next=reload().ids;
+  assert.equal(next['local-token'].value,'first-code');
+  assert.equal(next['local-remember'].checked,true);
+  next['local-token'].value='updated-code';await next['local-token'].fire('input');
+  next=reload().ids;assert.equal(next['local-token'].value,'updated-code');
+  next['local-remember'].checked=false;await next['local-remember'].fire('change');
+  assert.equal(next['local-token'].value,'updated-code');
+  assert.deepEqual([...storage.values],[['unrelated-setting','keep']]);
+  next=reload().ids;
+  assert.equal(next['local-remember'].checked,false);
+  assert.notEqual(next['local-token'].value,'updated-code');
+});
+
+test('clearing a remembered code removes the previous code from storage',async t=>{
+  const {ids,storage,reload}=setup(t,async()=>response(health));
+  ids['local-remember'].checked=true;await ids['local-remember'].fire('change');
+  assert.equal(storage.values.size,1);
+  ids['local-token'].value='   ';await ids['local-token'].fire('input');
+  assert.equal(storage.values.size,0);
+  assert.equal(reload().ids['local-remember'].checked,false);
+});
+
+test('blocked browser storage leaves manual pairing usable and explains the failed save',async t=>{
+  const blocked=()=>{throw new DOMException('Storage blocked','SecurityError');};
+  const {ids}=setup(t,async()=>response(health),{storage:{getItem:blocked,setItem:blocked,removeItem:blocked}});
+  ids['local-remember'].checked=true;await ids['local-remember'].fire('change');
+  assert.equal(ids['local-remember'].checked,false);
+  assert.match(ids['local-remember-hint'].textContent,/không thể|không cho phép/i);
+  await ids['local-check'].fire('click');
+  assert.match(ids['ai-status'].textContent,/sẵn sàng/);
+  assert.equal(ids['local-token'].value,'test-token');
+});
+
+test('a failed save removes the old code so reload cannot restore an outdated connection',async t=>{
+  const {ids,storage,reload}=setup(t,async()=>response(health));
+  ids['local-remember'].checked=true;await ids['local-remember'].fire('change');
+  storage.setItem=()=>{throw new DOMException('Storage full','QuotaExceededError');};
+  ids['local-token'].value='replacement-code';await ids['local-token'].fire('input');
+  assert.equal(ids['local-remember'].checked,false);
+  assert.equal(ids['local-token'].value,'replacement-code');
+  assert.equal(storage.values.size,0);
+  assert.equal(reload().ids['local-remember'].checked,false);
+});
+
+for(const kind of ['reading','connection']) test(`${kind} timeout clears progress and enables retry`,async t=>{
+  t.mock.timers.enable({apis:['Date','setTimeout','setInterval']});
+  let ready;const started=new Promise(resolve=>ready=resolve);
+  const {ids}=setup(t,async(url,{signal})=>{
+    if(kind==='reading'&&url.endsWith('/api/status'))return response(health);
+    return new Promise((resolve,reject)=>{
+      signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
+      ready();
+    });
+  });
+  const work=ids[kind==='reading'?'ai-read':'local-check'].fire('click');await started;
+  t.mock.timers.tick(kind==='reading'?190000:8000);await work;
+  assert.match(ids['ai-status'].textContent,/hết thời gian/i);
+  assert.equal(ids['ai-progress'].hidden,true);
+  assert.equal(ids['ai-elapsed'].hidden,true);
+  assert.equal(ids['ai-answer'].attributes['aria-busy'],'false');
+  assert.equal(ids['ai-read'].disabled,false);
+  assert.equal(ids['local-check'].disabled,false);
 });

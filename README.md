@@ -8,6 +8,8 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model giữ nguyên `gpt-5.6-sol` và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
+Giao diện 15/09/2026 hiển thị mã kết nối rõ, cho phép chọn ghi nhớ mã trên trình duyệt và xóa mã đã lưu ngay khi bỏ chọn. Lúc chờ kết nối/luận AI có vòng xoay cùng thời gian đã chờ; trạng thái dọn sạch khi xong, lỗi, hủy hoặc đổi dữ liệu. Không thay lõi, model hay giao thức.
+
 All-in-One v16 dùng TG-CB-5.0 (protocol 5), Engine TG-ROTATING-2.0. Bản nguồn này lấy từ lần xuất bản Sites 17; số lần xuất bản không phải phiên bản của bộ quy tắc. Một Core dùng chung; QimenBoard JSON và Analysis Engine nằm trong `dist/qimen/`. Sáu mode có quy tắc riêng, Auto phân loại ý định, graph nối đại diện và planner ghép diễn biến. Timing so sánh 2–12 thời điểm; Direction so tám phương vị theo mục tiêu. Năm tab kết quả và nút xem dữ kiện không cần AI. Chi tiết: `QIMEN-ARCHITECTURE.md`.
 
 Chạy `npm run prepare:windows` trước `npm run package:local`. Bước chuẩn bị kiểm SHA-256 của launcher và tải hoặc dùng lại đúng cloudflared 2026.9.0 đã xác minh. Đóng gói phải có đủ Windows/tunnel và toàn bộ `dist/qimen/`; thiếu tệp hoặc sai checksum sẽ dừng, giữ nguyên ZIP cũ. Hai đầu khóa SHA-256 của bàn và toàn bộ ngữ cảnh (mode, graph, ứng viên, đại diện). `local/interpret.mjs` vẫn cho phép sửa bài tối đa một lần trong tổng 180 giây; giữ Hủy, không thử lại lỗi xác thực/mạng, không đổi model hoặc mức suy luận.
