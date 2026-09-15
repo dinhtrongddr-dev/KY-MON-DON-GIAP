@@ -4,6 +4,9 @@ import {buildWriterContext} from './writerContext.mjs';
 import {auditTechnicalText} from './technicalAudit.mjs';
 import {verifiedFallback} from './verifiedFallback.mjs';
 import {formatError,plainReadingText} from '../../reading-format.mjs';
+import {createQimenBoard} from '../core/board.mjs';
+import {pillarFromGanzhi} from '../core/calendar.mjs';
+import {analyzeBoard} from '../analysis/index.mjs';
 export class ReadingValidationError extends Error {constructor(message){super(message);this.name='ReadingValidationError';}}
 const reject=message=>{throw new ReadingValidationError(message);};
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -30,6 +33,21 @@ function auditClaims(passages,context,rows=[]) {
   for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g))if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
   const allowedDates=new Set([context.question,...rows.map(x=>x.label)].join(' ').match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[]);
   for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
+}
+function auditComparison(reason,row,context) {
+  const c=context.allInOne;
+  let board=c.board,analysis=c.analysis,numbers=[row.palace];
+  if(c.classification.mode==='timing'){
+    const candidate=c.comparison.candidates.find(x=>x.id===row.id);
+    // A candidate's prose must be checked against its own instant and representative.
+    board=createQimenBoard(candidate.input,c.board.method);
+    const selfPillar=c.questionContext.subject.mapping?pillarFromGanzhi(c.questionContext.subject.mapping.pillar):c.board.pillars.day;
+    analysis=analyzeBoard(board,{topic:c.resolvedTopic,actors:c.actors,selfPillar});
+    numbers=candidate.details.map(x=>x.number);
+  }
+  const scoped={question:context.question,allInOne:{board,analysis,reasoning:{claims:[{id:row.id,evidenceIds:numbers.map(n=>`p${n}`),ruleIds:[]}]}}};
+  const errors=auditTechnicalText(reason,[row.id],scoped);if(errors.length)reject(errors.join(' '));
+  const formatting=formatError(reason);if(formatting)reject(formatting);
 }
 export function validateReading(r,facts,selectedTopic='general',context) {
   const c=context?.allInOne,g=c?.reasoning;
@@ -75,6 +93,7 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   const rows=c.comparison?.ranking||c.plan.computed.ranking||[],rowIds=rows.map(x=>x.id);
   if(r.comparisons.length>12||!unique(r.comparisons.map(x=>x.id))||r.comparisons.some(x=>!exact(x,['id','reason'])||!rowIds.includes(x.id)||!text(x.reason,50,1800)))reject('So sánh dùng thời điểm hoặc phương hướng chưa được tính.');
   if(c.classification.mode==='timing'&&r.comparisons.length!==rows.length||c.classification.mode==='direction'&&r.comparisons.length<2||!['timing','direction'].includes(c.classification.mode)&&r.comparisons.length)reject('Chưa đối chiếu đủ ứng viên theo chế độ.');
+  for(const comparison of r.comparisons)auditComparison(comparison.reason,rows.find(row=>row.id===comparison.id),context);
   const sections=[r.summary,r.situation,...r.development,r.bottleneck,r.alternative,r.timing];
   const used=new Set(sections.flatMap(s=>s.claim_ids));if(used.size<Math.min(compact?1:3,g.claims.length))reject('Bài luận chưa phối hợp đủ các cụm tượng trọng tâm.');
   const passages=[...sections.map(s=>s.text),...r.actions.map(a=>a.text)].filter(Boolean);

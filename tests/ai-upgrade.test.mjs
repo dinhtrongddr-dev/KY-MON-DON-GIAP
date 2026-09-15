@@ -107,6 +107,29 @@ test('Cấn and Càn remain distinct and reverse state assertions use real palac
   assert.throws(()=>validateReading(r,p.facts,body.topic,p.context));
 });
 
+test('comparison prose rejects false technical facts and invented events in both ranking modes',()=>{
+  for(const mode of ['timing','direction']){
+    const p=prepareReading({...body,mode,candidates:['2026-09-10T10:00','2026-09-11T10:00'],direction:{origin:'Cửa chính văn phòng',kind:'movement'}});
+    assert.doesNotThrow(()=>validateReading(readingFixture(p),p.facts,body.topic,p.context));
+    for(const text of ['Sinh Môn nằm ở cung 5.','Áp dụng rule_invented để chọn ứng viên.','Khách hàng đang chờ giám đốc ký.']){
+      const r=readingFixture(p);r.comparisons[0].reason+=' '+text;
+      assert.throws(()=>validateReading(r,p.facts,body.topic,p.context),undefined,mode+': '+text);
+    }
+  }
+});
+
+test('timing comparison facts use the candidate board instead of the question board',()=>{
+  const p=prepareReading({...body,mode:'timing',candidates:['2026-09-10T10:00','2026-09-11T14:00']});
+  const c=p.context.allInOne,candidate=c.comparison.candidates.find(row=>row.details.some(d=>row.board.palaces.find(p=>p.number===d.number).door!==c.board.palaces.find(p=>p.number===d.number).door.vi));
+  assert.ok(candidate,'Fixture must contain a candidate whose relevant door moves');
+  const n=candidate.details.find(d=>candidate.board.palaces.find(p=>p.number===d.number).door!==c.board.palaces.find(p=>p.number===d.number).door.vi).number;
+  const r=readingFixture(p),row=r.comparisons.find(row=>row.id===candidate.id),original=row.reason;
+  row.reason+=` ${candidate.board.palaces.find(p=>p.number===n).door} nằm ở cung ${n}.`;
+  assert.doesNotThrow(()=>validateReading(r,p.facts,body.topic,p.context));
+  row.reason=original+` ${c.board.palaces.find(p=>p.number===n).door.vi} nằm ở cung ${n}.`;
+  assert.throws(()=>validateReading(r,p.facts,body.topic,p.context));
+});
+
 test('after one unsuccessful repair return only independently recomputable verified content',async()=>{
   const p=await buildReadingRequest(body);let count=0;
   const reading=await interpretReading(p,{runner:async()=>{count++;return {invented:'Khách hàng chắc chắn ký.'};}});
