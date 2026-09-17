@@ -3,33 +3,58 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="${QIMEN_VPS_ENV_FILE:-$HOME/.config/kymon-vps/env}"
+SERVICE_FILE="/etc/systemd/system/kymon-vps.service"
 
-command -v npm >/dev/null 2>&1 || { echo 'npm is required' >&2; exit 1; }
-command -v 9router >/dev/null 2>&1 || { echo '9router is not installed' >&2; exit 1; }
+for cmd in node codex cloudflared curl; do
+  command -v "$cmd" >/dev/null 2>&1 || { echo "Missing required command: $cmd" >&2; exit 1; }
+done
 
-if ! command -v pm2 >/dev/null 2>&1; then
-  sudo npm install -g pm2
-fi
-PM2_BIN="$(command -v pm2)"
-
-# Reuse the current user's ~/.9router data/provider sessions. PM2 restarts it after crashes/reboots.
-pm2 delete 9router >/dev/null 2>&1 || true
-pm2 start "$(command -v 9router)" --name 9router --time
-
-# The Kỳ Môn bridge is enabled only when its private environment file exists.
-# Secrets remain outside Git and are sourced by the child shell at process start.
-if [[ -f "$ENV_FILE" ]]; then
-  chmod 600 "$ENV_FILE"
-  pm2 delete kymon-vps >/dev/null 2>&1 || true
-  pm2 start /bin/bash --name kymon-vps --time -- -lc "set -a; source '$ENV_FILE'; set +a; exec '$ROOT/START-VPS.sh'"
-else
-  echo "Kỳ Môn bridge not added to autostart yet: missing $ENV_FILE"
-  echo "9router autostart will still be installed."
+if ! systemctl list-unit-files 9router.service --no-legend 2>/dev/null | grep -q '^9router.service'; then
+  echo '9router.service is not installed. Configure 9router systemd first.' >&2
+  exit 1
 fi
 
-pm2 save
-sudo env PATH="$PATH" "$PM2_BIN" startup systemd -u "$USER" --hp "$HOME" >/dev/null
-pm2 save
+sudo systemctl enable 9router.service >/dev/null
+sudo systemctl start 9router.service
 
-echo 'PM2 reboot startup installed.'
-pm2 status
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "Missing private environment file: $ENV_FILE" >&2
+  exit 1
+fi
+chmod 600 "$ENV_FILE"
+
+USER_NAME="$(id -un)"
+HOME_DIR="$HOME"
+
+sudo tee "$SERVICE_FILE" >/dev/null <<EOF
+[Unit]
+Description=Ky Mon VPS AI Bridge
+After=network-online.target 9router.service
+Wants=network-online.target
+Requires=9router.service
+
+[Service]
+Type=simple
+User=$USER_NAME
+WorkingDirectory=$ROOT
+Environment=HOME=$HOME_DIR
+ExecStart=/bin/bash -lc 'set -a; source "$ENV_FILE"; set +a; exec /bin/bash "$ROOT/START-VPS.sh"'
+Restart=always
+RestartSec=10
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable kymon-vps.service >/dev/null
+sudo systemctl restart kymon-vps.service
+
+echo 'Systemd reboot startup installed.'
+echo -n '9router: '
+sudo systemctl is-enabled 9router.service
+sudo systemctl is-active 9router.service
+echo -n 'kymon-vps: '
+sudo systemctl is-enabled kymon-vps.service
+sudo systemctl is-active kymon-vps.service
