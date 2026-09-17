@@ -68,6 +68,22 @@ done
 
 [[ -n "$TUNNEL_URL" ]] || { echo "Could not obtain Cloudflare Quick Tunnel URL" >&2; cat "$TUNNEL_LOG" >&2; exit 1; }
 
+# A Quick Tunnel URL can be printed before its DNS record is resolvable everywhere.
+# Do not publish or report readiness until the public URL itself reaches the bridge.
+tunnel_ready=0
+for _ in $(seq 1 180); do
+  if curl -fsS --connect-timeout 2 --max-time 5 \
+    -H "X-Qimen-Token: $QIMEN_PAIRING_TOKEN" \
+    "$TUNNEL_URL/api/status" >/dev/null 2>&1; then
+    tunnel_ready=1
+    break
+  fi
+  kill -0 "$tunnel_pid" 2>/dev/null || { cat "$TUNNEL_LOG" >&2; exit 1; }
+  sleep 1
+done
+
+[[ "$tunnel_ready" == "1" ]] || { echo "Quick Tunnel URL did not become reachable" >&2; cat "$TUNNEL_LOG" >&2; exit 1; }
+
 if [[ "$PUBLISH_RELAY" == "1" ]]; then
   curl -fsS --retry 5 --retry-all-errors \
     -X POST 'https://ky-mon-codex-relay.dinhtrongddr.workers.dev/admin/origin' \
