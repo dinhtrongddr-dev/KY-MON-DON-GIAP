@@ -2,10 +2,11 @@
 // Terms are possibilities to test against the question, never facts about a person.
 const entry=(label,opportunity,agreement,value,movement,vocabulary,roles)=>({label,opportunity,agreement,value,movement,vocabulary,roles});
 export const MODE_SEMANTICS={
+  general:entry('Tổng quát / chưa rõ nhóm','khả năng mở bước tiếp theo','điều kiện có thể xác nhận','nguồn lực hoặc lợi ích liên quan','thay đổi trạng thái / cách tiếp cận',['mục tiêu','ràng buộc','nguồn lực','bên liên quan','điều kiện','bước tiếp theo'],['self','event','opportunity','execution']),
   business:entry('Kinh doanh / thương chiến','mở cửa giao dịch','thỏa thuận có thể xác nhận','lợi ích và dòng tiền','gặp khách / khảo sát / thay kênh tiếp cận',['khách hàng','người duyệt','phạm vi','báo giá','điều khoản','hợp đồng'],['self','event','opportunity','contract','quote','authority','money','customer','competitor']),
   project:entry('Dự án','mở hoặc chuyển giai đoạn','bàn giao và phối hợp','nguồn lực triển khai','khảo sát / triển khai thực địa',['phạm vi','tiến độ','nghiệm thu','phụ thuộc','người phê duyệt'],['self','event','service','execution','contract','authority']),
   relationship:entry('Tình cảm','cơ hội đối thoại','sự gắn kết và cam kết','khả năng nuôi dưỡng quan hệ','gặp gỡ / khoảng cách / thay đổi trạng thái',['đối thoại','ranh giới','mức độ cam kết','nhu cầu hai phía'],['self','event','customer','contract','opportunity']),
-  family:entry('Gia đình','khả năng trao đổi trong nhà','sự phối hợp giữa người thân','nguồn lực chăm sóc','gặp nhau / thay đổi sinh hoạt',['người thân','trách nhiệm','sinh hoạt','điều cần thống nhất'],['self','event','customer','contract','execution']),
+  family:entry('Gia đình','khả năng trao đổi trong nhà','sự phối hợp giữa người thân','nguồn lực chăm sóc','gặp nhau / thay đổi sinh hoạt',['người thân','trách nhiệm','sinh hoạt','nguồn lực chăm sóc','điều cần thống nhất','mốc rà soát'],['self','event','customer','contract','execution']),
   career:entry('Công việc / sự nghiệp','vai trò và cơ hội công việc','thỏa thuận làm việc','nguồn lực và sự phát triển','chuyển việc / công tác / thay môi trường',['vị trí','cấp quản lý','nhiệm vụ','năng lực','quy trình xét duyệt'],['self','event','opportunity','authority','service','execution']),
   recruitment:entry('Nhân sự / tuyển dụng','cơ hội gặp ứng viên hoặc nhà tuyển dụng','cam kết tuyển dụng','nguồn lực và khả năng đáp ứng','đổi vị trí / lịch gặp / nhận việc',['tiêu chí','ứng viên','phỏng vấn','người quyết định','thử việc'],['self','event','customer','authority','contract','opportunity']),
   study:entry('Học tập','đầu mối học và tiếp cận cơ hội','phối hợp học tập','khả năng tiến bộ','thay cách học / thực hành / đi thi',['kiến thức','bài tập','tiêu chí chấm','thực hành','lịch ôn'],['self','event','service','quote','execution','opportunity']),
@@ -17,8 +18,8 @@ export const MODE_SEMANTICS={
   travel:entry('Di chuyển','lối tiếp cận và hành trình','phối hợp trong chuyến đi','nguồn lực chuyến đi','di chuyển / thay lộ trình',['lộ trình','điểm xuất phát','lịch trình','điều kiện thực địa'],['self','event','movement','execution','opportunity']),
   social:entry('Quan hệ xã hội','cơ hội liên hệ','khả năng phối hợp','nguồn lực qua lại','gặp gỡ / đổi nhóm tiếp xúc',['người liên hệ','mục đích gặp','mức độ tin cậy','ranh giới'],['self','event','customer','contract','opportunity']),
 };
-export const TOPIC_DOMAINS={contract:'business',money:'finance',investment:'finance',debt:'finance',work:'career',study:'study',love:'relationship',family:'family',property:'property',lost:'search',travel:'travel',launch:'business',social:'social',health:'health',dispute:'legal',general:'career'};
-export const domainSemantics=id=>MODE_SEMANTICS[id]||MODE_SEMANTICS.career;
+export const TOPIC_DOMAINS={contract:'business',money:'finance',investment:'finance',debt:'finance',work:'career',study:'study',love:'relationship',family:'family',property:'property',lost:'search',travel:'travel',launch:'business',social:'social',health:'health',dispute:'legal',general:'general'};
+export const domainSemantics=id=>MODE_SEMANTICS[id]||MODE_SEMANTICS.general;
 export function semanticRoles(domain) {
   const d=domainSemantics(domain);
   return {self:'chủ thể người hỏi',event:'mục tiêu sự việc',opportunity:d.opportunity,contract:d.agreement,money:d.value,
