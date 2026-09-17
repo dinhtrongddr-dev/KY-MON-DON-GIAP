@@ -20,13 +20,20 @@ function defaultPairingToken(){
  }
  return randomBytes(24).toString('hex');
 }
+function configuredTunnelHostname(){
+ return (process.env.QIMEN_TUNNEL_HOSTNAME||'').trim().toLowerCase();
+}
 
-export function parseAllowedHost(value,port=8765){
+export function parseAllowedHost(value,port=8765,tunnelHostname=configuredTunnelHostname()){
  if(typeof value!=='string')return false;
  try{
    const parsed=new URL('http://'+value);
    const hostname=parsed.hostname.toLowerCase();
    if((hostname==='127.0.0.1'||hostname==='localhost')&&parsed.port===String(port))return {type:'local',hostname};
+   if(tunnelHostname){
+     if(hostname===tunnelHostname&&(parsed.port===''||parsed.port==='443'))return {type:'tunnel',hostname};
+     return false;
+   }
    if(hostname.length>TUNNEL_SUFFIX.length&&hostname.endsWith(TUNNEL_SUFFIX)&&(parsed.port===''||parsed.port==='443'))return {type:'tunnel',hostname};
    return false;
  }catch{return false;}
@@ -35,7 +42,7 @@ export function isAllowedOrigin(value,port,host){
  if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||ALLOWED_WEB_ORIGINS.includes(value))return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map();
@@ -46,7 +53,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
    res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Frame-Options','DENY');
    res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
    res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ky-mon-codex-relay.dinhtrongddr.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
-   const host=parseAllowedHost(req.headers.host,port);
+   const host=parseAllowedHost(req.headers.host,port,tunnelHostname);
    if(!host)return send(403,{error:'Host không hợp lệ.'});
    const path=new URL(req.url,origin).pathname;
    const requestOrigin=req.headers.origin;
