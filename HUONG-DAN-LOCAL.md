@@ -1,33 +1,33 @@
 # Kỳ Môn • Codex trên máy tính
 
-## Bản tích hợp Windows 16.1.0 ngày 15/09/2026
+## Bản tích hợp Windows 17.0.0 ngày 17/09/2026
 
-Đây là v16.1.0 / TG-CB-5.1, protocol 5, đã tích hợp với launcher và relay hiện có. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
+Đây là v17.0.0 / TG-CB-6.0, protocol 5, đã tích hợp với launcher và relay hiện có. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
 
 Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` cũ. Cầu nối chọn `qimen-reader`, chỉ cho đọc thư mục tạm trống của từng lượt, tắt mạng công cụ và dùng sandbox Windows `elevated`. Cầu nối kiểm tra cấu hình hiệu lực trước khi gửi câu hỏi và dừng nếu cấu hình mở rộng quyền hoặc dùng `sandbox_mode` cũ. Không cần thay Codex CLI toàn máy. Nếu Windows yêu cầu thiết lập sandbox, hoàn tất thiết lập chính thức; không chuyển sang full access.
 
 Mã ghép nối lấy từ tệp cấu hình riêng `%LOCALAPPDATA%\KyMonCodex\pairing-code.txt`, được launcher truyền vào server; nhập bằng tay trên giao diện. Gói tải xuống không chứa mã này, khóa quản trị relay hoặc thông tin đăng nhập. Giữ nguyên các tệp cấu hình riêng khi cập nhật.
 
-## Trạng thái AI và ghi nhớ mã · cập nhật 15/09/2026
+## Trạng thái AI và ghi nhớ mã · cập nhật 16/09/2026
 
 - Ô **Mã kết nối AI** hiển thị đầy đủ ký tự để dễ kiểm tra và sao chép.
 - Chọn **Ghi nhớ mã trên thiết bị này** để trình duyệt tự điền mã ở lần mở sau. Mã được lưu trong localStorage của chính trình duyệt và địa chỉ trang đang dùng. Bỏ chọn xóa mã đã lưu ngay, vẫn giữ mã trong ô nhập cho lượt hiện tại. Xóa hết ô nhập cũng xóa mã đã lưu.
 - Khi kiểm tra kết nối hoặc luận AI, vòng xoay và **Đã chờ … giây** cho biết trang đang chờ xử lý. Đây là thời gian đã chờ, không phải phần trăm hoàn thành hoặc xác nhận máy chủ vẫn đang chạy. Bấm **Hủy** để dừng; biểu tượng tắt khi hoàn tất, lỗi, hết thời gian hoặc thay đổi dữ liệu.
 - Nếu trình duyệt không cho phép ghi nhớ, thông báo xuất hiện dưới tùy chọn; bạn vẫn nhập mã và kết nối như thường.
 
-Bản 16.1.0 dùng TG-CB-5.1 / protocol 5, giữ nguyên lõi lập bàn. Thêm kiểm tra dữ kiện trong văn, nguồn/giới hạn của ánh xạ, bài ngắn theo câu hỏi, chữ đậm an toàn, đầu vào phương hướng và phần dữ kiện dự phòng sau một lượt sửa không đạt. Nguồn chính là GitHub, host Cloudflare Pages tại kymon.pp.ua. Bộ kết nối hiện dùng GPT-6 Astra/ultra theo yêu cầu. Kết quả thử thực tại `docs/releases/AI-ULTRA-TEST-2026-09-15.md`; kiểm toán yêu cầu tại `docs/releases/AI-REQUIREMENTS-2026-09-15.md`.
+Bản 17.0.0 dùng TG-CB-6.0 / protocol 5, giữ nguyên lõi lập bàn. Thêm kiểm tra dữ kiện trong văn, nguồn/giới hạn của ánh xạ, bài ngắn theo câu hỏi, chữ đậm an toàn, đầu vào phương hướng và phần dữ kiện dự phòng sau một lượt sửa không đạt. Nguồn chính là GitHub, host Cloudflare Pages tại kymon.pp.ua. Bộ kết nối hiện dùng GPT-6 Astra/ultra theo yêu cầu. Tầng luận mới phân biệt bảy giai đoạn, giữ judgment do mã quyết định và evidence trace theo tab. Kết quả thử thực, đối chiếu trước/sau và giới hạn tại `docs/releases/REASONING-UPGRADE-2026-09-16.md`.
 
 Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-6 Astra → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
 
-## Cập nhật lên TG-CB-5.1 (All-in-One, website v16)
+## Cập nhật lên TG-CB-6.0 (All-in-One, website v17)
 
 1. Tải bộ mới tại https://kymon.pp.ua/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
 2. Xác định đúng thư mục/tiến trình đang phục vụ cổng 8765. Nếu dùng server nguyên bản trong gói, chuyển tiến trình sang thư mục mới rồi khởi động lại. Nếu server đã được tùy biến cho relay/tunnel, tích hợp các module mới và giữ nguyên phần cấu hình riêng; không chép đè cả server một cách máy móc.
 3. Dùng nguyên bộ `dist/`, đặc biệt toàn bộ thư mục mới `dist/qimen/` và các module `reading-*.mjs`; giữ `dist/vendor/lunar.js`. Bộ chạy: `local/reading.mjs`, `local/interpret.mjs`, `local/codex-client.mjs`, `local/server.mjs`. Không chỉ sửa số rules/protocol trên server cũ: mode, graph, schema, context và validation phải đồng bộ.
 4. Server gọi `prepareReading(body)` và `readingIdentity(prepared)` để đối chiếu request trước khi gọi `interpretReading(prepared,{signal})`. Hàm này kiểm tra nội dung và cho phép viết lại tối đa một lần. Phản hồi giữ các trường `model`, `rules`, `protocol`, `chartFingerprint`, `requestFingerprint`, `reading`, `facts` và bổ sung `reasoningEffort`.
 5. Giữ nguyên endpoint Worker, tunnel và CORS cho website hiện tại. Mã kết nối nhập bằng tay, không đặt vào URL hoặc mã website. Không mở cổng ra LAN/Internet và không tắt kiểm tra Host/Origin.
-6. Khởi động lại đúng server, nhập mã mới trên website rồi bấm Kiểm tra kết nối. `/api/status` qua Worker phải báo `rules: TG-CB-5.1`, `protocol: 5`, `model: gpt-6-astra`, `reasoningEffort: ultra`. Kiểm tra trạng thái thành công chưa chứng minh model đã chạy.
+6. Khởi động lại đúng server, nhập mã mới trên website rồi bấm Kiểm tra kết nối. `/api/status` qua Worker phải báo `rules: TG-CB-6.0`, `protocol: 5`, `model: gpt-6-astra`, `reasoningEffort: ultra`. Kiểm tra trạng thái thành công chưa chứng minh model đã chạy.
 7. Thử các mode với cùng một câu hỏi giả lập. Kiểm tra Luận trọng tâm/Luận sâu, năm tab và căn cứ mặc định thu gọn; Hủy/đổi mode không để lời luận cũ xuất hiện. Timing cần 2–12 thời điểm. Ma trận thử AI thật nằm trong `AI-EVAL.md`; không ghi các ca này đã đạt nếu chỉ chạy mock.
 
 Mức suy luận được đặt `ultra`, mức cao nhất mà Codex `model/list` trên tài khoản hiện tại cung cấp cho `gpt-6-astra`. Nếu Codex/tài khoản không hỗ trợ cấu hình này, báo lỗi để kiểm tra phiên bản/quyền; không tự hạ mức, đổi model hoặc dùng API key. Tổng thời gian tối đa cho cả lượt và phần viết lại là 600 giây, phía web chờ 610 giây. Lỗi đăng nhập/mạng không tự thử lại để tránh tạo thêm lượt.
@@ -61,7 +61,7 @@ Giao thức 5 giữ đầu vào `mode`, `actors`, `action`, `candidates` và th�
 - Nếu cài CLI ở vị trí đặc biệt, đặt `QIMEN_CODEX_BIN` thành đường dẫn tuyệt đối đến executable Codex hoặc `codex.js`. Không đặt thành chuỗi lệnh gồm tham số. Windows hỗ trợ npm global bằng cách chạy `codex.js` qua Node, không chuyển câu hỏi vào shell.
 - Các kiểm thử đi kèm dùng Codex giả lập để kiểm tra giao thức và server. Cần thử một câu hỏi thật trên máy bạn để xác nhận CLI/model/tài khoản tương thích.
 
-## Bộ quy tắc TG-CB-5.1
+## Bộ quy tắc TG-CB-6.0
 
 Thời Gia, Chuyển Bàn; dùng đúng pháp Tháo bổ/Mao Sơn đã chọn; 23:00 đổi ngày; Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can Trung Ngũ cùng chuyển với Thiên Nhuế. Nhật/Thời can tìm trên thiên bàn; Giáp theo nghi ẩn của chính trụ. Quan hệ người–việc xét hành cung. Cùng đọc Môn–Tinh–Thần, Không/Mã, phục/phản ngâm, Môn bức, Lục nghi kích hình và Tam kỳ nhập mộ.
 

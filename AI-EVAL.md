@@ -1,3 +1,11 @@
+# Đánh giá lời luận AI hiện tại · v17.0.0 / TG-CB-6.0
+
+Ngày 16/09/2026: bài tiền phát sinh 07:46 UTC+7 được thử bằng Astra/ultra thật ở standard (94,180 giây) và deep (167,042 giây), cả hai qua ngay lần đầu. Nguyên văn được kiểm lại trên planner cuối và phát lại trong Chrome desktop/mobile; đây không phải lượt model qua browser-relay thật. Ca đàm phán mới bị chặn ở bản nháp vì định dạng nhấn, lượt sửa bị hết quota; chưa tính là đạt. Ma trận nhiều mode/chất lượng dự báo chưa được nghiệm thu toàn bộ.
+
+Báo cáo hiện tại: `docs/releases/REASONING-UPGRADE-2026-09-16.md`. Các đoạn có ngày cũ bên dưới là lịch sử, không phải cấu hình hiện tại.
+
+## Lịch sử và ma trận nền
+
 # Đánh giá lời luận AI · v16 / TG-CB-5.0
 
 Đây là ma trận nghiệm thu với model thật. Ngày 14/09/2026 đã kiểm tra thành công một lượt dự đoán hợp đồng qua website với GPT-5.6 Sol/high trong 146,326 giây; kết quả qua validator, đủ ba chặng và năm tab. Chưa hoàn tất các ca so sánh và chấm điểm nhiều lượt trong ma trận này. Bằng chứng kỹ thuật ở `docs/releases/evidence/public-browser-check.json`. Test Node/DOM/runner giả lập không thay việc đọc và chấm nội dung; không ghi là đã đạt dự báo hoặc chất lượng văn chỉ vì schema hợp lệ.

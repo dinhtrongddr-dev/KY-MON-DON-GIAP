@@ -1,0 +1,15 @@
+{
+  "body": {
+    "input": {"year":2026,"month":9,"day":16,"hour":7,"minute":46,"tzOffset":7},
+    "question":"Trong tuần này tôi có khoản tiền vào được phát sinh không?",
+    "topic":"general","mode":"auto","method":"chaibu"
+  },
+  "chartFingerprint":"1b8dc506acb201f4c6b922da5a0dcb31cfccedfb353e904fb8ae418f188d5288",
+  "expected": {
+    "domain":"finance","intent":"income","stageAsked":"emergence",
+    "self":{"palace":8,"stem":"癸"},"event":{"palace":3,"stem":"丙"},
+    "income_emergence":"positive","cash_realization":["conditional","unresolved"],
+    "answerClass":"conditional_positive","primaryPalace":3,"limitingPalaces":[8,1],
+    "forbiddenActors":["customer","payer","authority","decisionMaker"]
+  }
+}

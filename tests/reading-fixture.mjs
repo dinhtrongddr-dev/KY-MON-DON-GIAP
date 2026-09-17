@@ -1,24 +1,29 @@
 // Handwritten synthetic prose for contract/integration tests, NOT output from a live model.
+// This fixture exercises the v2 contract; it is not an evaluation of writing quality.
 export function readingFixture(prepared) {
   const c=prepared.context.allInOne,g=c.reasoning,s=g.likelyScenario,ids=g.claims.map(x=>x.id),primary=s.primaryJudgment.claimIds;
   const section=(text,claim_ids=primary)=>({text,claim_ids});
   return {status:'reading',topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:c.questionContext.questionType,
-    summary:section('Chưa đủ căn cứ để đồng nhất một tín hiệu thuận với việc đã đạt mục tiêu. Điểm cần chú ý là điều kiện khiến sự việc chuyển được sang bước tiếp theo. Nếu xác nhận được điều kiện đó, bạn mới có cơ sở tăng mức cam kết; nếu chưa, nên giữ nhận định ở dạng có điều kiện.'),
-    situation:section('Bạn đang hỏi: '+prepared.context.question+' Trong phạm vi này, cần tách phần mình có thể làm với phần còn phụ thuộc vào phía liên quan. Một lời trao đổi, sự quan tâm hoặc mong muốn đi tiếp chỉ phản ánh một giai đoạn. Nó chưa xác nhận người có trách nhiệm đã đồng ý hoặc nguồn lực đã sẵn sàng. Đây là những điểm cần đối chiếu từ thông tin bạn đang có, không phải sự kiện đã được bàn chứng minh.',ids.slice(0,3)),
+    summary:section(g.primaryJudgment.main+' '+g.primaryJudgment.distinction+' Đây là nhận định theo cụm tượng của mục tiêu đang hỏi; điều kiện chuyển bước nằm trong phần diễn biến.'),
+    situation:section('Người hỏi và sự việc là hai vai riêng. Cụm tượng ở mỗi vai mô tả phần năng lực, cách tiến hành và mức chủ động tương ứng. Ghép các vai qua chiều sinh khắc giúp thấy phần nào hỗ trợ, phần nào tạo yêu cầu. Các vai cùng cung chia sẻ một căn cứ, không được cộng thành nhiều tín hiệu độc lập.',ids.slice(0,3)),
     development:s.stages.map((stage,i)=>({...section([
-      'Điểm xuất phát là làm rõ việc đang dừng ở khâu nào. Bạn có thể đã nắm một phần thông tin, nhưng chưa nên lấy phần đó thay cho toàn bộ quá trình. Hãy xác định điều gì đã được xác nhận trực tiếp, điều gì mới là dự định và điều gì còn phải hỏi lại người có liên quan.',
-      'Từ trạng thái trên, bước chuyển cần được nhận biết bằng một phản hồi cụ thể. Nếu phía liên quan đưa ra yêu cầu rõ hơn, hãy đối chiếu yêu cầu đó với khả năng thực hiện trước khi trả lời. Nếu họ vẫn chưa xác nhận, sự việc có thể quay lại khâu làm rõ; khi ấy tăng lời hứa chưa chắc giúp tiến nhanh hơn.',
-      'Sau bước làm rõ, hướng kết quả phụ thuộc vào việc các điều kiện đã thật sự được đáp ứng hay chưa. Có xác nhận nhất quán thì mới nâng mức kỳ vọng; thông tin trái chiều thì cần điều chỉnh cách hiểu. Tiến thêm một khâu và đạt mục tiêu cuối là hai mốc khác nhau, nên kiểm tra từng mốc trước khi quyết định.'
-    ][i],stage.claimIds),stage:stage.stage,interaction_ids:stage.relationshipIds,condition:i===0?'Đối chiếu giai đoạn thực tế trước khi diễn giải tiếp.':stage.condition})),
-    bottleneck:{...section('Nút thắt nằm ở khoảng cách giữa khả năng được gợi ra và điều kiện để khả năng ấy thành việc. Cần kiểm tra ai có trách nhiệm xác nhận, phần việc nào còn vướng và dấu hiệu nào chứng tỏ vướng mắc đã được gỡ. Khi dữ kiện chưa rõ, không nên kết luận phía bên kia đã đổi ý hoặc cố gây khó.',[s.mainConflict?.claimId||primary[0]]),resolution:s.turningPoint},
-    actions:g.recommendations.slice(0,3).map((r,i)=>({recommendation_id:r.id,text:[
-      'Ghi lại bước đang chờ và người có thể xác nhận bước đó. Trao đổi một câu hỏi cụ thể để biết điều kiện còn thiếu, rồi giữ lại phản hồi làm mốc đối chiếu.',
-      'Chuẩn bị phần thông tin phục vụ trực tiếp yêu cầu vừa xác nhận. Chỉ cam kết trong phạm vi mình kiểm soát được; nếu có thay đổi thì làm rõ trước khi chuyển sang bước sau.',
-      'Theo dõi kết quả của hành động đã thực hiện. Nếu không có phản hồi như dự kiến, quay lại kiểm tra giả định ban đầu và điều chỉnh cách tiếp cận trước khi đầu tư thêm nguồn lực.'
+      'Ở đầu chuỗi, cơ hội và dấu hiệu xuất hiện giúp nhận ra khả năng mở việc. Mức hỗ trợ này cần được đọc theo đúng mục tiêu, chưa thay cho trạng thái đã xảy ra ngoài thực tế. Phần người dùng đã kể là nguồn mô tả hiện trạng riêng, không được suy ngược từ các ký hiệu.',
+      'Chặng giữa cần biến khả năng thành một nội dung có thể xử lý. Quan hệ giữa người hỏi và sự việc quyết định phía nào cho nguồn lực, phía nào chịu yêu cầu. Phạm vi thực hiện và năng lực đáp ứng cần đi cùng nhau để bước thử không trở thành cam kết vượt khả năng.',
+      'Ở chặng cuối, thực hiện và thu được kết quả là hai mốc khác nhau. Dấu hiệu thuận ở đầu chuỗi giữ vai trò hỗ trợ; điều kiện chưa được tháo gỡ giữ vai trò hạn chế thực hóa. Nếu tiến triển dừng lại, quay về đúng khâu còn thiếu thay vì xem toàn bộ cơ hội đã biến mất.'
+    ][i],stage.claimIds),stage:stage.stage,interaction_ids:stage.relationshipIds,condition:[
+      'Nhận diện dấu hiệu xuất hiện riêng trước khi nói tới thành hình.',
+      'Phần năng lực đáp ứng được yêu cầu thì mới mở rộng bước xử lý.',
+      'Kết quả thực tế cần một dấu hiệu riêng, không đồng nhất với bước chuẩn bị.'
     ][i]})),
-    alternative:{...section('Nếu điều kiện chuyển vẫn chưa được xác nhận, khả năng khác là sự việc tiếp tục ở khâu chuẩn bị hoặc phải sửa phương án. Khi đó nên giảm mức kỳ vọng và xác minh lại thông tin, thay vì xem tiến độ chậm là một quyết định cuối cùng.'),id:s.alternative.id},
-    timing:section('Thời hạn người hỏi nêu là phạm vi quan sát. Chưa có cơ sở trong dữ liệu này để ấn định một ngày xảy ra kết quả; cần theo dõi dấu hiệu chuyển bước thực tế.'),
-    comparisons:(c.comparison?.ranking||c.plan.computed.ranking||[]).map(row=>({id:row.id,reason:'Đối chiếu ứng viên này theo các điều kiện cản và mức phù hợp đã tính. Thứ hạng chỉ giúp so sánh tương đối trong danh sách, cần xác nhận điều kiện thực tế trước khi lựa chọn.'})),questions:[]};
+    bottleneck:{...section('Điểm mấu chốt là tác động của điều kiện cản lên đúng giai đoạn đang xét. Một giới hạn ở tầng nhận kết quả không xóa hỗ trợ của tầng trước. Phân biệt hai tầng này giúp giữ mức nhận định phù hợp với cả căn cứ thuận và căn cứ hạn chế.',[s.mainConflict?.claimId||primary[0]]),resolution:s.turningPoint},
+    actions:g.recommendations.slice(0,3).map((r,i)=>({recommendation_id:r.id,text:[
+      'Ghi riêng mục tiêu đang hỏi và phần nguồn lực bạn có thể sử dụng. Chọn một bước trong khả năng hiện tại, với dấu hiệu kết thúc rõ ràng để biết khi nào nên chuyển tiếp.',
+      'Chia phần thực hiện thành việc nhỏ gắn trực tiếp với yêu cầu của sự việc. Giữ phạm vi phù hợp năng lực; khi yêu cầu đổi, sửa phần việc tương ứng trước khi tăng cam kết.',
+      'Theo dõi tác dụng của bước đã thử và ghi lại phần thực tế khác với dự kiến. Dùng sự khác biệt đó để điều chỉnh cách tiếp cận, thay vì mở rộng nguồn lực ngay.'
+    ][i]})),
+    alternative:{...section('Nếu bước chuyển không tạo dấu hiệu mới hoặc có thông tin thực tế trái chiều, kịch bản cần quay về khâu chuẩn bị. Nhánh này giữ lại cơ hội có căn cứ nhưng hạ kỳ vọng về tốc độ thực hiện. Nó không mặc định ai đã đổi ý hay mục tiêu đã thất bại.'),id:s.alternative.id},
+    timing:section('Chưa có mốc ứng kỳ đủ rõ. Thời hạn trong câu hỏi là phạm vi quan sát; phép định ngày từ các điều kiện trên bàn chưa được triển khai.'),
+    comparisons:(c.comparison?.ranking||c.plan.computed.ranking||[]).map(row=>({id:row.id,reason:'Ứng viên này được so theo các điều kiện cản và mức phù hợp đã tính riêng. Thứ hạng mô tả tương quan trong danh sách, không phải ngày chắc chắn có kết quả hoặc bảo đảm hành động thành công.'})),questions:[]};
 }
 export function clarificationFixture(prepared) {
   const c=prepared?.context?.allInOne,empty=()=>({text:'',claim_ids:[]});

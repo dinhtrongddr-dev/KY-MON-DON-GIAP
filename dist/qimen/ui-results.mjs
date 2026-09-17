@@ -18,7 +18,7 @@ export function resultTabs(root) {
   });
   select(0);return panels;
 }
-export function renderTechnical(root,prepared,{includeJson=true}={}) {
+export function renderTechnical(root,prepared,{includeJson=true,expanded=false}={}) {
   const doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);
   const c=prepared.context.allInOne;
   node('h3',`${c.plan.label} · dữ liệu đã tính`,root);
@@ -26,16 +26,16 @@ export function renderTechnical(root,prepared,{includeJson=true}={}) {
   node('p',`${c.coverage.resolvedActors}/${c.coverage.totalActors} đại diện có cung theo quy ước hoặc khai báo. Đây không phải độ chính xác dự báo.`,root,'ai-note');
   const roles=node('div','',root,'rule-actors');
   for(const r of c.graph.nodes){const item=node('div','',roles);node('strong',r.label,item);node('span',r.palace?`Cung ${r.palace} · ${r.status==='proxy'?'biểu tượng tham khảo':r.status==='user_supplied'?'người dùng khai báo':'quy ước'}`:'Chưa xác định đại diện',item);node('p',`${r.selectionRule.id} · ${r.selectionRule.verification}. Nguồn: ${r.selectionRule.source}. ${r.limitations.join(' ')}`,item,'ai-note');}
-  const links=node('details','',root);node('summary','Mạng quan hệ giữa các đối tượng',links);
+  const links=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Mạng quan hệ giữa các đối tượng',links);
   node('p',c.graph.meaning,links,'ai-note');
   const ul=node('ul','',links);
   for(const edge of c.graph.relations)node('li',prepared.facts[edge.id],ul);
-  const flags=node('details','',root);node('summary','Vượng suy, điều kiện và mâu thuẫn cần đối chiếu',flags);
+  const flags=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Vượng suy, điều kiện và mâu thuẫn cần đối chiếu',flags);
   for(const n of c.relevantPalaces){node('p',prepared.facts[`strength_${n}`],flags);node('p',prepared.facts[`c${n}`],flags);}
   for(const conflict of c.analysis.contradictions.filter(x=>c.relevantPalaces.includes(x.palace)))node('p',conflict.text,flags);
   node('p',prepared.facts.special,flags);
   for(const [id,value] of Object.entries(prepared.facts).filter(([id])=>/^special_/.test(id)))node('p',value,flags);
-  const scope=node('details','',root);node('summary','Quy tắc đã hỗ trợ và giới hạn',scope);
+  const scope=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Quy tắc đã hỗ trợ và giới hạn',scope);
   node('p','Đã tính: '+c.analysis.coverage.computed.join('; ')+'.',scope);
   node('p','Chưa hỗ trợ: '+c.analysis.coverage.unsupported.join('; ')+'.',scope);
   if(includeJson){const details=node('details','',root);node('summary','QimenBoard JSON · dữ liệu bàn chuẩn hóa',details);node('pre',JSON.stringify(c.board,null,2),details,'qimen-json');}

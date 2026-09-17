@@ -19,7 +19,8 @@ test('context retains the source question, company, horizon and relevant industr
   assert.equal(c.question,question);assert.equal(c.questionType,'strategy');
   assert.equal(c.subject.kind,'self_company');assert.equal(c.timeHorizon.amount,1);assert.equal(c.timeHorizon.unit,'month');
   assert.ok(c.vocabulary.includes('khảo sát'));assert.ok(c.vocabulary.includes('định biên nhân sự'));
-  assert.equal(c.stakeholders.find(s=>s.role==='decisionMaker').status,'possible');
+  // Version 2 only records people actually mentioned; missing authority is not an actor.
+  assert.equal(c.stakeholders.find(s=>s.role==='decisionMaker'),undefined);
   assert.ok(!JSON.stringify(c).includes('Mowi'));
 });
 test('domain roles differ without inventing a known counterparty palace',()=>{

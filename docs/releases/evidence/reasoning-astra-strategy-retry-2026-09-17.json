@@ -1,0 +1,24 @@
+{
+  "body": {
+    "question": "Công ty tôi cung cấp dịch vụ vệ sinh văn phòng. Khách hàng A đã nhận báo giá. Tôi nên thương lượng phạm vi công việc thế nào để tiến tới hợp đồng trong tháng này?",
+    "mode": "negotiation",
+    "topic": "general",
+    "method": "chaibu",
+    "input": {
+      "year": 2026,
+      "month": 9,
+      "day": 16,
+      "hour": 7,
+      "minute": 46,
+      "tzOffset": 7
+    }
+  },
+  "attempts": [],
+  "error": "Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex. Chờ hạn mức được đặt lại rồi thử lại.",
+  "seconds": 20.768,
+  "liveModelAttempt": true,
+  "validated": false,
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "note": "Final candidate retry on 2026-09-17 still blocked by Codex quota; no model output received."
+}

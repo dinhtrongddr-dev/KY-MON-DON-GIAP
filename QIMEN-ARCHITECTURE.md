@@ -1,62 +1,63 @@
-# All-in-One Qimen AI · v16 / TG-CB-5.0
+# Kỳ Môn All-in-One v17.0.0 / TG-CB-6.0
 
-## Lõi giữ nguyên
+Cập nhật 16/09/2026. Source chính: GitHub `dinhtrongddr-dev/KY-MON-DON-GIAP`, Cloudflare Pages tại `https://kymon.pp.ua`. Engine TG-ROTATING-2.0 không đổi. Giao thức mạng vẫn là 5; public structured reading JSON giữ các field và ba slot `current/next/outcome`. Internal graph là `ReadingEvidenceGraph/2`, context là `QuestionContext/2`; server và browser cùng tính lại, không dùng graph cũ đã lưu.
 
-`dist/qimen.mjs`, `dist/vendor/lunar.js` và toàn bộ `dist/qimen/core/` giữ nguyên so với v15. Cùng một triển khai lịch/an bàn phục vụ giao diện, preparation và từng ứng viên Timing. `QimenBoard/1` vẫn bất biến; `QimenAnalysis/1` bổ sung metadata vai và không ghi trở lại bàn.
+## Luồng dữ liệu
 
-Mốc 480 bàn (hai pháp, 1900/2024/2026/2100, 12 tháng, năm mốc giờ/múi giờ) giữ hash `d384c9f4d42a94bd80d709eac2c865943ac5ac4f7e86489d84b003edd2b465ea`. Không cập nhật mốc này để làm test xanh. Bộ cũ vẫn kiểm 1.080 cấu hình chuyển bàn, tám fixture cổ thư và giao tiết HKO.
+Core deterministic -> QuestionContext / OutcomeTarget -> Actor map theo ngữ cảnh -> Evidence bundles -> Relevance và conflict priority riêng -> Role-aware translation / interactions -> Outcome dimensions -> Seven event stages -> Primary judgment -> Scenario / recommendations / timing -> Writer -> Validators -> Five tabs.
 
-## Pipeline và vị trí mã
+AI không tham gia lập bàn hoặc quyết định lại judgment. Mọi ánh xạ thành sự việc đời thường là quy ước diễn giải ứng dụng, không phải kiểm chứng dự báo.
 
-| Module | Vai trò |
-|---|---|
-| `ai/questionContext.mjs` | Tách domain/mode/questionType, chủ thể, giai đoạn, thời hạn, dữ kiện người dùng và từ vựng liên quan |
-| `modes/semantics.mjs` | Registry ngữ nghĩa của business, project, relationship, family, career, recruitment, study, search, health, legal, finance, property, travel, social |
-| `analysis/usefulGod.mjs` | Tái sử dụng Nhật/Thời, dụng thần chuyên đề và đại diện khai báo; gắn vai ngữ nghĩa theo domain |
-| `analysis/evidenceBundles.mjs` | Gom các tượng của một cung với các vai liên quan; điều kiện mộ/hình chỉ gắn đúng can đại diện |
-| `analysis/contradictions.mjs` | Điều kiện hỗ trợ/cản, điều kiện chi phối và dấu hiệu tháo gỡ |
-| `analysis/evidenceScore.mjs` | Xếp relevance; giữ người/việc chính, thường chọn 4 cụm, tối đa 6 khi luận sâu hoặc cần giữ đại diện nhập tay, không đếm bí danh cùng cung là chứng cứ độc lập |
-| `analysis/relationGraph.mjs`, `interactions.mjs` | Nút có cung/lớp/điều kiện; cạnh có chiều; phân tích nguồn lực, sức ép, phụ thuộc và đồng cung |
-| `ai/realWorld.mjs` | Phối hợp Môn × Tinh × Thần × vai × domain × trạng thái, tạo khái niệm/điều kiện để AI diễn đạt |
-| `ai/scenario.mjs`, `recommendations.mjs` | Dùng quyết định của registry mode hiện tại, dựng hiện trạng → bước chuyển → kết quả, nhánh thay thế và hành động có căn cứ |
-| `ai/reasoningPlanner.mjs` | Điều phối `ReadingEvidenceGraph/1`, đóng băng claims/graph/scenario/recommendations |
-| `ai/writerContext.mjs` | Chọn planner và facts cần thiết cho model; không gửi lại toàn bộ QimenBoard và Analysis |
-| `schemas/reading.mjs`, `ai/readingAudit.mjs` | Schema v5 và validation/relevance checks; dùng chung ở browser và bridge |
-| `reading-view.mjs` | Năm tab, căn cứ đóng mặc định, chỉ textContent, nút đối chiếu cung |
+| Trách nhiệm | Module |
+| --- | --- |
+| Core và canonical chart | `dist/qimen.mjs`, `dist/qimen/core/`, `dist/vendor/lunar.js` (6 file đóng băng) |
+| Ý định, câu hỏi trọng tâm, chủ thể, thời hạn | `dist/qimen/ai/questionContext.mjs`, `outcomeTarget.mjs`, `classifier.mjs` |
+| Vai và nguồn chọn | `dist/qimen/analysis/usefulGod.mjs`, `actorRelevance.mjs`, `ruleRegistry.mjs` |
+| Cụm Môn/Tinh/Thần/Can/trạng thái | `dist/qimen/analysis/evidenceBundles.mjs` |
+| Ưu tiên theo mục tiêu/giai đoạn | `dist/qimen/analysis/evidenceScore.mjs` |
+| Mâu thuẫn theo vai và dimension | `dist/qimen/analysis/contradictions.mjs` |
+| Mạng có chiều và cơ chế quan hệ | `dist/qimen/analysis/relationGraph.mjs`, `interactions.mjs` |
+| Dịch cụm tượng trong ngữ cảnh | `dist/qimen/ai/realWorld.mjs` |
+| Các mức kết quả độc lập | `dist/qimen/ai/outcomeDimensions.mjs` |
+| Bảy tầng và điều kiện chuyển | `dist/qimen/ai/eventStages.mjs` |
+| Nhận định trước writer | `dist/qimen/ai/primaryJudgment.mjs`, `scenario.mjs`, `reasoningPlanner.mjs` |
+| Hành động có căn cứ | `dist/qimen/ai/recommendations.mjs` |
+| Thời hạn / giới hạn ứng kỳ | `dist/qimen/ai/timingEngine.mjs` |
+| So thời điểm bằng bàn riêng | `dist/qimen/ai/timingComparison.mjs` (giữ phép tính hiện có) |
+| Payload và sáu nhiệm vụ writer | `dist/qimen/ai/writerContext.mjs`, `prompts.mjs` |
+| Schema, vị trí, ngữ nghĩa hữu hạn | `dist/qimen/ai/readingAudit.mjs`, `technicalAudit.mjs`, `synthesisAudit.mjs` |
+| Năm tab và trace | `dist/reading-view.mjs`, `dist/qimen/ui-results.mjs` |
 
-Điểm vào công khai vẫn là `prepareReading(body)`. Kết quả có `context.allInOne.questionContext` và `context.allInOne.reasoning`. Context đầy đủ dùng để băm/kiểm chứng; `buildWriterContext(context)` là payload rút gọn của AI. Không truyền mã kết nối vào model. Không thêm lượt AI planner: planner chạy bằng mã, writer gọi một lượt và chỉ sửa tối đa một lần khi không qua validator.
+## Hợp đồng diễn giải
 
-## Các quy ước phải giữ rõ
+`outcomeTarget` có object/event/stageAsked/realizationAsked/timeHorizon. Phần câu hỏi trực tiếp được ưu tiên hơn lời kể trước đó. Registry không còn payment/reply trùng. Ranh giới từ ngăn “thay đổi nơi” khớp nhầm “đòi nợ”; “tiến triển” không phải “tiền”.
 
-- Domain và ý định độc lập: Thương chiến có thể trả lời prediction hoặc strategy. Manual mode được giữ; classifier vẫn là quy tắc hữu hạn có thể nhầm câu đa nghĩa, người dùng có thể đổi mode/chủ đề.
-- Dữ kiện người dùng được giữ nguyên nguồn. Từ vựng ngành là gợi ý, không phải bằng chứng có bộ phận/người/hồ sơ ấy. Không hard-code kết quả của ví dụ vệ sinh công nghiệp.
-- Vai cùng một cung dùng chung bundle, nhưng từng can chỉ nhận mộ/hình của chính nó. Khách/đối thủ/người duyệt chưa khai báo có cung null. Không suy danh tính, giới tính hoặc tâm ý từ một thần.
-- Scoring là ưu tiên giải thích: tượng có khí làm tăng mức cần chú ý; điều kiện cản cũng tăng mức cần chú ý. Điểm không phải cát/hung, tỷ lệ hoặc xác suất đã hiệu chuẩn.
-- Nút thắt xét toàn bộ cụm trọng tâm, gồm cung mục tiêu và người quyết định đã khai báo. Điều kiện chi phối đi cùng kết luận, chặng kết quả và hành động ưu tiên; graph rút gọn luôn giữ đủ hai đầu mỗi cạnh.
-- Graph là quan hệ biểu tượng. `interactions` không chứng minh nguyên nhân thực tế; scenario luôn có điều kiện quan sát. Không suy lịch trước/sau từ chiều sinh khắc.
-- Core cũ giữ phép Cửu Tinh theo [Yên Ba Điếu Tẩu Ca](https://zh.wikisource.org/wiki/煙波釣叟歌): đồng hành tháng tướng, Tinh sinh tháng vượng, tháng sinh Tinh phế, Tinh khắc tháng hưu, tháng khắc Tinh tù. Không áp cho Môn/Can/cung.
-- Phạm vi mộ/hình, Ngũ bất ngộ thời và các tổ hợp giới hạn giữ v15. Không tự thêm nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hay ngày ứng nghiệm chắc chắn.
+Vai legacy vẫn phục vụ mode engine; graph cho writer lọc theo domain/intent/outcome/mode và vai người dùng cung cấp. Vai người chưa biết không có cung hoặc cạnh giả. Câu hỏi thu nhập chung không tạo customer/payer/authority. Vai có actorId, role, source, palace, stem, evidenceIds, relevance và confidenceLevel về căn cứ.
 
-## Protocol 5
+Bundle gom các alias trong cùng cung, không cộng chúng thành nhiều bằng chứng. Relevance cộng các chiều question/actor/goal/stage/strength/corroboration; modifierImportance và conflictPriority không nhân vào evidenceScore. Self/event và các Can Chi người dùng cung cấp được giữ khi chọn tối đa sáu cung.
 
-Request thêm `depth: standard|deep` bên cạnh `mode`, `actors`, `action`, `candidates`. `chartFingerprint` vẫn băm bàn legacy; `requestFingerprint` băm rules + chart hash + toàn context, gồm planner/độ sâu/ứng viên. Server bỏ qua planner/facts/instructions do client chèn, tự chuẩn bị lại. TG-CB-4.0 và trước đó bị chặn; không chỉ đổi số phiên bản để lách.
+Tài chính có opportunity, income_emergence, income_formation, payment_commitment, payment_processing, cash_realization, completion. Mỗi dimension có status, supportingEvidenceIds, limitingEvidenceIds, conditions, confidenceLevel, reason. Không có điểm tổng vận may hoặc xác suất. Sinh Môn có trên mọi bàn nên một vị trí dụng thần riêng không đủ để mọi câu thu nhập đều thành positive: cần phối hợp sự việc và cụm tượng. Các giới hạn có thể làm formation/execution/realization yếu hơn emergence.
 
-Result gồm status/topic_id/mode/questionType; summary/situation/timing là text + claim_ids. development đúng ba chặng với text, condition, claim_ids, interaction_ids. bottleneck có resolution; alternative có id; actions có recommendation_id + text; comparisons chỉ dùng ứng viên đã tính; questions phục vụ làm rõ.
+EventStages giữ đủ POSSIBILITY -> EMERGENCE -> FORMATION -> CONFIRMATION -> EXECUTION -> REALIZATION -> COMPLETION. `observed` chỉ từ lời kể khẳng định của người dùng, không từ tượng; từng stage của bàn luôn `observed:false`. Kịch bản gồm các điều kiện chuyển, không hứa sự kiện sẽ tuần tự xảy ra. Mạng có chiều được dùng trong conditions, transitions và recommendations; quan hệ ngũ hành không biến thành tâm ý hoặc hành vi đã có.
 
-Không còn schema đánh giá bốn aspect rồi viết lại toàn bộ mode_chain. Mỗi đoạn phải dẫn claim đã lập, mỗi hành động phải dẫn recommendation; chặng phải dùng cạnh đã chọn. Bài thường hướng tới 500–800 đơn vị cách nhau bởi khoảng trắng, đơn giản có thể ngắn; lựa chọn Luận sâu cho phép dài hơn. Văn chính, điều kiện và resolution cùng tính vào giới hạn; căn cứ và bảng ứng viên không tính.
+Primary judgment gồm answerClass/main/distinction/support/limit/condition/expectedSequence/forbiddenClaims. Astra diễn đạt kết quả này. Trực Phù ở self thành quyền chủ động của người hỏi; chỉ vai authority phù hợp mới nói về thẩm quyền. Void có affectedDimension/effect/severity/resolution/evidenceIds riêng theo vai; khi nhiều vai cùng cung vẫn giữ cách tác động riêng.
 
-Audit chặn cấu trúc sai, claim/action/cạnh/ứng viên giả, lệch topic/mode/ý định, bỏ đại diện chính, thiếu mâu thuẫn chi phối, thiếu chặng/điều kiện, văn quá ngắn/dài, trùng hoặc gần trùng đoạn, một số dạng số tiền/ngày/xác suất bịa trong mọi chuỗi hiển thị, kể cả điều kiện, resolution, so sánh và làm rõ. Các heuristic không chứng minh mọi câu có nghĩa đúng và không phát hiện mọi kiểu bịa hoặc lặp ý; writer được yêu cầu tự kiểm, rồi cần đánh giá người đọc/AI thật theo AI-EVAL.md.
+## Writer và kiểm tra
 
-## Timing / Direction và kết nối
+GPT-6 Astra (`gpt-6-astra`), reasoning `ultra`, tài khoản ChatGPT riêng. Payload đã xử lý, không có toàn bộ raw board; giữ cụm tượng được chọn để giải thích và đối chiếu kỹ thuật. Luận sâu thêm quan hệ, phản chứng và các tầng; không ép 900-1400 từ. Tổng ngân sách 600000 ms gồm tối đa một lượt sửa; web chờ 610000 ms. Lỗi xác thực/hạn mức/mạng không được retry như lỗi nội dung.
 
-Timing tiếp tục so 2–12 thời điểm, giữ Nhật trụ người hỏi của bàn gốc, gọi một Core cho mỗi ứng viên khác nhau. Direction so tám cung ngoài trung tâm; thứ hạng tương đối và đồng hạng giữ nguyên. Writer nhận điều kiện từng ứng viên, không được lấy Không/Mã của bàn hỏi thay ngày khác.
+Validators kiểm schema, claim/evidence, cung/can/trạng thái/chiều sinh khắc, mâu thuẫn với judgment theo các mẫu được hỗ trợ, sự kiện/người/tiền/thời điểm thêm vào và cảnh báo lặp nghĩa. Semantic repetition cần cơ chế và căn cứ mới; đổi claim ID đơn thuần không tính là thêm ý. Đây là bộ kiểm mẫu hữu hạn, không phải chứng minh toàn bộ ngữ nghĩa tự do. Một lượt sửa vẫn không đạt thì verified_fallback chỉ đưa dữ kiện đã tính; client tự tính lại fallback trước khi nhận.
 
-Giữ relay `https://ky-mon-codex-relay.dinhtrongddr.workers.dev`, model `gpt-5.6-sol`, high effort, tài khoản ChatGPT, xác thực nhập tay, Host/Origin/CORS, chỉ đọc và chặn công cụ. Tổng hạn 180 giây cho cả lượt/repair, web chờ 190 giây. Không thử lại lỗi auth/network. Hủy và thay form làm phản hồi cũ mất hiệu lực.
+Timing engine đổi các thời hạn tương đối đã hỗ trợ thành khoảng lịch theo UTC offset của bàn. Không triển khai ngày xuất Không/điền thực/xung Không/hợp xung định ngày. `allowedPredictions=[]`, `timingConfidence=low`. Chọn thời điểm bằng các bàn ứng viên là chức năng khác và vẫn giữ nguyên.
 
-## Kiểm tra và triển khai
+## UI và tương thích
 
-`npm run check`; `npm run prepare:windows`; `npm run package:local`; `npm run verify:package`. Ca mới nằm trong reasoning-context/planner/writer; ca bridge/DOM được chuyển sang contract v5, vẫn giữ bảo vệ cũ. Ngày 14/09/2026 đã chạy AI thật qua Chrome, website, Worker và tunnel, xác nhận một bài hợp lệ với năm tab. Ma trận đánh giá nội dung AI đầy đủ vẫn chưa hoàn tất. Fixture chữ chỉ để kiểm contract, không phải bằng chứng chất lượng AI. Bản ghi và quy trình tái lập nằm trong `docs/releases/`.
+Năm tab cả với bài trọng tâm: kết luận, diễn biến, phân tích, chiến lược, ứng kỳ. Phân tích cụm được đưa vào tab kỹ thuật để kết luận gọn. Mỗi tab có tối đa một collection căn cứ, mở bằng nút trace có aria-controls và hỗ trợ focus. Bài concise không bắt model tạo ba đoạn; UI dùng chuỗi điều kiện đã tính và ghi rõ đó không phải sự kiện đã xảy ra. Chữ đậm an toàn vẫn dùng DOM, không render HTML từ AI.
 
-Repo gốc đóng kèm `relay/`, mã nguồn launcher, cấu hình đóng gói và workflow kiểm thử. Manifest `docs/releases/core-baseline.json` khóa sáu tệp lõi theo UTF-8/LF; test 480 bàn vẫn kiểm độc lập hash đầu ra cũ. `scripts/package-local.py` dùng danh sách tệp cho phép, timestamp cố định và checksum Windows, xác minh nội dung trước khi thay ZIP. Lịch sử Git và source archive được sao lưu riêng với bộ cài local; cấu hình đăng nhập/ghép nối nằm ngoài cả ba.
+Mã kết nối hiển thị rõ; ghi nhớ là lựa chọn, spinner/elapsed/cancel giữ nguyên. CORS/Origin/Host, pairing, relay, launcher, hồ sơ đăng nhập không đổi. TG-CB-6.0 chặn bridge 5.1 để tránh ghép hai planner; cập nhật và khởi động lại runtime. Dữ liệu bàn lưu và phép an bàn không cần migration.
 
-Publish đúng Site hiện tại và gói `downloads/ky-mon-ai.zip`. Người dùng cần cập nhật/restart bộ kết nối; website không có quyền thay tiến trình trên máy họ. Hướng dẫn migration trong HUONG-DAN-LOCAL.md. Không tạo app, key, secret hoặc model mới.
+## Debug và tái lập
+
+Debug chỉ là CLI riêng, không có endpoint/UI debug production. Ví dụ PowerShell: đặt `$env:QIMEN_DEBUG_REASONING='1'`, chạy `node scripts/debug-reasoning.mjs tests/fixtures/income-emergence-2026-09-16.json .release/reasoning-debug.json`, rồi bỏ biến sau khi dùng. Script mặc định từ chối chạy; whitelist chỉ thu các tầng luận và payload, không đọc cấu hình auth/pairing. Không chia sẻ dump chứa câu hỏi riêng tư.
+
+Chạy `npm run check`, `npm run package:local`, `npm run verify:package`. Danh sách file đóng gói bao gồm fixtures JSON mới. Báo cáo actual before/after, live model và giới hạn: `docs/releases/REASONING-UPGRADE-2026-09-16.md`; bằng chứng trong `docs/releases/evidence/reasoning-*.json`.

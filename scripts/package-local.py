@@ -35,7 +35,7 @@ def source_files(root):
     files = {root / name for name in REQUIRED}
     for pattern in ['local/*.mjs', 'dist/*.mjs', 'dist/*.html', 'dist/*.css',
                     'dist/*.svg', 'dist/*.png', 'dist/assets/*.png',
-                    'dist/qimen/**/*.mjs', 'tests/*.mjs', 'tests/*.py',
+                    'dist/qimen/**/*.mjs', 'tests/*.mjs', 'tests/*.py', 'tests/fixtures/*.json',
                     'scripts/*.mjs', 'scripts/*.json', 'scripts/*.py',
                     'relay/src/*.js', 'relay/test/*.mjs', 'relay/*.md',
                     'docs/releases/**/*.md', 'docs/releases/**/*.json']:

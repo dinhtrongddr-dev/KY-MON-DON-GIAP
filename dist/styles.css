@@ -790,3 +790,5 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-evidence { margin:12px 0; overflow-wrap:anywhere; }
 .ai-evidence .jump-cung { min-height:44px; margin:8px 8px 4px 0; padding:8px 12px; font-size:14px; }
 .ai-actions > li { margin-bottom:18px; }
+.ai-trace { display:inline-flex; align-items:center; min-height:44px; padding:5px 10px; margin:0 0 8px; border:1px solid var(--line); border-radius:4px; background:transparent; color:var(--jade-dark); font:inherit; font-size:13px; cursor:pointer; }
+.ai-trace:hover,.ai-trace:focus-visible { background:#e5f2eb; outline:2px solid var(--jade); outline-offset:2px; }

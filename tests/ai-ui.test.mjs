@@ -134,6 +134,14 @@ test('evidence is collapsed and every displayed basis comes from the verified pl
   const evidence=all.filter(n=>n.tag==='details'&&n.className==='ai-evidence');
   assert.ok(evidence.length>=3);assert.ok(evidence.every(n=>n.open===false));
   assert.ok(all.some(n=>n.textContent===p.facts[p.context.allInOne.reasoning.claims[0].evidenceIds[0]]));
+  for(const panel of all.filter(n=>n.attributes?.role==='tabpanel')){
+    const descendants=[];const visit=n=>{descendants.push(n);n.children.forEach(visit);};visit(panel);
+    assert.ok(descendants.filter(n=>n.tag==='details'&&n.className==='ai-evidence').length<=1);
+  }
+  const traces=all.filter(n=>n.className==='ai-trace');assert.ok(traces.length);
+  await traces[0].fire('click');
+  assert.ok(evidence.some(n=>n.open===true));
+  assert.ok(evidence.some(n=>n.id===traces[0].attributes['aria-controls']));
 });
 
 test('reading shows elapsed progress, then clears it when a validated answer arrives',async t=>{

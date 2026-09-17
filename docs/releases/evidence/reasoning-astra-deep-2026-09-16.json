@@ -1,0 +1,229 @@
+{
+  "syntheticQuestion": true,
+  "liveModel": true,
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "body": {
+    "question": "Trong tuần này tôi có khoản tiền vào được phát sinh không?",
+    "mode": "auto",
+    "depth": "deep",
+    "topic": "general",
+    "method": "chaibu",
+    "input": {
+      "year": 2026,
+      "month": 9,
+      "day": 16,
+      "hour": 7,
+      "minute": 46,
+      "tzOffset": 7
+    }
+  },
+  "chartFingerprint": "1b8dc506acb201f4c6b922da5a0dcb31cfccedfb353e904fb8ae418f188d5288",
+  "requestFingerprint": "265801bc6a265cdd37823a0a3487d7197476f44e5ba67cb0d71f8c67c7534ea7",
+  "seconds": 167.042,
+  "attempts": [
+    {
+      "seconds": 166.955,
+      "issue": null,
+      "reading": {
+        "status": "reading",
+        "topic_id": "money",
+        "mode": "prediction",
+        "questionType": "prediction",
+        "summary": {
+          "text": "Nhận định **thiên về có khoản thu phát sinh trong tuần này; để khoản thu thành hình, bạn vẫn cần đáp ứng yêu cầu thực hiện liên quan**. Tượng phát sinh mạnh hơn tượng thực nhận, nên có phát sinh chưa đồng nghĩa tiền sẽ vào tay trong cùng tuần.",
+          "claim_ids": [
+            "claim_3",
+            "claim_1",
+            "claim_8"
+          ]
+        },
+        "situation": {
+          "text": "Căn cứ chính nằm tại Chấn 3: thiên can Bính, đại diện bối cảnh sự việc, trên địa can Tân, đi cùng Sinh Môn–Thiên Nhậm–Cửu Thiên. Thiên Nhậm vượng và cung này không gặp Tuần Không; cụm tượng hỗ trợ khả năng tạo khoản thu bằng năng lực thực hiện ổn định. **Nếu quy mô phù hợp với sức làm, cơ hội có cơ sở tiến thành khoản thu**, thay vì chỉ dừng ở hướng mở chung. Việc gán tượng cho khoản thu và nguồn lực là quy ước ứng dụng chưa được xác minh; luận tượng không phải bằng chứng khoa học về dòng tiền.",
+          "claim_ids": [
+            "claim_3"
+          ]
+        },
+        "development": [
+          {
+            "text": "Ở tầng cơ hội, Khảm 1 có Khai Môn–Thiên Tâm–Đằng Xà, thiên can Mậu trên địa can Quý; Mậu được dùng làm đại diện nguồn lực. Thiên Tâm tướng, phối hợp với cụm này, gợi hướng mở thông qua phương án có thể kiểm tra, không dựa vào giả định đơn thuần. **Tuần Không không tự phủ định cơ hội hoặc phát sinh; khâu thực nhận vẫn cần nguồn lực trở nên sử dụng được**. Sự việc đồng thời đặt yêu cầu lên bạn, nên dấu hiệu mở cơ hội chưa tự xác nhận khoản thu đã phát sinh.",
+            "claim_ids": [
+              "claim_3",
+              "claim_1",
+              "claim_8"
+            ],
+            "stage": "current",
+            "condition": "Xuất hiện dấu hiệu thực tế riêng của bước phát sinh khoản thu, thay vì chỉ có khả năng chung.",
+            "interaction_ids": [
+              "graph_event_self"
+            ]
+          },
+          {
+            "text": "Từ phát sinh sang thành hình, quan hệ cung cho thấy Chấn 3 thuộc Mộc của sự việc/khoản thu khắc Cấn 8 thuộc Thổ của bạn. Chiều tác động là yêu cầu từ sự việc lên người hỏi; không phải bạn tự quyết được toàn bộ kết quả. **Khoản thu có thể tiến thêm nếu bạn đáp ứng phần yêu cầu trực tiếp bằng nguồn lực thực sự có**, trước khi mở rộng cam kết. Sau đó, tầng cam kết cần nội dung cụ thể; tầng xử lý cần một bước thực sự được thực hiện. Hai tầng này hiện còn chưa rõ, không thể suy ra chỉ từ dấu hiệu phát sinh thuận.",
+            "claim_ids": [
+              "claim_3",
+              "claim_8"
+            ],
+            "stage": "next",
+            "condition": "Bạn xác định được nguồn lực và bước chủ động mình làm được, đáp ứng yêu cầu trực tiếp, rồi có cam kết cụ thể và bước xử lý thực tế.",
+            "interaction_ids": [
+              "graph_event_self",
+              "graph_self_money"
+            ]
+          },
+          {
+            "text": "Kịch bản thuận là khoản thu phát sinh, thành hình rồi tiến qua cam kết và xử lý; đây là chuỗi điều kiện, không phải lịch tương lai đã biết. Vì kết quả của bạn còn phụ thuộc điều kiện của khoản thu, **chỉ khi quan sát được khoản thực nhận mới tính là tiền đã vào; hoàn tất còn cần các phần việc còn lại kết thúc**. Tín hiệu thuận ở đầu chuỗi không bảo đảm mọi khâu đều xong trong tuần.",
+            "claim_ids": [
+              "claim_3",
+              "claim_1",
+              "claim_8"
+            ],
+            "stage": "outcome",
+            "condition": "Có khoản thực nhận quan sát được; chỉ xác định hoàn tất khi các phần việc còn lại đã kết thúc.",
+            "interaction_ids": [
+              "graph_self_money"
+            ]
+          }
+        ],
+        "bottleneck": {
+          "text": "Nút thắt chính nằm ở khâu nhận kết quả của bạn. Tại Cấn 8, thiên can Quý đại diện người hỏi trên địa can Bính, đi cùng Hưu Môn–Thiên Bồng–Trực Phù; Thiên Bồng phế, có Tuần Không và Dịch Mã. Cụm này gợi nhu cầu giữ nhịp, rà nguồn lực, trong khi vị thế nhận kết quả chưa ổn định. Trực Phù là quyền chủ động của chính bạn; Dịch Mã gặp Không cho thấy **thay đổi chỉ giúp chuyển bước khi thực sự triển khai được**, không phải cứ có động thái là có kết quả.",
+          "claim_ids": [
+            "claim_8"
+          ],
+          "resolution": "Xác định nguồn lực và bước chủ động bạn thực sự làm được để ổn định khâu nhận kết quả; chọn một thay đổi trong khả năng, theo dõi tác dụng trước khi mở rộng."
+        },
+        "actions": [
+          {
+            "recommendation_id": "action_8",
+            "text": "Xác định nguồn lực và bước bạn thực sự chủ động được: **khi khâu nhận kết quả còn bất định, tập trung phần này giúp giảm yêu cầu chưa đáp ứng ở chính bạn**."
+          },
+          {
+            "recommendation_id": "action_1",
+            "text": "Tách khoản dự kiến khỏi khoản đã thực có: **khi nguồn lực chưa thành phần sử dụng được, cách tách này giúp phân biệt khả năng thu với kết quả thực tế**, tránh cam kết dựa trên giả định."
+          }
+        ],
+        "alternative": {
+          "text": "**Nếu thiếu dấu hiệu phát sinh hoặc xuất hiện thông tin thực tế trái giả thuyết, nhận định thiên về có cần được điều chỉnh**. Còn nếu khoản thu đã phát sinh nhưng điều kiện chuyển bước chưa đáp ứng, kịch bản thay thế là dừng ở khoản dự kiến hoặc chưa thực nhận — không phải phủ nhận bước phát sinh. Khi đó giữ lại khâu kiểm tra, điều chỉnh phương án thay vì coi mục tiêu cuối đã đạt.",
+          "claim_ids": [
+            "claim_3",
+            "claim_1",
+            "claim_8"
+          ],
+          "id": "alternative_conditions_unmet"
+        },
+        "timing": {
+          "text": "Chưa có mốc ứng kỳ đủ rõ. **Với căn cứ hiện có, chỉ giữ phạm vi “tuần này”, không chốt ngày phát sinh hay nhận tiền**; Không và Mã ở đây chưa cung cấp phép định ngày được hỗ trợ.",
+          "claim_ids": [
+            "claim_1",
+            "claim_8"
+          ]
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    }
+  ],
+  "reading": {
+    "status": "reading",
+    "topic_id": "money",
+    "mode": "prediction",
+    "questionType": "prediction",
+    "summary": {
+      "text": "Nhận định **thiên về có khoản thu phát sinh trong tuần này; để khoản thu thành hình, bạn vẫn cần đáp ứng yêu cầu thực hiện liên quan**. Tượng phát sinh mạnh hơn tượng thực nhận, nên có phát sinh chưa đồng nghĩa tiền sẽ vào tay trong cùng tuần.",
+      "claim_ids": [
+        "claim_3",
+        "claim_1",
+        "claim_8"
+      ]
+    },
+    "situation": {
+      "text": "Căn cứ chính nằm tại Chấn 3: thiên can Bính, đại diện bối cảnh sự việc, trên địa can Tân, đi cùng Sinh Môn–Thiên Nhậm–Cửu Thiên. Thiên Nhậm vượng và cung này không gặp Tuần Không; cụm tượng hỗ trợ khả năng tạo khoản thu bằng năng lực thực hiện ổn định. **Nếu quy mô phù hợp với sức làm, cơ hội có cơ sở tiến thành khoản thu**, thay vì chỉ dừng ở hướng mở chung. Việc gán tượng cho khoản thu và nguồn lực là quy ước ứng dụng chưa được xác minh; luận tượng không phải bằng chứng khoa học về dòng tiền.",
+      "claim_ids": [
+        "claim_3"
+      ]
+    },
+    "development": [
+      {
+        "text": "Ở tầng cơ hội, Khảm 1 có Khai Môn–Thiên Tâm–Đằng Xà, thiên can Mậu trên địa can Quý; Mậu được dùng làm đại diện nguồn lực. Thiên Tâm tướng, phối hợp với cụm này, gợi hướng mở thông qua phương án có thể kiểm tra, không dựa vào giả định đơn thuần. **Tuần Không không tự phủ định cơ hội hoặc phát sinh; khâu thực nhận vẫn cần nguồn lực trở nên sử dụng được**. Sự việc đồng thời đặt yêu cầu lên bạn, nên dấu hiệu mở cơ hội chưa tự xác nhận khoản thu đã phát sinh.",
+        "claim_ids": [
+          "claim_3",
+          "claim_1",
+          "claim_8"
+        ],
+        "stage": "current",
+        "condition": "Xuất hiện dấu hiệu thực tế riêng của bước phát sinh khoản thu, thay vì chỉ có khả năng chung.",
+        "interaction_ids": [
+          "graph_event_self"
+        ]
+      },
+      {
+        "text": "Từ phát sinh sang thành hình, quan hệ cung cho thấy Chấn 3 thuộc Mộc của sự việc/khoản thu khắc Cấn 8 thuộc Thổ của bạn. Chiều tác động là yêu cầu từ sự việc lên người hỏi; không phải bạn tự quyết được toàn bộ kết quả. **Khoản thu có thể tiến thêm nếu bạn đáp ứng phần yêu cầu trực tiếp bằng nguồn lực thực sự có**, trước khi mở rộng cam kết. Sau đó, tầng cam kết cần nội dung cụ thể; tầng xử lý cần một bước thực sự được thực hiện. Hai tầng này hiện còn chưa rõ, không thể suy ra chỉ từ dấu hiệu phát sinh thuận.",
+        "claim_ids": [
+          "claim_3",
+          "claim_8"
+        ],
+        "stage": "next",
+        "condition": "Bạn xác định được nguồn lực và bước chủ động mình làm được, đáp ứng yêu cầu trực tiếp, rồi có cam kết cụ thể và bước xử lý thực tế.",
+        "interaction_ids": [
+          "graph_event_self",
+          "graph_self_money"
+        ]
+      },
+      {
+        "text": "Kịch bản thuận là khoản thu phát sinh, thành hình rồi tiến qua cam kết và xử lý; đây là chuỗi điều kiện, không phải lịch tương lai đã biết. Vì kết quả của bạn còn phụ thuộc điều kiện của khoản thu, **chỉ khi quan sát được khoản thực nhận mới tính là tiền đã vào; hoàn tất còn cần các phần việc còn lại kết thúc**. Tín hiệu thuận ở đầu chuỗi không bảo đảm mọi khâu đều xong trong tuần.",
+        "claim_ids": [
+          "claim_3",
+          "claim_1",
+          "claim_8"
+        ],
+        "stage": "outcome",
+        "condition": "Có khoản thực nhận quan sát được; chỉ xác định hoàn tất khi các phần việc còn lại đã kết thúc.",
+        "interaction_ids": [
+          "graph_self_money"
+        ]
+      }
+    ],
+    "bottleneck": {
+      "text": "Nút thắt chính nằm ở khâu nhận kết quả của bạn. Tại Cấn 8, thiên can Quý đại diện người hỏi trên địa can Bính, đi cùng Hưu Môn–Thiên Bồng–Trực Phù; Thiên Bồng phế, có Tuần Không và Dịch Mã. Cụm này gợi nhu cầu giữ nhịp, rà nguồn lực, trong khi vị thế nhận kết quả chưa ổn định. Trực Phù là quyền chủ động của chính bạn; Dịch Mã gặp Không cho thấy **thay đổi chỉ giúp chuyển bước khi thực sự triển khai được**, không phải cứ có động thái là có kết quả.",
+      "claim_ids": [
+        "claim_8"
+      ],
+      "resolution": "Xác định nguồn lực và bước chủ động bạn thực sự làm được để ổn định khâu nhận kết quả; chọn một thay đổi trong khả năng, theo dõi tác dụng trước khi mở rộng."
+    },
+    "actions": [
+      {
+        "recommendation_id": "action_8",
+        "text": "Xác định nguồn lực và bước bạn thực sự chủ động được: **khi khâu nhận kết quả còn bất định, tập trung phần này giúp giảm yêu cầu chưa đáp ứng ở chính bạn**."
+      },
+      {
+        "recommendation_id": "action_1",
+        "text": "Tách khoản dự kiến khỏi khoản đã thực có: **khi nguồn lực chưa thành phần sử dụng được, cách tách này giúp phân biệt khả năng thu với kết quả thực tế**, tránh cam kết dựa trên giả định."
+      }
+    ],
+    "alternative": {
+      "text": "**Nếu thiếu dấu hiệu phát sinh hoặc xuất hiện thông tin thực tế trái giả thuyết, nhận định thiên về có cần được điều chỉnh**. Còn nếu khoản thu đã phát sinh nhưng điều kiện chuyển bước chưa đáp ứng, kịch bản thay thế là dừng ở khoản dự kiến hoặc chưa thực nhận — không phải phủ nhận bước phát sinh. Khi đó giữ lại khâu kiểm tra, điều chỉnh phương án thay vì coi mục tiêu cuối đã đạt.",
+      "claim_ids": [
+        "claim_3",
+        "claim_1",
+        "claim_8"
+      ],
+      "id": "alternative_conditions_unmet"
+    },
+    "timing": {
+      "text": "Chưa có mốc ứng kỳ đủ rõ. **Với căn cứ hiện có, chỉ giữ phạm vi “tuần này”, không chốt ngày phát sinh hay nhận tiền**; Không và Mã ở đây chưa cung cấp phép định ngày được hỗ trợ.",
+      "claim_ids": [
+        "claim_1",
+        "claim_8"
+      ]
+    },
+    "comparisons": [],
+    "questions": []
+  },
+  "finalValidation": {
+    "passed": true,
+    "chartFingerprint": "1b8dc506acb201f4c6b922da5a0dcb31cfccedfb353e904fb8ae418f188d5288",
+    "requestFingerprint": "b34509b1584b32c368cdb66d1c08507ff800d3da131e659185cf1eb9c2762a59",
+    "rules": "TG-CB-6.0",
+    "scope": "Unedited real model output revalidated against final planner; original requestFingerprint records the candidate payload used for the live call."
+  }
+}

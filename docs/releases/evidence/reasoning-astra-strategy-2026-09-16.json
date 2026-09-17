@@ -1,0 +1,134 @@
+{
+  "body": {
+    "question": "Công ty tôi cung cấp dịch vụ vệ sinh văn phòng. Khách hàng A đã nhận báo giá. Tôi nên thương lượng phạm vi công việc thế nào để tiến tới hợp đồng trong tháng này?",
+    "mode": "negotiation",
+    "topic": "general",
+    "method": "chaibu",
+    "input": {
+      "year": 2026,
+      "month": 9,
+      "day": 16,
+      "hour": 7,
+      "minute": 46,
+      "tzOffset": 7
+    }
+  },
+  "attempts": [
+    {
+      "seconds": 202.243,
+      "issue": null,
+      "reading": {
+        "status": "reading",
+        "topic_id": "contract",
+        "mode": "negotiation",
+        "questionType": "strategy",
+        "summary": {
+          "text": "Việc chốt thỏa thuận còn có điều kiện: **phạm vi phải vừa sức và hai bên thống nhất rõ bước tiếp**. Nên thương lượng phần việc làm chắc trước, chỉ mở rộng có điều kiện đổi lại. Tiến triển về phạm vi chưa đồng nghĩa đã thực hiện hay hoàn tất hợp đồng.",
+          "claim_ids": [
+            "claim_3",
+            "claim_8"
+          ]
+        },
+        "situation": {
+          "text": "Theo bạn, A đã nhận báo giá. Khảm 1 có Khai Môn–Thiên Tâm tướng–Đằng Xà, thiên can Mậu trên địa can Quý, gặp Tuần Không: hướng phù hợp là **đưa phương án kiểm tra được, chỉ hứa trong dữ kiện đã rõ**. Chưa xác định đại diện A nên không suy động cơ hay điểm yếu của họ. Đây là giả thuyết từ tượng; ánh xạ vai là quy ước ứng dụng chưa xác minh, không phải bằng chứng khoa học.",
+          "claim_ids": [
+            "claim_1"
+          ]
+        },
+        "development": [
+          {
+            "text": "Chấn 3 có Sinh Môn–Thiên Nhậm vượng–Cửu Thiên, Bính trên Tân, không Tuần Không: cơ hội gắn với khả năng cung cấp dịch vụ ổn định. Mộc cung 3 khắc Thổ cung 8 gợi áp lực đáp ứng lên công ty. **Khi A làm rõ nhu cầu ưu tiên, hãy tập trung phần đáp ứng trực tiếp**, thay vì tăng nguồn lực ngay.",
+            "claim_ids": [
+              "claim_3",
+              "claim_8"
+            ],
+            "stage": "current",
+            "condition": "A làm rõ phần việc ưu tiên trong báo giá.",
+            "interaction_ids": [
+              "graph_event_self"
+            ]
+          },
+          {
+            "text": "Thổ cung 8 bị Mộc cung lợi ích 3 khắc, đồng thời sinh Kim cung hợp đồng 7: điều kiện lợi ích tạo sức ép, còn bạn phải bỏ nguồn lực xây dựng thỏa thuận. Đoài 7 có Tử Môn–Thiên Nhuế vượng–Lục Hợp, thiên can Nhâm + Kỷ trên địa can Ất, không Tuần Không: nên sửa điểm vướng và làm rõ trách nhiệm. **Chỉ đổi phạm vi khi có cam kết tương ứng**, không nhượng bộ một chiều.",
+            "claim_ids": [
+              "claim_3",
+              "claim_8",
+              "claim_7"
+            ],
+            "stage": "next",
+            "condition": "Đã rõ chi phí thực, phạm vi tối thiểu và giới hạn chấp nhận.",
+            "interaction_ids": [
+              "graph_event_self",
+              "graph_self_money",
+              "graph_self_contract"
+            ]
+          },
+          {
+            "text": "**Nếu hai bên xác nhận phạm vi, trách nhiệm và bước tiếp, mới có căn cứ ghi nhận chốt thỏa thuận**. Sau đó, chỉ tăng cam kết khi bước thực hiện cho thấy nguồn lực đáp ứng được; công sức chuẩn bị không thay thế kết quả thực nhận hoặc hoàn tất.",
+            "claim_ids": [
+              "claim_3",
+              "claim_8"
+            ],
+            "stage": "outcome",
+            "condition": "Hai bên thống nhất rõ nội dung cam kết và cách chuyển sang thực hiện.",
+            "interaction_ids": [
+              "graph_self_money",
+              "graph_self_contract"
+            ]
+          }
+        ],
+        "bottleneck": {
+          "text": "Cấn 8 của bạn có Hưu Môn–Thiên Bồng phế–Trực Phù, Quý trên Bính, gặp Tuần Không và Dịch Mã. Trực Phù là quyền chủ động của chính bạn. Tuần Không ở người hỏi và cửa giao dịch giới hạn thực nhận, hoàn tất, không xóa cơ hội; Dịch Mã còn cần điều kiện triển khai. **Chỉ tăng cam kết khi nguồn lực thực sự đáp ứng**.",
+          "claim_ids": [
+            "claim_8",
+            "claim_1"
+          ],
+          "resolution": "Xác định nguồn lực và bước chủ động mình thực sự làm được; theo dõi tác dụng của một điều chỉnh trong khả năng trước khi mở rộng."
+        },
+        "actions": [
+          {
+            "recommendation_id": "action_8",
+            "text": "Trước trao đổi, rà nguồn lực, chi phí thực, phạm vi tối thiểu và giới hạn chấp nhận. **Chỉ cam kết phần mình làm được**, vì đây là phần bạn chủ động kiểm soát, giúp giảm yêu cầu chưa đáp ứng."
+          },
+          {
+            "recommendation_id": "action_3",
+            "text": "Hỏi A phần việc cần ưu tiên rồi đề xuất phạm vi tương ứng. **Chỉ mở rộng sau phản hồi về quy mô**, để lấy khả năng làm ổn định làm cơ sở thương lượng và tránh tăng nguồn lực quá sớm."
+          },
+          {
+            "recommendation_id": "action_1",
+            "text": "Đưa phương án ghi rõ phần giữ nguyên, phần điều chỉnh và điều kiện đi kèm. **Nếu A thống nhất điều kiện đổi lại, mới cam kết điều chỉnh**; cách này biến cơ hội trao đổi thành bước tiến kiểm tra được."
+          },
+          {
+            "recommendation_id": "action_7",
+            "text": "Rà phần cần sửa hoặc bổ sung, ghi rõ trách nhiệm và cam kết mỗi bên. **Khi thẩm quyền xác nhận đã rõ mới đề nghị chốt**, để việc hoàn thiện phương án dẫn tới một xác nhận thực tế."
+          }
+        ],
+        "alternative": {
+          "text": "Nếu yêu cầu vượt khả năng thực hiện, thẩm quyền chốt chưa rõ hoặc nhượng bộ không có điều kiện đổi lại, **giữ giới hạn và điều chỉnh phương án trước khi đi tiếp**. Khi ấy nên dừng ở bước trao đổi, không coi mục tiêu trong tháng đã đạt.",
+          "claim_ids": [
+            "claim_3",
+            "claim_8"
+          ],
+          "id": "alternative_conditions_unmet"
+        },
+        "timing": {
+          "text": "Chưa có mốc ứng kỳ đủ rõ. “Trong tháng này” chỉ là phạm vi mục tiêu; **chỉ đánh giá tiến độ khi điều kiện chuyển bước đã đạt**, không suy ngày chốt từ Không hoặc Mã.",
+          "claim_ids": [
+            "claim_1",
+            "claim_8"
+          ]
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    }
+  ],
+  "error": "Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex. Chờ hạn mức được đặt lại rồi thử lại.",
+  "seconds": 209.135,
+  "liveModel": true,
+  "syntheticQuestion": true,
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "validated": false,
+  "note": "First draft rejected for emphasis that detached a qualifier; the single repair was blocked by exhausted Codex quota."
+}

@@ -1,0 +1,136 @@
+{
+  "syntheticQuestion": true,
+  "liveModel": true,
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "body": {
+    "question": "Trong tuần này tôi có khoản tiền vào được phát sinh không?",
+    "mode": "auto",
+    "topic": "general",
+    "method": "chaibu",
+    "input": {
+      "year": 2026,
+      "month": 9,
+      "day": 16,
+      "hour": 7,
+      "minute": 46,
+      "tzOffset": 7
+    }
+  },
+  "chartFingerprint": "1b8dc506acb201f4c6b922da5a0dcb31cfccedfb353e904fb8ae418f188d5288",
+  "requestFingerprint": "effddac057d50d40ddbd913a4463e0b69383740eb7cd2c108db627cfc2bead92",
+  "seconds": 94.18,
+  "attempts": [
+    {
+      "seconds": 94.126,
+      "issue": null,
+      "reading": {
+        "status": "reading",
+        "topic_id": "money",
+        "mode": "prediction",
+        "questionType": "prediction",
+        "summary": {
+          "text": "Theo tượng bàn, thiên về **có khoản thu phát sinh trong tuần này; để khoản thu thành hình, cần đáp ứng yêu cầu thực hiện trực tiếp**. Tượng phát sinh mạnh hơn tượng thực nhận, nên chưa thể kết luận tiền sẽ vào tay trong tuần.",
+          "claim_ids": [
+            "claim_3",
+            "claim_1",
+            "claim_8"
+          ]
+        },
+        "situation": {
+          "text": "Tại Chấn 3, Sinh Môn–Thiên Nhậm vượng–Cửu Thiên, Bính trên Tân, không gặp Tuần Không, hỗ trợ khả năng tạo khoản thu dựa trên năng lực thực hiện ổn định. Tại Khảm 1, Khai Môn–Thiên Tâm tướng–Đằng Xà, Mậu trên Quý, gặp Tuần Không: **cơ hội vẫn được giữ, nhưng muốn chuyển thành nguồn lực dùng được thì phương án và giả định phải kiểm chứng được**. Giới hạn này thuộc khâu thực nhận, không tự phủ định phát sinh. Đây là diễn giải biểu tượng, không phải bằng chứng dự báo tài chính.",
+          "claim_ids": [
+            "claim_3",
+            "claim_1"
+          ]
+        },
+        "development": [],
+        "bottleneck": {
+          "text": "Cấn 8 có Quý trên Bính, Hưu Môn–Thiên Bồng phế–Trực Phù, gặp Tuần Không và Dịch Mã: **khâu nhận kết quả còn hạn chế nếu bước chủ động chưa triển khai được**. Trực Phù ở đây là quyền chủ động của bạn; có Mã chưa đồng nghĩa việc xử lý đã chạy. Chấn Mộc khắc Cấn Thổ biểu thị yêu cầu từ sự việc đặt lên người hỏi.",
+          "claim_ids": [
+            "claim_8",
+            "claim_3"
+          ],
+          "resolution": "Xác định nguồn lực và bước mình thực sự làm được; theo dõi tác dụng của bước thử trước khi mở rộng."
+        },
+        "actions": [
+          {
+            "recommendation_id": "action_1",
+            "text": "**Tách khoản dự kiến khỏi khoản đã thực có khi chưa có tiền thực nhận**: nguồn lực còn mang tính khả năng, nên sự phân biệt này giúp tránh coi cơ hội là tiền đã sử dụng được."
+          }
+        ],
+        "alternative": {
+          "text": "",
+          "claim_ids": [],
+          "id": ""
+        },
+        "timing": {
+          "text": "Chưa có mốc ứng kỳ đủ rõ. “Tuần này” chỉ là phạm vi câu hỏi.",
+          "claim_ids": [
+            "claim_1",
+            "claim_8"
+          ]
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    }
+  ],
+  "reading": {
+    "status": "reading",
+    "topic_id": "money",
+    "mode": "prediction",
+    "questionType": "prediction",
+    "summary": {
+      "text": "Theo tượng bàn, thiên về **có khoản thu phát sinh trong tuần này; để khoản thu thành hình, cần đáp ứng yêu cầu thực hiện trực tiếp**. Tượng phát sinh mạnh hơn tượng thực nhận, nên chưa thể kết luận tiền sẽ vào tay trong tuần.",
+      "claim_ids": [
+        "claim_3",
+        "claim_1",
+        "claim_8"
+      ]
+    },
+    "situation": {
+      "text": "Tại Chấn 3, Sinh Môn–Thiên Nhậm vượng–Cửu Thiên, Bính trên Tân, không gặp Tuần Không, hỗ trợ khả năng tạo khoản thu dựa trên năng lực thực hiện ổn định. Tại Khảm 1, Khai Môn–Thiên Tâm tướng–Đằng Xà, Mậu trên Quý, gặp Tuần Không: **cơ hội vẫn được giữ, nhưng muốn chuyển thành nguồn lực dùng được thì phương án và giả định phải kiểm chứng được**. Giới hạn này thuộc khâu thực nhận, không tự phủ định phát sinh. Đây là diễn giải biểu tượng, không phải bằng chứng dự báo tài chính.",
+      "claim_ids": [
+        "claim_3",
+        "claim_1"
+      ]
+    },
+    "development": [],
+    "bottleneck": {
+      "text": "Cấn 8 có Quý trên Bính, Hưu Môn–Thiên Bồng phế–Trực Phù, gặp Tuần Không và Dịch Mã: **khâu nhận kết quả còn hạn chế nếu bước chủ động chưa triển khai được**. Trực Phù ở đây là quyền chủ động của bạn; có Mã chưa đồng nghĩa việc xử lý đã chạy. Chấn Mộc khắc Cấn Thổ biểu thị yêu cầu từ sự việc đặt lên người hỏi.",
+      "claim_ids": [
+        "claim_8",
+        "claim_3"
+      ],
+      "resolution": "Xác định nguồn lực và bước mình thực sự làm được; theo dõi tác dụng của bước thử trước khi mở rộng."
+    },
+    "actions": [
+      {
+        "recommendation_id": "action_1",
+        "text": "**Tách khoản dự kiến khỏi khoản đã thực có khi chưa có tiền thực nhận**: nguồn lực còn mang tính khả năng, nên sự phân biệt này giúp tránh coi cơ hội là tiền đã sử dụng được."
+      }
+    ],
+    "alternative": {
+      "text": "",
+      "claim_ids": [],
+      "id": ""
+    },
+    "timing": {
+      "text": "Chưa có mốc ứng kỳ đủ rõ. “Tuần này” chỉ là phạm vi câu hỏi.",
+      "claim_ids": [
+        "claim_1",
+        "claim_8"
+      ]
+    },
+    "comparisons": [],
+    "questions": []
+  },
+  "finalValidation": {
+    "passed": true,
+    "chartFingerprint": "1b8dc506acb201f4c6b922da5a0dcb31cfccedfb353e904fb8ae418f188d5288",
+    "requestFingerprint": "329643a999e22db30e1a64e7a5cffe2b58f1024458950f8fd9399f11ef73bb5d",
+    "rules": "TG-CB-6.0",
+    "scope": "Unedited real model output revalidated against final planner; original requestFingerprint records the candidate payload used for the live call."
+  }
+}

@@ -7,6 +7,7 @@ import {formatError,plainReadingText} from '../../reading-format.mjs';
 import {createQimenBoard} from '../core/board.mjs';
 import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {analyzeBoard} from '../analysis/index.mjs';
+import {auditSynthesis} from './synthesisAudit.mjs';
 export class ReadingValidationError extends Error {constructor(message){super(message);this.name='ReadingValidationError';}}
 const reject=message=>{throw new ReadingValidationError(message);};
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -100,6 +101,12 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   for(let i=0;i<passages.length;i++)for(let j=i+1;j<passages.length;j++)if(passages[i].trim()===passages[j].trim()||repeated(passages[i],passages[j]))reject('Các phần đang lặp ý hoặc lặp đoạn; cần viết lại cho mỗi chặng.');
   // Audit every user-visible string, even when it sits outside the prose budget.
   const prose=[...passages,r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' ');
+  const semanticPassages=[...['summary','situation','bottleneck','alternative','timing'].map(slot=>({slot,text:r[slot].text,claimIds:r[slot].claim_ids})),
+    ...r.development.flatMap(s=>[{slot:s.stage,text:s.text,claimIds:s.claim_ids},{slot:'condition',text:s.condition,claimIds:s.claim_ids}]),
+    {slot:'resolution',text:r.bottleneck.resolution,claimIds:r.bottleneck.claim_ids},
+    ...r.actions.map(a=>({slot:'action',text:a.text,claimIds:[g.recommendations.find(x=>x.id===a.recommendation_id).claimId]})),
+    ...r.comparisons.map(a=>({slot:'comparison',text:a.reason,claimIds:[]})),...r.questions.map(text=>({slot:'question',text,claimIds:[]}))];
+  const synthesisErrors=auditSynthesis(semanticPassages,context);if(synthesisErrors.length)reject(synthesisErrors.join(' '));
   auditClaims([prose,...r.comparisons.map(r=>r.reason),...r.questions],context,rows);
   for(const [value,ids] of [[r.bottleneck.resolution,r.bottleneck.claim_ids],...r.development.map(s=>[s.condition,s.claim_ids]),...r.actions.map(a=>[a.text,[g.recommendations.find(x=>x.id===a.recommendation_id).claimId]]),...r.questions.map(q=>[q,[]])]){
     const errors=auditTechnicalText(value,ids,context);if(errors.length)reject(errors.join(' '));

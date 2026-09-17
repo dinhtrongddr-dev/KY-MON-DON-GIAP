@@ -1,0 +1,49 @@
+{
+  "rules": "TG-CB-6.0",
+  "results": [
+    {
+      "name": "income",
+      "width": 1440,
+      "tabs": 5,
+      "oneEvidenceCollectionPerTab": true,
+      "traceWorks": true,
+      "noPageErrors": true,
+      "noHorizontalOverflow": true,
+      "screenshot": ".release/reasoning-income-1440.png",
+      "kind": "browser replay of unedited real Astra output; relay mocked"
+    },
+    {
+      "name": "income",
+      "width": 390,
+      "tabs": 5,
+      "oneEvidenceCollectionPerTab": true,
+      "traceWorks": true,
+      "noPageErrors": true,
+      "noHorizontalOverflow": true,
+      "screenshot": ".release/reasoning-income-390.png",
+      "kind": "browser replay of unedited real Astra output; relay mocked"
+    },
+    {
+      "name": "deep",
+      "width": 1440,
+      "tabs": 5,
+      "oneEvidenceCollectionPerTab": true,
+      "traceWorks": true,
+      "noPageErrors": true,
+      "noHorizontalOverflow": true,
+      "screenshot": ".release/reasoning-deep-1440.png",
+      "kind": "browser replay of unedited real Astra output; relay mocked"
+    },
+    {
+      "name": "deep",
+      "width": 390,
+      "tabs": 5,
+      "oneEvidenceCollectionPerTab": true,
+      "traceWorks": true,
+      "noPageErrors": true,
+      "noHorizontalOverflow": true,
+      "screenshot": ".release/reasoning-deep-390.png",
+      "kind": "browser replay of unedited real Astra output; relay mocked"
+    }
+  ]
+}
