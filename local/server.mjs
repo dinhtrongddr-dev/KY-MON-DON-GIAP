@@ -4,7 +4,7 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runCodex,MODEL,REASONING_EFFORT} from './codex-client.mjs';
+import {runCodex,MODEL,REASONING_EFFORT,ROUTING_MODE} from './codex-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
@@ -70,7 +70,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
        return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
      }
      failures.delete(client);
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
      if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
@@ -86,7 +86,6 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
         let keepAliveTimer,keepAliveInterval,streaming=false;
         const stopKeepAlive=()=>{clearTimeout(keepAliveTimer);clearInterval(keepAliveInterval);};
         if(host.type==='tunnel'){
-          // Leading JSON whitespace keeps the tunnel stream alive without changing the final response document.
           keepAliveTimer=setTimeout(()=>{
             if(res.destroyed||res.writableEnded)return;
             streaming=true;
@@ -101,7 +100,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
         try{
           const result=await interpretReading(prepared,{runner,signal:controller.signal});
           if(!res.destroyed){
-            const data={model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+            const data={router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }
@@ -109,7 +108,6 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
       }catch(e){
         if(!res.destroyed){
           const data={error:e.message||'Không kết nối được Codex.'};
-          // Keepalive already sent HTTP 200; finish the JSON document with the actual error.
           if(res.headersSent)res.end(JSON.stringify(data));
           else send(502,data);
         }
@@ -134,7 +132,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const bridge=createBridge();
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
-   console.log('Kỳ Môn Local • GPT-6 Astra\nMở trên máy tính: '+bridge.origin+'\nMã ghép nối: '+bridge.token+'\nĐang tạo link HTTPS công khai qua Cloudflare Tunnel...\nGiữ cửa sổ này mở. Ctrl+C để dừng.');
+   console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
    if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
      const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler',SITE_ORIGIN+'/'],{detached:true,stdio:'ignore',windowsHide:true});
      browser.unref();
