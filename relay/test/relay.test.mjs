@@ -2,47 +2,31 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../src/index.js';
 
-class MemoryKv {
-  constructor() { this.values = new Map(); }
-  async get(key, type) {
-    const value = this.values.get(key) ?? null;
-    return type === 'json' && value !== null ? JSON.parse(value) : value;
-  }
-  async put(key, value) { this.values.set(key, value); }
-}
-
 const officialOrigin = 'https://kymon.pp.ua';
-const tunnel = 'https://unit-test.trycloudflare.com';
+const namedTunnel = 'https://ai-origin.kymon.pp.ua';
 
-test('relay authenticates updates and proxies only the Ky Mon API', async () => {
-  const env = { KYMON_RELAY: new MemoryKv(), RELAY_ADMIN_SECRET: 'a'.repeat(64) };
+test('relay uses the fixed Named Tunnel and only proxies the Ky Mon API', async () => {
+  const env = {RELAY_ADMIN_SECRET: 'a'.repeat(64)};
 
-  const unauthorized = await worker.fetch(new Request('https://relay.example/admin/origin', {
+  const oldAdminRoute = await worker.fetch(new Request('https://relay.example/admin/origin', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Qimen-Relay-Secret': 'wrong' },
-    body: JSON.stringify({ url: tunnel }),
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({url: 'https://unit-test.trycloudflare.com'}),
   }), env);
-  assert.equal(unauthorized.status, 401);
-
-  const update = await worker.fetch(new Request('https://relay.example/admin/origin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Qimen-Relay-Secret': env.RELAY_ADMIN_SECRET },
-    body: JSON.stringify({ url: tunnel }),
-  }), env);
-  assert.equal(update.status, 200);
+  assert.equal(oldAdminRoute.status, 404);
 
   const forbidden = await worker.fetch(new Request('https://relay.example/api/status', {
-    headers: { Origin: 'https://evil.example', 'X-Qimen-Token': 'test-pairing-token' },
+    headers: {Origin: 'https://evil.example', 'X-Qimen-Token': 'test-pairing-token'},
   }), env);
   assert.equal(forbidden.status, 403);
 
   const originalFetch = globalThis.fetch;
   let upstreamRequest;
   globalThis.fetch = async (url, options) => {
-    upstreamRequest = { url: String(url), options };
-    return new Response(JSON.stringify({ model: 'gpt-5.6-sol' }), {
+    upstreamRequest = {url: String(url), options};
+    return new Response(JSON.stringify({model: 'qimen-smart'}), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
     });
   };
   try {
@@ -55,7 +39,7 @@ test('relay authenticates updates and proxies only the Ky Mon API', async () => 
     }), env);
     assert.equal(response.status, 200);
     assert.equal(response.headers.get('Access-Control-Allow-Origin'), officialOrigin);
-    assert.equal(upstreamRequest.url, tunnel + '/api/status');
+    assert.equal(upstreamRequest.url, namedTunnel + '/api/status');
     assert.equal(upstreamRequest.options.headers.get('Origin'), officialOrigin);
     assert.equal(upstreamRequest.options.headers.get('X-Qimen-Token'), 'test-pairing-token');
     assert.match(upstreamRequest.options.headers.get('X-Qimen-Client'), /^[a-f0-9]{64}$/);
@@ -65,13 +49,13 @@ test('relay authenticates updates and proxies only the Ky Mon API', async () => 
 });
 
 test('relay streams keepalive and final JSON errors without buffering or losing Retry-After', async t => {
-  const env = {KYMON_RELAY: new MemoryKv(), RELAY_ADMIN_SECRET: 'b'.repeat(64)};
-  await env.KYMON_RELAY.put('active_tunnel', JSON.stringify({url: tunnel}));
+  const env = {RELAY_ADMIN_SECRET: 'b'.repeat(64)};
   const previousFetch = globalThis.fetch;
   t.after(() => {globalThis.fetch = previousFetch;});
   let finish;
   const encoder = new TextEncoder();
-  globalThis.fetch = async (_url, options) => {
+  globalThis.fetch = async (url, options) => {
+    assert.equal(String(url), namedTunnel + '/api/read');
     assert.equal(options.redirect, 'manual');
     assert.equal(await new Response(options.body).text(), '{"request":"unchanged"}');
     return new Response(new ReadableStream({start(controller) {
