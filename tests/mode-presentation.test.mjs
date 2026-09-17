@@ -10,7 +10,7 @@ test('standard prediction is result-first without forced diễn biến or ứng 
   assert.equal(p.layout,'focused');
   assert.equal(p.showDevelopment,false);
   assert.equal(p.showTiming,false);
-  assert.deepEqual(labels(p),['Kết quả','Điều cần làm','Căn cứ Kỳ Môn']);
+  assert.deepEqual(labels(p),['Bài luận','Điều cần làm','Căn cứ Kỳ Môn']);
 });
 
 test('prediction only adds diễn biến when requested and calls timing ứng kỳ only when supported',()=>{
@@ -23,9 +23,9 @@ test('prediction only adds diễn biến when requested and calls timing ứng k
 });
 
 test('strategy, business and negotiation expose distinct decision surfaces',()=>{
-  assert.deepEqual(labels(buildPresentationProfile(context('strategy'))),['Thế cục','Lộ trình','Hành động','Điểm dừng / kích hoạt','Căn cứ Kỳ Môn']);
-  assert.deepEqual(labels(buildPresentationProfile(context('business'))),['Thương vụ','Pipeline','Bước chốt','Rủi ro & điều kiện','Căn cứ Kỳ Môn']);
-  assert.deepEqual(labels(buildPresentationProfile(context('negotiation'))),['Thế đàm phán','Nhịp trao đổi','Đòn bẩy & bước tiếp','Giới hạn / điểm dừng','Căn cứ Kỳ Môn']);
+  assert.deepEqual(labels(buildPresentationProfile(context('strategy'))),['Bài luận','Lộ trình','Hành động','Điểm dừng / kích hoạt','Căn cứ Kỳ Môn']);
+  assert.deepEqual(labels(buildPresentationProfile(context('business'))),['Bài luận','Pipeline','Bước chốt','Rủi ro & điều kiện','Căn cứ Kỳ Môn']);
+  assert.deepEqual(labels(buildPresentationProfile(context('negotiation'))),['Bài luận','Nhịp trao đổi','Đòn bẩy & bước tiếp','Giới hạn / điểm dừng','Căn cứ Kỳ Môn']);
 });
 
 test('timing and direction are comparison layouts, not generic event narratives',()=>{

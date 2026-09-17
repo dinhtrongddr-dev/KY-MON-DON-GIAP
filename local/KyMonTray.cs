@@ -678,8 +678,8 @@ internal static class Program
     {
         if (!File.Exists(PairingCodePath)) return null;
         string code = File.ReadAllText(PairingCodePath, Encoding.UTF8).Trim();
-        if (code.Length < 6 || code.Length > 128)
-            throw new InvalidOperationException("Can dai tu 6 den 128 ky tu.");
+        if (code.Length < 4 || code.Length > 128)
+            throw new InvalidOperationException("Can dai tu 4 den 128 ky tu.");
         return code;
     }
 

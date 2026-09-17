@@ -154,11 +154,11 @@
             <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
             <p>Luận đúng việc đang hỏi: phối hợp các tượng, làm rõ điểm thuận–vướng và nối thành diễn biến có điều kiện. Mỗi nhận định đều có căn cứ để đối chiếu ngay trên bàn.</p>
             <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI · TG-CB-6.0</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
-              <p>All-in-One cần bộ kết nối AI TG-CB-6.0. Website không tự cập nhật bộ kết nối. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
+              <ol><li><a href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI · TG-CB-6.1</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
+              <p>All-in-One cần bộ kết nối AI TG-CB-6.1. Website không tự cập nhật bộ kết nối. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
             </details>
             <div class="local-controls">
-              <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /></label>
+              <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Từ 4 đến 128 ký tự; mã chỉ dùng để ghép nối với bộ kết nối AI.</small></label>
               <button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button>
               <button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button>
               <button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button>
@@ -174,12 +174,12 @@
             <button id="rule-analyze" class="button button-quiet" type="button">Xem phân tích quy tắc · không cần kết nối AI</button>
             <div id="rule-preview" class="rule-preview" hidden></div>
             <div id="ai-answer" aria-live="polite" aria-busy="false" hidden></div>
-            <details><summary>Quy tắc và phạm vi luận · TG-CB-6.0</summary>
+            <details><summary>Quy tắc và phạm vi luận · TG-CB-6.1</summary>
               <p>Một lõi Thời Gia · Chuyển Bàn, giữ đúng Tháo bổ hoặc Mao Sơn đã chọn. Sáu chế độ có quy tắc phân tích riêng; Tự động chọn theo ý định câu hỏi và bạn có thể đổi lại. Trước khi gọi AI, app xác định ngữ cảnh, gom cụm tượng, chọn căn cứ trọng tâm và lập diễn biến có điều kiện.</p>
               <p>Kết luận nhanh và Diễn biến thực tế dành cho người mới. Căn cứ Kỳ Môn được thu gọn, có thể mở để đối chiếu ngay với cung trên bàn. Chiến lược đề xuất nêu bước làm tiếp; Ứng kỳ tách thời hạn câu hỏi với việc so sánh thời điểm hành động.</p>
               <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, Ngũ bất ngộ thời và một số tổ hợp can được khai báo. Chưa hỗ trợ nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hoặc dự báo ngày ứng nghiệm chắc chắn. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>
               <p>Lời luận phải nối các tượng thành giả thuyết có điều kiện, không tự tạo danh tính hoặc tâm ý khách hàng/đối thủ. Kiểm tra cấu trúc không chứng minh diễn giải đúng. Bài mặc định khoảng 500–800 từ; câu đơn giản ngắn hơn, chọn Luận sâu khi cần chi tiết. AI được yêu cầu viết lại tối đa một lần khi không đạt kiểm tra; nút Hủy luôn có hiệu lực.</p>
-              <p><a href="./audit.html">Kiểm toán và phạm vi v17.0.0 · 17/09/2026</a></p>
+              <p><a href="./audit.html">Kiểm toán và phạm vi v17.1.0 · 17/09/2026</a></p>
             </details>
           </section>
           <section class="learning-panel element-panel" aria-labelledby="elements-title">
@@ -273,7 +273,7 @@
 
       <footer>
         <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
-        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">v17.0.0 · kiểm toán</a>.</p>
+        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">v17.1.0 · kiểm toán</a>.</p>
       </footer>
     </div>
 

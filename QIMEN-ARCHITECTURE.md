@@ -1,6 +1,6 @@
-# Kỳ Môn All-in-One v17.0.0 / TG-CB-6.0
+# Kỳ Môn All-in-One v17.1.0 / TG-CB-6.1
 
-Cập nhật 16/09/2026. Source chính: GitHub `dinhtrongddr-dev/KY-MON-DON-GIAP`, Cloudflare Pages tại `https://kymon.pp.ua`. Engine TG-ROTATING-2.0 không đổi. Giao thức mạng vẫn là 5; public structured reading JSON giữ các field và ba slot `current/next/outcome`. Internal graph là `ReadingEvidenceGraph/2`, context là `QuestionContext/2`; server và browser cùng tính lại, không dùng graph cũ đã lưu.
+Cập nhật 17/09/2026. Source chính: GitHub `dinhtrongddr-dev/KY-MON-DON-GIAP`, Cloudflare Pages tại `https://kymon.pp.ua`. Engine TG-ROTATING-2.0 không đổi. Giao thức mạng vẫn là 5; public structured reading JSON giữ các field và ba slot `current/next/outcome`. Internal graph là `ReadingEvidenceGraph/2`, context là `QuestionContext/2`; server và browser cùng tính lại, không dùng graph cũ đã lưu.
 
 ## Luồng dữ liệu
 
@@ -54,7 +54,7 @@ Timing engine đổi các thời hạn tương đối đã hỗ trợ thành kho
 
 Năm tab cả với bài trọng tâm: kết luận, diễn biến, phân tích, chiến lược, ứng kỳ. Phân tích cụm được đưa vào tab kỹ thuật để kết luận gọn. Mỗi tab có tối đa một collection căn cứ, mở bằng nút trace có aria-controls và hỗ trợ focus. Bài concise không bắt model tạo ba đoạn; UI dùng chuỗi điều kiện đã tính và ghi rõ đó không phải sự kiện đã xảy ra. Chữ đậm an toàn vẫn dùng DOM, không render HTML từ AI.
 
-Mã kết nối hiển thị rõ; ghi nhớ là lựa chọn, spinner/elapsed/cancel giữ nguyên. CORS/Origin/Host, pairing, relay, launcher, hồ sơ đăng nhập không đổi. TG-CB-6.0 chặn bridge 5.1 để tránh ghép hai planner; cập nhật và khởi động lại runtime. Dữ liệu bàn lưu và phép an bàn không cần migration.
+Mã kết nối hiển thị rõ; ghi nhớ là lựa chọn, spinner/elapsed/cancel giữ nguyên. CORS/Origin/Host, pairing, relay, launcher, hồ sơ đăng nhập không đổi. TG-CB-6.1 chặn bridge khác phiên bản để tránh ghép hai planner; cập nhật và khởi động lại runtime. Dữ liệu bàn lưu và phép an bàn không cần migration.
 
 ## Debug và tái lập
 

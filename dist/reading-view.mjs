@@ -9,18 +9,14 @@ export function renderReading(answer,data,prepared) {
   const evidence=(claimIds,parent,id='')=>{
     if(!claimIds.length)return;
     const details=node('details','',parent,'ai-evidence');details.open=false;if(id)details.id=id;details.tabIndex=-1;
-    node('summary','Xem toàn bộ căn cứ của phần này',details);
+    node('summary','Căn cứ Kỳ Môn của phần này',details);
     const shown=new Set();
     for(const id of claimIds){
       const claim=g.claims.find(c=>c.id===id),bundle=g.evidenceBundles.find(b=>b.id===claim.bundleId);
       node('h4',bundle.roles.map(r=>r.meaning).join(' · ')+` — cung ${bundle.palace}`,details);
-      for(const factId of [`p${bundle.palace}`,`c${bundle.palace}`])if(!shown.has(factId)){node('p',data.facts[factId],details);shown.add(factId);}
+      for(const factId of [`p${bundle.palace}`,`mix${bundle.palace}`,`c${bundle.palace}`,`strength_${bundle.palace}`])if(data.facts[factId]&&!shown.has(factId)){node('p',data.facts[factId],details);shown.add(factId);}
       const relationId=claim.evidenceIds.find(id=>id.startsWith('graph_'));
       if(relationId&&!shown.has(relationId)){node('p',data.facts[relationId],details);shown.add(relationId);}
-      for(const ruleId of claim.ruleIds||[]){
-        if(shown.has(ruleId))continue;const rule=g.rules[ruleId];shown.add(ruleId);
-        node('p',`${rule.id} · ${rule.verification} · Nguồn: ${rule.source}. ${rule.conditions}`,details,'ai-note');
-      }
       if(claim.conflicts.length)node('p','Dấu hiệu hạn chế: '+claim.conflicts.map(c=>c.resolution||c.text||c.code).join(' '),details);
       const button=node('button',`Đối chiếu cung ${bundle.palace}`,details,'jump-cung');button.type='button';
       button.addEventListener('click',()=>{const palace=doc.querySelector(`[data-palace="${bundle.palace}"]`);palace?.click();palace?.scrollIntoView({block:'center',behavior:'smooth'});});
@@ -32,7 +28,7 @@ export function renderReading(answer,data,prepared) {
     if(!ids.length||!panel)return;
     const item=collections.get(panel)||{ids:new Set(),buttons:[],id:`reading-evidence-${collections.size}`};
     ids.forEach(id=>item.ids.add(id));
-    const button=node('button',`${ids.length} căn cứ`,parent,'ai-trace');button.type='button';
+    const button=node('button','Xem căn cứ Kỳ Môn',parent,'ai-trace');button.type='button';
     button.setAttribute('aria-controls',item.id);button.setAttribute('aria-label','Xem căn cứ cho nhận định này');
     item.buttons.push(button);collections.set(panel,item);
   };
@@ -60,10 +56,22 @@ export function renderReading(answer,data,prepared) {
     finishEvidence();answer.hidden=false;return;
   }
 
-  const tabs=resultTabs(answer,profile.tabs),opening=node('div','',tabs.quick,'ai-opening');prose(r.summary.text,opening);trace(r.summary.claim_ids,opening,tabs.quick);
-  const situationPanel=['strategy','business','negotiation'].includes(profile.mode)?tabs.quick:tabs.technical;
-  section(profile.labels.situation,r.situation,situationPanel,situationPanel);
-  const bottleneck=section(profile.labels.bottleneck,r.bottleneck,tabs.quick,tabs.quick);if(bottleneck&&r.bottleneck.resolution)prose(r.bottleneck.resolution,bottleneck);
+  const tabs=resultTabs(answer,profile.tabs);
+  const narrative=node('article','',tabs.quick,'ai-narrative');
+  const narrativeBlock=(value,extra='')=>{
+    if(!value?.text&&!extra)return;
+    const block=node('section','',narrative,'ai-narrative-block');
+    prose(value?.text,block);if(extra)prose(extra,block);
+  };
+  narrativeBlock(r.summary);
+  narrativeBlock(r.situation);
+  for(const step of r.development)narrativeBlock(step,step.condition);
+  narrativeBlock(r.bottleneck,r.bottleneck.resolution);
+  if(profile.showAlternative)narrativeBlock(r.alternative);
+  for(const action of r.actions)narrativeBlock({text:action.text});
+  if(r.timing?.text)narrativeBlock(r.timing);
+  const quickClaimIds=[...new Set([r.summary,r.situation,...r.development,r.bottleneck,r.alternative,r.timing].flatMap(part=>part?.claim_ids||[]))];
+  trace(quickClaimIds,narrative,tabs.quick);
 
   if(tabs.story&&profile.showDevelopment){
     const stages=node('ol','',tabs.story,'ai-stages');
@@ -102,8 +110,8 @@ export function renderReading(answer,data,prepared) {
   }
 
   if(tabs.technical){
-    node('h3','Căn cứ của các nhận định chính',tabs.technical);
-    node('p','Mở từng cụm để đối chiếu tượng trên bàn. Đây là dữ kiện và quy ước diễn giải, không phải bằng chứng về việc đã xảy ra.',tabs.technical,'ai-note');
+    node('h3','Căn cứ Kỳ Môn',tabs.technical);
+    node('p','Mở từng cụm để đối chiếu trực tiếp Môn, Tinh, Thần, Can, trạng thái đặc biệt và quan hệ giữa các cung trên bàn.',tabs.technical,'ai-note');
     trace(g.claims.map(c=>c.id),tabs.technical,tabs.technical);
     renderTechnical(tabs.technical,prepared,{includeJson:false,expanded:true});
   }

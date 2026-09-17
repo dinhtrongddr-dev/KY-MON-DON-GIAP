@@ -134,6 +134,9 @@ test('evidence is collapsed and every displayed basis comes from the verified pl
   const evidence=all.filter(n=>n.tag==='details'&&n.className==='ai-evidence');
   assert.ok(evidence.length>=3);assert.ok(evidence.every(n=>n.open===false));
   assert.ok(all.some(n=>n.textContent===p.facts[p.context.allInOne.reasoning.claims[0].evidenceIds[0]]));
+  const visibleText=all.map(n=>n.textContent||'').join(' ');
+  assert.doesNotMatch(visibleText,/rule_[a-z0-9_]+|Nguồn:/i);
+  assert.ok(all.some(n=>n.textContent==='Căn cứ Kỳ Môn của bài luận'));
   for(const panel of all.filter(n=>n.attributes?.role==='tabpanel')){
     const descendants=[];const visit=n=>{descendants.push(n);n.children.forEach(visit);};visit(panel);
     assert.ok(descendants.filter(n=>n.tag==='details'&&n.className==='ai-evidence').length<=1);

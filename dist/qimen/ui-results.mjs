@@ -4,7 +4,7 @@ export function element(doc,tag,text,parent,className) {
 export function resultTabs(root,customEntries=null) {
   const doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);
   const bar=node('div','',root,'ai-tabs');bar.setAttribute('role','tablist');bar.setAttribute('aria-label','Các phần của lời luận');
-  const entries=customEntries?.length?customEntries:[['quick','Kết luận nhanh'],['story','Diễn biến thực tế'],['technical','Phân tích Kỳ Môn'],['actions','Chiến lược đề xuất'],['timing','Ứng kỳ']];
+  const entries=customEntries?.length?customEntries:[['quick','Bài luận'],['story','Diễn biến'],['technical','Căn cứ Kỳ Môn'],['actions','Điều cần làm'],['timing','Ứng kỳ']];
   const buttons=[],panels={};
   const select=index=>entries.forEach(([id],i)=>{buttons[i].setAttribute('aria-selected',String(i===index));buttons[i].tabIndex=i===index?0:-1;panels[id].hidden=i!==index;});
   entries.forEach(([id,label],i)=>{
@@ -18,27 +18,41 @@ export function resultTabs(root,customEntries=null) {
   });
   select(0);return panels;
 }
-export function renderTechnical(root,prepared,{includeJson=true,expanded=false}={}) {
+export function renderTechnical(root,prepared,{includeJson=false,expanded=false}={}) {
   const doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);
   const c=prepared.context.allInOne;
-  node('h3',`${c.plan.label} · dữ liệu đã tính`,root);
-  node('p',c.classification.reason,root);
-  node('p',`${c.coverage.resolvedActors}/${c.coverage.totalActors} đại diện có cung theo quy ước hoặc khai báo. Đây không phải độ chính xác dự báo.`,root,'ai-note');
+  node('h3','Căn cứ Kỳ Môn của bài luận',root);
+  node('p','Chỉ hiển thị tượng, vị trí cung, trạng thái và quan hệ đã tính trực tiếp từ bàn Kỳ Môn.',root,'ai-note');
+
   const roles=node('div','',root,'rule-actors');
-  for(const r of c.graph.nodes){const item=node('div','',roles);node('strong',r.label,item);node('span',r.palace?`Cung ${r.palace} · ${r.status==='proxy'?'biểu tượng tham khảo':r.status==='user_supplied'?'người dùng khai báo':'quy ước'}`:'Chưa xác định đại diện',item);node('p',`${r.selectionRule.id} · ${r.selectionRule.verification}. Nguồn: ${r.selectionRule.source}. ${r.limitations.join(' ')}`,item,'ai-note');}
-  const links=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Mạng quan hệ giữa các đối tượng',links);
-  node('p',c.graph.meaning,links,'ai-note');
+  for(const r of c.graph.nodes){
+    const item=node('div','',roles);node('strong',r.label,item);
+    node('span',r.palace?`Cung ${r.palace}`:'Chưa xác định đại diện trên bàn',item);
+  }
+
+  const palaceNumbers=[...new Set(c.relevantPalaces||[])].filter(n=>n!==5);
+  const clusters=node(expanded?'section':'details','',root);
+  node(expanded?'h4':'summary','Cụm tượng tại các cung liên quan',clusters);
+  for(const n of palaceNumbers){
+    node('h4',`Cung ${n}`,clusters);
+    for(const id of [`p${n}`,`mix${n}`,`c${n}`,`strength_${n}`])if(prepared.facts[id])node('p',prepared.facts[id],clusters);
+  }
+
+  const links=node(expanded?'section':'details','',root);
+  node(expanded?'h4':'summary','Quan hệ giữa các cung',links);
   const ul=node('ul','',links);
-  for(const edge of c.graph.relations)node('li',prepared.facts[edge.id],ul);
-  const flags=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Vượng suy, điều kiện và mâu thuẫn cần đối chiếu',flags);
-  for(const n of c.relevantPalaces){node('p',prepared.facts[`strength_${n}`],flags);node('p',prepared.facts[`c${n}`],flags);}
-  for(const conflict of c.analysis.contradictions.filter(x=>c.relevantPalaces.includes(x.palace)))node('p',conflict.text,flags);
-  node('p',prepared.facts.special,flags);
+  for(const edge of c.graph.relations)if(prepared.facts[edge.id])node('li',prepared.facts[edge.id],ul);
+  if(!c.graph.relations.length)node('p','Không có quan hệ cung bổ sung cần hiển thị cho câu hỏi này.',links,'ai-note');
+
+  const flags=node(expanded?'section':'details','',root);
+  node(expanded?'h4':'summary','Dấu hiệu toàn bàn và trạng thái đặc biệt',flags);
+  for(const id of ['day','hour','relation','duty','patterns','special'])if(prepared.facts[id])node('p',prepared.facts[id],flags);
   for(const [id,value] of Object.entries(prepared.facts).filter(([id])=>/^special_/.test(id)))node('p',value,flags);
-  const scope=node(expanded?'section':'details','',root);node(expanded?'h4':'summary','Quy tắc đã hỗ trợ và giới hạn',scope);
-  node('p','Đã tính: '+c.analysis.coverage.computed.join('; ')+'.',scope);
-  node('p','Chưa hỗ trợ: '+c.analysis.coverage.unsupported.join('; ')+'.',scope);
-  if(includeJson){const details=node('details','',root);node('summary','QimenBoard JSON · dữ liệu bàn chuẩn hóa',details);node('pre',JSON.stringify(c.board,null,2),details,'qimen-json');}
+
+  if(includeJson){
+    const details=node('details','',root);node('summary','Dữ liệu bàn chuẩn hóa',details);
+    node('pre',JSON.stringify(c.board,null,2),details,'qimen-json');
+  }
 }
 export function renderComparison(root,prepared) {
   const c=prepared.context.allInOne,doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);

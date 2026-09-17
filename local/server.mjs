@@ -12,12 +12,14 @@ const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
 
+function validatePairingToken(value){
+ const token=String(value||'').trim();
+ if(token.length<4||token.length>128)throw new Error('Mã ghép nối cấu hình phải dài từ 4 đến 128 ký tự.');
+ return token;
+}
 function defaultPairingToken(){
  const configured=process.env.QIMEN_PAIRING_TOKEN?.trim();
- if(configured){
-   if(configured.length<6||configured.length>128)throw new Error('Mã ghép nối cấu hình phải dài từ 6 đến 128 ký tự.');
-   return configured;
- }
+ if(configured)return validatePairingToken(configured);
  return randomBytes(24).toString('hex');
 }
 function configuredTunnelHostname(){
@@ -43,6 +45,7 @@ export function isAllowedOrigin(value,port,host){
  return false;
 }
 export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
+ token=validatePairingToken(token);
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map();

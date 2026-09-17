@@ -786,6 +786,11 @@ textarea:focus { outline:3px solid #bce8ce; }
 }
 
 /* Reading controls and evidence retain the existing responsive layout. */
+.ai-narrative { max-width:82ch; margin:0 auto; }
+.ai-narrative-block { margin:0 0 18px; padding:0; }
+.ai-narrative-block .ai-prose { margin:0 0 10px; line-height:1.78; }
+.ai-narrative-block:first-child { border-left:4px solid var(--jade); background:#f0f7f2; padding:12px 16px; }
+.ai-narrative>.ai-trace { margin-top:2px; }
 .reading-depth { margin-top:12px; max-width:26rem; }
 .ai-evidence { margin:12px 0; overflow-wrap:anywhere; }
 .ai-evidence .jump-cung { min-height:44px; margin:8px 8px 4px 0; padding:8px 12px; font-size:14px; }

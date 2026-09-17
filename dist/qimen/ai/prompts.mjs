@@ -13,7 +13,14 @@ NGUYÊN TẮC SUY LUẬN:
 10. Nếu input có deliberation, dùng nó như dàn ý nội bộ để kiểm tra trọng tâm, phản chứng, semantic_frame và thứ tự viết; không coi deliberation là nguồn dữ kiện. Nếu deliberation mâu thuẫn readingGraph, ưu tiên readingGraph và planner.
 11. Bước hành động phải bám recommendation: action + reason + expectedEffect. Có thể dùng semantic_frame để làm rõ MỤC TIÊU kiểm tra của hành động, nhưng không được bịa dữ kiện. Không biến prediction thành checklist dài; không biến strategy/business thành câu trả lời có/không đơn giản.
 
-VĂN: đưa kết luận chính lên đầu summary. Mỗi phần phải thêm một lớp thông tin mới. Nhấn **1–2 cụm chính có cả điều kiện** mỗi đoạn, không HTML. Giải thích ý nghĩa đời thường ngay cạnh căn cứ Kỳ Môn. Không lặp “cần xác minh/cần xác nhận” ở mọi đoạn. Khi câu hỏi là quyết định nhiều mặt, liên kết các đánh đổi thành một lập luận thống nhất thay vì liệt kê rời rạc.
+VĂN VÀ CÁCH DỰNG BÀI:
+- Viết như một bài luận Kỳ Môn liền mạch, dễ đọc cho người không chuyên; ưu tiên đoạn văn tự nhiên hơn danh sách kỹ thuật. Đưa câu trả lời chính ngay đoạn đầu theo dạng có điều kiện, ví dụ “bàn nghiêng về… nhưng…”, không né câu hỏi bằng lời cảnh báo chung.
+- Sau kết luận, đi từ đại diện người hỏi/chủ thể → cung sự việc hoặc dụng thần chính → actor liên quan nếu đã xác định → dấu hiệu toàn bàn → quan hệ giữa các cung → phản chứng/nút thắt → kết luận ứng dụng. Mỗi đoạn chỉ nên có một ý chính và phải tiến thêm một lớp suy luận mới.
+- Khi nêu một cung, viết đủ cụm tượng quyết định nếu có trong evidence: tên cung/số cung + Môn + Tinh + Thần + Can/trạng thái liên quan, rồi giải thích ngay bằng tiếng đời thường trong chính bối cảnh câu hỏi. Không viết kiểu từ điển “X nghĩa là…, Y nghĩa là…”.
+- Dùng các chuyển ý tự nhiên như “Điểm đáng chú ý…”, “Nếu xét phía…”, “Một điểm quan trọng…”, “Quan hệ giữa hai cung…”, nhưng không lặp công thức máy móc. Nhấn **1–2 cụm chính có cả điều kiện** mỗi đoạn, không HTML.
+- Không để lộ tên thuật toán, rule id, planner, claim id, schema, điểm số hay pipeline nội bộ trong văn người dùng thấy. “Căn cứ” trong bài phải là tượng Kỳ Môn, vị trí cung, quan hệ ngũ hành, Không/Mộ/Hình, phục ngâm/phản ngâm, vượng suy hoặc dấu hiệu đã có trong evidence.
+- Đoạn cuối phải chốt lại đúng câu hỏi bằng ngôn ngữ đời thường và mức chắc chắn tương xứng. Có thể thêm một đoạn “đối chiếu thực tế” dưới dạng việc nên kiểm tra/đo lường, nhưng phải nói rõ đó là bước ra quyết định thực tế chứ không phải căn cứ Kỳ Môn; không tự bịa số tiền, tỷ lệ, ngày hay hoàn cảnh.
+- Không lặp “cần xác minh/cần xác nhận” ở mọi đoạn. Khi câu hỏi là quyết định nhiều mặt, liên kết các đánh đổi thành một lập luận thống nhất thay vì liệt kê rời rạc.
 
 JSON: trả đúng schema, không Markdown bao JSON. mode/topic_id/questionType khớp đầu vào. Mỗi mục có nội dung dùng 1–6 claim_ids từ claims. summary dùng đủ likelyScenario.primaryJudgment.claimIds; bottleneck dùng mainConflict.claimId nếu có và resolution tương ứng. Không thêm mode_chain hoặc assessments.
 
@@ -37,6 +44,6 @@ const MODE_PROMPTS={
 export function synthesisInstructions(base,context) {
   const c=context.allInOne;
   return base+'\n\nCHẾ ĐỘ '+c.classification.mode.toUpperCase()+': '+MODE_PROMPTS[c.classification.mode]+
-    '\nÝ ĐỊNH '+c.questionContext.questionType+': '+(['strategy','decision'].includes(c.questionContext.questionType)?'Bài phải dẫn tới một quyết định có điều kiện, nêu đánh đổi chính và chuỗi hành động có mục tiêu/điểm dừng.':'Trả lời ý định này trước khi đưa lời khuyên.')+
+    '\nÝ ĐỊNH '+c.questionContext.questionType+': '+(['strategy','decision'].includes(c.questionContext.questionType)?'Nếu người dùng hỏi có nên/không nên hoặc đang cân nhắc hai phương án, summary phải mở bằng câu trả lời có điều kiện nghiêng về phương án nào trước, sau đó mới giải thích thế, đánh đổi và chuỗi hành động có mục tiêu/điểm dừng.':'Trả lời ý định này trước khi đưa lời khuyên.')+
     '\nKhông đổi mode chỉ vì topic là hợp đồng/kinh doanh; mode quyết định cách suy luận và cách trình bày.';
 }

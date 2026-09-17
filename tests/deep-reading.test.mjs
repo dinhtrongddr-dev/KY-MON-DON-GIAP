@@ -74,6 +74,6 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
 });
 
 test('v5 request fingerprint binds the planner, mode and depth',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.0');
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.1');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
 });

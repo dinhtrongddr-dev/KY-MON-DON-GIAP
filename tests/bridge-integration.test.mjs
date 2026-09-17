@@ -22,6 +22,11 @@ async function start(t,options={}) {
   });
 }
 
+test('pairing code accepts four characters and rejects shorter values',()=>{
+  assert.doesNotThrow(()=>createBridge({token:'abcd'}));
+  assert.throws(()=>createBridge({token:'abc'}),/4 đến 128/);
+});
+
 test('existing manual pairing configuration works across bridge restarts',()=>{
   const previous=process.env.QIMEN_PAIRING_TOKEN;
   process.env.QIMEN_PAIRING_TOKEN='existing-config-token';
@@ -33,7 +38,7 @@ test('the official website can reach protocol 5 through the existing tunnel',asy
   const call=await start(t);
   const result=await call('/api/status');
   assert.equal(result.status,200);
-  assert.equal(JSON.parse(result.text).rules,'TG-CB-6.0');
+  assert.equal(JSON.parse(result.text).rules,'TG-CB-6.1');
   assert.equal(JSON.parse(result.text).protocol,5);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);

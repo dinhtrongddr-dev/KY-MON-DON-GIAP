@@ -10,6 +10,6 @@
     "path": "KyMonTray.exe",
     "sha256": "50699d40ae0e1b6046076c545a6dfd0a45976f50f43739c82f6c775d8f81c389",
     "source": "local/KyMonTray.cs",
-    "sourceSha256": "d3094e0a1cd25557683cf06e7d744c5021a2b20f7a15d904dc981c139cd32581"
+    "sourceSha256": "b9326878d1a6ea34afa7555c776f7167afdec9acaea6241ba746c4ecabbffda0"
   }
 }
