@@ -10,9 +10,9 @@ const INTENTS=[
   ['contract',/\b(hop dong|dau thau|gi[aà]nh|ky duoc)\b/,'đạt thỏa thuận / hợp đồng'],
   ['project_result',/\b(du an|tien do|nghiem thu)\b/,'xác định giai đoạn và điều kiện hoàn thành dự án'],
   ['career_change',/\b(chuyen viec|doi viec|nhan viec|thang chuc)\b/,'phân biệt cơ hội công việc và thay đổi đã thực hiện'],
-  ['family_decision',/\b(gia dinh|cha me|con cai|sinh hoat)\b/,'làm rõ lựa chọn và khả năng phối hợp trong gia đình'],
+  ['family_decision',/\b(gia dinh|cha me|bo me|vo chong|vo toi|chong toi|ban doi|nguoi ban doi|con cai|con nho|em be|cham con|nuoi con|cham be|nuoi be|thai san|sinh hoat|o nha cham)\b/,'làm rõ lựa chọn, nguồn lực và khả năng phối hợp trong gia đình'],
   ['search',/\b(tim nguoi|tim do|that lac)\b/,'xác minh đầu mối tìm kiếm'],
-  ['relationship',/\b(tinh cam|tinh yeu|nguoi yeu|vo chong)\b/,'hiểu và xử lý quan hệ'],
+  ['relationship',/\b(tinh cam|tinh yeu|nguoi yeu|hen ho)\b/,'hiểu và xử lý quan hệ'],
 ];
 export function buildQuestionContext(question,{mode='auto',topic='general',depth='standard',direction=null,subject=null}={}) {
   if(!['standard','deep'].includes(depth))throw new Error('Mức luận không hợp lệ.');
@@ -23,7 +23,8 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
   const domainText=focusTopic==='work'?q:focusQ;
   let domain=TOPIC_DOMAINS[topic==='general'?inferredTopic:topic]||'career';
   if(topic==='general') {
-    if(/\b(tim nguoi|tim do|that lac)\b/.test(domainText))domain='search';
+    if(/\b(gia dinh|cha me|bo me|vo chong|vo toi|chong toi|ban doi|nguoi ban doi|con cai|con nho|em be|cham con|nuoi con|cham be|nuoi be|thai san|o nha cham)\b/.test(domainText))domain='family';
+    else if(/\b(tim nguoi|tim do|that lac)\b/.test(domainText))domain='search';
     else if(/\b(tuyen dung|ung vien|nhan su|tuyen nguoi)\b/.test(domainText))domain='recruitment';
     else if(/\b(du an|tien do|nghiem thu)\b/.test(domainText)&&!/\b(hop dong|bao gia|dau thau|khach hang)\b/.test(domainText))domain='project';
     else if(isFinancialQuestion(domainText)&&!/\b(bao gia|hop dong|dau thau)\b/.test(domainText))domain='finance';
@@ -33,7 +34,7 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
     ['timing','direction'].includes(classification.mode)?'decision':
     /\b(so sanh|so voi|loi the hon|manh hon|phuong an nao)\b/.test(q)?'comparison':
     /\b(tai sao|nguyen nhan|van de nam|nut that)\b/.test(q)?'diagnosis':
-    /\b(co nen|nen chon)\b/.test(q)?'decision':'prediction';
+    /\b(co nen|nen chon|nen hay khong)\b/.test(q)?'decision':'prediction';
   const intent=INTENTS.find(([,match])=>match.test(focusQ))||INTENTS.find(([,match])=>match.test(q));
   const company=/\b(cong ty|doanh nghiep|doi|ben) (cua )?(toi|minh|chung toi)\b/.test(q);
   const onBehalf=/\b(hoi (ho|thay)|cua (em trai|anh trai|chi gai|ban toi|con toi))\b/.test(q);
@@ -47,14 +48,17 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
   }
   const duration=q.match(/\b(?:trong|sau|vong|toi)\s+(?:(?:vong|khoang)\s+)?(\d+|mot|hai|ba)\s+(ngay|tuan|thang|nam)\b/);
   const relative=q.match(/\b(tuan sau|thang sau|hom nay|ngay mai|tuan nay|thang nay)\b/);
-  const timeHorizon=duration?{text:duration[0],amount:Number(duration[1])||({mot:1,hai:2,ba:3}[duration[1]]),unit:({ngay:'day',tuan:'week',thang:'month',nam:'year'}[duration[2]]),status:'explicit_duration'}:
+  const ageMilestone=q.match(/\b(?:den khi|toi khi)\s+(?:(?:con|be|em be)\s+)?(?:duoc\s+)?(\d+|mot|hai|ba)\s+tuoi\b/);
+  const wordNumber=value=>Number(value)||({mot:1,hai:2,ba:3}[value]);
+  const timeHorizon=ageMilestone?{text:ageMilestone[0],amount:null,unit:'age_milestone',targetAge:wordNumber(ageMilestone[1]),status:'explicit_milestone'}:
+    duration?{text:duration[0],amount:wordNumber(duration[1]),unit:({ngay:'day',tuan:'week',thang:'month',nam:'year'}[duration[2]]),status:'explicit_duration'}:
     {text:relative?.[0]||'Chưa nêu thời hạn',amount:null,unit:null,status:relative?'explicit_relative':'unknown'};
-  timeHorizon.code=relative?({'tuan nay':'this_week','tuan sau':'next_week','thang nay':'this_month','thang sau':'next_month','hom nay':'today','ngay mai':'tomorrow'}[relative[0]]):duration?'duration':'unknown';
+  timeHorizon.code=ageMilestone?'milestone_age':relative?({'tuan nay':'this_week','tuan sau':'next_week','thang nay':'this_month','thang sau':'next_month','hom nay':'today','ngay mai':'tomorrow'}[relative[0]]):duration?'duration':'unknown';
   const d=domainSemantics(domain),vocabulary=[...new Set([...d.vocabulary,...SECTOR_VOCABULARY.filter(s=>s.match.test(q)).flatMap(s=>s.terms)])];
   const observed=clauses;
   const stage=/\b(da gui|da nop|da bao gia)\b/.test(q)?'awaiting_response':/\b(dang thuong luong|dang dam phan)\b/.test(q)?'negotiating':/\b(da ky|da nhan viec)\b/.test(q)?'executing':'not_confirmed';
   const stakeholders=[{role:'self',status:subjectContext.status,source:subjectContext.source},
-    ...[['customer',/\b(khach|doi tac|nguoi yeu|doi phuong)\b/],['decisionMaker',/\b(nguoi duyet|nguoi quyet dinh|nguoi phe duyet|cap quan ly)\b/],['competitor',/\b(doi thu|vendor|nha cung cap hien tai)\b/]]
+    ...[['customer',/\b(khach|doi tac|nguoi yeu|doi phuong|vo toi|chong toi|vo chong|ban doi|nguoi ban doi|me cua be|bo cua be)\b/],['decisionMaker',/\b(nguoi duyet|nguoi quyet dinh|nguoi phe duyet|cap quan ly)\b/],['competitor',/\b(doi thu|vendor|nha cung cap hien tai)\b/]]
       .filter(([,pattern])=>pattern.test(q)).map(([role])=>({role,status:'mentioned',source}))];
   const targetOutcome=outcomeTarget(focusQ,domain,intent?.[0]||'understand_event',timeHorizon);
   const resolvedTopic=topic!=='general'?topic:domain==='finance'&&!['money','investment','debt'].includes(inferredTopic)?'money':inferredTopic;
@@ -62,7 +66,7 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
     intent:intent?.[0]||'understand_event',desiredOutcome:intent?.[2]||'Làm rõ đúng sự việc trong câu hỏi',subject:subjectContext,direction:directionContext,
     target:{text:source,status:'retain_question_context'},outcomeTarget:targetOutcome,stage,timeHorizon,stakeholders,
     constraints:observed.filter(s=>/\b(khong muon|khong the|chi co|toi da|ngan sach|han chot)\b/.test(normalizeQuestion(s))),
-    userStatements:observed,options:observed.filter(s=>/\b(hay|hoac|phuong an|so voi)\b/.test(normalizeQuestion(s))),actionability:questionType==='strategy'?'action_sequence':'conditional_assessment',vocabulary,depth,
+    userStatements:observed,options:observed.filter(s=>/\b(hay|hoac|phuong an|so voi)\b/.test(normalizeQuestion(s))),actionability:['strategy','decision'].includes(questionType)?'action_sequence':'conditional_assessment',vocabulary,depth,
     limits:['Vai trò biểu tượng không xác minh danh tính hay tâm ý.','Thời hạn câu hỏi không phải ngày ứng nghiệm đã tính.'],
     clarificationQuestions:[...(onBehalf&&!confirmed?['Bạn hỏi thay ai và đã xác nhận Can Chi nào đại diện cho người đó?']:[]),...(directionContext&&!directionContext.origin?['Bạn lấy vị trí nào làm điểm quy chiếu phương hướng?']:[]),...(directionContext&&!directionContext.kind?['Bạn cần hướng di chuyển, hướng ngồi (phía lưng/tựa) hay hướng nhìn?']:[])],
     needsClarification:onBehalf&&!confirmed||!!directionContext&&(!directionContext.origin||!directionContext.kind)};
