@@ -1,10 +1,10 @@
 import {instructionsFor, readingSchema, validateReading, ReadingValidationError} from './reading.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
-import {runCodex,READING_TIMEOUT_MS} from './codex-client.mjs';
+import {runAI,READING_TIMEOUT_MS} from './ai-client.mjs';
 import {verifiedFallback,clarificationReading} from '../dist/qimen/ai/verifiedFallback.mjs';
 
 // A single bounded repair is allowed for invalid content, never for auth/network failures.
-export async function interpretReading(prepared,{runner=runCodex,signal,budgetMs=READING_TIMEOUT_MS}={}) {
+export async function interpretReading(prepared,{runner=runAI,signal,budgetMs=READING_TIMEOUT_MS}={}) {
   signal?.throwIfAborted();
   if(prepared.context.allInOne.questionContext.needsClarification)return clarificationReading(prepared.context);
   const deadline=AbortSignal.timeout(budgetMs);
