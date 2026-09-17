@@ -5,6 +5,8 @@ import {homedir,tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {existsSync} from 'node:fs';
 
+const NINE_ROUTER_PROVIDER='qimen_9router';
+
 function runtimeFromEnv(env=process.env){
  const router=(env.QIMEN_AI_ROUTER||'').trim().toLowerCase();
  const is9Router=router==='9router';
@@ -43,14 +45,15 @@ function launcher(){
  return ['codex',[]];
 }
 function verify9RouterEnv(env,runtime){
- if(!runtime.is9Router)return;
- if(runtime.provider)return;
+ if(!runtime.is9Router)return null;
+ if(runtime.provider)return {provider:runtime.provider,base:null};
  const base=env.OPENAI_BASE_URL?.trim();
  const key=env.OPENAI_API_KEY?.trim();
  if(!base||!key)throw new Error('Chế độ 9router cần QIMEN_CODEX_PROVIDER hoặc OPENAI_BASE_URL + OPENAI_API_KEY của 9router.');
  let url;try{url=new URL(base);}catch{throw new Error('OPENAI_BASE_URL của 9router không hợp lệ.');}
  const local=['127.0.0.1','localhost','::1'].includes(url.hostname);
  if(!local||url.port!=='20128')throw new Error('Bridge chỉ cho phép 9router local tại cổng 20128 trên VPS.');
+ return {provider:NINE_ROUTER_PROVIDER,base:url.toString().replace(/\/$/,'')};
 }
 async function requireModel(request,runtime){
  let cursor=null;
@@ -102,12 +105,24 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
  try {
    const env={...process.env,CODEX_HOME:codexHome()};
    delete env.QIMEN_PAIRING_TOKEN;
-   if(runtime.is9Router)verify9RouterEnv(env,runtime);
-   else for(const key of ['OPENAI_API_KEY','CODEX_API_KEY','CODEX_ACCESS_TOKEN','OPENAI_BASE_URL'])delete env[key];
+   const nineRouter=runtime.is9Router?verify9RouterEnv(env,runtime):null;
+   if(!runtime.is9Router)for(const key of ['OPENAI_API_KEY','CODEX_API_KEY','CODEX_ACCESS_TOKEN','OPENAI_BASE_URL'])delete env[key];
    const [binary,prefix]=launcher();
    const config=['approval_policy="never"','features.shell_tool=false','features.unified_exec=false','web_search="disabled"','default_permissions="qimen-reader"',
      'permissions.qimen-reader.filesystem={'+JSON.stringify(cwd.replaceAll('\\','/'))+'="read"}','permissions.qimen-reader.network.enabled=false'];
-   if(runtime.provider)config.push('model_provider='+JSON.stringify(runtime.provider));
+   if(runtime.is9Router){
+     config.push('model_provider='+JSON.stringify(nineRouter.provider));
+     if(!runtime.provider){
+       config.push(
+         `model_providers.${NINE_ROUTER_PROVIDER}.name="9router"`,
+         `model_providers.${NINE_ROUTER_PROVIDER}.base_url=${JSON.stringify(nineRouter.base)}`,
+         `model_providers.${NINE_ROUTER_PROVIDER}.env_key="OPENAI_API_KEY"`,
+         `model_providers.${NINE_ROUTER_PROVIDER}.wire_api="responses"`,
+         `model_providers.${NINE_ROUTER_PROVIDER}.requires_openai_auth=false`,
+         `model_providers.${NINE_ROUTER_PROVIDER}.supports_websockets=false`
+       );
+     }
+   } else if(runtime.provider)config.push('model_provider='+JSON.stringify(runtime.provider));
    if(process.platform==='win32')config.push('windows.sandbox="elevated"');
    proc=spawnProcess(binary,[...prefix,'app-server','--listen','stdio://',...config.flatMap(value=>['-c',value])],{cwd,env,shell:false,stdio:['pipe','pipe','pipe'],windowsHide:true});
    proc.stdin.on('error',()=>fail(new Error('Kết nối với AI đã đóng.')));
