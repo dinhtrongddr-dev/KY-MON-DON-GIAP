@@ -4,7 +4,7 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runCodex,MODEL,REASONING_EFFORT,ROUTING_MODE} from './codex-client.mjs';
+import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE} from './ai-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
@@ -35,7 +35,7 @@ export function isAllowedOrigin(value,port,host){
  if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||ALLOWED_WEB_ORIGINS.includes(value))return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,keepAliveAfterMs=75000,keepAliveEveryMs=15000}={}){
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map();
@@ -107,7 +107,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
         }finally{stopKeepAlive();busy=false;}
       }catch(e){
         if(!res.destroyed){
-          const data={error:e.message||'Không kết nối được Codex.'};
+          const data={error:e.message||'Không kết nối được AI.'};
           if(res.headersSent)res.end(JSON.stringify(data));
           else send(502,data);
         }
