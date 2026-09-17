@@ -3,8 +3,8 @@ import {interpretReading} from '../local/interpret.mjs';
 import {MODEL,ROUTING_MODE,REASONING_EFFORT} from '../local/codex-client.mjs';
 
 const payload={
-  question:'Kiểm tra kết nối AI trên VPS; hãy luận ngắn gọn đúng theo dữ kiện bàn.',
-  topic:'general',
+  question:'Trong 30 ngày tới hợp đồng thử nghiệm này có tiến triển đến bước xác nhận hay không?',
+  topic:'contract',
   method:'chaibu',
   input:{year:2026,month:9,day:17,hour:14,minute:0,tzOffset:7},
 };
