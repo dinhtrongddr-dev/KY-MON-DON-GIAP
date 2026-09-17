@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="${QIMEN_VPS_ENV_FILE:-$HOME/.config/kymon-vps/env}"
+TOKEN_FILE="${CLOUDFLARE_TUNNEL_TOKEN_FILE:-$HOME/.config/kymon-vps/cloudflare-tunnel.token}"
 SERVICE_FILE="/etc/systemd/system/kymon-vps.service"
 
 for cmd in node codex cloudflared curl; do
@@ -22,6 +23,12 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 chmod 600 "$ENV_FILE"
+
+if [[ ! -f "$TOKEN_FILE" ]]; then
+  echo "Missing Cloudflare Named Tunnel token file: $TOKEN_FILE" >&2
+  exit 1
+fi
+chmod 600 "$TOKEN_FILE"
 
 USER_NAME="$(id -un)"
 HOME_DIR="$HOME"
