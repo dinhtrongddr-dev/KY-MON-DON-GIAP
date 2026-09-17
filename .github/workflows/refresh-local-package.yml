@@ -1,0 +1,34 @@
+name: Refresh Local Package
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - '.github/workflows/refresh-local-package.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: Rebuild local package
+        run: python3 scripts/package-local.py
+      - name: Verify rebuilt package
+        run: python3 scripts/package-local.py --check
+      - name: Commit refreshed package
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/downloads/ky-mon-ai.zip
+          if git diff --cached --quiet; then
+            echo "Package already current"
+            exit 0
+          fi
+          git commit -m "chore: refresh local package for reasoning upgrade"
+          git push origin HEAD:develop
