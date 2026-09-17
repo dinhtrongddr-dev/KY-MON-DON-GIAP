@@ -19,9 +19,9 @@ export function buildQuestionContext(question,{mode='auto',topic='general',depth
   const source=question.trim().normalize('NFC'),q=normalizeQuestion(source),classification=classifyQuestion(source,mode);
   const clauses=source.split(/[;\n]+|(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
   const focus=clauses.filter(s=>s.includes('?')).at(-1)||clauses.at(-1)||source,focusQ=normalizeQuestion(focus);
-  const focusTopic=classifyTopic(focus),inferredTopic=focusTopic==='work'?classifyTopic(source):focusTopic;
-  const domainText=focusTopic==='work'?q:focusQ;
-  let domain=TOPIC_DOMAINS[topic==='general'?inferredTopic:topic]||'career';
+  const focusTopic=classifyTopic(focus),inferredTopic=focusTopic==='general'?classifyTopic(source):focusTopic;
+  const domainText=focusTopic==='general'?q:focusQ;
+  let domain=TOPIC_DOMAINS[topic==='general'?inferredTopic:topic]||'general';
   if(topic==='general') {
     if(/\b(gia dinh|cha me|bo me|vo chong|vo toi|chong toi|ban doi|nguoi ban doi|con cai|con nho|em be|cham con|nuoi con|cham be|nuoi be|thai san|o nha cham)\b/.test(domainText))domain='family';
     else if(/\b(tim nguoi|tim do|that lac)\b/.test(domainText))domain='search';
