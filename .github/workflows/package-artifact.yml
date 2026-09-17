@@ -1,0 +1,28 @@
+name: Build Local Package Artifact
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - '.github/workflows/package-artifact.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Rebuild deterministic local package
+        run: python scripts/package-local.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ky-mon-ai-package
+          path: dist/downloads/ky-mon-ai.zip
+          if-no-files-found: error
+          compression-level: 0
