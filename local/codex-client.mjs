@@ -20,6 +20,7 @@ export const MODEL=RUNTIME.model;
 export const REASONING_EFFORT=RUNTIME.effort;
 export const READING_TIMEOUT_MS=600000;
 
+function modelLabel(model){return model==='gpt-6-astra'?'GPT-6 Astra':model;}
 function codexHome(){
  if(process.env.QIMEN_CODEX_HOME)return resolve(process.env.QIMEN_CODEX_HOME);
  if(process.platform==='win32'&&process.env.LOCALAPPDATA)return join(process.env.LOCALAPPDATA,'KyMonCodex','codex-home');
@@ -57,12 +58,12 @@ async function requireModel(request,runtime){
    const result=await request('model/list',{cursor,includeHidden:true,limit:100});
    const model=result.data?.find(item=>item.model===runtime.model||item.id===runtime.model);
    if(model){
-     if(runtime.effort!=='auto'&&!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===runtime.effort))throw new Error(`${runtime.model} không hỗ trợ mức suy luận ${runtime.effort} trên tài khoản/CLI này.`);
+     if(runtime.effort!=='auto'&&!model.supportedReasoningEfforts?.some(item=>item.reasoningEffort===runtime.effort))throw new Error(`${modelLabel(runtime.model)} không hỗ trợ mức suy luận ${runtime.effort} trên tài khoản/CLI này.`);
      return;
    }
    cursor=result.nextCursor;if(!cursor)break;
  }
- throw new Error(`Tài khoản Codex hiện không có quyền dùng ${runtime.model}. Cầu nối không tự đổi model.`);
+ throw new Error(`Tài khoản Codex hiện không có quyền dùng ${modelLabel(runtime.model)}. Cầu nối không tự đổi model.`);
 }
 function verifyPermissions(config,cwd){
  const profile=config?.permissions?.['qimen-reader'];
