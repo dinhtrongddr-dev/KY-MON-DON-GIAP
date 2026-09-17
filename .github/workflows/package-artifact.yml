@@ -1,20 +1,21 @@
-name: Build Local Package Artifact
+name: Refresh Local Package
 
 on:
   push:
     branches: [develop]
     paths:
       - '.github/workflows/package-artifact.yml'
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -27,9 +28,14 @@ jobs:
         run: python scripts/package-local.py
       - name: Verify rebuilt package
         run: python scripts/package-local.py --check
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ky-mon-ai-package
-          path: dist/downloads/ky-mon-ai.zip
-          if-no-files-found: error
-          compression-level: 0
+      - name: Commit refreshed package to develop
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/downloads/ky-mon-ai.zip
+          if git diff --cached --quiet; then
+            echo "Package already current."
+          else
+            git commit -m "chore: refresh local package for named tunnel"
+            git push origin HEAD:develop
+          fi
