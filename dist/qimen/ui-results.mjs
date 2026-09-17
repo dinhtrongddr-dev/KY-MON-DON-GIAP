@@ -1,10 +1,10 @@
 export function element(doc,tag,text,parent,className) {
   const el=doc.createElement(tag);el.textContent=text;if(className)el.className=className;parent.append(el);return el;
 }
-export function resultTabs(root) {
+export function resultTabs(root,customEntries=null) {
   const doc=root.ownerDocument||document,node=(tag,text,parent,cls)=>element(doc,tag,text,parent,cls);
   const bar=node('div','',root,'ai-tabs');bar.setAttribute('role','tablist');bar.setAttribute('aria-label','Các phần của lời luận');
-  const entries=[['quick','Kết luận nhanh'],['story','Diễn biến thực tế'],['technical','Phân tích Kỳ Môn'],['actions','Chiến lược đề xuất'],['timing','Ứng kỳ']];
+  const entries=customEntries?.length?customEntries:[['quick','Kết luận nhanh'],['story','Diễn biến thực tế'],['technical','Phân tích Kỳ Môn'],['actions','Chiến lược đề xuất'],['timing','Ứng kỳ']];
   const buttons=[],panels={};
   const select=index=>entries.forEach(([id],i)=>{buttons[i].setAttribute('aria-selected',String(i===index));buttons[i].tabIndex=i===index?0:-1;panels[id].hidden=i!==index;});
   entries.forEach(([id,label],i)=>{
