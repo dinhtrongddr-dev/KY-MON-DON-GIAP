@@ -10,11 +10,12 @@ export async function interpretReading(prepared,{runner=runAI,signal,budgetMs=RE
   const deadline=AbortSignal.timeout(budgetMs);
   const combined=signal?AbortSignal.any([signal,deadline]):deadline;
   const writerContext=buildWriterContext(prepared.context);
+  const selectedRunner=(process.env.QIMEN_AI_ROUTER||'').trim().toLowerCase()==='prism'?runAI:runner;
   let revision;
   for(let attempt=0;attempt<2;attempt++) {
     combined.throwIfAborted();
     const context=revision?{...writerContext,revision}:writerContext;
-    const result=await runner(instructionsFor(prepared.context),context,readingSchema(prepared.facts,prepared.context),{signal:combined});
+    const result=await selectedRunner(instructionsFor(prepared.context),context,readingSchema(prepared.facts,prepared.context),{signal:combined});
     combined.throwIfAborted();
     try{return validateReading(result,prepared.facts,prepared.context.selectedTopic,prepared.context);}
     catch(error) {
