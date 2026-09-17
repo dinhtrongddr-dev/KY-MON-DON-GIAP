@@ -7,14 +7,36 @@ cd "$ROOT"
 : "${QIMEN_PAIRING_TOKEN:?Set QIMEN_PAIRING_TOKEN in the service environment}"
 
 export QIMEN_AI_ROUTER="${QIMEN_AI_ROUTER:-9router}"
-export QIMEN_MODEL="${QIMEN_MODEL:-qimen-smart}"
-export QIMEN_REASONING_EFFORT="${QIMEN_REASONING_EFFORT:-auto}"
-export OPENAI_BASE_URL="${OPENAI_BASE_URL:-http://127.0.0.1:20128/v1}"
 PUBLISH_RELAY="${QIMEN_PUBLISH_RELAY:-0}"
 
-if [[ -z "${QIMEN_CODEX_PROVIDER:-}" ]]; then
-  : "${OPENAI_API_KEY:?Set OPENAI_API_KEY for the local 9router endpoint, or set QIMEN_CODEX_PROVIDER to a Codex provider already configured on the VPS}"
-fi
+case "$QIMEN_AI_ROUTER" in
+  9router)
+    export QIMEN_MODEL="${QIMEN_MODEL:-qimen-smart}"
+    export QIMEN_REASONING_EFFORT="${QIMEN_REASONING_EFFORT:-auto}"
+    export OPENAI_BASE_URL="${OPENAI_BASE_URL:-http://127.0.0.1:20128/v1}"
+    if [[ -z "${QIMEN_CODEX_PROVIDER:-}" ]]; then
+      : "${OPENAI_API_KEY:?Set OPENAI_API_KEY for the local 9router endpoint, or set QIMEN_CODEX_PROVIDER to a Codex provider already configured on the VPS}"
+    fi
+    REQUIRED_COMMANDS=(node codex cloudflared curl)
+    ;;
+  prism)
+    export QIMEN_MODEL="${QIMEN_MODEL:-gpt-6-astra}"
+    export QIMEN_REASONING_EFFORT="${QIMEN_REASONING_EFFORT:-xhigh}"
+    export PRISM_PROXY_BASE_URL="${PRISM_PROXY_BASE_URL:-http://127.0.0.1:8787/v1}"
+    : "${PRISM_PROXY_API_KEY:?Set PRISM_PROXY_API_KEY for the local Prism proxy}"
+    REQUIRED_COMMANDS=(node cloudflared curl)
+    ;;
+  chatgpt)
+    export QIMEN_MODEL="${QIMEN_MODEL:-gpt-6-astra}"
+    export QIMEN_REASONING_EFFORT="${QIMEN_REASONING_EFFORT:-ultra}"
+    REQUIRED_COMMANDS=(node codex cloudflared curl)
+    ;;
+  *)
+    echo "QIMEN_AI_ROUTER must be chatgpt, 9router or prism" >&2
+    exit 1
+    ;;
+esac
+
 if [[ "$PUBLISH_RELAY" == "1" ]]; then
   : "${RELAY_ADMIN_SECRET:?Set RELAY_ADMIN_SECRET before publishing the VPS tunnel to the production relay}"
 elif [[ "$PUBLISH_RELAY" != "0" ]]; then
@@ -22,9 +44,18 @@ elif [[ "$PUBLISH_RELAY" != "0" ]]; then
   exit 1
 fi
 
-for cmd in node codex cloudflared curl; do
+for cmd in "${REQUIRED_COMMANDS[@]}"; do
   command -v "$cmd" >/dev/null 2>&1 || { echo "Missing required command: $cmd" >&2; exit 1; }
 done
+
+if [[ "$QIMEN_AI_ROUTER" == "prism" ]]; then
+  curl -fsS --connect-timeout 2 --max-time 10 \
+    -H "Authorization: Bearer $PRISM_PROXY_API_KEY" \
+    "$PRISM_PROXY_BASE_URL/models" >/dev/null || {
+      echo "Prism proxy is not ready at $PRISM_PROXY_BASE_URL" >&2
+      exit 1
+    }
+fi
 
 LOG_DIR="${QIMEN_LOG_DIR:-$ROOT/.vps-runtime}"
 mkdir -p "$LOG_DIR"
@@ -95,6 +126,7 @@ fi
 echo "Kỳ Môn VPS bridge ready"
 echo "Router: $QIMEN_AI_ROUTER"
 echo "Model route: $QIMEN_MODEL"
+echo "Reasoning: $QIMEN_REASONING_EFFORT"
 echo "Tunnel: $TUNNEL_URL"
 if [[ "$PUBLISH_RELAY" == "1" ]]; then
   echo "Production relay: UPDATED"
