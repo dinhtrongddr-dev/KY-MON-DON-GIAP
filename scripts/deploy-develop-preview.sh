@@ -2,6 +2,7 @@
 set -euo pipefail
 
 REPO_DIR="${QIMEN_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+WORKTREE_DIR="${QIMEN_DEVELOP_WORKTREE:-$HOME/.local/share/kymon-develop-worktree}"
 PREVIEW_DIR="${QIMEN_PREVIEW_DIR:-$HOME/.local/share/kymon-develop-preview}"
 ENV_FILE="${QIMEN_ENV_FILE:-$HOME/.config/kymon-vps/env}"
 PREVIEW_PORT="${QIMEN_PREVIEW_PORT:-8766}"
@@ -9,19 +10,30 @@ PREVIEW_PORT="${QIMEN_PREVIEW_PORT:-8766}"
 die(){ printf 'deploy-develop-preview: %s\n' "$*" >&2; exit 1; }
 
 cd "$REPO_DIR"
-[[ -d .git ]] || die "REPO_DIR không phải git checkout."
-[[ -z "$(git status --porcelain)" ]] || die "Working tree không sạch; dừng để tránh ghi đè thay đổi chưa commit."
+git rev-parse --git-dir >/dev/null 2>&1 || die "REPO_DIR không phải git checkout."
 
+# Fetch only. Never switch/reset the caller's current branch or working tree.
 git fetch origin develop --prune
-git switch develop >/dev/null
-git reset --hard origin/develop >/dev/null
-[[ -z "$(git status --porcelain)" ]] || die "develop vẫn có thay đổi sau khi đồng bộ origin/develop."
+SOURCE_TARGET="$(git rev-parse origin/develop)"
 
-SOURCE_COMMIT="$(git rev-parse HEAD)"
+if [[ ! -e "$WORKTREE_DIR/.git" ]]; then
+  [[ ! -e "$WORKTREE_DIR" || -z "$(ls -A "$WORKTREE_DIR" 2>/dev/null)" ]] || die "Develop worktree path đã tồn tại nhưng không phải git worktree: $WORKTREE_DIR"
+  rm -rf "$WORKTREE_DIR"
+  git worktree add --detach "$WORKTREE_DIR" "$SOURCE_TARGET" >/dev/null
+fi
+
+git -C "$WORKTREE_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "Develop worktree không hợp lệ: $WORKTREE_DIR"
+[[ -z "$(git -C "$WORKTREE_DIR" status --porcelain)" ]] || die "Develop worktree có thay đổi chưa commit; dừng để không ghi đè."
+
+git -C "$WORKTREE_DIR" reset --hard "$SOURCE_TARGET" >/dev/null
+SOURCE_COMMIT="$(git -C "$WORKTREE_DIR" rev-parse HEAD)"
+[[ "$SOURCE_COMMIT" == "$SOURCE_TARGET" ]] || die "Develop worktree không khớp origin/develop."
+
 printf 'Source: origin/develop @ %s\n' "$SOURCE_COMMIT"
+printf 'Worktree: %s\n' "$WORKTREE_DIR"
 
 if [[ "${QIMEN_PREVIEW_SKIP_VERIFY:-0}" != "1" ]]; then
-  npm run verify
+  (cd "$WORKTREE_DIR" && npm run verify)
 fi
 
 mkdir -p "$PREVIEW_DIR"
@@ -29,12 +41,12 @@ STAGE="$(mktemp -d "${PREVIEW_DIR}.stage.XXXXXX")"
 cleanup(){ rm -rf "$STAGE"; }
 trap cleanup EXIT
 
-cp -a dist "$STAGE/"
-cp -a local "$STAGE/"
-cp -a package.json package-lock.json "$STAGE/"
+cp -a "$WORKTREE_DIR/dist" "$STAGE/"
+cp -a "$WORKTREE_DIR/local" "$STAGE/"
+cp -a "$WORKTREE_DIR/package.json" "$WORKTREE_DIR/package-lock.json" "$STAGE/"
 printf '%s\n' "$SOURCE_COMMIT" > "$STAGE/source-commit"
 
-# Preview-only adaptation. Source files in Git remain untouched.
+# Preview-only adaptation. Files inside the Git worktree remain byte-for-byte origin/develop.
 python3 - "$STAGE" <<'PY'
 from pathlib import Path
 import sys
