@@ -165,15 +165,39 @@ function renderNatalBoard(board,selfPalaceNumber=null){
   addFlag(flags,'Mã tinh: '+(board.horseBranch?.vi||'—')+' · cung '+horsePalace);
   appendPatternFlags(flags,board);section.append(flags);return section;
 }
+const HOUR_FAMILY_VI=Object.freeze({ZI:'Tý',CHOU:'Sửu',YIN:'Dần',MAO:'Mão',CHEN:'Thìn',SI:'Tỵ',WU:'Ngọ',WEI:'Mùi',SHEN:'Thân',YOU:'Dậu',XU:'Tuất',HAI:'Hợi'});
+function candidateSelfPalace(candidate){
+  const e=(candidate.evidence||[]).find(x=>x.evidenceId==='SELF_DAY_STEM');
+  return Number(String(e?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
+}
 function renderUnknownBoardNotice(prepared){
   const section=el('section','menh-board-section menh-board-unknown');
   const toolbar=el('div','board-toolbar menh-board-toolbar'),title=el('div');
-  title.append(el('p','eyebrow','Mệnh bàn Kỳ Môn · giờ sinh chưa xác định'),el('h2','','Chưa thể xác định một Mệnh bàn duy nhất'));
+  title.append(el('p','eyebrow','Đối chiếu giờ sinh'),el('h2','','Các Mệnh bàn có thể'));
   toolbar.append(title);section.append(toolbar);
+  const rect=prepared.rectification;
   const note=el('div','menh-unknown-board-placeholder');
-  note.append(el('strong','','Hệ thống đang đối chiếu '+prepared.candidateCount+' Mệnh bàn theo các khung giờ có thể.'));
-  note.append(el('p','','Không chọn tự động một giờ, không bỏ phiếu đa số và không dựng một bàn đại diện giả. Các kết luận bên dưới chỉ giữ phần ổn định qua toàn bộ ứng viên.'));
-  section.append(note);return section;
+  if(rect?.eventCount){
+    const best=rect.ranked?.[0],second=rect.ranked?.[1];
+    const state=rect.status==='STRONG'?'Có một khung giờ nổi bật rõ hơn':rect.status==='LEADING'?'Đang có một khung giờ phù hợp hơn':rect.status==='TIED'?'Hai hoặc nhiều khung giờ còn rất sát nhau':'Chưa đủ dấu hiệu để phân biệt';
+    note.append(el('strong','',state+' · đã đối chiếu '+rect.eventCount+' mốc cuộc đời.'));
+    if(best)note.append(el('p','','Đang dẫn đầu: giờ '+(HOUR_FAMILY_VI[best.family]||best.family)+' (bàn mẫu '+best.time+') · khớp '+best.points+'/'+best.maxPoints+' điểm kích hoạt.'+(second?' Khung kế tiếp '+(HOUR_FAMILY_VI[second.family]||second.family)+' '+second.points+'/'+second.maxPoints+'.':'')));
+  }else{
+    note.append(el('strong','','Chưa có mốc cuộc đời để lọc giờ sinh.'));
+    note.append(el('p','','Nhập các năm có bước ngoặt rõ ở phần trên để hệ thống so sánh các khung giờ.'));
+  }
+  note.append(el('p','','Kết quả này chỉ cho biết giờ sinh phù hợp hơn với các mốc đã nhập, không thay thế giấy tờ hoặc ký ức về giờ sinh.'));
+  section.append(note);
+  const ranked=(rect?.ranked?.length?rect.ranked:prepared.candidates).slice(0,rect?.eventCount?5:prepared.candidates.length);
+  const chooser=el('div','menh-candidate-list');
+  for(const c of ranked){
+    const details=el('details','menh-candidate');
+    const label='Giờ '+(HOUR_FAMILY_VI[c.family]||c.family)+' · '+c.time+(c.points!=null?' · '+c.points+'/'+c.maxPoints+' điểm':'');
+    details.append(el('summary','',label));
+    details.append(renderNatalBoard(c.board,candidateSelfPalace(c)));
+    chooser.append(details);
+  }
+  section.append(chooser);return section;
 }
 function renderTechnical(prepared){
   const section=el('section','menh-technical-section'),head=el('div','menh-section-heading');

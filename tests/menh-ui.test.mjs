@@ -43,11 +43,12 @@ test('Mệnh UI renders the exact natal QimenBoard already used by KM-MENH inste
   assert.match(view,/Phản Ngâm/);
   assert.doesNotMatch(view,/generateQimen|createQimenBoard/);
 });
-test('Mệnh UI does not present a fake representative board when birth time is unknown',()=>{
+test('Mệnh UI shows candidate boards for unknown birth time without pretending the leader is certain',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
-  assert.match(view,/Chưa thể xác định một Mệnh bàn duy nhất/);
-  assert.match(view,/không bỏ phiếu đa số/);
-  assert.match(view,/không dựng một bàn đại diện giả/);
+  assert.match(view,/Các Mệnh bàn có thể/);
+  assert.match(view,/Đang dẫn đầu/);
+  assert.match(view,/không thay thế giấy tờ hoặc ký ức về giờ sinh/);
+  assert.match(view,/renderNatalBoard\(c\.board/);
 });
 test('Mệnh AI long-form renderer preserves paragraph breaks',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');

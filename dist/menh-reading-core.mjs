@@ -36,12 +36,37 @@ function normalizeBody(body={}){
   if(sexMetadata&&!['MALE','FEMALE'].includes(sexMetadata))throw new Error('Giới tính metadata không hợp lệ.');
   const fullName=body.fullName==null||body.fullName===''?null:String(body.fullName).trim().slice(0,120)||null;
   const birthPlace=body.birthPlace==null||body.birthPlace===''?null:String(body.birthPlace).trim().slice(0,160)||null;
-  return freeze({...date,...(time||{}),fullName,birthPlace,birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
+  const lifeEvents=body.lifeEvents&&typeof body.lifeEvents==='object'?Object.fromEntries(Object.entries(body.lifeEvents).map(([k,v])=>[k,Object.freeze((Array.isArray(v)?v:[]).map(Number).filter(y=>Number.isInteger(y)&&y>=1900&&y<=2100))])):null;
+  return freeze({...date,...(time||{}),fullName,birthPlace,lifeEvents,birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
 }
 function canonicalPillar(pillar){
   const stem=STEM[pillar?.stem?.han],branch=BRANCH[pillar?.branch?.han];
   if(!stem||!branch)throw new Error('Không chuyển được Can Chi sang canonical pillar.');
   return `${stem}_${branch}`;
+}
+const EVENT_DOMAIN=Object.freeze({marriage:'MARRIAGE',children:'CHILDREN',career:'CAREER',wealth:'WEALTH',family:'FAMILY'});
+function rectifyCandidates(candidates,normalized){
+  const events=Object.entries(normalized.lifeEvents||{}).flatMap(([kind,years])=>(years||[]).map(year=>({kind,domain:EVENT_DOMAIN[kind],year}))).filter(e=>e.domain);
+  if(!events.length)return freeze({status:'NEED_EVENTS',eventCount:0,ranked:[]});
+  const ranked=candidates.map(c=>{
+    let points=0,maxPoints=0;const matches=[];
+    const domainPalaces=new Map();
+    for(const event of events){
+      if(!domainPalaces.has(event.domain)){
+        const ids=new Set(c.result.claims.filter(x=>x.domain===event.domain).flatMap(x=>x.evidenceIds));
+        domainPalaces.set(event.domain,new Set(c.result.evidence.filter(e=>ids.has(e.evidenceId)&&e.palace&&e.palace!=='GLOBAL').map(e=>e.palace)));
+      }
+      const annualPillar=annualPillarForYear(event.year,normalized.tzOffset);
+      const timed=analyzeOne(inputFrom(normalized.birthDateLocal,c.time,normalized.tzOffset),{age:event.year-normalized.year,annualPillar,sexMetadata:normalized.sexMetadata}).result;
+      const primary=timed.annual?.annualStemPalace,secondary=timed.annual?.annualBranchPalace,palaces=domainPalaces.get(event.domain);
+      const p=palaces.has(primary)?2:0,s=palaces.has(secondary)?1:0;points+=p+s;maxPoints+=3;
+      matches.push(freeze({kind:event.kind,year:event.year,primaryMatch:p>0,secondaryMatch:s>0}));
+    }
+    return {id:c.id,family:c.family,time:c.time,points,maxPoints,matches,board:c.result.natal.baseBoard,evidence:c.result.evidence};
+  }).sort((a,b)=>b.points-a.points||a.time.localeCompare(b.time));
+  const best=ranked[0]?.points??0,second=ranked[1]?.points??0;
+  const confidence=best===0?'INSUFFICIENT':best-second>=3?'STRONG':best-second>=1?'LEADING':'TIED';
+  return freeze({status:confidence,eventCount:events.length,bestId:ranked[0]?.id||null,ranked:ranked.map((x,i)=>freeze({...x,rank:i+1}))});
 }
 function annualPillarForYear(year,tzOffset){
   if(year==null)return null;
@@ -83,6 +108,7 @@ export function prepareMenhReading(body){
     return {id:candidate.id,family:candidate.family,time:candidate.birthTimeLocal,result:one.result,technical:technicalFrom(one.board,one.result.profileId,'UNKNOWN',candidate.birthTimeLocal)};
   });
   const composite=analyzeUnknownMenhCandidates(candidates.map(c=>c.result),{sourceTrace:['KM-MENH-1.0_RUNTIME']});
+  const rectification=rectifyCandidates(candidates,normalized);
   return freeze({
     input:normalized,
     result:composite,
@@ -93,8 +119,9 @@ export function prepareMenhReading(body){
       yearPillars:Object.freeze([...new Set(candidates.map(c=>c.technical.pillarHan.year))]),
       dayPillars:Object.freeze([...new Set(candidates.map(c=>c.technical.pillarHan.day))]),
     },
-    candidates:Object.freeze(candidates.map(c=>freeze({id:c.id,family:c.family,time:c.time,technical:c.technical}))),
+    candidates:Object.freeze(candidates.map(c=>freeze({id:c.id,family:c.family,time:c.time,technical:c.technical,board:c.result.natal.baseBoard,claims:c.result.claims,evidence:c.result.evidence}))),
     candidateCount:candidates.length,
+    rectification,
     annualPillar,
   });
 }

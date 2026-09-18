@@ -887,3 +887,13 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-self-palace .palace-head{min-height:52px;flex-wrap:wrap}
 .menh-self-badge{display:block!important;width:100%;padding:4px 6px;margin-top:3px;background:var(--jade-dark);color:#fff!important;font-size:.66rem!important;font-weight:900!important;letter-spacing:.04em;text-align:center;white-space:normal!important}
 .menh-board-key-self{font-weight:900}
+
+.menh-rectification-input{grid-column:1/-1;border:1px solid var(--line);padding:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.menh-rectification-input[hidden]{display:none}
+.menh-rectification-input legend{font-weight:900;padding:0 8px}
+.menh-rectification-input>p{grid-column:1/-1;margin:0;color:var(--muted)}
+.menh-candidate-list{display:grid;gap:12px;margin-top:16px}
+.menh-candidate{border:1px solid var(--line);background:var(--paper)}
+.menh-candidate>summary{cursor:pointer;padding:14px 16px;font-weight:900;color:var(--jade-dark)}
+.menh-candidate .menh-board-section{border:0;margin:0;padding-top:0}
+@media(max-width:720px){.menh-rectification-input{grid-template-columns:1fr}.menh-candidate .menh-board-frame{overflow-x:auto}}

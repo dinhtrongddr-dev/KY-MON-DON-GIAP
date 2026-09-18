@@ -5,7 +5,9 @@ import {createActivityLog} from './activity-log.mjs';
 
 const $=id=>document.getElementById(id);
 const form=$('menh-form'),name=$('birth-name'),place=$('birth-place'),date=$('birth-date'),time=$('birth-time'),unknown=$('birth-time-unknown');
-const timezone=$('menh-timezone'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year');
+const timezone=$('menh-timezone'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year'),rectification=$('birth-time-rectification');
+const rectFields={marriage:$('rect-marriage-years'),children:$('rect-children-years'),career:$('rect-career-years'),wealth:$('rect-wealth-years'),family:$('rect-family-years')};
+const parseYears=value=>[...new Set(String(value||'').split(/[^0-9]+/).filter(Boolean).map(Number).filter(y=>y>=1900&&y<=2100))];
 const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic');
 const activity=createActivityLog();
 let rememberedTime='',currentPrepared=null;
@@ -19,15 +21,17 @@ export function collectMenhForm(){
     birthTimeLocal:unknown.checked?null:time.value,
     tzOffset:Number(timezone.value),
     sexMetadata:sex.value||null,
+    lifeEvents:unknown.checked?Object.fromEntries(Object.entries(rectFields).map(([k,input])=>[k,parseYears(input.value)])):null,
     age:age.value===''?null:Number(age.value),
     annualYear:annual.value===''?null:Number(annual.value),
   };
 }
 export function syncUnknownBirthTime(){
+  rectification.hidden=!unknown.checked;
   if(unknown.checked){
     if(time.value)rememberedTime=time.value;
     time.value='';time.disabled=true;time.required=false;
-    $('birth-time-help').textContent='Không dùng giờ mặc định. Hệ thống lập 12 giờ đôi / tối đa 13 bàn ứng viên.';
+    $('birth-time-help').textContent='Không cần nhập giờ. Hệ thống sẽ đối chiếu các khung giờ sinh và các mốc cuộc đời bạn cung cấp.';
   }else{
     time.disabled=false;time.required=true;
     if(!time.value&&rememberedTime)time.value=rememberedTime;
