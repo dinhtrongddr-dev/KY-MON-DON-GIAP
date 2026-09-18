@@ -36,46 +36,48 @@ function normalizeBody(body={}){
   if(sexMetadata&&!['MALE','FEMALE'].includes(sexMetadata))throw new Error('Giới tính metadata không hợp lệ.');
   const fullName=body.fullName==null||body.fullName===''?null:String(body.fullName).trim().slice(0,120)||null;
   const birthPlace=body.birthPlace==null||body.birthPlace===''?null:String(body.birthPlace).trim().slice(0,160)||null;
-  const lifeEvents=body.lifeEvents&&typeof body.lifeEvents==='object'?Object.fromEntries(Object.entries(body.lifeEvents).map(([k,v])=>[k,Object.freeze((Array.isArray(v)?v:[]).map(Number).filter(y=>Number.isInteger(y)&&y>=1900&&y<=2100))])):null;
-  return freeze({...date,...(time||{}),fullName,birthPlace,lifeEvents,birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
+  const birthTimeWindow=mode==='UNKNOWN'&&WINDOW_FAMILIES[body.birthTimeWindow||'ALL']!==undefined?(body.birthTimeWindow||'ALL'):'ALL';
+  const lifeEvents=Array.isArray(body.lifeEvents)?body.lifeEvents.map(e=>({kind:String(e.kind||'').toUpperCase(),year:Number(e.year),month:e.month==null?null:Number(e.month),day:e.day==null?null:Number(e.day),precision:['DAY','MONTH','YEAR'].includes(e.precision)?e.precision:'YEAR',date:String(e.date||e.year||'')})).filter(e=>EVENT_DOMAIN[e.kind]&&Number.isInteger(e.year)&&e.year>=1900&&e.year<=2100):[];
+  return freeze({...date,...(time||{}),fullName,birthPlace,lifeEvents,birthTimeWindow,birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
 }
 function canonicalPillar(pillar){
   const stem=STEM[pillar?.stem?.han],branch=BRANCH[pillar?.branch?.han];
   if(!stem||!branch)throw new Error('Không chuyển được Can Chi sang canonical pillar.');
   return `${stem}_${branch}`;
 }
-const EVENT_DOMAIN=Object.freeze({marriage:'MARRIAGE',children:'CHILDREN',career:'CAREER',wealth:'WEALTH',family:'FAMILY'});
+const EVENT_DOMAIN=Object.freeze({MARRIAGE:'MARRIAGE',CHILDREN:'CHILDREN',CAREER:'CAREER',WEALTH:'WEALTH',FAMILY:'FAMILY',RELOCATION:'SELF'});
+const WINDOW_FAMILIES=Object.freeze({ALL:null,MORNING:new Set(['MAO','CHEN','SI','WU']),AFTERNOON:new Set(['WU','WEI','SHEN','YOU']),EVENING:new Set(['YOU','XU','HAI']),NIGHT:new Set(['HAI','ZI','CHOU','YIN'])});
+const PRECISION_WEIGHT=Object.freeze({DAY:1,MONTH:.8,YEAR:.55});
 function rectifyCandidates(candidates,normalized){
-  const events=Object.entries(normalized.lifeEvents||{}).flatMap(([kind,years])=>(years||[]).map(year=>({kind,domain:EVENT_DOMAIN[kind],year}))).filter(e=>e.domain);
-  if(!events.length)return freeze({status:'NEED_EVENTS',eventCount:0,ranked:[]});
+  const allowed=WINDOW_FAMILIES[normalized.birthTimeWindow];
+  if(allowed)candidates=candidates.filter(c=>allowed.has(c.family));
+  const events=(normalized.lifeEvents||[]).filter(e=>EVENT_DOMAIN[e.kind]&&Number.isInteger(e.year));
+  if(!events.length)return freeze({status:'NEED_EVENTS',eventCount:0,ranked:[],searchWindow:normalized.birthTimeWindow});
   const ranked=candidates.map(c=>{
-    let points=0,maxPoints=0;const matches=[];
-    const domainPalaces=new Map();
+    let points=0,maxPoints=0;const matches=[];const domainPalaces=new Map();
     for(const event of events){
-      if(!domainPalaces.has(event.domain)){
-        const ids=new Set(c.result.claims.filter(x=>x.domain===event.domain).flatMap(x=>x.evidenceIds));
-        domainPalaces.set(event.domain,new Set(c.result.evidence.filter(e=>ids.has(e.evidenceId)&&e.palace&&e.palace!=='GLOBAL').map(e=>e.palace)));
+      const domain=EVENT_DOMAIN[event.kind];
+      if(!domainPalaces.has(domain)){
+        const ids=new Set(c.result.claims.filter(x=>x.domain===domain).flatMap(x=>x.evidenceIds));
+        domainPalaces.set(domain,new Set(c.result.evidence.filter(e=>ids.has(e.evidenceId)&&e.palace&&e.palace!=='GLOBAL').map(e=>e.palace)));
       }
       const annualPillar=annualPillarForYear(event.year,normalized.tzOffset);
       const timed=analyzeOne(inputFrom(normalized.birthDateLocal,c.time,normalized.tzOffset),{age:event.year-normalized.year,annualPillar,sexMetadata:normalized.sexMetadata}).result;
-      const primary=timed.annual?.annualStemPalace,secondary=timed.annual?.annualBranchPalace,palaces=domainPalaces.get(event.domain);
-      const luckPalace=timed.luck?.palace||null;
-      const primaryMatch=palaces.has(primary),secondaryMatch=palaces.has(secondary),luckMatch=palaces.has(luckPalace);
-      const sameAnnual=primary&&secondary&&primary===secondary;
-      const primaryScore=primaryMatch?4:-1,secondaryScore=secondaryMatch?2:0,luckScore=luckMatch?2:0;
-      const convergence=(primaryMatch&&secondaryMatch?2:0)+(primaryMatch&&luckMatch?2:0)+(secondaryMatch&&luckMatch?1:0)+(sameAnnual&&primaryMatch?1:0);
-      const eventScore=primaryScore+secondaryScore+luckScore+convergence;
-      points+=eventScore;maxPoints+=14;
-      matches.push(freeze({kind:event.kind,year:event.year,primaryMatch,secondaryMatch,luckMatch,eventScore,primary,secondary,luckPalace}));
+      const primary=timed.annual?.annualStemPalace,secondary=timed.annual?.annualBranchPalace,luckPalace=timed.luck?.palace||null,palaces=domainPalaces.get(domain);
+      const primaryMatch=palaces.has(primary),secondaryMatch=palaces.has(secondary),luckMatch=palaces.has(luckPalace),sameAnnual=primary&&secondary&&primary===secondary;
+      const raw=(primaryMatch?4:-1)+(secondaryMatch?2:0)+(luckMatch?2:0)+(primaryMatch&&secondaryMatch?2:0)+(primaryMatch&&luckMatch?2:0)+(secondaryMatch&&luckMatch?1:0)+(sameAnnual&&primaryMatch?1:0);
+      const weight=PRECISION_WEIGHT[event.precision]||.55,eventScore=Math.round(raw*weight*100)/100;
+      points+=eventScore;maxPoints+=14*weight;
+      matches.push(freeze({kind:event.kind,date:event.date,precision:event.precision,weight,primaryMatch,secondaryMatch,luckMatch,eventScore,primary,secondary,luckPalace}));
     }
-    return {id:c.id,family:c.family,time:c.time,points,maxPoints,matches,board:c.result.natal.baseBoard,evidence:c.result.evidence};
+    return {id:c.id,family:c.family,time:c.time,points:Math.round(points*100)/100,maxPoints:Math.round(maxPoints*100)/100,matches,board:c.result.natal.baseBoard,evidence:c.result.evidence};
   }).sort((a,b)=>b.points-a.points||a.time.localeCompare(b.time));
-  const best=ranked[0]?.points??0,second=ranked[1]?.points??0,gap=best-second;
-  const distinctKinds=new Set(events.map(e=>e.kind)).size;
-  const bestSupport=ranked[0]?.matches.filter(m=>m.eventScore>=4).length??0;
-  const minEvidence=events.length>=6&&distinctKinds>=3&&bestSupport>=Math.ceil(events.length*.6);
+  const best=ranked[0]?.points??0,second=ranked[1]?.points??0,gap=Math.round((best-second)*100)/100;
+  const distinctKinds=new Set(events.map(e=>e.kind)).size,preciseEvents=events.filter(e=>e.precision!=='YEAR').length;
+  const bestSupport=ranked[0]?.matches.filter(m=>m.eventScore>=3).length??0;
+  const minEvidence=events.length>=5&&distinctKinds>=3&&bestSupport>=Math.ceil(events.length*.6)&&(preciseEvents>=2||events.length>=8);
   const confidence=!minEvidence||best<=0?'INSUFFICIENT':gap>=8?'STRONG':gap>=4?'LEADING':'TIED';
-  return freeze({status:confidence,eventCount:events.length,distinctKinds,bestSupport,gap,bestId:confidence==='STRONG'?ranked[0]?.id||null:null,ranked:ranked.map((x,i)=>freeze({...x,rank:i+1}))});
+  return freeze({status:confidence,eventCount:events.length,distinctKinds,preciseEvents,bestSupport,gap,searchWindow:normalized.birthTimeWindow,bestId:confidence==='STRONG'?ranked[0]?.id||null:null,ranked:ranked.map((x,i)=>freeze({...x,rank:i+1}))});
 }
 function annualPillarForYear(year,tzOffset){
   if(year==null)return null;
@@ -147,7 +149,7 @@ export async function buildMenhReadingRequest(body){
   const prepared=prepareMenhReading(body),identity=await menhReadingIdentity(prepared);
   return {...prepared,...identity,request:{
     fullName:prepared.input.fullName,birthPlace:prepared.input.birthPlace,birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
-    tzOffset:prepared.input.tzOffset,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,lifeEvents:prepared.input.lifeEvents,
+    tzOffset:prepared.input.tzOffset,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,lifeEvents:prepared.input.lifeEvents,birthTimeWindow:prepared.input.birthTimeWindow,
     protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,...identity,
   }};
 }

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 
 const html=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8');
 const app=readFileSync(new URL('../dist/menh-app.mjs',import.meta.url),'utf8');
+const core=readFileSync(new URL('../dist/menh-reading-core.mjs',import.meta.url),'utf8');
 const main=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
 
 test('Mệnh UI exposes exactly known time input plus Không nhớ giờ sinh checkbox',()=>{
@@ -68,4 +69,15 @@ test('Mệnh long-form reading visually emphasizes fast-scan translated takeaway
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/FOCUS_PATTERNS/);assert.match(view,/menh-ai-focus/);
   assert.match(view,/document\.createTextNode/);assert.doesNotMatch(view,/innerHTML/);
+});
+
+test('unknown birth-time rectification uses remembered window and dated event precision instead of year buckets',()=>{
+  assert.match(html,/id="rect-time-window"/);
+  assert.match(html,/id="rect-add-event"/);
+  assert.match(app,/collectRectEvents/);
+  assert.match(app,/precision:'DAY'/);
+  assert.match(core,/PRECISION_WEIGHT/);
+  assert.match(core,/WINDOW_FAMILIES/);
+  assert.match(core,/confidence=!minEvidence/);
+  assert.doesNotMatch(html,/rect-marriage-years/);
 });
