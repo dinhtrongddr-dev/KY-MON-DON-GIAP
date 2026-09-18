@@ -2,7 +2,7 @@
 
 ## Bản tích hợp Windows 17.2.0 ngày 18/09/2026
 
-Đây là v17.2.1 / TG-CB-6.2, protocol 5, chỉ dùng Luận sâu; chuỗi AI là Astra → Gemini 3.6 Flash → Prism Astra ở mức xhigh. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
+Đây là v17.2.2 / TG-CB-6.2, protocol 5, chỉ dùng Luận sâu; chuỗi AI là Astra → Gemini 3.6 Flash → Prism Astra ở mức xhigh. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
 
 Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` cũ. Cầu nối chọn `qimen-reader`, chỉ cho đọc thư mục tạm trống của từng lượt, tắt mạng công cụ và dùng sandbox Windows `elevated`. Cầu nối kiểm tra cấu hình hiệu lực trước khi gửi câu hỏi và dừng nếu cấu hình mở rộng quyền hoặc dùng `sandbox_mode` cũ. Không cần thay Codex CLI toàn máy. Nếu Windows yêu cầu thiết lập sandbox, hoàn tất thiết lập chính thức; không chuyển sang full access.
 

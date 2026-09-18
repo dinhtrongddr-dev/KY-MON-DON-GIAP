@@ -8,7 +8,7 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Bộ kết nối gọi `codex app-server` qua stdio với model `gpt-6-astra` theo yêu cầu cập nhật ngày 15/09/2026 và đăng nhập ChatGPT. Không dùng OpenAI API key. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Bản 17.2.1 / TG-CB-6.2 (protocol 5) chỉ dùng Luận sâu. Mọi lượt AI chạy mức suy luận xhigh theo thứ tự GPT-6 Astra → Gemini 3.6 Flash → GPT-6 Astra qua Prism; server trả đúng model thực tế đã hoàn tất để UI hiển thị. Dự đoán vẫn chỉ hiện diễn biến hoặc ứng kỳ khi câu hỏi và engine thực sự cần, không ép mọi sự việc vào cùng một form. Căn cứ hiển thị chỉ còn Kỳ Môn; mã ghép nối chấp nhận 4–128 ký tự.
+Bản 17.2.2 / TG-CB-6.2 (protocol 5) chỉ dùng Luận sâu. Mọi lượt AI chạy mức suy luận xhigh theo thứ tự GPT-6 Astra → Gemini 3.6 Flash → GPT-6 Astra qua Prism; server trả đúng model thực tế đã hoàn tất để UI hiển thị. Dự đoán vẫn chỉ hiện diễn biến hoặc ứng kỳ khi câu hỏi và engine thực sự cần, không ép mọi sự việc vào cùng một form. Căn cứ hiển thị chỉ còn Kỳ Môn; mã ghép nối chấp nhận 4–128 ký tự.
 
 Core TG-ROTATING-2.0 giữ nguyên. Sáu mode và Auto, so 2-12 thời điểm bằng bàn riêng, tám phương vị và dữ liệu đã lưu vẫn được hỗ trợ. Source phát hành từ GitHub main lên Cloudflare Pages. Kiến trúc hiện tại: `QIMEN-ARCHITECTURE.md`.
 

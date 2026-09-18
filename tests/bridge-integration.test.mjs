@@ -42,6 +42,7 @@ test('the official website can reach protocol 5 through the existing tunnel',asy
   assert.equal(JSON.parse(result.text).protocol,5);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);
+  assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'same-origin'}})).status,200);
   assert.equal((await call('/api/status',{headers:{Host:'foreign.example'}})).status,403);
 });
 

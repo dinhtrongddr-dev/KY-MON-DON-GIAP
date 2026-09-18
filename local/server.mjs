@@ -60,7 +60,8 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    if(!host)return send(403,{error:'Host không hợp lệ.'});
    const path=new URL(req.url,origin).pathname;
    const requestOrigin=req.headers.origin;
-   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
+   const sameOriginBrowserStatus=host.type==='tunnel'&&path==='/api/status'&&req.method==='GET'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin';
+   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginBrowserStatus)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
      res.setHeader('Access-Control-Allow-Methods','POST, GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
