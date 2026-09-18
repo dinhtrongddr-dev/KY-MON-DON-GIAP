@@ -708,6 +708,23 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-prose-table th,.ai-prose-table td { border:1px solid var(--line); padding:10px; text-align:left; }
 .ai-feedback #ai-status { margin:0; }
 .ai-feedback .ai-elapsed { margin:4px 0 0; font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.activity-summary { display:grid; grid-template-columns:repeat(2,minmax(0,220px)); gap:10px; margin:14px 0 4px; }
+.activity-summary > div { display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding:11px 13px; border:1px solid var(--line); background:#f7faf8; }
+.activity-summary span { color:var(--muted); font-size:.85rem; font-weight:700; }
+.activity-summary strong { color:var(--jade-dark); font-size:1.35rem; font-variant-numeric:tabular-nums; }
+.activity-history { margin:0 0 16px; }
+.activity-history summary { padding:10px 0; }
+.activity-history .ai-note { margin:0 0 8px; color:var(--muted); font-size:.84rem; }
+.activity-reading-list { margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
+.activity-row { display:grid; grid-template-columns:92px 150px minmax(0,1fr); gap:10px; align-items:baseline; padding:9px 0; border-bottom:1px solid var(--line); }
+.activity-row time { font-variant-numeric:tabular-nums; font-weight:750; }
+.activity-row small { color:var(--muted); overflow-wrap:anywhere; }
+.activity-state { font-weight:750; }
+.activity-completed { color:var(--jade-dark); }
+.activity-error,.activity-timeout { color:#9d2f2f; }
+.activity-cancelled,.activity-interrupted { color:var(--muted); }
+.activity-empty { padding:10px 0; color:var(--muted); }
+@media(max-width:560px) { .activity-summary { grid-template-columns:1fr 1fr; } .activity-row { grid-template-columns:80px 1fr; } .activity-row small { grid-column:1 / -1; } }
 .ai-spinner { width:22px; height:22px; margin-top:3px; flex-shrink:0; border:3px solid var(--line); border-top-color:var(--jade); border-radius:50%; animation:ai-spin .8s linear infinite; }
 @keyframes ai-spin { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .ai-spinner { animation:none; } }

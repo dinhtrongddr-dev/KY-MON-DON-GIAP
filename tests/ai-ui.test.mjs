@@ -25,7 +25,7 @@ class MemoryStorage {
   setItem(key,value){this.values.set(key,String(value));}
   removeItem(key){this.values.delete(key);}
 }
-function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClone(payload)}={}){
+function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClone(payload),activity=null}={}){
   const original={document:globalThis.document,fetch:globalThis.fetch,localStorage:globalThis.localStorage};
   globalThis.fetch=fetcher;globalThis.localStorage=storage;
   t.after(()=>Object.assign(globalThis,original));
@@ -35,7 +35,7 @@ function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClon
     ids['ai-read'].textContent='Luận bằng AI';
     const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
     globalThis.document=doc;
-    initLocalAi({prepare});
+    initLocalAi({prepare,activity});
     return {ids,doc};
   };
   return {...mount(),storage,reload:mount};
@@ -94,6 +94,17 @@ test('valid clarification renders text safely; no model HTML is interpreted',asy
   assert.equal(ids['ai-answer'].hidden,false);
   assert.equal(ids['ai-progress'].hidden,true);
   assert.equal(ids['ai-answer'].children[1].children[0].textContent,'<script>alert(1)</script>');
+});
+
+test('successful AI reading is recorded without passing the question to activity history',async t=>{
+  const p=await buildReadingRequest(payload),reading=readingFixture(p);
+  const modelUsed={id:'gpt-5.6-sol',label:'GPT-5.6 Sol',provider:'9router/codex',routeLabel:'9router · ChatGPT',effort:'xhigh',fallbackIndex:0};
+  const calls=[];const activity={startReading(...args){calls.push(['start',args]);return 'r1';},finishReading(...args){calls.push(['finish',args]);}};
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading,modelUsed}),{activity});
+  await ids['ai-read'].fire('click');
+  assert.deepEqual(calls[0],['start',[]]);
+  assert.equal(calls[1][0],'finish');assert.equal(calls[1][1][0],'r1');assert.equal(calls[1][1][1].status,'completed');assert.equal(calls[1][1][1].modelUsed.label,'GPT-5.6 Sol');
+  assert.equal(JSON.stringify(calls).includes(payload.question),false);
 });
 
 test('deep reading renders all three linked stages, alternatives and the actual model used',async t=>{

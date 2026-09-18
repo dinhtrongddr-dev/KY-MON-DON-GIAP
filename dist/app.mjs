@@ -6,6 +6,7 @@ import {initLocalAi} from './ai-local.mjs';
 import {initModeControls} from './qimen/ui-controls.mjs';
 import {prepareReading} from './reading-core.mjs';
 import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
+import {createActivityLog} from './activity-log.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -24,6 +25,7 @@ const methodCopy = document.querySelector("#method-copy");
 const workspace = document.querySelector(".workspace");
 const elementPanel = document.querySelector(".element-panel");
 if (workspace && elementPanel) workspace.append(elementPanel);
+const activity=createActivityLog();
 
 let currentChart = null;
 let selectedPalace = null;
@@ -295,9 +297,11 @@ function generateAndRender({ scroll = false } = {}) {
     errorBox.textContent = "";
     renderChart(chart);
     if (scroll && window.matchMedia("(max-width: 680px)").matches) resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    return chart;
   } catch (error) {
     errorBox.textContent = error instanceof Error ? error.message : "Không thể lập bàn cho thời điểm này.";
     errorBox.hidden = false;
+    return null;
   } finally {
     resultSection.setAttribute("aria-busy", "false");
   }
@@ -312,7 +316,7 @@ function setNow() {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   selectedPalace = null;
-  generateAndRender({ scroll: true });
+  if(generateAndRender({ scroll: true }))activity.recordChart();
 });
 
 document.querySelector("#now-button").addEventListener("click", setNow);
@@ -382,7 +386,7 @@ function prepareAiInput(){
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
   return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input},...readingOptions()};
 }
-initLocalAi({prepare:prepareAiInput});
+initLocalAi({prepare:prepareAiInput,activity});
 const rulePreview=document.getElementById('rule-preview');
 const clearRules=()=>{rulePreview.replaceChildren();rulePreview.hidden=true;};
 form.addEventListener('input',clearRules);form.addEventListener('change',clearRules);document.addEventListener('qimen-chart',clearRules);

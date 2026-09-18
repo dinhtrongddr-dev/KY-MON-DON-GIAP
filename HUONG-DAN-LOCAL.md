@@ -1,8 +1,8 @@
 # Kỳ Môn • Codex trên máy tính
 
-## Bản tích hợp Windows / VPS 17.2.3 ngày 18/09/2026
+## Bản tích hợp Windows / VPS 17.2.4 ngày 18/09/2026
 
-Đây là v17.2.3 / TG-CB-6.2, protocol 5, chỉ dùng Luận sâu. Trên VPS, chuỗi AI là GPT-5.6 Sol qua 9router → Gemini 3.6 Flash qua 9router → Prism Astra, đều ở mức xhigh; Prism giữ nguyên. Nếu bài do một route tạo ra không vượt kiểm tra căn cứ, lượt sửa giới hạn tiếp tục từ route kế tiếp và model thực tế vẫn được trả về UI kể cả khi cuối cùng phải dùng dữ kiện dự phòng. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd` cho cấu hình Windows tương ứng; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập Codex trực tiếp trên Windows, dùng `LOGIN-WINDOWS.cmd` với hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
+Đây là v17.2.4 / TG-CB-6.2, protocol 5, chỉ dùng Luận sâu. Trên VPS, chuỗi AI là GPT-5.6 Sol qua 9router → Gemini 3.6 Flash qua 9router → Prism Astra, đều ở mức xhigh; Prism giữ nguyên. Website lưu lịch sử hoạt động theo từng trình duyệt tối đa 30 ngày để đếm lượt Lập bàn và lượt Luận AI, nhưng không ghi nội dung câu hỏi. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd` cho cấu hình Windows tương ứng; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập Codex trực tiếp trên Windows, dùng `LOGIN-WINDOWS.cmd` với hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
 
 Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` cũ. Cầu nối chọn `qimen-reader`, chỉ cho đọc thư mục tạm trống của từng lượt, tắt mạng công cụ và dùng sandbox Windows `elevated`. Cầu nối kiểm tra cấu hình hiệu lực trước khi gửi câu hỏi và dừng nếu cấu hình mở rộng quyền hoặc dùng `sandbox_mode` cũ. Không cần thay Codex CLI toàn máy. Nếu Windows yêu cầu thiết lập sandbox, hoàn tất thiết lập chính thức; không chuyển sang full access.
 

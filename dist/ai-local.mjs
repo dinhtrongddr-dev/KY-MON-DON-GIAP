@@ -1,13 +1,14 @@
 import {buildReadingRequest,assertCompatible,validateReadingResponse,RULE_VERSION} from './reading-core.mjs';
 import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
-export function initLocalAi({prepare}) {
+export function initLocalAi({prepare,activity=null}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
  const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
- let active=null,version=0,progressTimer=null,requestTimeout=null;
+ let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
+ const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
  const endpoint=AI_RELAY_ORIGIN;
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
@@ -46,7 +47,7 @@ export function initLocalAi({prepare}) {
    read.textContent=isReading?'Đang luận AI…':readLabel;status.textContent=message;
    return controller;
  };
- const cancelWork=()=>{version++;active?.abort();active=null;finishWork();answer.hidden=true;answer.replaceChildren();};
+ const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
@@ -80,12 +81,15 @@ export function initLocalAi({prepare}) {
      const health=await call('/api/status',null,controller.signal);assertCompatible(health);
      if(v!==version)return;
      status.textContent=[...prepared.context.warnings,'AI đang ghép các căn cứ thành diễn biến cho sự việc đang hỏi. Bạn có thể Hủy trong lúc chờ.'].join(' ');
+     activityReadingId=track('startReading');
      const data=await call('/api/read',prepared.request,controller.signal);
      if(v!==version)return;
      status.textContent='Đang kiểm tra căn cứ và hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);
+     const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
+     if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.routeLabel} / ${data.modelUsed.effort}`:'';
      status.textContent=data.reading.status==='verified_fallback'?`AI đã trả bài nhưng chưa vượt kiểm tra căn cứ${modelText}. Đang hiển thị phần dữ kiện đã tính để bạn đối chiếu.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin ảnh hưởng cách luận.':`Đã nhận lời luận AI${modelText}; căn cứ và mã bàn khớp lượt hỏi này. Nội dung diễn giải vẫn cần đối chiếu thực tế.`;
-   }catch(e){if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
+   }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });
 }
