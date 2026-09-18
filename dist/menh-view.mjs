@@ -18,24 +18,40 @@ function addMeta(grid,label,value){
   const box=el('div','menh-meta-item');
   box.append(el('span','',label),el('strong','',value==null?'—':value));grid.append(box);
 }
+const PALACE_VI=Object.freeze({KAN_1:'Khảm 1',KUN_2:'Khôn 2',ZHEN_3:'Chấn 3',XUN_4:'Tốn 4',CENTER_5:'Trung 5',QIAN_6:'Càn 6',DUI_7:'Đoài 7',GEN_8:'Cấn 8',LI_9:'Ly 9'});
+const UI_TERM=Object.freeze({
+  FATHER:'cha',MOTHER:'mẹ',YANG:'dương',YIN:'âm',PRESSURE:'chịu áp lực/kiểm soát',
+  NINE_STAR:'Cửu tinh',EIGHT_DOOR:'Bát môn',TEN_STEM_KE_YING_AND_PALACE_STATE:'thiên can và trạng thái cung',
+  LOCAL_OR_ANCESTRAL_BASE_MORE_SUPPORTIVE:'nguồn lực tại chỗ hoặc nền tảng gia đình có xu hướng hỗ trợ hơn',
+  SELF_GENERATES_CAREER:'bản thân phải chủ động tạo và nuôi cơ hội nghề nghiệp',
+  CAREER_GENERATES_SELF:'môi trường nghề nghiệp có xu hướng hỗ trợ bản thân',
+  CAREER_CONTROLS_SELF:'công việc tạo áp lực lên bản thân',SELF_CONTROLS_CAREER:'bản thân có xu hướng chủ động kiểm soát công việc',
+});
+function friendlyText(value){
+  let s=String(value??'');
+  for(const [code,label] of Object.entries(PALACE_VI))s=s.replaceAll(code,label);
+  for(const [code,label] of Object.entries(UI_TERM))s=s.replaceAll(code,label);
+  s=s.replace(/\bnatal\b/gi,'Mệnh bàn').replace(/\bcorroborator\b/gi,'lớp đối chiếu bổ sung').replace(/\bPRIMARY\b/g,'chính').replace(/\bSECONDARY\b/g,'phụ');
+  s=s.replace(/\b([A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+)\b/g,(_,code)=>code.toLowerCase().replaceAll('_',' '));
+  return s;
+}
 function evidenceDetails(claim,result){
   const ids=new Set(claim.evidenceIds),items=(result.evidence||[]).filter(e=>ids.has(e.evidenceId));
   if(!items.length)return null;
   const details=el('details','menh-evidence');
-  details.append(el('summary','','Căn cứ kỹ thuật · '+items.length));
+  details.append(el('summary','','Xem căn cứ · '+items.length));
   const list=el('ul','menh-evidence-list');
   for(const item of items){
     const li=el('li');
-    li.append(el('strong','',(item.palace||'')+' · '+item.mechanism));
-    li.append(el('span','',item.metadata?.summary||item.effectTag));
+    li.append(el('span','',friendlyText(item.metadata?.summary||item.effectTag)));
     list.append(li);
   }
   details.append(list);return details;
 }
 function claimCard(claim,result){
   const card=el('article','menh-claim');
-  card.append(el('p','eyebrow',DOMAIN_LABEL[claim.domain]||claim.domain));
-  card.append(el('p','menh-claim-text',claim.text));
+  card.append(el('p','eyebrow',DOMAIN_LABEL[claim.domain]||friendlyText(claim.domain)));
+  card.append(el('p','menh-claim-text',friendlyText(claim.text)));
   const details=evidenceDetails(claim,result);if(details)card.append(details);
   return card;
 }
@@ -58,8 +74,9 @@ function makeEntity(className,label,item){
   node.append(el('span','entity-label',label),el('span','han',item?.han||'—'),el('span','vi',item?.vi||'—'));
   return node;
 }
-function natalPalaceNode(palace,board){
-  const node=el('div',palace.number===5?'palace palace-center':'palace');
+function natalPalaceNode(palace,board,selfPalaceNumber){
+  const isSelf=palace.number===selfPalaceNumber;
+  const node=el('div',(palace.number===5?'palace palace-center':'palace')+(isSelf?' menh-self-palace':''));
   node.dataset.element=elementSlug(palace.element);
   node.setAttribute('role','group');
   node.setAttribute('aria-label',palace.vi+' cung '+palace.number);
@@ -69,6 +86,7 @@ function natalPalaceNode(palace,board){
   if(palace.number===5)strong.textContent='中 · Trung Ngũ';
   else strong.append(el('span','trigram',palace.trigram),document.createTextNode(palace.vi+' · '+palace.han));
   head.append(strong,el('span','',palace.number===5?'Thổ · trung tâm':palace.direction+' · '+palace.element));
+  if(isSelf)head.append(el('span','menh-self-badge','BẢN MỆNH · BẠN Ở ĐÂY'));
   node.append(head);
 
   if(palace.number===5){
@@ -123,18 +141,19 @@ function appendPatternFlags(root,board){
   if(board.fuYin&&!fu)addFlag(root,'Phục Ngâm',true);
   if(board.fanYin&&!fan)addFlag(root,'Phản Ngâm',true);
 }
-function renderNatalBoard(board){
+function renderNatalBoard(board,selfPalaceNumber=null){
   const section=el('section','menh-board-section');
   const toolbar=el('div','board-toolbar menh-board-toolbar'),title=el('div');
-  title.append(el('p','eyebrow','Mệnh bàn theo giờ sinh'),el('h2','','Mệnh bàn Kỳ Môn 3×3'));
+  title.append(el('p','eyebrow','Mệnh bàn theo giờ sinh'),el('h2','','Mệnh bàn Kỳ Môn'));
+  const selfPalace=board.palaces.find(p=>p.number===selfPalaceNumber)||board.palaces.find(p=>(p.heavenStems||[]).some(s=>s.han===board.pillars.day.stem.han))||null;
   const key=el('div','board-key');
-  key.append(el('span','menh-board-key-self','Nhật can = Bản thân · '+board.pillars.day.vi));
+  key.append(el('span','menh-board-key-self','Bản mệnh: '+board.pillars.day.vi+(selfPalace?' · ở cung '+selfPalace.vi+' '+selfPalace.number:'')));
   key.append(el('span','','Bàn Kỳ Môn dùng để luận Mệnh'));
   toolbar.append(title,key);section.append(toolbar);
 
   const frame=el('div','board-frame menh-board-frame'),grid=el('div','qimen-board menh-qimen-board');
   grid.setAttribute('role','group');grid.setAttribute('aria-label','Mệnh bàn Kỳ Môn chín cung theo giờ sinh');
-  for(const palace of board.palaces)grid.append(natalPalaceNode(palace,board));
+  for(const palace of board.palaces)grid.append(natalPalaceNode(palace,board,selfPalace?.number??null));
   frame.append(grid);section.append(frame);
 
   const flags=el('div','board-flags menh-board-flags');
@@ -149,7 +168,7 @@ function renderNatalBoard(board){
 function renderUnknownBoardNotice(prepared){
   const section=el('section','menh-board-section menh-board-unknown');
   const toolbar=el('div','board-toolbar menh-board-toolbar'),title=el('div');
-  title.append(el('p','eyebrow','Mệnh bàn Kỳ Môn · giờ sinh chưa xác định'),el('h2','','Không có một bàn 3×3 duy nhất'));
+  title.append(el('p','eyebrow','Mệnh bàn Kỳ Môn · giờ sinh chưa xác định'),el('h2','','Chưa thể xác định một Mệnh bàn duy nhất'));
   toolbar.append(title);section.append(toolbar);
   const note=el('div','menh-unknown-board-placeholder');
   note.append(el('strong','','Hệ thống đang đối chiếu '+prepared.candidateCount+' Mệnh bàn theo các khung giờ có thể.'));
@@ -219,7 +238,9 @@ export function renderMenhDeterministic(container,prepared){
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
-    container.append(renderNatalBoard(board));
+    const selfEvidence=(prepared.result.evidence||[]).find(e=>e.evidenceId==='SELF_DAY_STEM');
+    const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
+    container.append(renderNatalBoard(board,selfPalaceNumber));
   }else container.append(renderUnknownBoardNotice(prepared));
   container.append(renderTechnical(prepared));
   const body=el('div','menh-deterministic-body');

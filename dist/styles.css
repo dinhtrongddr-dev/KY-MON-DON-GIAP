@@ -882,3 +882,8 @@ textarea:focus { outline:3px solid #bce8ce; }
 
 .menh-ai-focus{font-weight:800;color:var(--jade-dark);text-decoration-thickness:.08em;text-underline-offset:.14em}
 .menh-ai-section p+p{margin-top:12px}
+
+.menh-self-palace{outline:4px solid var(--jade-dark);outline-offset:-4px;z-index:2;box-shadow:inset 0 0 0 3px rgba(255,255,255,.72)}
+.menh-self-palace .palace-head{min-height:52px;flex-wrap:wrap}
+.menh-self-badge{display:block!important;width:100%;padding:4px 6px;margin-top:3px;background:var(--jade-dark);color:#fff!important;font-size:.66rem!important;font-weight:900!important;letter-spacing:.04em;text-align:center;white-space:normal!important}
+.menh-board-key-self{font-weight:900}
