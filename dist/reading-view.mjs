@@ -55,6 +55,7 @@ export function renderReading(answer,data,prepared) {
     const obstacle=section('Điều kiện cần xác minh',r.bottleneck,answer);if(obstacle&&r.bottleneck.resolution)prose(r.bottleneck.resolution,obstacle);
     for(const action of r.actions){prose(action.text,answer);trace([g.recommendations.find(a=>a.id===action.recommendation_id).claimId],answer,answer);}
     section('',r.alternative,answer);section('',r.timing,answer);
+    if(['timing','direction'].includes(profile.mode))renderComparison(answer,prepared);
     const details=node('details','',answer);node('summary','Đối chiếu dữ kiện và giới hạn',details);renderTechnical(details,prepared);
     if(r.questions.length){const list=node('ul','',answer);for(const q of r.questions)node('li',q,list);}
     finishEvidence();answer.hidden=false;return;

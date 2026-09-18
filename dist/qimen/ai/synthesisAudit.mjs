@@ -36,8 +36,10 @@ function auditRepetition(passages,g) {
   return [];
 }
 export function auditSynthesis(passages,context) {
-  const g=context.allInOne.reasoning,qc=g.questionContext,source=normalized(context.question),issues=[];
-  const candidateDates=new Set((context.allInOne.comparison?.candidates||[]).map(c=>`${c.input.year}-${String(c.input.month).padStart(2,'0')}-${String(c.input.day).padStart(2,'0')}`));
+  const c=context.allInOne,g=c.reasoning,qc=g.questionContext,source=normalized(context.question),issues=[];
+  const candidates=c.comparison?.candidates||[];
+  const candidateDates=new Set(candidates.map(c=>`${c.input.year}-${String(c.input.month).padStart(2,'0')}-${String(c.input.day).padStart(2,'0')}`));
+  const candidateDisplayDates=new Set(candidates.flatMap(c=>{const short=`${String(c.input.day).padStart(2,'0')}/${String(c.input.month).padStart(2,'0')}`;return [short,`${short}/${c.input.year}`];}));
   const has=id=>g.nodes.some(n=>n.id===id);
   const actors=[['customer',/\b(khach hang|khach se|khach da)\b/],['payer',/\b(nguoi tra tien|ben tra tien|ben thanh toan|nguoi chuyen tien|ben chuyen khoan)\b/],
     ['authority',/\b(nguoi co quyen (?:phe duyet|chap thuan)|nguoi phe duyet|nguoi duyet|cap phe duyet|giam doc)\b/]];
@@ -45,14 +47,20 @@ export function auditSynthesis(passages,context) {
     const q=normalized(p.text);if(!q)continue;
     for(const [id,pattern] of actors)if(pattern.test(q)&&!pattern.test(source)&&!has(id)&&!(id==='authority'&&has('decisionMaker')))
       issues.push(`Đoạn ${p.slot} tự thêm vai ${id} ngoài actor map và câu hỏi.`);
-    for(const match of q.matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g))
-      if(!source.includes(match[0]))issues.push('Bài luận tự thêm số tiền ngoài dữ liệu.');
+    for(const match of q.matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g)){
+      if(/[/:]/.test(q[match.index-1]||''))continue;
+      if(!source.includes(match[0]))issues.push(`Bài luận tự thêm số tiền ngoài dữ liệu: ${match[0]}.`);
+    }
     const timings=/\b(?:\d+|mot|hai|ba|bon|nam|sau|bay)(?:\s*[-–]\s*(?:\d+|mot|hai|ba))?\s*(?:ngay|tuan|thang)(?:\s+nua)?\b|\bthu (?:hai|ba|tu|nam|sau|bay)\b|\b(?:chu nhat|cuoi tuan|dau tuan|ngay mai|chieu mai|sang mai)\b/g;
     for(const match of q.matchAll(timings)){
-      const prefix=q.slice(0,match.index).split(/[.!?;]/).at(-1);
+      const before=q.slice(0,match.index);
+      const orderPhrase=match[0]==='thu tu'&&/^thứ\s+tự(?=\s|[.,;:!?]|$)/iu.test(p.text.slice(match.index));
+      const ordinalWeekday=/^thu\s+(?:hai|ba|tu|nam|sau|bay)\b/.test(match[0])&&/\b(?:moc|lua chon|ung vien|phuong an|thoi diem|buoc|hang|muc|nhom|truong hop|lan|xep|dung|giu|thuoc)\s*$/.test(before);
+      if(orderPhrase||ordinalWeekday)continue;
+      const prefix=before.split(/[.!?;]/).at(-1);
       const denied=/\b(chua|khong (?:the|co|nen|duoc))\b/.test(prefix)&&!/\b(neu|nhung|tuy nhien)\b/.test(prefix);
       const forecasts=/\b(se|xay ra|ung vao|tien ve|nhan tien|tien vao)\b/.test(prefix);
-      if(!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0]))issues.push('Mốc ứng kỳ ngoài Timing Engine; không được tự định ngày hoặc số ngày.');
+      if(!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0]))issues.push(`Mốc ứng kỳ ngoài Timing Engine: ${match[0]}; không được tự định ngày hoặc số ngày.`);
     }
     for(const match of q.matchAll(/\b\d{4}-\d{2}-\d{2}\b|\bngay \d{1,2} thang \d{1,2}(?: nam \d{4})?\b/g)){
       const scope=Object.values(g.timing.window||{}).includes(match[0])&&/\b(khoang hoi|pham vi|cua so|thoi han)\b/.test(q)&&!/\b(se|xay ra|tien ve)\b/.test(q);
@@ -60,7 +68,13 @@ export function auditSynthesis(passages,context) {
       if(!scope&&!comparison&&!source.includes(match[0]))issues.push('Ngày cụ thể ngoài dữ liệu thời gian được phép.');
     }
     const calendarDates=[...q.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)];
-    if(calendarDates.length&&!['comparison','question'].includes(p.slot)&&/\b(se|chac chan|nhat dinh)\b/.test(q)&&!conditionalPrefix(q,q.search(/\b(se|chac chan|nhat dinh)\b/)))issues.push('Khoảng lịch câu hỏi không phải ngày dự báo kết quả.');
+    const onlyTimingCandidates=c.classification.mode==='timing'&&calendarDates.length&&calendarDates.every(m=>candidateDisplayDates.has(m[0]));
+    const futureIndex=q.search(/\b(se|chac chan|nhat dinh)\b/);
+    const futurePrefix=futureIndex>=0?q.slice(0,futureIndex).split(/[.!?;]/).at(-1):'';
+    const negatedFuture=/\b(?:khong phai(?: la)?|khong dong nghia|khong the|khong nen|khong duoc|chua|khong co can cu de)\b[^.!?;]{0,120}$/.test(futurePrefix);
+    const unconditionalFuture=futureIndex>=0&&!conditionalPrefix(q,futureIndex)&&!negatedFuture;
+    if(calendarDates.length&&!['comparison','question'].includes(p.slot)&&unconditionalFuture&&!onlyTimingCandidates)issues.push('Khoảng lịch câu hỏi không phải ngày dự báo kết quả.');
+    if(onlyTimingCandidates&&unconditionalFuture&&/\b(?:se|chac chan|nhat dinh)\b[^.!?;]{0,80}\b(?:ky duoc|thanh cong|duoc ky|duoc phe duyet|duoc thanh toan|nhan duoc|tien ve|hoan tat|hoan thanh)\b/.test(q))issues.push('Ứng viên chọn thời điểm không phải ngày bảo đảm kết quả.');
     for(const match of q.matchAll(/\b(?:khach hang|doi tac|khoan thu|hop dong(?: moi)?|tien|ban)\s+(?:da|dang|se)\s+(?:duoc )?(?:dong y|chuyen tien|nhan|xac nhan|ky|thanh toan|phe duyet|vao tai khoan)[^.!?;]*/g)){
       if(!conditionalPrefix(q,match.index)&&!source.includes(match[0].replace(/[,.]$/,'')))issues.push('Bài luận tự khẳng định sự kiện ngoài điều người dùng đã kể.');
     }

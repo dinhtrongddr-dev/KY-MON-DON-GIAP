@@ -4,6 +4,7 @@ import {TOPICS,GENERATES,CONTROLS} from '../dist/guide.mjs';
 import {elementLink} from '../dist/reading-focus.mjs';
 import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,instructionsFor} from '../local/reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
+import {attachAiRoute,aiRouteOf} from '../local/ai-client.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {parseStructuredText} from '../local/codex-client.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
@@ -64,7 +65,9 @@ test('brief content gets exactly one bounded rewrite with the same facts and que
 
 test('a second inadequate reading returns verified facts; authentication or transport errors are never retried',async()=>{
   const p=prepareReading(body);let count=0;
-  const fallback=await interpretReading(p,{runner:async()=>{count++;return {};}});assert.equal(fallback.status,'verified_fallback');assert.equal(count,2);
+  const route={id:'sol',provider:'9router/codex',model:'cx/gpt-5.6-sol',modelId:'gpt-5.6-sol',label:'GPT-5.6 Sol',routeLabel:'9router · ChatGPT',effort:'xhigh',fallbackIndex:0};
+  const fallback=await interpretReading(p,{runner:async()=>{count++;return attachAiRoute({},route);}});assert.equal(fallback.status,'verified_fallback');assert.equal(count,2);
+  assert.equal(aiRouteOf(fallback)?.modelId,'gpt-5.6-sol');
   assert.doesNotThrow(()=>validateReading(fallback,p.facts,body.topic,p.context));
   count=0;await assert.rejects(interpretReading(p,{runner:async()=>{count++;throw new Error('Không có quyền truy cập model');}}),/quyền truy cập/);assert.equal(count,1);
 });

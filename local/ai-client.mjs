@@ -2,10 +2,10 @@ import {runCodex,READING_TIMEOUT_MS} from './codex-client.mjs';
 import {runPrism} from './prism-client.mjs';
 
 export const ROUTING_MODE='fallback-chain';
-export const MODEL='astra → gemini → prism-astra';
+export const MODEL='sol → gemini → prism-astra';
 export const REASONING_EFFORT='xhigh';
 export const AI_ROUTES=Object.freeze([
-  Object.freeze({id:'astra',provider:'9router/codex',model:'cx/gpt-6-astra',modelId:'gpt-6-astra',label:'GPT-6 Astra',routeLabel:'9router · Codex',effort:'xhigh'}),
+  Object.freeze({id:'sol',provider:'9router/codex',model:'cx/gpt-5.6-sol',modelId:'gpt-5.6-sol',label:'GPT-5.6 Sol',routeLabel:'9router · ChatGPT',effort:'xhigh'}),
   Object.freeze({id:'gemini',provider:'9router/gemini',model:'gemini/gemini-3.6-flash',modelId:'gemini-3.6-flash',label:'Gemini 3.6 Flash',routeLabel:'9router · Gemini',effort:'xhigh'}),
   Object.freeze({id:'prism-astra',provider:'prism',model:'gpt-6-astra',modelId:'gpt-6-astra',label:'GPT-6 Astra',routeLabel:'Prism fallback',effort:'xhigh'})
 ]);
@@ -15,9 +15,11 @@ export function attachAiRoute(value,route){
   return value;
 }
 export const aiRouteOf=value=>value?.__aiRoute||null;
-export async function runAI(instructions,input,schema,{signal,codexRunner=runCodex,prismRunner=runPrism}={}){
+export async function runAI(instructions,input,schema,{signal,codexRunner=runCodex,prismRunner=runPrism,routeStartIndex=0}={}){
   const failures=[];
+  const start=Number.isInteger(routeStartIndex)&&routeStartIndex>=0&&routeStartIndex<AI_ROUTES.length?routeStartIndex:0;
   for(const [index,route] of AI_ROUTES.entries()){
+    if(index<start)continue;
     signal?.throwIfAborted();
     try{
       const value=route.provider==='prism'
@@ -29,7 +31,7 @@ export async function runAI(instructions,input,schema,{signal,codexRunner=runCod
       failures.push({id:route.id,message:error?.message||String(error)});
     }
   }
-  const error=new Error('Cả Astra, Gemini và Prism Astra đều chưa hoàn tất lượt luận. Hãy thử lại sau.');
+  const error=new Error('Cả Sol, Gemini và Prism Astra đều chưa hoàn tất lượt luận. Hãy thử lại sau.');
   Object.defineProperty(error,'routeFailures',{value:failures,enumerable:false});
   throw error;
 }

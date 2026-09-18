@@ -43,4 +43,8 @@ test('AI cannot omit other candidate comparisons or add a fabricated time',()=>{
   for(const mutate of [r=>r.comparisons.pop(),r=>r.comparisons[0].id='timing_99']) {
     const r=readingFixture(p);mutate(r);assert.throws(()=>validateReading(r,p.facts,'contract',p.context));
   }
+  const known=readingFixture(p);known.comparisons[0].reason+=' Mốc 14/09 là cách viết ngắn của ứng viên đã nhập. Hai mốc 10:00 và 14:00 đồng hạng theo tiêu chí đã tính.';
+  assert.equal(validateReading(known,p.facts,'contract',p.context),known);
+  const invented=readingFixture(p);invented.comparisons[0].reason+=' Mốc 17/09 không có trong danh sách.';
+  assert.throws(()=>validateReading(invented,p.facts,'contract',p.context),/ngày chính xác ngoài dữ liệu/);
 });

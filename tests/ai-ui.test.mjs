@@ -5,6 +5,7 @@ import {createRequire} from 'node:module';
 import {initLocalAi} from '../dist/ai-local.mjs';
 import {buildReadingRequest,RULE_VERSION,READING_PROTOCOL} from '../dist/reading-core.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
+import {verifiedFallback} from '../dist/qimen/ai/verifiedFallback.mjs';
 globalThis.Solar=createRequire(import.meta.url)('../dist/vendor/lunar.js').Solar;
 const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 class Element {
@@ -24,7 +25,7 @@ class MemoryStorage {
   setItem(key,value){this.values.set(key,String(value));}
   removeItem(key){this.values.delete(key);}
 }
-function setup(t,fetcher,{storage=new MemoryStorage()}={}){
+function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClone(payload)}={}){
   const original={document:globalThis.document,fetch:globalThis.fetch,localStorage:globalThis.localStorage};
   globalThis.fetch=fetcher;globalThis.localStorage=storage;
   t.after(()=>Object.assign(globalThis,original));
@@ -34,7 +35,7 @@ function setup(t,fetcher,{storage=new MemoryStorage()}={}){
     ids['ai-read'].textContent='Luận bằng AI';
     const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
     globalThis.document=doc;
-    initLocalAi({prepare:()=>structuredClone(payload)});
+    initLocalAi({prepare});
     return {ids,doc};
   };
   return {...mount(),storage,reload:mount};
@@ -107,6 +108,30 @@ test('deep reading renders all three linked stages, alternatives and the actual 
   assert.equal(all.filter(n=>n.className==='ai-stage-label').length,3);
   const badge=all.find(n=>n.className==='ai-model-used');assert.ok(badge);assert.match(badge.textContent,/GPT-6 Astra.*Prism fallback.*xhigh.*fallback 2/);
   const button=all.find(n=>n.className==='jump-cung');await button.fire('click');assert.match(selected,/data-palace/);
+});
+
+test('verified fallback still shows which model produced the rejected AI draft',async t=>{
+  const p=await buildReadingRequest(payload),reading=verifiedFallback(p.context);
+  const modelUsed={id:'gpt-5.6-sol',label:'GPT-5.6 Sol',provider:'9router/codex',routeLabel:'9router · ChatGPT',effort:'xhigh',fallbackIndex:0};
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading,modelUsed}));
+  await ids['ai-read'].fire('click');
+  const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
+  assert.ok(all.some(n=>n.className==='ai-model-used'&&/GPT-5.6 Sol.*xhigh/.test(n.textContent)));
+  assert.match(ids['ai-status'].textContent,/GPT-5.6 Sol.*xhigh/);
+  assert.match(ids['ai-status'].textContent,/chưa vượt kiểm tra căn cứ/i);
+});
+
+test('timing fallback keeps the deterministic comparison instead of looking empty',async t=>{
+  const timingPayload={question:'Ngày nào nên gửi báo giá?',topic:'contract',mode:'timing',action:'quote',method:'chaibu',input:{year:2026,month:9,day:18,hour:10,minute:0,tzOffset:7},candidates:['2026-09-19T09:00','2026-09-20T10:00','2026-09-21T14:00']};
+  const p=await buildReadingRequest(timingPayload),reading=verifiedFallback(p.context);
+  const modelUsed={id:'gpt-5.6-sol',label:'GPT-5.6 Sol',provider:'9router/codex',routeLabel:'9router · ChatGPT',effort:'xhigh',fallbackIndex:0};
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading,modelUsed}),{prepare:()=>structuredClone(timingPayload)});
+  await ids['ai-read'].fire('click');
+  const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
+  const visible=all.map(n=>n.textContent||'').join(' ');
+  assert.match(visible,/AI chưa hoàn tất phần diễn giải chọn thời điểm/);
+  assert.match(visible,/So sánh các thời điểm đã nhập/);
+  for(const row of p.context.allInOne.comparison.ranking)assert.match(visible,new RegExp(row.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
 });
 
 test('underdeveloped content is rejected instead of looking like a completed reading',async t=>{

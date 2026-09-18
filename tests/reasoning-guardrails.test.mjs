@@ -51,8 +51,16 @@ test('deterministic debug is opt-in and does not collect auth or arbitrary conte
 test('computed timing candidates may be named for comparison, never as promised outcome dates',async()=>{
   const {auditSynthesis}=await load(),p=prepareReading({...body,question:'Chọn ngày nào ký hợp đồng?',mode:'timing',candidates:['2026-09-17T10:00','2026-09-18T10:00']});
   assert.deepEqual(auditSynthesis([section('Ứng viên 2026-09-17 có điều kiện cản, so riêng với bàn ngày 2026-09-18.','comparison')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('Hai mốc 10:00 và 14:00 đồng hạng theo bộ tiêu chí đã tính.','summary')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('Mốc thứ ba có nhiều điều kiện cản hơn nên xếp sau.','summary')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('19/09 xếp thứ hai trong ba ứng viên đã nhập.','summary')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('Thứ tự phù hợp là 17/09 rồi 18/09.','timing')],p.context),[]);
+  assert.ok(auditSynthesis([section('Thứ Tư sẽ có kết quả.','timing')],p.context).length);
   assert.ok(auditSynthesis([section('Ứng viên 2026-09-19 thuận lợi hơn.','comparison')],p.context).length);
   assert.ok(auditSynthesis([section('Ngày 2026-09-17 hợp đồng chắc chắn được ký.','timing')],p.context).length);
+  assert.deepEqual(auditSynthesis([section('17/09/2026 sẽ phù hợp hơn để thực hiện hành động, nhưng đây chỉ là xếp hạng tương đối.','summary')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('17/09 và 18/09 là hai ứng viên đã nhập; đây không phải ngày chắc chắn có kết quả.','timing')],p.context),[]);
+  assert.ok(auditSynthesis([section('17/09/2026 sẽ ký được hợp đồng.','summary')],p.context).length);
 });
 
 test('stage guards also reject invented completion and categorical success outside finance',async()=>{

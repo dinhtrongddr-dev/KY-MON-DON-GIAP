@@ -1,10 +1,16 @@
 export const plainReadingText=text=>text.replace(/\*\*([^*]+)\*\*/g,'$1');
-export function formatError(text) {
+export function formatError(text,{allowComparisonEmphasis=false}={}) {
   if((text.match(/\*\*/g)||[]).length%2||/\*{3,}/.test(text))return 'Dấu tô đậm chưa cân bằng.';
   for(const paragraph of text.split(/\n\s*\n/)){
     const matches=[...paragraph.matchAll(/\*\*([^*]+)\*\*/g)];
-    if(matches.length>2||matches.some(m=>m[1].length>240))return 'Chỉ nhấn một đến hai cụm ngắn trong mỗi đoạn.';
-    if(matches.some(m=>/^(?:chắc chắn|đảm bảo)\b/iu.test(m[1])||/\b(?:Nếu|Có thể|Chưa|Không đủ|Chỉ khi)\b[^.!?]*$/u.test(paragraph.slice(0,m.index))&&!/^(?:Nếu|Có thể|Chưa|Không|Chỉ khi)/u.test(m[1])))return 'Phần nhấn cần giữ cả điều kiện và mức chưa chắc chắn.';
+    if(matches.length>(allowComparisonEmphasis?3:2)||matches.some(m=>m[1].length>240))return allowComparisonEmphasis?'Chỉ nhấn tối đa ba cụm ngắn trong đoạn so sánh.':'Chỉ nhấn một đến hai cụm ngắn trong mỗi đoạn.';
+    if(matches.some(m=>{
+      if(/^(?:chắc chắn|đảm bảo)\b/iu.test(m[1]))return true;
+      const conditional=/\b(?:Nếu|Có thể|Chưa|Không đủ|Chỉ khi)\b[^.!?]*$/u.test(paragraph.slice(0,m.index));
+      if(!conditional||/^(?:Nếu|Có thể|Chưa|Không|Chỉ khi)/u.test(m[1]))return false;
+      if(allowComparisonEmphasis&&/\b(?:hạng|xếp|phù hợp|ưu tiên|đồng hạng|ngang nhau)\b/iu.test(m[1]))return false;
+      return true;
+    }))return 'Phần nhấn cần giữ cả điều kiện và mức chưa chắc chắn.';
   }
   return null;
 }

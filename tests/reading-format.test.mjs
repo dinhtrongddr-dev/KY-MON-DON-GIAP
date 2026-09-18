@@ -16,6 +16,11 @@ test('bold preserves all words, qualifiers, Vietnamese and line breaks',()=>{
   assert.equal(formatError(text),null);
   assert.ok(formatError('Cần **xác minh lại.'));
   assert.ok(formatError('Nếu có phản hồi, **chắc chắn ký**.'));
+  assert.ok(formatError('Nếu chỉ so ba lựa chọn, **20/09 phù hợp nhất**.'));
+  assert.equal(formatError('Nếu chỉ so ba lựa chọn, **20/09 phù hợp nhất**.',{allowComparisonEmphasis:true}),null);
+  assert.ok(formatError('Nếu chỉ so ba lựa chọn, **chắc chắn ký**.',{allowComparisonEmphasis:true}));
+  assert.equal(formatError('**20/09** hoặc **21/09**; **19/09 xếp sau**.',{allowComparisonEmphasis:true}),null);
+  assert.ok(formatError('**20/09** **21/09** **19/09** **18/09**.',{allowComparisonEmphasis:true}));
 });
 test('safe DOM rendering supports line breaks and tables without interpreting model HTML',()=>{
   const root=new Node('div');

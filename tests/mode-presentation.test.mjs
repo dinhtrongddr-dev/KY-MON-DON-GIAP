@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildPresentationProfile} from '../dist/qimen/ai/presentation.mjs';
+import {synthesisInstructions} from '../dist/qimen/ai/prompts.mjs';
 
 const context=(mode,{question='Việc này có thành không?',depth='deep',allowedPredictions=[]}={})=>({allInOne:{classification:{mode},questionContext:{question,depth},reasoning:{timing:{allowedPredictions}}}});
 const labels=profile=>profile.tabs.map(([,label])=>label);
@@ -32,4 +33,10 @@ test('timing and direction are comparison layouts, not generic event narratives'
     assert.equal(p.layout,'focused');assert.equal(p.showDevelopment,false);assert.equal(p.showAlternative,false);
     assert.ok(!labels(p).includes('Diễn biến'));
   }
+});
+
+test('timing writer keeps candidate technical facts inside the matching comparison row',()=>{
+  const c=context('timing');c.allInOne.questionContext.questionType='selection';
+  assert.match(synthesisInstructions('BASE',c),/chỉ được viết trong comparisons\[\]\.reason của đúng id ứng viên/i);
+  assert.match(synthesisInstructions('BASE',c),/không được bịa khách hàng, công ty, người duyệt/i);
 });
