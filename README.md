@@ -8,7 +8,7 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Trên cấu hình VPS hiện tại, route ChatGPT đi qua 9router local; Prism là fallback local riêng và không thay đổi cấu hình upstream. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Bản 17.2.4 / TG-CB-6.2 (protocol 5) giữ chuỗi AI xhigh: GPT-5.6 Sol qua 9router → Gemini 3.6 Flash qua 9router → GPT-6 Astra qua Prism. Website bổ sung lịch sử hoạt động cục bộ: đếm số lần bấm Lập bàn và số yêu cầu Luận AI được gửi trong ngày, lưu tối đa 30 ngày trên chính trình duyệt và chỉ ghi thời điểm/trạng thái/model-route-effort — không lưu câu hỏi. Các sửa validator và fallback của v17.2.3 tiếp tục giữ nguyên.
+Bản 17.2.4 / TG-CB-6.2 (protocol 5) giữ chuỗi AI xhigh: GPT-5.6 Sol qua 9router → Gemini 3.6 Flash qua 9router → GPT-6 Astra qua Prism. Website bổ sung thống kê hoạt động dùng chung: đếm số lần Lập bàn được gửi từ website và số yêu cầu Luận AI thực sự vào backend trong ngày, lưu tối đa 30 ngày trên VPS và chỉ ghi thời điểm/trạng thái/model-route-effort — không lưu câu hỏi, nội dung bài luận hay mã kết nối. Trình duyệt vẫn giữ một bản cục bộ tối thiểu để làm fallback khi thống kê chung tạm thời không tải được. Các sửa validator và fallback của v17.2.3 tiếp tục giữ nguyên.
 
 Core TG-ROTATING-2.0 giữ nguyên. Sáu mode và Auto, so 2-12 thời điểm bằng bàn riêng, tám phương vị và dữ liệu đã lưu vẫn được hỗ trợ. Source phát hành từ GitHub main lên Cloudflare Pages. Kiến trúc hiện tại: `QIMEN-ARCHITECTURE.md`.
 

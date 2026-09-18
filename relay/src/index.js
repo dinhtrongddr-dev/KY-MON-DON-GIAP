@@ -46,10 +46,12 @@ async function proxyApi(request, env, url) {
 
   const isStatus = url.pathname === '/api/status' && request.method === 'GET';
   const isRead = url.pathname === '/api/read' && request.method === 'POST';
-  if (!isStatus && !isRead) {
+  const isActivity = url.pathname === '/api/activity' && request.method === 'GET';
+  const isChart = url.pathname === '/api/activity/chart' && request.method === 'POST';
+  if (!isStatus && !isRead && !isActivity && !isChart) {
     return json(404, {error: 'Khong co chuc nang nay.'}, cors);
   }
-  if (!request.headers.get('X-Qimen-Token')) {
+  if ((isStatus || isRead) && !request.headers.get('X-Qimen-Token')) {
     return json(401, {error: 'Nhap ma ket noi AI.'}, cors);
   }
   if (isRead) {
@@ -62,12 +64,13 @@ async function proxyApi(request, env, url) {
     }
   }
 
-  const target = new URL(url.pathname, `${UPSTREAM_ORIGIN}/`);
+  const target = new URL(url.pathname + url.search, `${UPSTREAM_ORIGIN}/`);
   const headers = new Headers({
     Origin: origin,
-    'X-Qimen-Token': request.headers.get('X-Qimen-Token'),
     'X-Qimen-Client': await clientIdentity(request, env),
   });
+  const token = request.headers.get('X-Qimen-Token');
+  if (token) headers.set('X-Qimen-Token', token);
   if (isRead) headers.set('Content-Type', 'application/json');
 
   let upstream;

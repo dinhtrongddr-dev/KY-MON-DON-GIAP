@@ -26,12 +26,18 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
    const req=httpRequest(url,options,res=>{const chunks=[];res.on('data',c=>chunks.push(c));res.on('end',()=>resolve(new Response(res.statusCode===204?null:Buffer.concat(chunks),{status:res.statusCode,headers:res.headers})));});
    req.on('error',reject);req.end(options.body);
  });
- let called=0;
- const {server}=createBridge({token:'test-pair-token',runner:async()=>{called++;return answer;}});
+ let called=0,charts=0,readingStatus=null;
+ const activityStore={recordChart(){charts++;return 'c1';},startReading(){readingStatus='running';return 'r1';},finishReading(_id,{status}){readingStatus=status;},summary(){return {date:'2026-09-18',chartCount:charts,readingCount:readingStatus?1:0,recentReadings:readingStatus?[{at:Date.now(),status:readingStatus,model:'',route:'',effort:''}]:[]};}};
+ const {server}=createBridge({token:'test-pair-token',activityStore,runner:async()=>{called++;return answer;}});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  t.after(()=>{server.closeAllConnections();server.close();});
  const url=`http://127.0.0.1:${server.address().port}`;
  const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'test-pair-token',Origin:'https://kymon.pp.ua','Content-Type':'application/json'};
+ const publicHeaders={Host:headers.Host,Origin:headers.Origin};
+ let activity=await(await fetch(url+'/api/activity?tzOffset=7',{headers:publicHeaders})).json();assert.equal(activity.activity.chartCount,0);assert.equal(activity.activity.readingCount,0);
+ assert.equal((await fetch(url+'/api/activity/chart?tzOffset=7',{method:'POST',headers:publicHeaders})).status,200);
+ activity=await(await fetch(url+'/api/activity?tzOffset=7',{headers:publicHeaders})).json();assert.equal(activity.activity.chartCount,1);
+ assert.equal((await fetch(url+'/api/activity',{headers:{...publicHeaders,Origin:'https://evil.example'}})).status,403);
  assert.equal((await fetch(url+'/api/status',{headers:{Host:headers.Host}})).status,401);
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Origin:'https://evil.example'}})).status,403);
  assert.equal((await fetch(url+'/api/status',{headers:{...headers,Host:'evil.example'}})).status,403);
@@ -40,7 +46,8 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
  const prepared=await buildReadingRequest(payload);
  const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
- const data=await v2.json();assert.equal(data.model,ROUTED_MODEL);assert.equal(data.reasoningEffort,ROUTED_EFFORT);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
+ const data=await v2.json();assert.equal(data.model,ROUTED_MODEL);assert.equal(data.reasoningEffort,ROUTED_EFFORT);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);assert.equal(readingStatus,'completed');
+ activity=await(await fetch(url+'/api/activity?tzOffset=7',{headers:publicHeaders})).json();assert.equal(activity.activity.readingCount,1);
  for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
  }

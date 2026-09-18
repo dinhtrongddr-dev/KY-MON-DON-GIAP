@@ -39,3 +39,27 @@ test('summary counts only events on today while retaining recent reading history
   ],now);
   assert.equal(summary.chartCount,1);assert.equal(summary.readingCount,1);assert.equal(summary.recentReadings.length,2);
 });
+
+class ViewElement {
+  constructor(){this.textContent='';this.children=[];this.className='';}
+  replaceChildren(){this.children=[];}
+  append(...nodes){this.children.push(...nodes);}
+}
+test('browser activity view prefers shared server totals and sends chart increments without a pairing token',async()=>{
+  const ids=Object.fromEntries(['activity-chart-count','activity-reading-count','activity-reading-list','activity-storage-note'].map(id=>[id,new ViewElement()]));
+  const document={getElementById:id=>ids[id]||null,createElement:()=>new ViewElement()};
+  const calls=[],server={chartCount:12,readingCount:4,recentReadings:[{at:Date.now(),status:'completed',model:'GPT-5.6 Sol',route:'9router · ChatGPT',effort:'xhigh'}]};
+  const fetcher=async(url,options={})=>{
+    calls.push({url:String(url),options});
+    if(options.method==='POST')server.chartCount++;
+    return new Response(JSON.stringify({activity:server}),{status:200,headers:{'Content-Type':'application/json'}});
+  };
+  const log=createActivityLog({storage:new MemoryStorage(),document,fetcher,endpoint:'https://relay.example',pollMs:0});
+  await log.refresh();
+  assert.equal(ids['activity-chart-count'].textContent,'12');assert.equal(ids['activity-reading-count'].textContent,'4');
+  assert.match(ids['activity-storage-note'].textContent,/bộ kết nối chung/i);
+  log.recordChart();await new Promise(resolve=>setImmediate(resolve));
+  const post=calls.find(call=>call.options.method==='POST');assert.ok(post);assert.match(post.url,/\/api\/activity\/chart/);
+  assert.equal(post.options.headers?.['X-Qimen-Token'],undefined);
+  assert.equal(ids['activity-chart-count'].textContent,'13');
+});

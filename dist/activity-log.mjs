@@ -1,14 +1,16 @@
+import {AI_RELAY_ORIGIN} from './site-config.mjs';
+
 const STORAGE_KEY='qimen.activity.v1';
 const MAX_AGE_MS=30*24*60*60*1000;
 const MAX_EVENTS=500;
 const READING_STATUSES=new Set(['running','completed','fallback','clarification','error','cancelled','timeout','interrupted']);
-
 const two=value=>String(value).padStart(2,'0');
+const safeText=(value,max=80)=>typeof value==='string'?value.trim().slice(0,max):'';
+
 export function localDayKey(ms){
   const d=new Date(ms);
   return `${d.getFullYear()}-${two(d.getMonth()+1)}-${two(d.getDate())}`;
 }
-const safeText=(value,max=80)=>typeof value==='string'?value.trim().slice(0,max):'';
 function sanitize(raw,now){
   if(!raw||!Array.isArray(raw.events))return [];
   const cutoff=now-MAX_AGE_MS;
@@ -16,8 +18,8 @@ function sanitize(raw,now){
     if(!item||!Number.isFinite(item.at)||item.at<cutoff||item.at>now+86_400_000)return [];
     if(item.type==='chart')return [{id:safeText(item.id,64)||`chart-${item.at}`,type:'chart',at:item.at}];
     if(item.type!=='reading')return [];
-    const status=READING_STATUSES.has(item.status)?item.status:'interrupted';
-    return [{id:safeText(item.id,64)||`reading-${item.at}`,type:'reading',at:item.at,status,
+    return [{id:safeText(item.id,64)||`reading-${item.at}`,type:'reading',at:item.at,
+      status:READING_STATUSES.has(item.status)?item.status:'interrupted',
       finishedAt:Number.isFinite(item.finishedAt)?item.finishedAt:null,
       model:safeText(item.model),route:safeText(item.route),effort:safeText(item.effort,24)}];
   }).slice(-MAX_EVENTS);
@@ -40,9 +42,20 @@ export function summarizeActivity(events,now=Date.now()){
     recentReadings:events.filter(e=>e.type==='reading').slice(-30).reverse()
   };
 }
-export function createActivityLog({storage,document=globalThis.document,now=()=>Date.now()}={}){
+function remoteSnapshotOf(value){
+  if(!value||!Number.isInteger(value.chartCount)||value.chartCount<0||!Number.isInteger(value.readingCount)||value.readingCount<0||!Array.isArray(value.recentReadings))return null;
+  return {
+    chartCount:value.chartCount,readingCount:value.readingCount,
+    recentReadings:value.recentReadings.slice(0,50).flatMap(item=>{
+      if(!item||!Number.isFinite(item.at))return [];
+      return [{at:item.at,status:READING_STATUSES.has(item.status)?item.status:'interrupted',
+        model:safeText(item.model),route:safeText(item.route),effort:safeText(item.effort,24)}];
+    })
+  };
+}
+export function createActivityLog({storage,document=globalThis.document,now=()=>Date.now(),fetcher=globalThis.fetch,endpoint=AI_RELAY_ORIGIN,pollMs=60_000}={}){
   if(storage===undefined){try{storage=globalThis.localStorage;}catch{storage=null;}}
-  let sequence=0,events=[],persistent=!!storage;
+  let sequence=0,events=[],persistent=!!storage,remoteSnapshot=null,remoteState=document?'loading':'disabled';
   try{events=sanitize(JSON.parse(storage?.getItem(STORAGE_KEY)||'{}'),now());}catch{events=[];persistent=false;}
   let repaired=false;
   events=events.map(e=>e.type==='reading'&&e.status==='running'?(repaired=true,{...e,status:'interrupted',finishedAt:now()}):e);
@@ -58,14 +71,14 @@ export function createActivityLog({storage,document=globalThis.document,now=()=>
     note:document?.getElementById?.('activity-storage-note')
   });
   const render=()=>{
-    const ui=ids(),snapshot=summarizeActivity(events,now());
+    const ui=ids(),local=summarizeActivity(events,now()),snapshot=remoteSnapshot||local;
     if(ui.charts)ui.charts.textContent=String(snapshot.chartCount);
     if(ui.readings)ui.readings.textContent=String(snapshot.readingCount);
     if(ui.list){
       ui.list.replaceChildren();
       if(!snapshot.recentReadings.length){
-        const li=document.createElement('li');li.textContent='Chưa có lượt luận nào được ghi trên thiết bị này.';li.className='activity-empty';ui.list.append(li);
-      }else for(const event of snapshot.recentReadings){
+        const li=document.createElement('li');li.textContent='Chưa có lượt luận nào được ghi.';li.className='activity-empty';ui.list.append(li);
+      }else for(const event of snapshot.recentReadings.slice(0,30)){
         const li=document.createElement('li');li.className='activity-row';
         const when=document.createElement('time');when.dateTime=new Date(event.at).toISOString();when.textContent=formatMoment(event.at,now());
         const state=document.createElement('span');state.className=`activity-state activity-${event.status}`;state.textContent=statusLabel(event.status);
@@ -73,28 +86,55 @@ export function createActivityLog({storage,document=globalThis.document,now=()=>
         li.append(when,state,model);ui.list.append(li);
       }
     }
-    if(ui.note)ui.note.textContent=persistent?'Lưu cục bộ trên trình duyệt này tối đa 30 ngày; không lưu nội dung câu hỏi.':'Trình duyệt không cho phép lưu; thống kê chỉ giữ trong phiên này và vẫn không lưu nội dung câu hỏi.';
+    if(ui.note){
+      ui.note.textContent=remoteState==='live'
+        ?'Tổng hợp từ bộ kết nối chung; lưu tối đa 30 ngày và không lưu nội dung câu hỏi.'
+        :remoteState==='stale'?'Tạm chưa làm mới được máy chủ; đang hiển thị số liệu chung tải gần nhất.'
+        :remoteState==='loading'?'Đang tải thống kê chung; nội dung câu hỏi không được đưa vào lịch sử.'
+        :persistent?'Không tải được thống kê chung; đang hiển thị lịch sử cục bộ trên trình duyệt này.'
+        :'Không tải được thống kê chung và trình duyệt không cho phép lưu lịch sử cục bộ.';
+    }
     return snapshot;
   };
+  const timezoneOffset=()=>-new Date(now()).getTimezoneOffset()/60;
+  const applyRemote=data=>{
+    const snapshot=remoteSnapshotOf(data?.activity);
+    if(!snapshot)throw new Error('Invalid activity response');
+    remoteSnapshot=snapshot;remoteState='live';render();return snapshot;
+  };
+  const refreshRemote=async()=>{
+    if(!document||typeof fetcher!=='function')return null;
+    try{
+      const response=await fetcher(`${endpoint}/api/activity?tzOffset=${encodeURIComponent(timezoneOffset())}`,{credentials:'omit',cache:'no-store'});
+      if(!response.ok)throw new Error('Activity unavailable');
+      return applyRemote(await response.json());
+    }catch{
+      remoteState=remoteSnapshot?'stale':'error';render();return null;
+    }
+  };
   const append=event=>{
-    events=sanitize({events:[...events,event]},now());
-    persist();render();return event.id;
+    events=sanitize({events:[...events,event]},now());persist();render();return event.id;
   };
   const recordChart=()=>{
-    const at=now();return append({id:`chart-${at}-${sequence++}`,type:'chart',at});
+    const at=now(),id=append({id:`chart-${at}-${sequence++}`,type:'chart',at});
+    if(document&&typeof fetcher==='function')void fetcher(`${endpoint}/api/activity/chart?tzOffset=${encodeURIComponent(timezoneOffset())}`,{
+      method:'POST',credentials:'omit',cache:'no-store'
+    }).then(async response=>{if(response.ok)applyRemote(await response.json());else throw new Error();}).catch(()=>{remoteState=remoteSnapshot?'stale':'error';render();});
+    return id;
   };
   const startReading=()=>{
-    const at=now();return append({id:`reading-${at}-${sequence++}`,type:'reading',at,status:'running'});
+    const at=now(),id=append({id:`reading-${at}-${sequence++}`,type:'reading',at,status:'running'});
+    if(document&&typeof fetcher==='function')globalThis.setTimeout?.(()=>void refreshRemote(),750);
+    return id;
   };
   const finishReading=(id,{status='completed',modelUsed=null}={})=>{
     if(!id)return;
-    const index=events.findIndex(e=>e.id===id&&e.type==='reading');
-    if(index<0)return;
-    const normalized=READING_STATUSES.has(status)?status:'error';
-    events[index]={...events[index],status:normalized,finishedAt:now(),
+    const index=events.findIndex(e=>e.id===id&&e.type==='reading');if(index<0)return;
+    events[index]={...events[index],status:READING_STATUSES.has(status)?status:'error',finishedAt:now(),
       model:safeText(modelUsed?.label||modelUsed?.id),route:safeText(modelUsed?.routeLabel||modelUsed?.provider),effort:safeText(modelUsed?.effort,24)};
-    events=sanitize({events},now());persist();render();
+    events=sanitize({events},now());persist();render();void refreshRemote();
   };
-  render();
-  return {recordChart,startReading,finishReading,render,snapshot:()=>summarizeActivity(events,now())};
+  render();void refreshRemote();
+  if(document&&typeof fetcher==='function'&&pollMs>0)globalThis.setInterval?.(()=>void refreshRemote(),pollMs);
+  return {recordChart,startReading,finishReading,render,refresh:refreshRemote,snapshot:()=>remoteSnapshot||summarizeActivity(events,now())};
 }

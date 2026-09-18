@@ -48,6 +48,20 @@ test('relay uses the fixed Named Tunnel and only proxies the Ky Mon API', async 
   }
 });
 
+test('relay exposes activity totals without pairing token and keeps client identity hashed', async t => {
+  const env={RELAY_ADMIN_SECRET:'c'.repeat(64)},previousFetch=globalThis.fetch;t.after(()=>{globalThis.fetch=previousFetch;});
+  const seen=[];
+  globalThis.fetch=async(url,options)=>{seen.push({url:String(url),options});return new Response(JSON.stringify({activity:{chartCount:4,readingCount:2,recentReadings:[]}}),{headers:{'Content-Type':'application/json'}});};
+  const summary=await worker.fetch(new Request('https://relay.example/api/activity?tzOffset=7',{headers:{Origin:officialOrigin,'CF-Connecting-IP':'203.0.113.20'}}),env);
+  assert.equal(summary.status,200);assert.deepEqual((await summary.json()).activity.chartCount,4);
+  assert.equal(seen[0].url,namedTunnel+'/api/activity?tzOffset=7');assert.equal(seen[0].options.headers.has('X-Qimen-Token'),false);
+  assert.match(seen[0].options.headers.get('X-Qimen-Client'),/^[a-f0-9]{64}$/);
+  const chart=await worker.fetch(new Request('https://relay.example/api/activity/chart',{method:'POST',headers:{Origin:officialOrigin,'CF-Connecting-IP':'203.0.113.20'}}),env);
+  assert.equal(chart.status,200);assert.equal(seen[1].url,namedTunnel+'/api/activity/chart');
+  const forbidden=await worker.fetch(new Request('https://relay.example/api/activity',{headers:{Origin:'https://evil.example'}}),env);
+  assert.equal(forbidden.status,403);
+});
+
 test('relay streams keepalive and final JSON errors without buffering or losing Retry-After', async t => {
   const env = {RELAY_ADMIN_SECRET: 'b'.repeat(64)};
   const previousFetch = globalThis.fetch;

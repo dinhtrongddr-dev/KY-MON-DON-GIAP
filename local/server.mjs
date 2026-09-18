@@ -7,6 +7,7 @@ import {resolve,extname} from 'node:path';
 import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf} from './ai-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
+import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
@@ -42,13 +43,15 @@ export function parseAllowedHost(value,port=8765,tunnelHostname=configuredTunnel
 }
 export function isAllowedOrigin(value,port,host){
  if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||ALLOWED_WEB_ORIGINS.includes(value))return true;
+ if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
  token=validatePairingToken(token);
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
- const failures=new Map();
+ const failures=new Map(),activityClients=new Map();
+ const track=(method,...args)=>{try{return activityStore?.[method]?.(...args)??null;}catch{return null;}};
  const files=new Set(['/index.html','/audit.html','/styles.css','/app.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/reading-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
@@ -58,19 +61,27 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ky-mon-codex-relay.dinhtrongddr.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
    const host=parseAllowedHost(req.headers.host,port,tunnelHostname);
    if(!host)return send(403,{error:'Host không hợp lệ.'});
-   const path=new URL(req.url,origin).pathname;
+   const requestUrl=new URL(req.url,origin),path=requestUrl.pathname;
    const requestOrigin=req.headers.origin;
-   const sameOriginBrowserStatus=host.type==='tunnel'&&path==='/api/status'&&req.method==='GET'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin';
-   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginBrowserStatus)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
+   const sameOriginPublic=host.type==='tunnel'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin'&&((path==='/api/status'&&req.method==='GET')||(path==='/api/activity'&&req.method==='GET')||(path==='/api/activity/chart'&&req.method==='POST'));
+   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginPublic)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
      res.setHeader('Access-Control-Allow-Methods','POST, GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
    }
    if(path.startsWith('/api/')){
-     const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
      const relayClient=String(req.headers['x-qimen-client']||'');
      const client=/^[a-f0-9]{64}$/i.test(relayClient)?relayClient:String(req.headers['cf-connecting-ip']||req.socket.remoteAddress||'unknown').slice(0,128);
-     const now=Date.now();let failure=failures.get(client);
+     const now=Date.now();
+     if(path==='/api/activity'&&req.method==='GET')return send(200,{activity:activityStore.summary(requestUrl.searchParams.get('tzOffset'))});
+     if(path==='/api/activity/chart'&&req.method==='POST'){
+       let usage=activityClients.get(client);if(!usage||now-usage.startedAt>=3_600_000)usage={startedAt:now,count:0};
+       if(usage.count>=300){res.setHeader('Retry-After','3600');return send(429,{error:'Quá nhiều lượt lập bàn trong một giờ.'});}
+       usage.count++;activityClients.set(client,usage);track('recordChart');
+       return send(200,{ok:true,activity:activityStore.summary(requestUrl.searchParams.get('tzOffset'))});
+     }
+     const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
+     let failure=failures.get(client);
      if(failure&&failure.blockedUntil>now){res.setHeader('Retry-After','600');return send(429,{error:'Quá nhiều lần nhập sai mã. Thử lại sau 10 phút.'});}
      if(failure&&now-failure.startedAt>300000){failures.delete(client);failure=null;}
      if(value.length!==expected.length||!timingSafeEqual(value,expected)){
@@ -86,6 +97,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
      const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
+     let activityReadingId=null;
      try{
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
@@ -94,6 +106,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        if(body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
+       activityReadingId=track('startReading');
         let keepAliveTimer,keepAliveInterval,streaming=false;
         const stopKeepAlive=()=>{clearTimeout(keepAliveTimer);clearInterval(keepAliveInterval);};
         if(host.type==='tunnel'){
@@ -110,15 +123,18 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
         }
         try{
           const result=await interpretReading(prepared,{runner,signal:controller.signal});
+          const used=aiRouteOf(result);
+          const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
+          const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
+          if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
           if(!res.destroyed){
-            const used=aiRouteOf(result);
-            const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
             const data={router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }
         }finally{stopKeepAlive();busy=false;}
       }catch(e){
+        if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'cancelled':'error'});activityReadingId=null;}
         if(!res.destroyed){
           const data={error:e.message||'Không kết nối được AI.'};
           if(res.headersSent)res.end(JSON.stringify(data));
@@ -142,7 +158,8 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
  return {server,token,origin};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- const bridge=createBridge();
+ const activityStore=createActivityStore({filePath:defaultActivityPath()});
+ const bridge=createBridge({activityStore});
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
    console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
