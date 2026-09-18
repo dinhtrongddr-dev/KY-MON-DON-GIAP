@@ -10,7 +10,7 @@ test('KM-MENH runtime builds real known-time claims with traceable evidence',()=
   assert.equal(p.candidateCount,1);
   assert.equal(p.result.profileId,'ZHANG_ADVANCED_CLASS_LIFETIME');
   assert.deepEqual(p.result.claims.map(c=>c.claimId),[
-    'SELF_CORE','FAMILY_PARENTS','FAMILY_PARENT_PAIR_ROLE','CHILDREN_CORE',
+    'GLOBAL_STRUCTURE','SELF_CORE','FAMILY_PARENTS','FAMILY_PARENT_PAIR_ROLE','CHILDREN_CORE',
     'MARRIAGE_CORE','CAREER_CORE','WEALTH_CORE','LUCK_CURRENT','ANNUAL_CURRENT'
   ]);
   const evidenceIds=new Set(p.result.evidence.map(e=>e.evidenceId));

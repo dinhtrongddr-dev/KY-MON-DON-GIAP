@@ -111,8 +111,17 @@ export function analyzeNatalView(natalView,{age=null,annualPillar=null,sexMetada
   const zhiFu=palaceByNumber(board,board.zhiFu.palace),zhiShi=palaceByNumber(board,board.zhiShi.palace);
   const selfVertical=verticalAnalyzeNatalPalace(board,day);
   const hourVertical=verticalAnalyzeNatalPalace(board,hour);
-  const evidence=[...globalEvidence(board)];
+  const globalHardEvidence=globalEvidence(board);
+  const evidence=[...globalHardEvidence];
   const claims=[];
+  if(globalHardEvidence.length){
+    const mechanisms=globalHardEvidence.map(e=>e.mechanism==='FU_YIN'?'Phục Ngâm':e.mechanism==='FAN_YIN'?'Phản Ngâm':e.mechanism).join(' + ');
+    claims.push(claim({
+      claimId:'GLOBAL_STRUCTURE',domain:'GLOBAL',
+      text:`Toàn bàn có ${mechanisms}. Đây là cấu trúc nền ưu tiên cao: phải xét trước các tín hiệu cục bộ và có thể giới hạn/cap mặt thuận của chúng trong các domain bị ảnh hưởng; không phải một veto xấu tuyệt đối hay bằng chứng sự kiện chắc chắn.`,
+      ruleIds:['KMZ-GLOBAL-001'],evidenceIds:globalHardEvidence.map(e=>e.evidenceId),
+    }));
+  }
 
   const selfEvidence=[
     makeEvidence({id:'SELF_DAY_STEM',ruleId:'KMZ-SELF-001',domain:'SELF',palace:day,mechanism:'DAY_STEM_PALACE',effectTag:'SELF_IDENTITY',priorityClass:'SELF_CORE',metadata:{summary:summaryVertical(selfVertical),vertical:selfVertical}}),

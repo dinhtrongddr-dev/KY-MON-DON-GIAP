@@ -1,5 +1,5 @@
 const DOMAIN_LABEL=Object.freeze({
-  SELF:'Bản thân & tổng thể',FAMILY:'Gia đình & cha mẹ',CHILDREN:'Con cái',
+  GLOBAL:'Cấu trúc toàn cục',SELF:'Bản thân & tổng thể',FAMILY:'Gia đình & cha mẹ',CHILDREN:'Con cái',
   MARRIAGE:'Hôn nhân',CAREER:'Sự nghiệp',WEALTH:'Tài vận',
 });
 const SECTION_LABEL=Object.freeze({

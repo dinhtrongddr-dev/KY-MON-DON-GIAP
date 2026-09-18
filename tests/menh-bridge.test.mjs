@@ -8,8 +8,12 @@ const payload={birthDateLocal:'1990-01-01',birthTimeMode:'KNOWN',birthTimeLocal:
 const empty=()=>({text:'',claim_ids:[]});
 function readingFromContext(ctx){
   const first=ctx.claims[0];
+  const globalLabel=(ctx.globalStructure?.mechanisms||[]).map(x=>x==='FU_YIN'?'Phục Ngâm':x==='FAN_YIN'?'Phản Ngâm':x).join(' + ');
+  const overview=ctx.globalStructure?.active
+    ?{text:`Toàn bàn có ${globalLabel}. Đây là cấu trúc ưu tiên phải xét trước và có thể giới hạn/cap tín hiệu thuận cục bộ, nhưng không phải veto xấu tuyệt đối.`,claim_ids:[ctx.globalStructure.claimId]}
+    :first?{text:'Tổng quan có điều kiện từ Mệnh bàn đã tính.',claim_ids:[first.claimId]}:empty();
   const r={status:'reading',specVersion:ctx.specVersion,profileId:ctx.profileId,
-    overview:first?{text:'Tổng quan có điều kiện từ Mệnh bàn đã tính.',claim_ids:[first.claimId]}:empty(),
+    overview,
     self:empty(),family:empty(),marriage:empty(),career:empty(),wealth:empty(),luck:empty(),annual:empty(),birthTimeNote:empty()};
   return r;
 }

@@ -18,6 +18,16 @@ function fallback(context){
   }
   const first=context.claims[0];
   if(first)out.overview={text:`Kết quả deterministic hiện có: ${first.text}`,claim_ids:[first.claimId]};
+  if(context.globalStructure?.active&&context.globalStructure.claimId){
+    const globalId=context.globalStructure.claimId;
+    const labels=(context.globalStructure.mechanisms||[]).map(x=>x==='FU_YIN'?'Phục Ngâm':x==='FAN_YIN'?'Phản Ngâm':x).join(' + ');
+    const sectionByDomain={SELF:'self',FAMILY:'family',CHILDREN:'family',MARRIAGE:'marriage',CAREER:'career',WEALTH:'wealth'};
+    const sections=new Set((context.globalStructure.affectedDomains||[]).map(x=>sectionByDomain[x]).filter(Boolean));
+    for(const key of sections)if(out[key].text){
+      if(!out[key].claim_ids.includes(globalId))out[key].claim_ids.push(globalId);
+      out[key].text+=` Bối cảnh ${labels} phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.`;
+    }
+  }
   if(context.birthTimeMode==='UNKNOWN')out.birthTimeNote={text:'Không nhớ giờ sinh: chỉ các kết luận ổn định qua toàn bộ ứng viên giờ sinh được hiển thị; các phần còn lại phụ thuộc giờ sinh và không được bỏ phiếu đa số.',claim_ids:[]};
   return out;
 }
@@ -37,7 +47,7 @@ export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READI
       const used=aiRouteOf(result);
       if(attempt===1)return attachAiRoute(validateMenhReading(fallback(context),context),used);
       if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=Math.min(used.fallbackIndex+1,AI_ROUTES.length-1);
-      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence trong context; không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Trả lại JSON đầy đủ theo schema.'};
+      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence trong context; không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Nếu globalStructure.active, phải nêu đúng Phục Ngâm/Phản Ngâm ở overview, thể hiện precedence/cap trước tín hiệu cục bộ và gắn GLOBAL_STRUCTURE vào các section bị ảnh hưởng. Trả lại JSON đầy đủ theo schema.'};
     }
   }
 }

@@ -2,11 +2,37 @@ const SECTION_KEYS=['overview','self','family','marriage','career','wealth','luc
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const text=value=>typeof value==='string'&&value.length<=8000;
 const normalize=s=>String(s??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+const GLOBAL_SECTION_BY_DOMAIN=Object.freeze({SELF:'self',FAMILY:'family',CHILDREN:'family',MARRIAGE:'marriage',CAREER:'career',WEALTH:'wealth'});
 
 export class MenhReadingValidationError extends Error{
   constructor(message){super(message);this.name='MenhReadingValidationError';}
 }
 const reject=message=>{throw new MenhReadingValidationError(message);};
+
+function auditGlobalStructure(reading,context){
+  const global=context.globalStructure;
+  if(!global?.active)return;
+  if(!global.claimId||!context.allowedClaimIds.includes(global.claimId))
+    reject('KM-MENH writer thiếu deterministic GLOBAL_STRUCTURE claim.');
+  if(!reading.overview.claim_ids.includes(global.claimId))
+    reject('overview phải gắn GLOBAL_STRUCTURE khi có cấu trúc toàn cục ưu tiên cao.');
+  const n=normalize(reading.overview.text);
+  for(const mechanism of global.mechanisms||[]){
+    if(mechanism==='FU_YIN'&&!/\b(phuc ngam|fu_yin)\b/.test(n))
+      reject('overview phải nêu Phục Ngâm khi GLOBAL_FU_YIN đang hoạt động.');
+    if(mechanism==='FAN_YIN'&&!/\b(phan ngam|fan_yin)\b/.test(n))
+      reject('overview phải nêu Phản Ngâm khi GLOBAL_FAN_YIN đang hoạt động.');
+  }
+  if(!/\b(xet truoc|uu tien|gioi han|kim|cap)\b/.test(n))
+    reject('overview phải thể hiện precedence/cap của GLOBAL_STRUCTURE trước tín hiệu cục bộ.');
+  if(!/\bkhong\b[^.!?]{0,120}\b(tuyet doi|veto|quyet dinh|phan quyet)\b/.test(n))
+    reject('overview phải nói rõ GLOBAL_STRUCTURE không phải veto/phán quyết xấu tuyệt đối.');
+  const sections=new Set((global.affectedDomains||[]).map(domain=>GLOBAL_SECTION_BY_DOMAIN[domain]).filter(Boolean));
+  for(const key of sections){
+    if(reading[key]?.text?.trim()&&!reading[key].claim_ids.includes(global.claimId))
+      reject(key+': phải gắn GLOBAL_STRUCTURE vì domain này chịu cấu trúc toàn cục.');
+  }
+}
 
 function auditDangerousClaims(prose){
   const n=normalize(prose);
@@ -53,6 +79,7 @@ export function validateMenhReading(reading,context){
     if(/gio sinh (dung|chinh xac|la)\s*\d/.test(n))
       reject('Không được tự chọn giờ sinh đúng.');
   }
+  auditGlobalStructure(reading,context);
   auditDangerousClaims(allText.join(' '));
   return reading;
 }
