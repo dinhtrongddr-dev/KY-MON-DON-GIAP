@@ -8,8 +8,9 @@
   },
   "launcher": {
     "path": "KyMonTray.exe",
-    "sha256": "50699d40ae0e1b6046076c545a6dfd0a45976f50f43739c82f6c775d8f81c389",
+    "sha256": "bf439ca45d53ca3184d0db9f0c138fdb9612d4b4ad0d971c16ae1764bca01f4a",
     "source": "local/KyMonTray.cs",
-    "sourceSha256": "b9326878d1a6ea34afa7555c776f7167afdec9acaea6241ba746c4ecabbffda0"
+    "sourceSha256": "b9326878d1a6ea34afa7555c776f7167afdec9acaea6241ba746c4ecabbffda0",
+    "size": 27648
   }
 }
