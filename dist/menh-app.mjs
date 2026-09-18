@@ -11,7 +11,7 @@ const EVENT_OPTIONS=[['MARRIAGE','Kết hôn / chia tay lớn'],['CHILDREN','Sin
 function addRectEvent(value={}){
   const row=document.createElement('div');row.className='rect-event-row';
   const opts=EVENT_OPTIONS.map(([v,t])=>`<option value="${v}"${value.kind===v?' selected':''}>${t}</option>`).join('');
-  row.innerHTML=`<label class="field"><span>Loại sự kiện</span><select class="rect-kind">${opts}</select></label><label class="field"><span>Ngày / tháng / năm</span><input class="rect-date" type="text" inputmode="numeric" placeholder="VD: 20/10/2020, 03/2022 hoặc 2018" value="${value.date||''}"><small>DD/MM/YYYY · MM/YYYY · YYYY</small></label><button class="rect-remove" type="button" aria-label="Xóa sự kiện">×</button>`;
+  row.innerHTML=`<label class="field"><span>Loại sự kiện</span><select class="rect-kind">${opts}</select></label><label class="field"><span>Ngày / tháng / năm</span><input class="rect-date" type="text" inputmode="text" autocomplete="off" placeholder="VD: 20/10/2020, 03/2022 hoặc 2018" value="${value.date||''}"><small>DD/MM/YYYY · MM/YYYY · YYYY</small></label><button class="rect-remove" type="button" aria-label="Xóa sự kiện">×</button>`;
   row.querySelector('.rect-remove').addEventListener('click',()=>{row.remove();clearResult();});rectEventList.append(row);
 }
 function parseEventDate(raw){
