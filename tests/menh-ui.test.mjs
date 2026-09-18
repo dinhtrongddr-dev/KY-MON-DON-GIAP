@@ -27,3 +27,23 @@ test('question and natal products link to each other without replacing the quest
 test('Mệnh page loads calendar before the Mệnh app module',()=>{
   assert.ok(html.indexOf('./vendor/lunar.js')<html.indexOf('./menh-app.mjs'));
 });
+
+
+test('Mệnh UI renders the exact natal QimenBoard already used by KM-MENH instead of generating another board',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/prepared\.result\?\.natal\?\.baseBoard/);
+  assert.match(view,/Mệnh bàn Kỳ Môn 3×3/);
+  assert.match(view,/Trực Phù/);
+  assert.match(view,/Trực Sử/);
+  assert.match(view,/Không Vong/);
+  assert.match(view,/Mã tinh/);
+  assert.match(view,/Phục Ngâm/);
+  assert.match(view,/Phản Ngâm/);
+  assert.doesNotMatch(view,/generateQimen|createQimenBoard/);
+});
+test('Mệnh UI does not present a fake representative board when birth time is unknown',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/Không có một bàn 3×3 duy nhất/);
+  assert.match(view,/không bỏ phiếu đa số/);
+  assert.match(view,/không dựng một bàn đại diện giả/);
+});
