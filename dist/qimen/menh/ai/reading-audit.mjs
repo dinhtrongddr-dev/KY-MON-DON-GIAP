@@ -23,15 +23,37 @@ function auditGlobalStructure(reading,context){
     if(mechanism==='FAN_YIN'&&!/\b(phan ngam|fan_yin)\b/.test(n))
       reject('overview phải nêu Phản Ngâm khi GLOBAL_FAN_YIN đang hoạt động.');
   }
-  if(!/\b(xet truoc|uu tien|gioi han|kim|cap)\b/.test(n))
+  const hasPrecedence=/\b(xet truoc|doc truoc|uu tien|lop[^.!?]{0,50}truoc)\b/.test(n);
+  const hasCap=/\b(gioi han|han che|cap|kim|kho phat huy|phat huy[^.!?]{0,40}(cham|khong tron ven)|loi the[^.!?]{0,40}(cham|muon))\b/.test(n);
+  if(!hasPrecedence||!hasCap)
     reject('overview phải thể hiện precedence/cap của GLOBAL_STRUCTURE trước tín hiệu cục bộ.');
-  if(!/\bkhong\b[^.!?]{0,120}\b(tuyet doi|veto|quyet dinh|phan quyet)\b/.test(n))
+  if(!(/\bkhong\b[^.!?]{0,120}\b(tuyet doi|veto|quyet dinh|phan quyet|dong nghia|phu dinh)\b/.test(n)||/\btuyet doi\b[^.!?]{0,40}\bkhong\b/.test(n)))
     reject('overview phải nói rõ GLOBAL_STRUCTURE không phải veto/phán quyết xấu tuyệt đối.');
   const sections=new Set((global.affectedDomains||[]).map(domain=>GLOBAL_SECTION_BY_DOMAIN[domain]).filter(Boolean));
   for(const key of sections){
     if(reading[key]?.text?.trim()&&!reading[key].claim_ids.includes(global.claimId))
       reject(key+': phải gắn GLOBAL_STRUCTURE vì domain này chịu cấu trúc toàn cục.');
   }
+}
+
+const LONGFORM_MIN=Object.freeze({overview:280,self:500,family:550,marriage:500,career:550,wealth:550,luck:350,annual:350});
+function auditLongForm(reading,context){
+  if(context.birthTimeMode!=='KNOWN'||context.outputMode!=='COMPREHENSIVE_ONE_SHOT')return;
+  const claims=new Set(context.allowedClaimIds||[]);
+  const expected={
+    overview:claims.size>0,self:claims.has('SELF_CORE'),
+    family:[...claims].some(id=>id.startsWith('FAMILY_')||id==='CHILDREN_CORE'),
+    marriage:claims.has('MARRIAGE_CORE'),career:claims.has('CAREER_CORE'),wealth:claims.has('WEALTH_CORE'),
+    luck:claims.has('LUCK_CURRENT'),annual:claims.has('ANNUAL_CURRENT'),
+  };
+  let expectedCount=0,actualTotal=0;
+  for(const [key,min] of Object.entries(LONGFORM_MIN)){
+    if(!expected[key])continue;
+    expectedCount++;const len=reading[key]?.text?.trim().length||0;actualTotal+=len;
+    if(len<min)reject(key+': bài luận production quá ngắn cho chế độ COMPREHENSIVE_ONE_SHOT ('+len+'/'+min+' ký tự sàn).');
+  }
+  const requiredTotal=Math.round(6800*(expectedCount/Object.keys(LONGFORM_MIN).length));
+  if(actualTotal<requiredTotal)reject('Bài luận production chưa đủ độ sâu long-form ('+actualTotal+'/'+requiredTotal+' ký tự tối thiểu toàn bài).');
 }
 
 function auditDangerousClaims(prose){
@@ -48,7 +70,7 @@ function auditDangerousClaims(prose){
     reject('KM-MENH writer không được dự đoán tất định cái chết của cha mẹ.');
 }
 
-export function validateMenhReading(reading,context){
+export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
   const top=['status','specVersion','profileId',...SECTION_KEYS];
   if(!exact(reading,top)||reading.status!=='reading')reject('KM-MENH writer trả sai schema.');
   if(reading.specVersion!==context.specVersion||reading.profileId!==context.profileId)
@@ -81,5 +103,6 @@ export function validateMenhReading(reading,context){
   }
   auditGlobalStructure(reading,context);
   auditDangerousClaims(allText.join(' '));
+  if(enforceLongForm)auditLongForm(reading,context);
   return reading;
 }

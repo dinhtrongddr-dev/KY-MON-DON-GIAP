@@ -47,3 +47,8 @@ test('Mệnh UI does not present a fake representative board when birth time is 
   assert.match(view,/không bỏ phiếu đa số/);
   assert.match(view,/không dựng một bàn đại diện giả/);
 });
+test('Mệnh AI long-form renderer preserves paragraph breaks',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/appendAiParagraphs/);
+  assert.match(view,/split\(\/\\n\{2,\}\//);
+});

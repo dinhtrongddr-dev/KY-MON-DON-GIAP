@@ -41,13 +41,13 @@ export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READI
     const options=runner===runAI?{signal:combined,routeStartIndex}:{signal:combined};
     const result=await runner(menhWriterInstructions(),input,menhReadingSchema(context),options);
     combined.throwIfAborted();
-    try{return attachAiRoute(validateMenhReading(result,context),aiRouteOf(result));}
+    try{return attachAiRoute(validateMenhReading(result,context,{enforceLongForm:runner===runAI}),aiRouteOf(result));}
     catch(error){
       if(!(error instanceof MenhReadingValidationError))throw error;
       const used=aiRouteOf(result);
       if(attempt===1)return attachAiRoute(validateMenhReading(fallback(context),context),used);
       if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=Math.min(used.fallbackIndex+1,AI_ROUTES.length-1);
-      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence trong context; không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Nếu globalStructure.active, phải nêu đúng Phục Ngâm/Phản Ngâm ở overview, thể hiện precedence/cap trước tín hiệu cục bộ và gắn GLOBAL_STRUCTURE vào các section bị ảnh hưởng. Trả lại JSON đầy đủ theo schema.'};
+      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence/boardFacts trong context; boardFacts chỉ làm sâu các claim đã có, không tạo claim mới. Không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Nếu globalStructure.active, phải nêu đúng Phục Ngâm/Phản Ngâm ở overview, thể hiện precedence/cap trước tín hiệu cục bộ và gắn GLOBAL_STRUCTURE vào các section bị ảnh hưởng. Nếu lỗi là bài quá ngắn, hãy viết lại đầy đủ theo COMPREHENSIVE_ONE_SHOT, phát triển cơ chế → biểu hiện có điều kiện, không lặp câu để lấy độ dài. Trả lại JSON đầy đủ theo schema.'};
     }
   }
 }

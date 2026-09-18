@@ -224,13 +224,17 @@ export function renderMenhDeterministic(container,prepared){
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
   container.append(body);
 }
+function appendAiParagraphs(card,value){
+  const parts=String(value||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean);
+  for(const part of parts)card.append(el('p','',part));
+}
 export function renderMenhAi(container,reading){
   container.replaceChildren();
   const grid=el('div','menh-ai-grid');
   for(const key of Object.keys(SECTION_LABEL)){
     const section=reading[key];if(!section?.text?.trim())continue;
     const card=el('section','menh-ai-section'+(key==='birthTimeNote'?' menh-ai-note':''));
-    card.append(el('h3','',SECTION_LABEL[key]),el('p','',section.text));grid.append(card);
+    card.append(el('h3','',SECTION_LABEL[key]));appendAiParagraphs(card,section.text);grid.append(card);
   }
   container.append(grid);
 }

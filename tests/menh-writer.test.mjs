@@ -43,6 +43,10 @@ test('P9 prompt explicitly forbids chart rebuild, scores, probabilities and dete
   const p=menhWriterInstructions().toLowerCase();
   for(const token of ['không tự lập lại bàn','không cho điểm tổng mệnh','xác suất thành công','không đoán giờ sinh đúng'])assert.ok(p.includes(token));
 });
+test('KM-MENH production writer is explicitly one-shot long-form and guards modern extrapolation',()=>{
+  const p=menhWriterInstructions().toLowerCase();
+  for(const token of ['một lần','8.000–14.000','comprehensive_one_shot','không double-count','boardfacts','ví dụ hiện đại'])assert.ok(p.includes(token),token);
+});
 test('P9 reading audit accepts claim-bound prose and rejects fabricated claim ids',()=>{
   const ctx=context(),r=validReading(ctx);
   assert.equal(validateMenhReading(r,ctx),r);
@@ -71,4 +75,17 @@ test('P9 UNKNOWN reading must disclose uncertainty and cannot select an exact bi
   assert.equal(validateMenhReading(r,unknown),r);
   const bad=structuredClone(r);bad.birthTimeNote.text='Giờ sinh chính xác là 09:00.';
   assert.throws(()=>validateMenhReading(bad,unknown));
+});
+test('writer context exposes deterministic palace facts only for KNOWN mode',()=>{
+  const ctx=context();
+  assert.equal(ctx.outputMode,'COMPREHENSIVE_ONE_SHOT');
+  assert.equal(ctx.boardFacts.palaces.length,9);
+  assert.ok(ctx.boardFacts.palaces.every(p=>p.code&&p.element));
+  assert.ok(ctx.claimSupport.every(x=>ctx.allowedClaimIds.includes(x.claimId)));
+  const unknown=buildMenhWriterContext(buildMenhDeterministicResult(createMenhNatal(board()),{claims:[]}),{birthTimeMode:'UNKNOWN',stability:{}});
+  assert.equal(unknown.boardFacts,null);
+});
+test('production long-form audit rejects a structurally valid but shallow draft',()=>{
+  const ctx=context(),r=validReading(ctx);
+  assert.throws(()=>validateMenhReading(r,ctx,{enforceLongForm:true}),/quá ngắn|chưa đủ độ sâu/);
 });
