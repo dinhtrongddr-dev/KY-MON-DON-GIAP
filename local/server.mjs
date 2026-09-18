@@ -7,6 +7,8 @@ import {resolve,extname} from 'node:path';
 import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf} from './ai-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
+import {prepareMenhReading,menhReadingIdentity,MENH_RULE_VERSION,MENH_PROTOCOL} from './menh-reading.mjs';
+import {interpretMenhReading} from './menh-interpret.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
@@ -52,7 +54,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map(),activityClients=new Map();
  const track=(method,...args)=>{try{return activityStore?.[method]?.(...args)??null;}catch{return null;}};
- const files=new Set(['/index.html','/audit.html','/styles.css','/app.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/reading-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const files=new Set(['/index.html','/menh.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/reading-core.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -92,8 +94,10 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
      }
      failures.delete(client);
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
-     if(path!=='/api/read'||req.method!=='POST')return send(404,{error:'Không có chức năng này.'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
+     const isMenhRead=path==='/api/menh/read'&&req.method==='POST';
+     const isQuestionRead=path==='/api/read'&&req.method==='POST';
+     if(!isQuestionRead&&!isMenhRead)return send(404,{error:'Không có chức năng này.'});
      if(busy)return send(429,{error:'Đang có một lượt luận. Đợi lượt đó xong rồi thử lại.'});
      if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
      const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});
@@ -101,9 +105,15 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      try{
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
-       let prepared;try{prepared=prepareReading(body);}catch(e){return send(400,{error:e.message});}
-       const identity=await readingIdentity(prepared);
-       if(body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       let prepared,identity;
+       try{
+         prepared=isMenhRead?prepareMenhReading(body):prepareReading(body);
+         identity=isMenhRead?await menhReadingIdentity(prepared):await readingIdentity(prepared);
+       }catch(e){return send(400,{error:e.message});}
+       const identityMismatch=isMenhRead
+         ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
+         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
+       if(identityMismatch)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
        activityReadingId=track('startReading');
@@ -122,13 +132,15 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
           res.once('close',stopKeepAlive);
         }
         try{
-          const result=await interpretReading(prepared,{runner,signal:controller.signal});
+          const result=isMenhRead?await interpretMenhReading(prepared,{runner,signal:controller.signal}):await interpretReading(prepared,{runner,signal:controller.signal});
           const used=aiRouteOf(result);
           const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
           const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
           if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
           if(!res.destroyed){
-            const data={router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+            const data=isMenhRead
+              ?{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,...identity,reading:result}
+              :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }
@@ -148,7 +160,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));

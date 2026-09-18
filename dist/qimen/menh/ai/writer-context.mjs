@@ -23,6 +23,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     luck:result.luck,
     annual:result.annual,
     claims,
+    evidence:(result.evidence||[]).filter(e=>evidenceIds.includes(e.evidenceId)).map(e=>({evidenceId:e.evidenceId,ruleId:e.ruleId,domain:e.domain,palace:e.palace,mechanism:e.mechanism,effectTag:e.effectTag,severity:e.severity,summary:e.metadata?.summary||null,relation:e.relation||null})),
     allowedClaimIds:claims.map(c=>c.claimId),
     allowedEvidenceIds:evidenceIds,
     stability:birthTimeMode==='UNKNOWN'?stability:null,

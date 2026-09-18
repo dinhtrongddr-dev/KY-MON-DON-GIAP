@@ -1,0 +1,43 @@
+import {buildMenhWriterContext} from '../dist/qimen/menh/ai/writer-context.mjs';
+import {menhWriterInstructions} from '../dist/qimen/menh/ai/prompts.mjs';
+import {validateMenhReading,MenhReadingValidationError} from '../dist/qimen/menh/ai/reading-audit.mjs';
+import {menhReadingSchema,MENH_READING_SECTIONS} from '../dist/qimen/menh/ai/schema.mjs';
+import {runAI,READING_TIMEOUT_MS,attachAiRoute,aiRouteOf,AI_ROUTES} from './ai-client.mjs';
+
+function empty(){return {text:'',claim_ids:[]};}
+function fallback(context){
+  const out={status:'reading',specVersion:context.specVersion,profileId:context.profileId};
+  for(const key of MENH_READING_SECTIONS)out[key]=empty();
+  const map={SELF:'self',FAMILY:'family',CHILDREN:'family',MARRIAGE:'marriage',CAREER:'career',WEALTH:'wealth'};
+  for(const claim of context.claims){
+    const key=claim.claimId==='LUCK_CURRENT'?'luck':claim.claimId==='ANNUAL_CURRENT'?'annual':map[claim.domain];
+    if(!key)continue;
+    if(out[key].text)out[key].text+=' ';
+    out[key].text+=claim.text;
+    out[key].claim_ids.push(claim.claimId);
+  }
+  const first=context.claims[0];
+  if(first)out.overview={text:`Kết quả deterministic hiện có: ${first.text}`,claim_ids:[first.claimId]};
+  if(context.birthTimeMode==='UNKNOWN')out.birthTimeNote={text:'Không nhớ giờ sinh: chỉ các kết luận ổn định qua toàn bộ ứng viên giờ sinh được hiển thị; các phần còn lại phụ thuộc giờ sinh và không được bỏ phiếu đa số.',claim_ids:[]};
+  return out;
+}
+export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READING_TIMEOUT_MS,signal}={}){
+  const context=buildMenhWriterContext(prepared.result,{birthTimeMode:prepared.input.birthTimeMode,stability:prepared.result.stability||null});
+  const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
+  let revision,routeStartIndex=0;
+  for(let attempt=0;attempt<2;attempt++){
+    combined.throwIfAborted();
+    const input=revision?{...context,revision}:context;
+    const options=runner===runAI?{signal:combined,routeStartIndex}:{signal:combined};
+    const result=await runner(menhWriterInstructions(),input,menhReadingSchema(context),options);
+    combined.throwIfAborted();
+    try{return attachAiRoute(validateMenhReading(result,context),aiRouteOf(result));}
+    catch(error){
+      if(!(error instanceof MenhReadingValidationError))throw error;
+      const used=aiRouteOf(result);
+      if(attempt===1)return attachAiRoute(validateMenhReading(fallback(context),context),used);
+      if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=Math.min(used.fallbackIndex+1,AI_ROUTES.length-1);
+      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence trong context; không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Trả lại JSON đầy đủ theo schema.'};
+    }
+  }
+}

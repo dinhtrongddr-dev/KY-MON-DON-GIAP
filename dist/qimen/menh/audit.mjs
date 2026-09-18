@@ -49,6 +49,11 @@ export function validateMenhResult(result){
   if(!String(result.profileId??'').trim())throw new Error('KM-MENH: result phải serialize profileId.');
   if(!Array.isArray(result.claims))throw new Error('KM-MENH: result phải có claims.');
   for(const claim of result.claims)createClaim(claim);
+  if(Array.isArray(result.evidence)&&result.evidence.length){
+    const evidenceIds=new Set(result.evidence.map(e=>e?.evidenceId).filter(Boolean));
+    for(const claim of result.claims)for(const id of claim.evidenceIds)
+      if(!evidenceIds.has(id))throw new Error('KM-MENH: claim '+claim.claimId+' tham chiếu evidence không tồn tại: '+id+'.');
+  }
   if(result.annual&&result.annual.annualStemLayerAuthority!=='TRANSMISSION_CORROBORATED')
     throw new Error('KM-MENH: annual result phải serialize annualStemLayerAuthority.');
   assertNoProhibitedOutput(result.outputTags||[]);

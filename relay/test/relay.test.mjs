@@ -96,3 +96,22 @@ test('relay streams keepalive and final JSON errors without buffering or losing 
   assert.deepEqual(JSON.parse(text), {error: 'Provider usage limit reached.'});
   assert.equal((await reader.read()).done, true);
 });
+
+
+test('relay proxies the separate KM-MENH AI route with the original JSON body', async t => {
+  const env={RELAY_ADMIN_SECRET:'m'.repeat(64)},previousFetch=globalThis.fetch;
+  t.after(()=>{globalThis.fetch=previousFetch;});
+  let seen;
+  globalThis.fetch=async(url,options)=>{
+    seen={url:String(url),options,body:await new Response(options.body).text()};
+    return new Response(JSON.stringify({menhRules:'KM-MENH-1.0',menhProtocol:1}),{headers:{'Content-Type':'application/json'}});
+  };
+  const body=JSON.stringify({birthDateLocal:'1990-01-01',protocol:1,rules:'KM-MENH-1.0'});
+  const response=await worker.fetch(new Request('https://relay.example/api/menh/read',{
+    method:'POST',headers:{Origin:officialOrigin,'X-Qimen-Token':'test-pairing-token','Content-Type':'application/json'},body
+  }),env);
+  assert.equal(response.status,200);
+  assert.equal(seen.url,namedTunnel+'/api/menh/read');
+  assert.equal(seen.body,body);
+  assert.equal(seen.options.headers.get('X-Qimen-Token'),'test-pairing-token');
+});

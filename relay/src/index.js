@@ -46,15 +46,17 @@ async function proxyApi(request, env, url) {
 
   const isStatus = url.pathname === '/api/status' && request.method === 'GET';
   const isRead = url.pathname === '/api/read' && request.method === 'POST';
+  const isMenhRead = url.pathname === '/api/menh/read' && request.method === 'POST';
+  const isAiRead = isRead || isMenhRead;
   const isActivity = url.pathname === '/api/activity' && request.method === 'GET';
   const isChart = url.pathname === '/api/activity/chart' && request.method === 'POST';
-  if (!isStatus && !isRead && !isActivity && !isChart) {
+  if (!isStatus && !isAiRead && !isActivity && !isChart) {
     return json(404, {error: 'Khong co chuc nang nay.'}, cors);
   }
-  if ((isStatus || isRead) && !request.headers.get('X-Qimen-Token')) {
+  if ((isStatus || isAiRead) && !request.headers.get('X-Qimen-Token')) {
     return json(401, {error: 'Nhap ma ket noi AI.'}, cors);
   }
-  if (isRead) {
+  if (isAiRead) {
     const contentLength = Number(request.headers.get('Content-Length') || '0');
     if (contentLength > 20000) {
       return json(413, {error: 'Cau hoi qua dai.'}, cors);
@@ -71,14 +73,14 @@ async function proxyApi(request, env, url) {
   });
   const token = request.headers.get('X-Qimen-Token');
   if (token) headers.set('X-Qimen-Token', token);
-  if (isRead) headers.set('Content-Type', 'application/json');
+  if (isAiRead) headers.set('Content-Type', 'application/json');
 
   let upstream;
   try {
     upstream = await fetch(target, {
       method: request.method,
       headers,
-      body: isRead ? request.body : undefined,
+      body: isAiRead ? request.body : undefined,
       redirect: 'manual',
       signal: request.signal,
     });
