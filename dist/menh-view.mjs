@@ -266,6 +266,8 @@ export function renderMenhDeterministic(container,prepared){
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderNatalBoard(board,selfPalaceNumber));
   }else container.append(renderUnknownBoardNotice(prepared));
+  const aiPanel=document.querySelector('.menh-ai-panel');
+  if(aiPanel)container.append(aiPanel);
   container.append(renderTechnical(prepared));
   const body=el('div','menh-deterministic-body');
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);

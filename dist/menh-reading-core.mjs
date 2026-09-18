@@ -138,7 +138,7 @@ export async function buildMenhReadingRequest(body){
   const prepared=prepareMenhReading(body),identity=await menhReadingIdentity(prepared);
   return {...prepared,...identity,request:{
     fullName:prepared.input.fullName,birthPlace:prepared.input.birthPlace,birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
-    tzOffset:prepared.input.tzOffset,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,
+    tzOffset:prepared.input.tzOffset,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,lifeEvents:prepared.input.lifeEvents,
     protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,...identity,
   }};
 }
