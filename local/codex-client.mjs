@@ -96,10 +96,11 @@ function turnFailure(error,runtime){
  if(error?.codexErrorInfo==='usageLimitExceeded')return new Error(runtime.is9Router?'9router chưa tìm được route còn hạn mức. Kiểm tra account pool/combo rồi thử lại.':'Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex. Chờ hạn mức được đặt lại rồi thử lại.');
  return new Error(runtime.is9Router?'AI chưa hoàn tất lượt luận qua 9router. Kiểm tra 9router, combo/model và provider rồi thử lại.':'AI chưa hoàn tất lượt luận. Kiểm tra hạn mức, đăng nhập và kết nối Codex rồi thử lại.');
 }
-export async function runCodex(instructions,input,schema,{signal,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
+export async function runCodex(instructions,input,schema,{signal,model,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
  if(signal?.aborted)throw new Error('Đã hủy.');
+ const requestedModel=String(model||runtime.model||'').trim();
  const requestedEffort=String(effort||runtime.effort||'auto').trim()||'auto';
- const effectiveRuntime={...runtime,effort:requestedEffort};
+ const effectiveRuntime={...runtime,model:requestedModel,effort:requestedEffort};
  const cwd=await mkdtemp(join(tmpdir(),'qimen-reading-'));
  let proc, timer, seq=0, finished=false,threadId=null,turnId=null;
  const pending=new Map(); let resolveTurn,rejectTurn,lastText='';
@@ -115,12 +116,12 @@ export async function runCodex(instructions,input,schema,{signal,effort,spawnPro
  try {
    const env={...process.env,CODEX_HOME:codexHome()};
    delete env.QIMEN_PAIRING_TOKEN;
-   const nineRouter=runtime.is9Router?verify9RouterEnv(env,runtime):null;
-   if(!runtime.is9Router)for(const key of ['OPENAI_API_KEY','CODEX_API_KEY','CODEX_ACCESS_TOKEN','OPENAI_BASE_URL'])delete env[key];
+   const nineRouter=effectiveRuntime.is9Router?verify9RouterEnv(env,effectiveRuntime):null;
+   if(!effectiveRuntime.is9Router)for(const key of ['OPENAI_API_KEY','CODEX_API_KEY','CODEX_ACCESS_TOKEN','OPENAI_BASE_URL'])delete env[key];
    const [binary,prefix]=launcher();
    const config=['approval_policy="never"','features.shell_tool=false','features.unified_exec=false','web_search="disabled"','default_permissions="qimen-reader"',
      'permissions.qimen-reader.filesystem={'+JSON.stringify(cwd.replaceAll('\\','/'))+'="read"}','permissions.qimen-reader.network.enabled=false'];
-   if(runtime.is9Router){
+   if(effectiveRuntime.is9Router){
      config.push('model_provider='+JSON.stringify(nineRouter.provider));
      if(!runtime.provider){
        config.push(
@@ -132,7 +133,7 @@ export async function runCodex(instructions,input,schema,{signal,effort,spawnPro
          `model_providers.${NINE_ROUTER_PROVIDER}.supports_websockets=false`
        );
      }
-   } else if(runtime.provider)config.push('model_provider='+JSON.stringify(runtime.provider));
+   } else if(effectiveRuntime.provider)config.push('model_provider='+JSON.stringify(effectiveRuntime.provider));
    if(process.platform==='win32')config.push('windows.sandbox="elevated"');
    proc=spawnProcess(binary,[...prefix,'app-server','--listen','stdio://',...config.flatMap(value=>['-c',value])],{cwd,env,shell:false,stdio:['pipe','pipe','pipe'],windowsHide:true});
    proc.stdin.on('error',()=>fail(new Error('Kết nối với AI đã đóng.')));
@@ -146,8 +147,8 @@ export async function runCodex(instructions,input,schema,{signal,effort,spawnPro
    createInterface({input:proc.stdout}).on('line',line=>{
      let m;try{m=JSON.parse(line);}catch{return;}
      if(m.id!==undefined && m.method){send({id:m.id,error:{code:-32601,message:'This client does not allow tools or approval requests.'}});fail(new Error('AI yêu cầu công cụ ngoài phạm vi luận; đã dừng.'));proc.kill();return;}
-     if(m.id!==undefined){const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(runtime.is9Router?'9router/Codex từ chối yêu cầu. Kiểm tra route, key và cấu hình provider.':'AI từ chối yêu cầu. Kiểm tra kết nối, đăng nhập và sandbox Windows elevated của Codex.')):p.resolve(m.result);}return;}
-     if(m.method==='error'){fail(turnFailure(m.params?.error,runtime));proc.kill();return;}
+     if(m.id!==undefined){const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(effectiveRuntime.is9Router?'9router/Codex từ chối yêu cầu. Kiểm tra route, key và cấu hình provider.':'AI từ chối yêu cầu. Kiểm tra kết nối, đăng nhập và sandbox Windows elevated của Codex.')):p.resolve(m.result);}return;}
+     if(m.method==='error'){fail(turnFailure(m.params?.error,effectiveRuntime));proc.kill();return;}
      const item=m.params?.item;
      if(m.method==='item/started' && item && !['userMessage','agentMessage','reasoning'].includes(item.type)){fail(new Error('Lượt luận đã dừng vì AI yêu cầu công cụ ngoài phạm vi.'));proc.kill();return;}
      if(m.method==='item/completed' && item?.type==='agentMessage')lastText=item.text||lastText;
@@ -157,16 +158,16 @@ export async function runCodex(instructions,input,schema,{signal,effort,spawnPro
    if(signal?.aborted)throw new Error('Đã hủy.');
    await request('initialize',{clientInfo:{name:'qimen_local',title:'Kỳ Môn Local',version:'5.1.0'},capabilities:{experimentalApi:false}});
    send({method:'initialized',params:{}});
-   if(!runtime.is9Router){
+   if(!effectiveRuntime.is9Router){
      const auth=await request('account/read',{refreshToken:false});
      if(auth.account?.type!=='chatgpt')throw new Error('AI chưa được đăng nhập đúng tài khoản ChatGPT. Mở LOGIN-WINDOWS.cmd để đăng nhập hồ sơ Kỳ Môn rồi thử lại.');
    }
    verifyPermissions((await request('config/read',{includeLayers:false,cwd})).config,cwd);
-   if(!runtime.is9Router)await requireModel(request,effectiveRuntime);
-   const started=await request('thread/start',{model:runtime.model,cwd,approvalPolicy:'never',ephemeral:true,baseInstructions:instructions});
-   if((!runtime.is9Router&&started.model!==runtime.model)||started.sandbox?.type!=='readOnly'||started.sandbox?.networkAccess!==false)throw new Error('Codex không giữ đúng model hoặc sandbox chỉ đọc. Đã dừng lượt luận.');
+   if(!effectiveRuntime.is9Router)await requireModel(request,effectiveRuntime);
+   const started=await request('thread/start',{model:effectiveRuntime.model,cwd,approvalPolicy:'never',ephemeral:true,baseInstructions:instructions});
+   if((!effectiveRuntime.is9Router&&started.model!==effectiveRuntime.model)||started.sandbox?.type!=='readOnly'||started.sandbox?.networkAccess!==false)throw new Error('Codex không giữ đúng model hoặc sandbox chỉ đọc. Đã dừng lượt luận.');
    threadId=started.thread.id;
-   const turnParams={threadId,model:runtime.model,approvalPolicy:'never',input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema};
+   const turnParams={threadId,model:effectiveRuntime.model,approvalPolicy:'never',input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema};
    if(requestedEffort!=='auto')turnParams.effort=requestedEffort;
    const turn=await request('turn/start',turnParams);
    turnId=turn.turn.id;

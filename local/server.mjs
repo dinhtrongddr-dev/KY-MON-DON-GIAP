@@ -4,7 +4,7 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runCodex,MODEL,REASONING_EFFORT,ROUTING_MODE} from './codex-client.mjs';
+import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf} from './ai-client.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
@@ -44,7 +44,7 @@ export function isAllowedOrigin(value,port,host){
  if(value===`http://127.0.0.1:${port}`||value===`http://localhost:${port}`||ALLOWED_WEB_ORIGINS.includes(value))return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runCodex,keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
  token=validatePairingToken(token);
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
@@ -110,14 +110,16 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runCo
         try{
           const result=await interpretReading(prepared,{runner,signal:controller.signal});
           if(!res.destroyed){
-            const data={router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+            const used=aiRouteOf(result);
+            const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
+            const data={router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }
         }finally{stopKeepAlive();busy=false;}
       }catch(e){
         if(!res.destroyed){
-          const data={error:e.message||'Không kết nối được Codex.'};
+          const data={error:e.message||'Không kết nối được AI.'};
           if(res.headersSent)res.end(JSON.stringify(data));
           else send(502,data);
         }

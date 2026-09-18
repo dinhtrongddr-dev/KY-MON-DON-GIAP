@@ -1,8 +1,8 @@
 # Kỳ Môn • Codex trên máy tính
 
-## Bản tích hợp Windows 17.1.0 ngày 17/09/2026
+## Bản tích hợp Windows 17.2.0 ngày 18/09/2026
 
-Đây là v17.1.0 / TG-CB-6.1, protocol 5, đã tích hợp với launcher và relay hiện có. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
+Đây là v17.2.0 / TG-CB-6.2, protocol 5, chỉ dùng Luận sâu; chuỗi AI là Astra → Gemini 3.6 Flash ở mức xhigh. Chạy shortcut **Ky Mon Local** hoặc `START-WINDOWS.cmd`; launcher khởi động server, tunnel và cập nhật đích Worker. Khi cần đăng nhập, dùng `LOGIN-WINDOWS.cmd` để đăng nhập chính thức vào hồ sơ riêng `%LOCALAPPDATA%\KyMonCodex\codex-home`.
 
 Codex CLI 0.154 dùng permission profile thay cho trường `readOnly.access` cũ. Cầu nối chọn `qimen-reader`, chỉ cho đọc thư mục tạm trống của từng lượt, tắt mạng công cụ và dùng sandbox Windows `elevated`. Cầu nối kiểm tra cấu hình hiệu lực trước khi gửi câu hỏi và dừng nếu cấu hình mở rộng quyền hoặc dùng `sandbox_mode` cũ. Không cần thay Codex CLI toàn máy. Nếu Windows yêu cầu thiết lập sandbox, hoàn tất thiết lập chính thức; không chuyển sang full access.
 
@@ -20,7 +20,7 @@ Bản 17.1.0 dùng TG-CB-6.1 / protocol 5, giữ nguyên lõi lập bàn. Thêm 
 Luồng công khai: website → `https://ky-mon-codex-relay.dinhtrongddr.workers.dev` → tunnel đã cấu hình → server Node local → `codex app-server` → GPT-6 Astra → kết quả trên bàn.
 Không tạo OpenAI API key, không trích xuất hoặc sao chép token đăng nhập. Cầu nối dùng giao thức App Server chính thức qua stdio, không điều khiển cửa sổ chat đang mở. Tài khoản/model và hạn mức thực tế do Codex quyết định; đây không phải AI chạy offline.
 
-## Cập nhật lên TG-CB-6.1 (All-in-One, website v17.1)
+## Cập nhật lên TG-CB-6.2 (All-in-One, website v17.2)
 
 1. Tải bộ mới tại https://kymon.pp.ua/downloads/ky-mon-ai.zip và giải nén vào thư mục mới. Sao lưu phiên bản server và cấu hình đang dùng.
 2. Xác định đúng thư mục/tiến trình đang phục vụ cổng 8765. Nếu dùng server nguyên bản trong gói, chuyển tiến trình sang thư mục mới rồi khởi động lại. Nếu server đã được tùy biến cho relay/tunnel, tích hợp các module mới và giữ nguyên phần cấu hình riêng; không chép đè cả server một cách máy móc.

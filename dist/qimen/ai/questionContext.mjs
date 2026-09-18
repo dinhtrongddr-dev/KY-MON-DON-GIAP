@@ -14,8 +14,9 @@ const INTENTS=[
   ['search',/\b(tim nguoi|tim do|that lac)\b/,'xác minh đầu mối tìm kiếm'],
   ['relationship',/\b(tinh cam|tinh yeu|nguoi yeu|hen ho)\b/,'hiểu và xử lý quan hệ'],
 ];
-export function buildQuestionContext(question,{mode='auto',topic='general',depth='standard',direction=null,subject=null}={}) {
+export function buildQuestionContext(question,{mode='auto',topic='general',depth='deep',direction=null,subject=null}={}) {
   if(!['standard','deep'].includes(depth))throw new Error('Mức luận không hợp lệ.');
+  depth='deep';
   const source=question.trim().normalize('NFC'),q=normalizeQuestion(source),classification=classifyQuestion(source,mode);
   const clauses=source.split(/[;\n]+|(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
   const focus=clauses.filter(s=>s.includes('?')).at(-1)||clauses.at(-1)||source,focusQ=normalizeQuestion(focus);

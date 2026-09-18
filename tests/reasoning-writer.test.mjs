@@ -70,9 +70,9 @@ test('writer receives a compact planner and one repair preserves its facts, iden
   assert.deepEqual(seen[1].revision.previousReading,firstReading,'the repair needs the rejected reading to correct it without losing valid sections');
   assert.ok(JSON.stringify(seen[0]).length<JSON.stringify(p.context).length/2);
 });
-test('depth changes reading identity while preserving the board; clarification stays short',async()=>{
-  const a=await buildReadingRequest(body),b=await buildReadingRequest({...body,depth:'deep'});
-  assert.equal(a.chartFingerprint,b.chartFingerprint);assert.notEqual(a.requestFingerprint,b.requestFingerprint);
-  assert.equal(b.request.depth,'deep');assert.equal((await buildReadingRequest(b.request)).requestFingerprint,b.requestFingerprint);
+test('all requests normalize to deep while preserving the board; clarification stays short',async()=>{
+  const a=await buildReadingRequest({...body,depth:'standard'}),b=await buildReadingRequest({...body,depth:'deep'});
+  assert.equal(a.chartFingerprint,b.chartFingerprint);assert.equal(a.requestFingerprint,b.requestFingerprint);
+  assert.equal(a.request.depth,'deep');assert.equal(b.request.depth,'deep');assert.equal((await buildReadingRequest(b.request)).requestFingerprint,b.requestFingerprint);
   const r=clarificationFixture(a);assert.equal(validateReading(r,a.facts,'general',a.context),r);
 });

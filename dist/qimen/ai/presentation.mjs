@@ -5,7 +5,6 @@ export function buildPresentationProfile(context) {
   const text=normalized(q.question);
   const asksDevelopment=/\b(dien bien|chuyen bien|tiep theo|qua trinh|se ra sao|sau do)\b/.test(text);
   const hasRealTiming=Boolean(g.timing?.allowedPredictions?.length);
-  const deep=q.depth==='deep';
   const profile={
     mode,
     layout:'full',
@@ -20,16 +19,16 @@ export function buildPresentationProfile(context) {
   };
 
   if(mode==='prediction'){
-    profile.layout=!deep&&!asksDevelopment?'focused':'full';
-    profile.showDevelopment=deep||asksDevelopment;
-    profile.showTiming=deep||hasRealTiming;
-    profile.showAlternative=deep||profile.showDevelopment;
+    profile.layout=asksDevelopment?'full':'focused';
+    profile.showDevelopment=asksDevelopment;
+    profile.showTiming=hasRealTiming;
+    profile.showAlternative=profile.showDevelopment;
     profile.minActions=1;
-    profile.minClaimGroups=deep?3:2;
+    profile.minClaimGroups=3;
     const timingTab=profile.showTiming?[['timing',hasRealTiming?'Ứng kỳ':'Thời gian & giới hạn']]:[];
     profile.tabs=[['quick','Bài luận'],...(profile.showDevelopment?[['story','Diễn biến']]:[]),['actions','Điều cần làm'],['technical','Căn cứ Kỳ Môn'],...timingTab];
     profile.labels={situation:'Cụm tượng quyết định',bottleneck:'Điều kiện làm thay đổi kết quả',alternative:'Nhánh kết quả khác',actions:'Điều cần làm',timing:hasRealTiming?'Ứng kỳ':'Phạm vi thời gian & giới hạn'};
-    profile.reasoningGoal='Trả lời kết quả đang hỏi trước; tách dấu hiệu, điều kiện chuyển và kết quả cuối. Chỉ dựng diễn biến khi câu hỏi thực sự cần hoặc người dùng chọn Luận sâu. Ở Luận trọng tâm, không tạo tab ứng kỳ nếu engine chưa có mốc được phép.';
+    profile.reasoningGoal='Trả lời kết quả đang hỏi trước; tách dấu hiệu, điều kiện chuyển và kết quả cuối. Luận sâu ở tầng suy nghĩ, nhưng chỉ dựng diễn biến khi câu hỏi thực sự cần và chỉ tạo Ứng kỳ khi engine có mốc được phép.';
   } else if(mode==='strategy'){
     profile.tabs=[['quick','Bài luận'],['story','Lộ trình'],['actions','Hành động'],['timing','Điểm dừng / kích hoạt'],['technical','Căn cứ Kỳ Môn']];
     profile.labels={situation:'Thế và nguồn lực',bottleneck:'Nút cần phá',alternative:'Phương án B',actions:'Thứ tự hành động',timing:'Điều kiện kích hoạt / điểm dừng'};

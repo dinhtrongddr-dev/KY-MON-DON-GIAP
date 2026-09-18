@@ -8,6 +8,7 @@ import {join,resolve} from 'node:path';
 import {prepareReading,validateReading,INSTRUCTIONS,readingSchema,RULE_VERSION,READING_PROTOCOL,buildReadingRequest,validateReadingResponse} from '../local/reading.mjs';
 import {createBridge} from '../local/server.mjs';
 import {runCodex,MODEL,REASONING_EFFORT} from '../local/codex-client.mjs';
+import {MODEL as ROUTED_MODEL,REASONING_EFFORT as ROUTED_EFFORT} from '../local/ai-client.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 const payload={question:'Trong 30 ngày tới tôi có nhận được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:9,hour:15,minute:30,tzOffset:7}};
 const answer=readingFixture(prepareReading(payload));
@@ -39,12 +40,12 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
  const prepared=await buildReadingRequest(payload);
  const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
- const data=await v2.json();assert.equal(data.model,MODEL);assert.equal(data.reasoningEffort,'ultra');assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
+ const data=await v2.json();assert.equal(data.model,ROUTED_MODEL);assert.equal(data.reasoningEffort,ROUTED_EFFORT);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);
  for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
  }
  assert.equal(called,1);
- const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,'ultra');
+ const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,ROUTED_EFFORT);
  assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ai/contextBuilder.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ui-controls.mjs',{headers})).status,200);

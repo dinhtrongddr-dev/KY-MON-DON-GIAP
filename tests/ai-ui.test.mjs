@@ -95,15 +95,17 @@ test('valid clarification renders text safely; no model HTML is interpreted',asy
   assert.equal(ids['ai-answer'].children[1].children[0].textContent,'<script>alert(1)</script>');
 });
 
-test('deep reading renders all three linked stages and alternatives without truncation',async t=>{
+test('deep reading renders all three linked stages, alternatives and the actual model used',async t=>{
   const p=await buildReadingRequest(payload),reading=readingFixture(p);
-  const {ids,doc}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
+  const modelUsed={id:'gpt-6-astra',label:'GPT-6 Astra',provider:'prism',routeLabel:'Prism fallback',effort:'xhigh',fallbackIndex:2};
+  const {ids,doc}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading,modelUsed}));
   let selected;doc.querySelector=selector=>({click(){selected=selector;},scrollIntoView(){}});
   await ids['ai-read'].fire('click');
   assert.equal(ids['ai-answer'].hidden,false);
   const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
   for(const part of [reading.situation.text,...reading.development.map(s=>s.text),reading.alternative.text])assert.ok(all.some(n=>n.textContent===part));
   assert.equal(all.filter(n=>n.className==='ai-stage-label').length,3);
+  const badge=all.find(n=>n.className==='ai-model-used');assert.ok(badge);assert.match(badge.textContent,/GPT-6 Astra.*Prism fallback.*xhigh.*fallback 2/);
   const button=all.find(n=>n.className==='jump-cung');await button.fire('click');assert.match(selected,/data-palace/);
 });
 

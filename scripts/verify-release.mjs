@@ -38,8 +38,8 @@ export function verifyRelease(directory = root) {
   const pkg = JSON.parse(readFileSync(join(directory, 'package.json'), 'utf8'));
   if (pkg.type !== 'commonjs' || Object.keys(pkg.dependencies || {}).length) throw new Error('Keep the vendored lunar CommonJS boundary and dependency-free app runtime');
   const versionChecks = [
-    ['dist/qimen.mjs', 'TG-ROTATING-2.0'], ['dist/reading-core.mjs', 'TG-CB-6.1'],
-    ['dist/reading-core.mjs', 'READING_PROTOCOL=5'], ['local/codex-client.mjs', 'gpt-6-astra'],
+    ['dist/qimen.mjs', 'TG-ROTATING-2.0'], ['dist/reading-core.mjs', 'TG-CB-6.2'],
+    ['dist/reading-core.mjs', 'READING_PROTOCOL=5'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
   ];
   for (const [name, expected] of versionChecks) {
     if (!readFileSync(join(directory, name), 'utf8').replace(/\s+/g, '').includes(expected)) throw new Error(`Baseline version mismatch: ${name}`);

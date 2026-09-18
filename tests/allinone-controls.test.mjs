@@ -10,8 +10,8 @@ class Element {
   focus(){this.focused=true;}
 }
 function setup(){
-  const ids=Object.fromEntries(['reading-depth','qimen-mode','question','mode-explanation','timing-options','direction-options','direction-origin','direction-kind','subject-label','actor-subject','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
-  ids['reading-depth'].value='standard';ids['qimen-mode'].tag='select';ids['qimen-action'].value='general';
+  const ids=Object.fromEntries(['qimen-mode','question','mode-explanation','timing-options','direction-options','direction-origin','direction-kind','subject-label','actor-subject','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
+ids['qimen-mode'].tag='select';ids['qimen-action'].value='general';
   for(const id of ['customer','competitor','decisionMaker']){const el=ids['actor-'+id];el.tag='select';el.append(new Element('option'));}
   for(let i=0;i<2;i++){const input=new Element('input');input.className='timing-candidate';ids['timing-candidates'].append(input);}
   const inputs=()=>{const out=[];const visit=el=>{if(el.className==='timing-candidate')out.push(el);el.children.forEach(visit);};visit(ids['timing-candidates']);return out;};
@@ -33,7 +33,7 @@ test('additional timing rows are bounded, removable and changes invalidate previ
   ids['timing-candidates'].children[2].children[1].fire('click');assert.equal(inputs().length,11);assert.equal(changes,1);
 });
 
-test('depth selection is returned with reading options',()=>{const {ids,options}=setup();assert.equal(options().depth,'standard');ids['reading-depth'].value='deep';assert.equal(options().depth,'deep');});
+test('reading options are always deep without a depth selector',()=>{const {options}=setup();assert.equal(options().depth,'deep');});
 
 test('direction and confirmed subject inputs are carried into requests and hidden outside direction mode',()=>{
   const {ids,options}=setup();ids['qimen-mode'].value='direction';ids['qimen-mode'].fire('change');

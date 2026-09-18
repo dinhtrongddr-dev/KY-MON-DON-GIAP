@@ -40,6 +40,10 @@ export function renderReading(answer,data,prepared) {
   };
   const section=(title,value,parent,tracePanel=parent)=>{if(!parent||!value?.text)return null;const el=node('section','',parent,'ai-assessment');if(title)node('h3',title,el);prose(value.text,el);trace(value.claim_ids,el,tracePanel);return el;};
   answer.replaceChildren();node('h3',r.status==='needs_clarification'?'Cần làm rõ trước khi luận':'Nhận định cho sự việc này',answer);
+  if(data.modelUsed){
+    const fallback=data.modelUsed.fallbackIndex>0?` · fallback ${data.modelUsed.fallbackIndex}`:'';
+    node('p',`Model vừa luận: ${data.modelUsed.label} · ${data.modelUsed.routeLabel} · suy luận ${data.modelUsed.effort}${fallback}`,answer,'ai-model-used');
+  }
   if(r.status==='needs_clarification'){
     const opening=node('div','',answer,'ai-opening');prose(r.summary.text,opening);
     const list=node('ul','',answer);for(const question of r.questions)node('li',question,list);

@@ -12,7 +12,7 @@ import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {relevantActorIds} from '../analysis/actorRelevance.mjs';
 export {buildReadingEvidenceGraph} from './reasoningPlanner.mjs';
 export function buildAnalysisContext(chart,body,facts) {
-  const questionContext=buildQuestionContext(body.question,{mode:body.mode??'auto',topic:body.topic,depth:body.depth??'standard',direction:body.direction??null,subject:body.subject??null});
+  const questionContext=buildQuestionContext(body.question,{mode:body.mode??'auto',topic:body.topic,depth:body.depth??'deep',direction:body.direction??null,subject:body.subject??null});
   const classification=questionContext.classification,actors=normalizeActors(body.actors??{});
   const resolvedTopic=questionContext.resolvedTopic;
   const board=toQimenBoard(chart),selfPillar=questionContext.subject.mapping?pillarFromGanzhi(questionContext.subject.mapping.pillar):board.pillars.day;

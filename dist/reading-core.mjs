@@ -10,7 +10,7 @@ import {BASE_WRITER_INSTRUCTIONS} from './qimen/ai/prompts.mjs';
 import {synthesisInstructions} from './qimen/ai/prompts.mjs';
 
 // One deterministic contract is used by the browser and the AI bridge.
-export const RULE_VERSION = 'TG-CB-6.1';
+export const RULE_VERSION = 'TG-CB-6.2';
 export const READING_PROTOCOL = 5;
 const UPGRADE_MESSAGE = `Bộ kết nối AI chưa cùng bộ quy tắc ${RULE_VERSION}. Hãy cập nhật bộ kết nối theo hướng dẫn; chưa thể nhận lời luận khác phiên bản.`;
 const named = p => `${p.vi} ${p.number} (${p.element})`;
