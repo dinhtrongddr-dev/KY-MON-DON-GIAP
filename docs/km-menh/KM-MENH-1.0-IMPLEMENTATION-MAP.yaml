@@ -1,0 +1,470 @@
+mapId: KM-MENH-1.0-IMPLEMENTATION-MAP
+specVersion: KM-MENH-1.0
+repoBaseline:
+  repository: dinhtrongddr-dev/KY-MON-DON-GIAP
+  branch: develop
+  observedHead: e214379cd93b91b757a12271398718005f39f509
+  packageVersion: 17.2.4
+  protectedCorePolicy: NO_CHANGES_TO_DIST_QIMEN_MJS_VENDOR_LUNAR_OR_DIST_QIMEN_CORE
+fixtures:
+- id: F-CENTER5-ADV-YANG
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_PROFILE_CONSTRUCTION
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/profiles.mjs
+  - dist/qimen/menh/natal-adapter.mjs
+  targetTest: tests/menh-profile.test.mjs
+  ruleIds:
+  - KMZ-NATAL-002A
+- id: F-CENTER5-ADV-YIN
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_PROFILE_CONSTRUCTION
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/profiles.mjs
+  - dist/qimen/menh/natal-adapter.mjs
+  targetTest: tests/menh-profile.test.mjs
+  ruleIds:
+  - KMZ-NATAL-002A
+- id: F-S5-SHENQI-LEGACY-CENTER5
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P2_PROFILE_CONSTRUCTION
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/profiles.mjs
+  - dist/qimen/menh/natal-adapter.mjs
+  targetTest: tests/menh-profile.test.mjs
+  ruleIds:
+  - KMZ-NATAL-002B
+- id: F-LWF02-PROFILE-CONFLICT-ISOLATION
+  kind: SOURCE_NEGATIVE
+  mandatory: true
+  phase: P2_PROFILE_CONSTRUCTION
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/profiles.mjs
+  - dist/qimen/menh/natal-adapter.mjs
+  targetTest: tests/menh-profile.test.mjs
+  ruleIds:
+  - KMZ-NATAL-002A
+  - KMZ-NATAL-002B
+  - KMZ-SOURCE-001
+- id: F-Z19-SOURCE-CONFLICT
+  kind: SOURCE_NEGATIVE
+  mandatory: true
+  phase: P1_FIXTURE_COMPILER
+  compiledInputKind: SOURCE_REJECT
+  targetModules:
+  - dist/qimen/menh/source-validation.mjs
+  targetTest: tests/menh-source-validation.test.mjs
+  ruleIds:
+  - KMZ-SOURCE-001
+- id: F-FIVE-STEM-COMBOS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_RESOLVERS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/resolvers.mjs
+  targetTest: tests/menh-resolvers.test.mjs
+  ruleIds:
+  - KMZ-MARR-002
+  - KMZ-JIA-002
+- id: F-SIX-JIA-HIDDEN-INSTRUMENTS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_RESOLVERS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/resolvers.mjs
+  targetTest: tests/menh-resolvers.test.mjs
+  ruleIds:
+  - KMZ-JIA-001
+  - KMZ-YEAR-002
+- id: F-ABSTRACT-JIA-PROXY
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_RESOLVERS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/resolvers.mjs
+  targetTest: tests/menh-resolvers.test.mjs
+  ruleIds:
+  - KMZ-JIA-002
+- id: F-BRANCH-TO-PALACE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P3_LUCK
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/luck.mjs
+  targetTest: tests/menh-luck.test.mjs
+  ruleIds:
+  - KMZ-LUCK-002
+  - KMZ-YEAR-003
+- id: F-CLOCKWISE-PALACE-SEQUENCE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P3_LUCK
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/luck.mjs
+  targetTest: tests/menh-luck.test.mjs
+  ruleIds:
+  - KMZ-LUCK-003
+- id: F-Z16-LUCK-FROM-SI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P3_LUCK
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/luck.mjs
+  targetTest: tests/menh-luck.test.mjs
+  ruleIds:
+  - KMZ-LUCK-001
+  - KMZ-LUCK-002
+  - KMZ-LUCK-003
+  - KMZ-LUCK-004
+- id: F-WJG21-LUCK-FROM-HAI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P3_LUCK
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/luck.mjs
+  targetTest: tests/menh-luck.test.mjs
+  ruleIds:
+  - KMZ-LUCK-001
+  - KMZ-LUCK-002
+  - KMZ-LUCK-003
+- id: F-LUCK-5-5-5-BOUNDARIES
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P3_LUCK
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/luck.mjs
+  targetTest: tests/menh-luck.test.mjs
+  ruleIds:
+  - KMZ-LUCK-004
+- id: F-Z16-DAY-STEM-SELF
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P4_EVIDENCE_CORE
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/evidence.mjs
+  - dist/qimen/menh/synthesis.mjs
+  targetTest: tests/menh-evidence.test.mjs
+  ruleIds:
+  - KMZ-SELF-001
+  - KMZ-SELF-002
+- id: F-Z17-HOUR-DAY-BASELINE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P4_EVIDENCE_CORE
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/evidence.mjs
+  - dist/qimen/menh/synthesis.mjs
+  targetTest: tests/menh-evidence.test.mjs
+  ruleIds:
+  - KMZ-SELF-003
+  - KMZ-CHILD-001
+- id: F-Z18-GLOBAL-HARD-PRECEDENCE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P4_EVIDENCE_CORE
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/evidence.mjs
+  - dist/qimen/menh/synthesis.mjs
+  targetTest: tests/menh-evidence.test.mjs
+  ruleIds:
+  - KMZ-GLOBAL-001
+  - KMZ-EVID-001
+- id: F-EVIDENCE-DEDUP
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P4_EVIDENCE_CORE
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/evidence.mjs
+  - dist/qimen/menh/synthesis.mjs
+  targetTest: tests/menh-evidence.test.mjs
+  ruleIds:
+  - KMZ-EVID-001
+- id: F-DIRECT-ZHANG-PARENT-PAIR-YANG
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/domains/family.mjs
+  targetTest: tests/menh-family.test.mjs
+  ruleIds:
+  - KMZ-PARENT-001
+  - KMZ-PARENT-005
+- id: F-PARENT-PAIR-YIN-INVARIANT
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/family.mjs
+  targetTest: tests/menh-family.test.mjs
+  ruleIds:
+  - KMZ-PARENT-005
+- id: F-GENG-QIAN-KUN-GUARD
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/family.mjs
+  targetTest: tests/menh-family.test.mjs
+  ruleIds:
+  - KMZ-PARENT-004
+  - KMZ-OUTPUT-002
+- id: F-MARRIAGE-BUNDLE-REQUIRED
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/marriage.mjs
+  targetTest: tests/menh-marriage.test.mjs
+  ruleIds:
+  - KMZ-MARR-001
+  - KMZ-MARR-002
+  - KMZ-MARR-003
+- id: F-SQ16-E4-FIVE-COMBINATION-SPOUSE-ACTIVE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/domains/marriage.mjs
+  targetTest: tests/menh-marriage.test.mjs
+  ruleIds:
+  - KMZ-MARR-002
+- id: F-LWF06-MARRIAGE-MULTI-RESOLVER
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/domains/marriage.mjs
+  targetTest: tests/menh-marriage.test.mjs
+  ruleIds:
+  - KMZ-MARR-001
+  - KMZ-MARR-002
+  - KMZ-MARR-003
+- id: F-CAREER-OPEN-DOOR
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/career.mjs
+  targetTest: tests/menh-career.test.mjs
+  ruleIds:
+  - KMZ-CAREER-001
+  - KMZ-CAREER-002
+  - KMZ-CAREER-003
+- id: F-WEALTH-RELATION-SEMANTICS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/wealth.mjs
+  targetTest: tests/menh-wealth.test.mjs
+  ruleIds:
+  - KMZ-WEALTH-001
+- id: F-WEALTH-INNER-OUTER
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P5_DOMAINS
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/domains/wealth.mjs
+  targetTest: tests/menh-wealth.test.mjs
+  ruleIds:
+  - KMZ-WEALTH-003
+- id: F-ANNUAL-NATAL-IMMUTABLE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P6_ANNUAL
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/annual.mjs
+  - dist/qimen/menh/overlay.mjs
+  targetTest: tests/menh-annual.test.mjs
+  ruleIds:
+  - KMZ-NATAL-003
+  - KMZ-YEAR-001
+  - KMZ-YEAR-003
+- id: F-LWF03-ANNUAL-TIANPAN-DING-HAI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P6_ANNUAL
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/annual.mjs
+  - dist/qimen/menh/overlay.mjs
+  targetTest: tests/menh-annual.test.mjs
+  ruleIds:
+  - KMZ-YEAR-004
+- id: F-LWF04-ANNUAL-TIANPAN-BING-CHEN
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P6_ANNUAL
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/annual.mjs
+  - dist/qimen/menh/overlay.mjs
+  targetTest: tests/menh-annual.test.mjs
+  ruleIds:
+  - KMZ-YEAR-004
+- id: F-LWF08-ANNUAL-TIANPAN-BING-ZI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P6_ANNUAL
+  compiledInputKind: BOARD_SNAPSHOT
+  targetModules:
+  - dist/qimen/menh/annual.mjs
+  - dist/qimen/menh/overlay.mjs
+  targetTest: tests/menh-annual.test.mjs
+  ruleIds:
+  - KMZ-YEAR-004
+- id: F-ANNUAL-JIA-SHEN
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P6_ANNUAL
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/annual.mjs
+  - dist/qimen/menh/overlay.mjs
+  targetTest: tests/menh-annual.test.mjs
+  ruleIds:
+  - KMZ-YEAR-002
+  - KMZ-JIA-001
+- id: F-S1-TENDENCY-NOT-EVENT
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/schema.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds:
+  - KMZ-OUTPUT-001
+- id: F-PROHIBITED-OUTPUTS
+  kind: OUTPUT_GUARD
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/schema.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds:
+  - KMZ-OUTPUT-002
+  - KMZ-OUTPUT-003
+- id: F-OPTIONAL-TRANSMISSION-OFF-BY-DEFAULT
+  kind: OUTPUT_GUARD
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/schema.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds: []
+- id: F-TRACEABILITY
+  kind: OUTPUT_GUARD
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/schema.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds: []
+- id: F-BIRTHTIME-KNOWN-REQUIRES-TIME
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_INPUT_CONTRACT
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/input.mjs
+  - dist/qimen/menh/schema.mjs
+  targetTest: tests/menh-input.test.mjs
+  ruleIds:
+  - KMZ-INPUT-001
+- id: F-BIRTHTIME-UNKNOWN-NULLS-TIME
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_INPUT_CONTRACT
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/input.mjs
+  - dist/qimen/menh/schema.mjs
+  targetTest: tests/menh-input.test.mjs
+  ruleIds:
+  - KMZ-INPUT-001
+  - KMZ-INPUT-002
+- id: F-BIRTHTIME-UNKNOWN-CANDIDATE-COVERAGE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_INPUT_CONTRACT
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/input.mjs
+  - dist/qimen/menh/candidates.mjs
+  targetTest: tests/menh-input.test.mjs
+  ruleIds:
+  - KMZ-INPUT-002
+  - KMZ-INPUT-003
+- id: F-BIRTHTIME-UNKNOWN-23H-BOUNDARY
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  phase: P2_INPUT_CONTRACT
+  compiledInputKind: FUNCTION
+  targetModules:
+  - dist/qimen/menh/input.mjs
+  - dist/qimen/menh/candidates.mjs
+  targetTest: tests/menh-input.test.mjs
+  ruleIds:
+  - KMZ-INPUT-003
+- id: F-BIRTHTIME-UNKNOWN-STABILITY-NO-VOTE
+  kind: OUTPUT_GUARD
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/stability.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds:
+  - KMZ-INPUT-004
+  - KMZ-EVID-001
+- id: F-BIRTHTIME-UNKNOWN-NO-AUTO-RECTIFICATION
+  kind: OUTPUT_GUARD
+  mandatory: true
+  phase: P7_OUTPUT_CONTRACT
+  compiledInputKind: OUTPUT_GUARD
+  targetModules:
+  - dist/qimen/menh/stability.mjs
+  - dist/qimen/menh/audit.mjs
+  targetTest: tests/menh-guardrails.test.mjs
+  ruleIds:
+  - KMZ-INPUT-002
+  - KMZ-INPUT-005
+fixtureCount: 41

@@ -1,0 +1,708 @@
+suite:
+  id: KM-MENH-1.0-GOLDEN
+  specVersion: KM-MENH-1.0
+  frozenAt: '2026-09-18'
+  status: FROZEN
+  purpose: 'Normative regression suite for KM-MENH-1.0. SOURCE_GOLDEN fixtures lock behavior reproduced from audited
+    published cases. DERIVED_INVARIANT fixtures lock deterministic rules frozen by the specification.
+
+    '
+  scientificValidationClaim: false
+  fixtureCount: 41
+profiles:
+  ZHANG_ADVANCED_CLASS_LIFETIME:
+    status: DEFAULT_FROZEN
+    plate: ROTATING
+    juMethod: CHAI_BU
+    center5:
+      YANG_DUN: GEN_8
+      YIN_DUN: KUN_2
+    annualStemLayer: TIAN_PAN_ACTIVE_STEM
+    luckModel: EIGHT_PALACES_X_15_YEARS
+  ZHANG_SHENQI_GENERAL_NATAL_LEGACY:
+    status: RESEARCH_COMPATIBILITY_FROZEN
+    center5:
+      YANG_DUN: KUN_2
+      YIN_DUN: KUN_2
+    annualStemLayer: TIAN_PAN_ACTIVE_STEM
+sourceRefs:
+  SRC_Z_ADV:
+    provenance: DIRECT_ZHANG
+    work: 张志春奇门遁甲高级班笔记
+    section: 第三讲 奇门与四柱（上） 张志春主讲
+  SRC_Z_SHENQI:
+    provenance: DIRECT_ZHANG
+    work: 神奇之门
+    section: 人生机遇预测
+  SRC_WJG_ADV:
+    provenance: TRANSMISSION_WJG
+    work: 张志春奇门遁甲高级班笔记
+    section: 第四讲 奇门与四柱（下） 王建国主讲
+  SRC_LWF:
+    provenance: TRANSMISSION_ZHANG_LINE_LWF
+    work: 奇门与四柱
+    author: 李万福
+fixtureKinds:
+  SOURCE_GOLDEN: exact behavior from an audited source case
+  SOURCE_NEGATIVE: source case that must be rejected or isolated
+  DERIVED_INVARIANT: deterministic rule frozen from the source-backed spec
+  OUTPUT_GUARD: validator behavior
+fixtures:
+- id: F-CENTER5-ADV-YANG
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  profile: ZHANG_ADVANCED_CLASS_LIFETIME
+  ruleIds:
+  - KMZ-NATAL-002A
+  input:
+    dun: YANG_DUN
+    centerPalace: CENTER_5
+  expect:
+    lodgePalace: GEN_8
+    associatedDoor: SHENG
+- id: F-CENTER5-ADV-YIN
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  profile: ZHANG_ADVANCED_CLASS_LIFETIME
+  ruleIds:
+  - KMZ-NATAL-002A
+  input:
+    dun: YIN_DUN
+    centerPalace: CENTER_5
+  expect:
+    lodgePalace: KUN_2
+    associatedDoor: SI
+- id: F-S5-SHENQI-LEGACY-CENTER5
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_SHENQI
+  provenance: DIRECT_ZHANG
+  profile: ZHANG_SHENQI_GENERAL_NATAL_LEGACY
+  ruleIds:
+  - KMZ-NATAL-002B
+  sourceCase: S5
+  input:
+    birthApprox: 1942-01-13 05:00
+    pillars:
+    - XIN_SI
+    - XIN_CHOU
+    - BING_YIN
+    - XIN_MAO
+    dun: YANG_DUN
+    ju: 2
+  expect:
+    center5LodgePalace: KUN_2
+  negativeAssertions:
+  - mustNotNormalizeTo: GEN_8
+- id: F-LWF02-PROFILE-CONFLICT-ISOLATION
+  kind: SOURCE_NEGATIVE
+  mandatory: true
+  sourceRef: SRC_LWF
+  provenance: TRANSMISSION_ZHANG_LINE_LWF
+  sourceCase: LWF-02
+  ruleIds:
+  - KMZ-NATAL-002A
+  - KMZ-NATAL-002B
+  - KMZ-SOURCE-001
+  observedSource:
+    pillars:
+    - WU_XU
+    - YI_MAO
+    - GUI_MAO
+    - JIA_YIN
+    dun: YANG_DUN
+    ju: 9
+    center5LodgePalace: KUN_2
+  expect:
+    requireExplicitProfile: true
+    compatibleWithAdvancedClassFixture: false
+    silentCrossProfileComparison: REJECT
+- id: F-Z19-SOURCE-CONFLICT
+  kind: SOURCE_NEGATIVE
+  mandatory: true
+  sourceRef: SRC_Z_ADV
+  provenance: DIRECT_ZHANG
+  sourceCase: Z19
+  ruleIds:
+  - KMZ-SOURCE-001
+  sourceHeader:
+    dateTime: 1963-10-28 07:00-07:30
+    pillars:
+    - GUI_MAO
+    - REN_XU
+    - JIA_CHEN
+    - WU_CHEN
+  sourceAnalysisConflict:
+    analyzedDayStem: REN
+  expect:
+    fixtureStatus: SOURCE_CONFLICT
+    eligibleAsGolden: false
+    chartGenerationScoreAllowed: false
+- id: F-FIVE-STEM-COMBOS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-MARR-002
+  - KMZ-JIA-002
+  cases:
+    JIA: JI
+    JI: JIA
+    YI: GENG
+    GENG: YI
+    BING: XIN
+    XIN: BING
+    DING: REN
+    REN: DING
+    WU: GUI
+    GUI: WU
+- id: F-SIX-JIA-HIDDEN-INSTRUMENTS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-JIA-001
+  - KMZ-YEAR-002
+  cases:
+    JIA_ZI: WU
+    JIA_XU: JI
+    JIA_SHEN: GENG
+    JIA_WU: XIN
+    JIA_CHEN: REN
+    JIA_YIN: GUI
+- id: F-ABSTRACT-JIA-PROXY
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-JIA-002
+  input:
+    context: ABSTRACT_FIVE_COMBINATION_COUNTERPART
+    stem: JIA
+    branch: null
+  expect:
+    resolved: ZHI_FU_JIA_PROXY
+    mustNotInventBranch: true
+- id: F-BRANCH-TO-PALACE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-LUCK-002
+  - KMZ-YEAR-003
+  cases:
+    ZI: KAN_1
+    CHOU: GEN_8
+    YIN: GEN_8
+    MAO: ZHEN_3
+    CHEN: XUN_4
+    SI: XUN_4
+    WU: LI_9
+    WEI: KUN_2
+    SHEN: KUN_2
+    YOU: DUI_7
+    XU: QIAN_6
+    HAI: QIAN_6
+- id: F-CLOCKWISE-PALACE-SEQUENCE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-LUCK-003
+  expect:
+    sequence:
+    - KAN_1
+    - GEN_8
+    - ZHEN_3
+    - XUN_4
+    - LI_9
+    - KUN_2
+    - DUI_7
+    - QIAN_6
+- id: F-Z16-LUCK-FROM-SI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_ADV
+  provenance: DIRECT_ZHANG
+  sourceCase: Z16
+  profile: ZHANG_ADVANCED_CLASS_LIFETIME
+  ruleIds:
+  - KMZ-LUCK-001
+  - KMZ-LUCK-002
+  - KMZ-LUCK-003
+  - KMZ-LUCK-004
+  input:
+    birthYearBranch: SI
+  expect:
+    periods:
+    - ages: 1-15
+      palace: XUN_4
+    - ages: 16-30
+      palace: LI_9
+    - ages: 31-45
+      palace: KUN_2
+    - ages: 46-60
+      palace: DUI_7
+    - ages: 61-75
+      palace: QIAN_6
+    - ages: 76-90
+      palace: KAN_1
+    - ages: 91-105
+      palace: GEN_8
+    - ages: 106-120
+      palace: ZHEN_3
+- id: F-WJG21-LUCK-FROM-HAI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_WJG_ADV
+  provenance: TRANSMISSION_WJG
+  sourceCase: WJG-21
+  profile: ZHANG_ADVANCED_CLASS_LIFETIME
+  ruleIds:
+  - KMZ-LUCK-001
+  - KMZ-LUCK-002
+  - KMZ-LUCK-003
+  input:
+    birthYearBranch: HAI
+  expect:
+    firstFivePeriods:
+    - ages: 1-15
+      palace: QIAN_6
+    - ages: 16-30
+      palace: KAN_1
+    - ages: 31-45
+      palace: GEN_8
+    - ages: 46-60
+      palace: ZHEN_3
+    - ages: 61-75
+      palace: XUN_4
+- id: F-LUCK-5-5-5-BOUNDARIES
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-LUCK-004
+  cases:
+    age5: NINE_STAR
+    age6: EIGHT_DOOR
+    age10: EIGHT_DOOR
+    age11: TEN_STEM_KE_YING_AND_PALACE_STATE
+    age15: TEN_STEM_KE_YING_AND_PALACE_STATE
+    age16:
+      nextFifteenYearPalace: true
+      activeLayer: NINE_STAR
+- id: F-Z16-DAY-STEM-SELF
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_ADV
+  provenance: DIRECT_ZHANG
+  sourceCase: Z16
+  ruleIds:
+  - KMZ-SELF-001
+  - KMZ-SELF-002
+  input:
+    pillars:
+    - GUI_SI
+    - JIA_ZI
+    - DING_YOU
+    - JIA_CHEN
+  expect:
+    selfStem: DING
+    selfResolver: DAY_STEM_PALACE
+    requireZhiFuZhiShiBaseline: true
+- id: F-Z17-HOUR-DAY-BASELINE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_ADV
+  provenance: DIRECT_ZHANG
+  sourceCase: Z17
+  ruleIds:
+  - KMZ-SELF-003
+  - KMZ-CHILD-001
+  expect:
+    hourStemUsedForChildren: true
+    hourStemAlsoUsedInSelfProcessBaseline: true
+    duplicateEvidenceVote: false
+- id: F-Z18-GLOBAL-HARD-PRECEDENCE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_ADV
+  provenance: DIRECT_ZHANG
+  sourceCase: Z18
+  ruleIds:
+  - KMZ-GLOBAL-001
+  - KMZ-EVID-001
+  observed:
+    favorableLocalSignals:
+    - TIAN_XIN
+    - KAI_MEN
+    severeGlobalOrSelfSignals:
+    - FU_YIN
+    - SEVERE_SELF_STRUCTURE
+  expect:
+    globalHardStructureEvaluatedBeforeDomainSynthesis: true
+    favorableLocalSignalsMayBeCapped: true
+    automaticBadFateVeto: false
+    rawVoteCounting: false
+- id: F-EVIDENCE-DEDUP
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-EVID-001
+  input:
+    evidence:
+    - palace: QIAN_6
+      mechanism: SAME_PALACE_ALIAS
+      symbol: A
+    - palace: QIAN_6
+      mechanism: SAME_PALACE_ALIAS
+      symbol: B
+  expect:
+    rawCountConfidenceInflation: false
+    dedupeRequired: true
+- id: F-DIRECT-ZHANG-PARENT-PAIR-YANG
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_SHENQI
+  provenance: DIRECT_ZHANG_AUXILIARY
+  sourceCase: SQ16-E2
+  ruleIds:
+  - KMZ-PARENT-001
+  - KMZ-PARENT-005
+  input:
+    yearStemPolarity: YANG
+    yearStem: BING
+  expect:
+    yearStemRole: FATHER
+    pairedStem: XIN
+    pairedStemRole: MOTHER
+    resolverRole: CORROBORATOR
+    soleParentResolver: false
+- id: F-PARENT-PAIR-YIN-INVARIANT
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-PARENT-005
+  input:
+    yearStemPolarity: YIN
+  expect:
+    yearStemRole: MOTHER
+    pairedStemRole: FATHER
+    soleParentResolver: false
+- id: F-GENG-QIAN-KUN-GUARD
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-PARENT-004
+  - KMZ-OUTPUT-002
+  cases:
+    GENG_IN_QIAN:
+      target: FATHER_SIDE
+    GENG_IN_KUN:
+      target: MOTHER_SIDE
+  expect:
+    evidenceClass: TRADITIONAL_STRONG_PATTERN
+    deterministicDeathClaim: REJECT
+- id: F-MARRIAGE-BUNDLE-REQUIRED
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-MARR-001
+  - KMZ-MARR-002
+  - KMZ-MARR-003
+  expect:
+    requiredResolvers:
+    - DAY_STEM
+    - XIU_MEN
+    - LIU_HE
+    - YI_GENG
+    - DAY_STEM_FIVE_COMBINATION_COUNTERPART
+    universalSolePrimary: false
+- id: F-SQ16-E4-FIVE-COMBINATION-SPOUSE-ACTIVE
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_SHENQI
+  provenance: DIRECT_ZHANG_AUXILIARY
+  sourceCase: SQ16-E4
+  ruleIds:
+  - KMZ-MARR-002
+  input:
+    dayStem: XIN
+  expect:
+    fiveCombinationCounterpart: BING
+    counterpartRemainsActiveSpouseEvidence: true
+    counterpartUniversalSolePrimary: false
+- id: F-LWF06-MARRIAGE-MULTI-RESOLVER
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_LWF
+  provenance: TRANSMISSION_ZHANG_LINE_LWF
+  sourceCase: LWF-06
+  ruleIds:
+  - KMZ-MARR-001
+  - KMZ-MARR-002
+  - KMZ-MARR-003
+  input:
+    pillars:
+    - GENG_YIN
+    - YI_YOU
+    - REN_SHEN
+    - GUI_MAO
+  expect:
+    inspect:
+    - LIU_HE
+    - YI_GENG
+    - REN_DING
+    singleResolverDecisionAllowed: false
+- id: F-CAREER-OPEN-DOOR
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-CAREER-001
+  - KMZ-CAREER-002
+  - KMZ-CAREER-003
+  expect:
+    selfStarDoorDefinesVocationNature: true
+    kaiMenComparedToSelf: true
+    duMenIsCorroborator: true
+    numericCareerScore: false
+- id: F-WEALTH-RELATION-SEMANTICS
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-WEALTH-001
+  cases:
+    SHENG_GENERATES_SELF: SUPPORT
+    SHENG_SAME_SELF: ALIGNMENT
+    SELF_GENERATES_SHENG: INPUT_COST
+    SHENG_CONTROLS_SELF: PRESSURE
+    SELF_CONTROLS_SHENG: CONTEXT_REQUIRED
+  expect:
+    forcePositiveForSelfControlsSheng: false
+- id: F-WEALTH-INNER-OUTER
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-WEALTH-003
+  cases:
+    SHENG_OUTER_SELF_INNER: DEVELOPMENT_AWAY_FROM_ORIGIN
+    SELF_OUTER_SHENG_INNER: ANCESTRAL_LOCAL_ASSETS_HARDER_TO_RETAIN
+    BOTH_INNER: LOCAL_OR_ANCESTRAL_BASE_MORE_SUPPORTIVE
+    BOTH_OUTER: DEVELOPMENT_OR_ENTERPRISE_AWAY_FROM_ORIGIN
+  expect:
+    claimType: NATAL_TENDENCY
+    guaranteedMigrationEvent: false
+- id: F-ANNUAL-NATAL-IMMUTABLE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-NATAL-003
+  - KMZ-YEAR-001
+  - KMZ-YEAR-003
+  expect:
+    annualProcessingMutatesNatalChart: false
+    overlayRequired: true
+- id: F-LWF03-ANNUAL-TIANPAN-DING-HAI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_LWF
+  provenance: TRANSMISSION_ZHANG_LINE_LWF
+  sourceCase: LWF-03
+  ruleIds:
+  - KMZ-YEAR-004
+  input:
+    annualPillar: DING_HAI
+  observedNatal:
+    heavenPlateStemPalace:
+      DING: ZHEN_3
+    earthPlateStemAtZhen3: XIN
+  expect:
+    annualStemPalace: ZHEN_3
+    layerUsed: TIAN_PAN_ACTIVE_STEM
+    mustNotAssertWholeChartProfile: true
+  fixtureScope: ANNUAL_LAYER_RESOLVER_ONLY
+  chartConstructionProfile: SOURCE_NATIVE_NOT_ASSERTED
+- id: F-LWF04-ANNUAL-TIANPAN-BING-CHEN
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_LWF
+  provenance: TRANSMISSION_ZHANG_LINE_LWF
+  sourceCase: LWF-04
+  ruleIds:
+  - KMZ-YEAR-004
+  input:
+    annualPillar: BING_CHEN
+  observedNatal:
+    heavenPlateStemPalace:
+      BING: LI_9
+    earthPlateStemAtLi9: GUI
+  expect:
+    annualStemPalace: LI_9
+    layerUsed: TIAN_PAN_ACTIVE_STEM
+    mustNotAssertWholeChartProfile: true
+  fixtureScope: ANNUAL_LAYER_RESOLVER_ONLY
+  chartConstructionProfile: SOURCE_NATIVE_NOT_ASSERTED
+- id: F-LWF08-ANNUAL-TIANPAN-BING-ZI
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_LWF
+  provenance: TRANSMISSION_ZHANG_LINE_LWF
+  sourceCase: LWF-08
+  ruleIds:
+  - KMZ-YEAR-004
+  input:
+    annualPillar: BING_ZI
+  observedNatal:
+    heavenPlateStemPalace:
+      BING: QIAN_6
+    earthPlateStemAtQian6: JI
+  expect:
+    annualStemPalace: QIAN_6
+    layerUsed: TIAN_PAN_ACTIVE_STEM
+    mustNotAssertWholeChartProfile: true
+  fixtureScope: ANNUAL_LAYER_RESOLVER_ONLY
+  chartConstructionProfile: SOURCE_NATIVE_NOT_ASSERTED
+- id: F-ANNUAL-JIA-SHEN
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-YEAR-002
+  - KMZ-JIA-001
+  input:
+    annualPillar: JIA_SHEN
+  expect:
+    resolvedStem: GENG
+    annualBranchPalace: KUN_2
+- id: F-S1-TENDENCY-NOT-EVENT
+  kind: SOURCE_GOLDEN
+  mandatory: true
+  sourceRef: SRC_Z_SHENQI
+  provenance: DIRECT_ZHANG
+  sourceCase: S1
+  ruleIds:
+  - KMZ-OUTPUT-001
+  expect:
+    natalAdverseSymbolismClaimType: NATAL_TENDENCY
+    mayAutoPromoteToObservedEvent: false
+- id: F-PROHIBITED-OUTPUTS
+  kind: OUTPUT_GUARD
+  mandatory: true
+  ruleIds:
+  - KMZ-OUTPUT-002
+  - KMZ-OUTPUT-003
+  reject:
+  - EXACT_DEATH_AGE
+  - LIFESPAN_COUNTDOWN
+  - EXACT_CHILD_COUNT
+  - EXACT_CHILD_SEX
+  - INFERTILITY_CERTAINTY
+  - DETERMINISTIC_PARENT_DEATH
+  - DETERMINISTIC_SEVERE_DISEASE
+  - DETERMINISTIC_ACCIDENT_DEATH
+  - EXACT_MARRIAGE_COUNT_FROM_PALACE_NUMBERS
+  - NUMERIC_WEALTH_FROM_PALACE_NUMBER
+  - OVERALL_DESTINY_SCORE
+  - SUCCESS_PROBABILITY
+- id: F-OPTIONAL-TRANSMISSION-OFF-BY-DEFAULT
+  kind: OUTPUT_GUARD
+  mandatory: true
+  expectDisabled:
+  - BRANCH_THREE_COMBINATION_THREE_MEETING_ACTIVATION
+  - DAY_STEM_LU_GUANLU_SECONDARY_BODY_PROXY
+  - BAZI_TEN_YEAR_LUCK_INTEGRATION
+  - FOUR_PILLARS_USEFUL_GOD_FUSION
+  - HOUR_STEM_FINAL_LIFE_OUTCOME
+  - SEX_DUN_SHUN_NI_LABEL
+  - EXACT_MONTH_DAY_YING_QI_BRANCH_NETWORK
+- id: F-TRACEABILITY
+  kind: OUTPUT_GUARD
+  mandatory: true
+  expect:
+    everyRenderedClaimHasRuleIds: true
+    everyRenderedClaimHasEvidenceIds: true
+    profileIdSerialized: true
+    annualStemLayerAuthoritySerializedWhenAnnualUsed: true
+- id: F-BIRTHTIME-KNOWN-REQUIRES-TIME
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-001
+  input:
+    birthTimeMode: KNOWN
+    birthTimeLocal: null
+  expect:
+    validation: REJECT
+    reasonCode: BIRTH_TIME_REQUIRED
+- id: F-BIRTHTIME-UNKNOWN-NULLS-TIME
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-001
+  - KMZ-INPUT-002
+  input:
+    birthTimeMode: UNKNOWN
+    previousUiTime: 09:30
+  expect:
+    submittedBirthTimeLocal: null
+    defaultTimeInjected: false
+- id: F-BIRTHTIME-UNKNOWN-CANDIDATE-COVERAGE
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-002
+  - KMZ-INPUT-003
+  input:
+    birthTimeMode: UNKNOWN
+    civilBirthDate: '2000-01-01'
+  expect:
+    doubleHourFamilies:
+    - ZI
+    - CHOU
+    - YIN
+    - MAO
+    - CHEN
+    - SI
+    - WU
+    - WEI
+    - SHEN
+    - YOU
+    - XU
+    - HAI
+    familyCount: 12
+    candidateCountMin: 12
+    candidateCountMax: 13
+- id: F-BIRTHTIME-UNKNOWN-23H-BOUNDARY
+  kind: DERIVED_INVARIANT
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-003
+  input:
+    birthTimeMode: UNKNOWN
+    dayBoundary: '23:00'
+  expect:
+    preserveEarlyZiAndLateZiWhenDayPillarDiffers: true
+    collapseDifferentDayPillars: false
+- id: F-BIRTHTIME-UNKNOWN-STABILITY-NO-VOTE
+  kind: OUTPUT_GUARD
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-004
+  - KMZ-EVID-001
+  input:
+    candidateDirections:
+    - SUPPORT
+    - SUPPORT
+    - PRESSURE
+  expect:
+    majorityVerdictAllowed: false
+    classification: TIME_SENSITIVE
+- id: F-BIRTHTIME-UNKNOWN-NO-AUTO-RECTIFICATION
+  kind: OUTPUT_GUARD
+  mandatory: true
+  ruleIds:
+  - KMZ-INPUT-002
+  - KMZ-INPUT-005
+  expect:
+    autoSelectedBirthHour: null
+    exactHourClaimAllowed: false
+    rectificationEnabled: false
+releaseGate:
+  mandatoryFixturesMustPass: true
+  sourceNegativeFixturesMustFailAsExpected: true
+  crossProfileSilentNormalizationAllowed: false
+  optionalTransmissionAffectsDefaultResult: false
+  appImplementationMayClaimComplianceOnlyAfterGatePasses: true
