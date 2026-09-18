@@ -126,10 +126,10 @@ function appendPatternFlags(root,board){
 function renderNatalBoard(board){
   const section=el('section','menh-board-section');
   const toolbar=el('div','board-toolbar menh-board-toolbar'),title=el('div');
-  title.append(el('p','eyebrow','Mệnh bàn Kỳ Môn · natal cố định'),el('h2','','Mệnh bàn Kỳ Môn 3×3'));
+  title.append(el('p','eyebrow','Mệnh bàn theo giờ sinh'),el('h2','','Mệnh bàn Kỳ Môn 3×3'));
   const key=el('div','board-key');
   key.append(el('span','menh-board-key-self','Nhật can = Bản thân · '+board.pillars.day.vi));
-  key.append(el('span','','Thời Gia · Chuyển Bàn · Tháo bổ'));
+  key.append(el('span','','Bàn Kỳ Môn dùng để luận Mệnh'));
   toolbar.append(title,key);section.append(toolbar);
 
   const frame=el('div','board-frame menh-board-frame'),grid=el('div','qimen-board menh-qimen-board');
@@ -152,17 +152,16 @@ function renderUnknownBoardNotice(prepared){
   title.append(el('p','eyebrow','Mệnh bàn Kỳ Môn · giờ sinh chưa xác định'),el('h2','','Không có một bàn 3×3 duy nhất'));
   toolbar.append(title);section.append(toolbar);
   const note=el('div','menh-unknown-board-placeholder');
-  note.append(el('strong','','Engine đang đối chiếu '+prepared.candidateCount+' Mệnh bàn ứng viên deterministic.'));
+  note.append(el('strong','','Hệ thống đang đối chiếu '+prepared.candidateCount+' Mệnh bàn theo các khung giờ có thể.'));
   note.append(el('p','','Không chọn tự động một giờ, không bỏ phiếu đa số và không dựng một bàn đại diện giả. Các kết luận bên dưới chỉ giữ phần ổn định qua toàn bộ ứng viên.'));
   section.append(note);return section;
 }
 function renderTechnical(prepared){
   const section=el('section','menh-technical-section'),head=el('div','menh-section-heading');
-  head.append(el('p','eyebrow','Dữ liệu deterministic'),el('h2','','Thông tin kỹ thuật'));section.append(head);
+  head.append(el('p','eyebrow','Dữ liệu lập bàn'),el('h2','','Thông tin kỹ thuật'));section.append(head);
   const meta=el('div','menh-meta-grid');
   if(prepared.input.fullName)addMeta(meta,'Họ và tên',prepared.input.fullName);
   if(prepared.input.birthPlace)addMeta(meta,'Nơi sinh',prepared.input.birthPlace);
-  addMeta(meta,'Profile',prepared.result.profileId);
   addMeta(meta,'Ngày sinh',prepared.input.birthDateLocal);
   addMeta(meta,'Giờ sinh',prepared.input.birthTimeMode==='KNOWN'?prepared.input.birthTimeLocal:'Không xác định');
   addMeta(meta,'Ứng viên',prepared.candidateCount);
@@ -179,7 +178,7 @@ function renderTechnical(prepared){
 }
 function renderKnown(root,prepared){
   const result=prepared.result,section=el('section','menh-domain-section'),head=el('div','menh-section-heading');
-  head.append(el('p','eyebrow','Claims & evidence KM-MENH-1.0'),el('h2','','Các trục luận Mệnh'));section.append(head);
+  head.append(el('p','eyebrow','Nội dung từ Mệnh bàn'),el('h2','','Các trục luận Mệnh'));section.append(head);
   const grid=el('div','menh-claim-grid');for(const claim of result.claims)grid.append(claimCard(claim,result));
   section.append(grid);root.append(section);
 }
@@ -213,13 +212,13 @@ function renderUnknown(root,prepared){
 export function renderMenhDeterministic(container,prepared){
   container.replaceChildren();
   const header=el('div','menh-result-head'),title=el('div');
-  title.append(el('p','eyebrow','KM-MENH-1.0 · Zhang Advanced-Class'),el('h2','',prepared.input.birthTimeMode==='KNOWN'?'Mệnh bàn theo giờ sinh':'Phân tích khi không nhớ giờ sinh'));
+  title.append(el('p','eyebrow','Kỳ Môn Mệnh'),el('h2','',prepared.input.birthTimeMode==='KNOWN'?'Mệnh bàn theo giờ sinh':'Phân tích khi không nhớ giờ sinh'));
   header.append(title);
   header.append(el('span','menh-mode-badge',prepared.input.birthTimeMode==='KNOWN'?'Biết giờ sinh':'Không nhớ giờ sinh'));
   container.append(header);
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
-    if(!board)throw new Error('KM-MENH: thiếu QimenBoard natal đã dùng để luận.');
+    if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
     container.append(renderNatalBoard(board));
   }else container.append(renderUnknownBoardNotice(prepared));
   container.append(renderTechnical(prepared));

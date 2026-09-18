@@ -25,12 +25,12 @@
     <section class="control-panel menh-control" aria-labelledby="menh-input-title">
       <div class="control-heading">
         <div><p class="eyebrow">Mệnh bàn theo thời điểm sinh</p><h1 id="menh-input-title">Nhập dữ kiện sinh</h1></div>
-        <span class="menh-profile-chip">Zhang Advanced-Class</span>
+        <span class="menh-profile-chip">Kỳ Môn Mệnh</span>
       </div>
-      <p class="menh-intro">Dùng Thời Gia Kỳ Môn · Chuyển Bàn · Tháo bổ. Nếu không nhớ giờ sinh, hệ thống không tự đặt giờ mà so toàn bộ các giờ đôi và chỉ giữ phần ổn định.</p>
+      <p class="menh-intro">Lập Mệnh bàn theo ngày giờ sinh. Nếu không nhớ giờ sinh, hệ thống sẽ đối chiếu các khung giờ và chỉ giữ những kết luận ổn định.</p>
       <form id="menh-form" class="menh-input-grid" novalidate>
-        <label class="field"><span>Họ và tên</span><input id="birth-name" type="text" maxlength="120" autocomplete="name" placeholder="Ví dụ: Nguyễn Đình Trọng" /><small>Dùng để hiển thị hồ sơ Mệnh; không làm thay đổi phép lập bàn.</small></label>
-        <label class="field"><span>Nơi sinh</span><input id="birth-place" type="text" maxlength="160" autocomplete="off" placeholder="Ví dụ: Hà Nội, Việt Nam" /><small>Ghi địa danh nơi sinh để lưu đúng ngữ cảnh giờ địa phương.</small></label>
+        <label class="field"><span>Họ và tên</span><input id="birth-name" type="text" maxlength="120" autocomplete="name" placeholder="Ví dụ: Trần Minh Anh" /><small>Dùng để hiển thị tên trên hồ sơ Mệnh.</small></label>
+        <label class="field"><span>Nơi sinh</span><input id="birth-place" type="text" maxlength="160" autocomplete="off" placeholder="Ví dụ: Đà Nẵng, Việt Nam" /><small>Nhập tỉnh/thành phố và quốc gia nơi sinh.</small></label>
         <label class="field"><span>Ngày sinh</span><input id="birth-date" type="date" min="1900-01-01" max="2100-12-31" required /><small>Ngày dương lịch tại nơi sinh</small></label>
         <label class="field"><span>Giờ sinh</span><input id="birth-time" type="time" required /><small id="birth-time-help">Nhập giờ dân dụng tại nơi sinh.</small></label>
         <label class="birth-time-toggle"><input id="birth-time-unknown" type="checkbox" /><span><strong>Không nhớ giờ sinh</strong><small>Tích vào đây nếu hoàn toàn không nhớ giờ.</small></span></label>
@@ -38,15 +38,15 @@
         <label class="field"><span>Giới tính · tùy chọn</span><select id="menh-sex"><option value="">Không khai báo</option><option value="MALE">Nam</option><option value="FEMALE">Nữ</option></select><small>Chỉ dùng cho lớp ký hiệu truyền thống phụ; không đổi bộ resolver chính.</small></label>
         <label class="field"><span>Tuổi muốn xét · tùy chọn</span><input id="menh-age" type="number" min="1" max="120" step="1" placeholder="Ví dụ: 37" /><small>Dùng để xác định đại vận 15 năm và lớp 5+5+5.</small></label>
         <label class="field"><span>Năm lưu niên · tùy chọn</span><input id="menh-annual-year" type="number" min="1900" max="2100" step="1" /><small>Can là lớp chính; Chi là lớp phụ trên Mệnh bàn cố định.</small></label>
-        <div class="field submit-field"><span aria-hidden="true">Thao tác</span><button class="button button-primary" type="submit"><span>Lập Mệnh bàn</span><span aria-hidden="true">→</span></button><small aria-hidden="true">Phân tích deterministic</small></div>
+        <div class="field submit-field"><span aria-hidden="true">Thao tác</span><button class="button button-primary" type="submit"><span>Lập Mệnh bàn</span><span aria-hidden="true">→</span></button><small aria-hidden="true">Lập bàn và phân tích</small></div>
       </form>
       <p id="menh-form-error" class="form-error" role="alert" hidden></p>
     </section>
     <section id="menh-result" class="result menh-result" aria-live="polite" hidden>
-      <section id="menh-deterministic" class="menh-panel" aria-label="Kết quả Kỳ Môn Mệnh deterministic"></section>
+      <section id="menh-deterministic" class="menh-panel" aria-label="Kết quả Kỳ Môn Mệnh"></section>
       <section class="learning-panel ai-panel menh-ai-panel" aria-labelledby="menh-ai-title">
         <div class="control-heading"><div><p class="eyebrow">Diễn giải có kiểm chứng</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
-        <p>AI không tự lập lại bàn và không được đổi profile/rule. Mọi đoạn luận phải bám claim và evidence KM-MENH-1.0 đã tính ở phía trên.</p>
+        <p>AI diễn giải trực tiếp từ Mệnh bàn đã lập ở phía trên và không tự thay đổi dữ liệu của bàn.</p>
         <div class="local-controls">
           <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Dùng chung mã với phần Hỏi việc.</small></label>
           <button id="menh-local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button>
