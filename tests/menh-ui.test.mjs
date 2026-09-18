@@ -81,3 +81,12 @@ test('unknown birth-time rectification uses remembered window and dated event pr
   assert.match(core,/confidence=!minEvidence/);
   assert.doesNotMatch(html,/rect-marriage-years/);
 });
+
+test('unknown candidate can be explicitly promoted to the known board used by AI',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/menh-use-candidate/);
+  assert.match(view,/Chọn bàn này để AI luận/);
+  assert.match(app,/button\.dataset\.candidateTime/);
+  assert.match(app,/unknown\.checked=false/);
+  assert.match(app,/form\.requestSubmit\(\)/);
+});

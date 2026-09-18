@@ -194,8 +194,13 @@ function renderUnknownBoardNotice(prepared){
     const details=el('details','menh-candidate');
     const label='Giờ '+(HOUR_FAMILY_VI[c.family]||c.family)+' · '+c.time+(c.points!=null?' · '+c.points+'/'+c.maxPoints+' điểm':'');
     details.append(el('summary','',label));
+    const actions=el('div','menh-candidate-actions');
+    const choose=el('button','button button-primary','Chọn giờ này để luận AI');choose.type='button';choose.dataset.birthTime=c.time;choose.dataset.birthFamily=c.family;
+    actions.append(choose);details.append(actions);
     details.append(renderNatalBoard(c.board,candidateSelfPalace(c)));
-    chooser.append(details);
+    const use=el('button','button button-primary menh-use-candidate','Chọn bàn này để AI luận');
+    use.type='button';use.dataset.candidateTime=c.time;use.dataset.candidateFamily=c.family;
+    details.append(use);chooser.append(details);
   }
   section.append(chooser);return section;
 }

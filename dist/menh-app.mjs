@@ -69,6 +69,12 @@ form.addEventListener('submit',event=>{
     result.scrollIntoView?.({behavior:'smooth',block:'start'});
   }catch(e){error.textContent=e.message;error.hidden=false;result.hidden=true;}
 });
+deterministic.addEventListener('click',event=>{
+  const button=event.target.closest?.('.menh-use-candidate');if(!button)return;
+  rememberedTime=button.dataset.candidateTime;unknown.checked=false;syncUnknownBirthTime();time.value=rememberedTime;
+  clearResult();form.requestSubmit();
+  requestAnimationFrame(()=>document.getElementById('menh-ai-read')?.scrollIntoView?.({behavior:'smooth',block:'center'}));
+});
 annual.value=String(new Date().getFullYear());
 syncUnknownBirthTime();
 initMenhAi({prepare:()=>collectMenhForm(),activity});
