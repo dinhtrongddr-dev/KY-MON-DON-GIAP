@@ -22,6 +22,14 @@ export const MODEL=RUNTIME.model;
 export const REASONING_EFFORT=RUNTIME.effort;
 export const READING_TIMEOUT_MS=600000;
 
+export function parseStructuredText(text){
+ const value=String(text??'').trim();
+ try{return JSON.parse(value);}catch{}
+ const match=value.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+ if(match){try{return JSON.parse(match[1]);}catch{}}
+ throw new Error('AI trả kết quả chưa hợp lệ. Hãy thử lại.');
+}
+
 function modelLabel(model){return model==='gpt-6-astra'?'GPT-6 Astra':model;}
 function codexHome(){
  if(process.env.QIMEN_CODEX_HOME)return resolve(process.env.QIMEN_CODEX_HOME);
@@ -88,8 +96,10 @@ function turnFailure(error,runtime){
  if(error?.codexErrorInfo==='usageLimitExceeded')return new Error(runtime.is9Router?'9router chưa tìm được route còn hạn mức. Kiểm tra account pool/combo rồi thử lại.':'Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex. Chờ hạn mức được đặt lại rồi thử lại.');
  return new Error(runtime.is9Router?'AI chưa hoàn tất lượt luận qua 9router. Kiểm tra 9router, combo/model và provider rồi thử lại.':'AI chưa hoàn tất lượt luận. Kiểm tra hạn mức, đăng nhập và kết nối Codex rồi thử lại.');
 }
-export async function runCodex(instructions,input,schema,{signal,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
+export async function runCodex(instructions,input,schema,{signal,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
  if(signal?.aborted)throw new Error('Đã hủy.');
+ const requestedEffort=String(effort||runtime.effort||'auto').trim()||'auto';
+ const effectiveRuntime={...runtime,effort:requestedEffort};
  const cwd=await mkdtemp(join(tmpdir(),'qimen-reading-'));
  let proc, timer, seq=0, finished=false,threadId=null,turnId=null;
  const pending=new Map(); let resolveTurn,rejectTurn,lastText='';
@@ -152,16 +162,16 @@ export async function runCodex(instructions,input,schema,{signal,spawnProcess=sp
      if(auth.account?.type!=='chatgpt')throw new Error('AI chưa được đăng nhập đúng tài khoản ChatGPT. Mở LOGIN-WINDOWS.cmd để đăng nhập hồ sơ Kỳ Môn rồi thử lại.');
    }
    verifyPermissions((await request('config/read',{includeLayers:false,cwd})).config,cwd);
-   if(!runtime.is9Router)await requireModel(request,runtime);
+   if(!runtime.is9Router)await requireModel(request,effectiveRuntime);
    const started=await request('thread/start',{model:runtime.model,cwd,approvalPolicy:'never',ephemeral:true,baseInstructions:instructions});
    if((!runtime.is9Router&&started.model!==runtime.model)||started.sandbox?.type!=='readOnly'||started.sandbox?.networkAccess!==false)throw new Error('Codex không giữ đúng model hoặc sandbox chỉ đọc. Đã dừng lượt luận.');
    threadId=started.thread.id;
    const turnParams={threadId,model:runtime.model,approvalPolicy:'never',input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema};
-   if(runtime.effort!=='auto')turnParams.effort=runtime.effort;
+   if(requestedEffort!=='auto')turnParams.effort=requestedEffort;
    const turn=await request('turn/start',turnParams);
    turnId=turn.turn.id;
    const text=await turnDone;
-   try{return JSON.parse(text);}catch{throw new Error('AI trả kết quả chưa hợp lệ. Hãy thử lại.');}
+   return parseStructuredText(text);
  } finally {
    finished=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);
    await stopProcess(proc);

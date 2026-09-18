@@ -4,9 +4,9 @@ Mục tiêu 2 — tổng hợp Kỳ Môn: chọn đúng tầng kết quả ngư�
 Phân loại từng related_consideration bằng source: explicit = người dùng nói thẳng; entailed = hệ quả trực tiếp của lựa chọn đang hỏi; check_only = vấn đề hợp lý nên kiểm tra thêm nhưng chưa có dữ kiện. check_only tuyệt đối không được viết như sự thật. Ví dụ một quyết định gia đình có thể liên quan nguồn lực chăm sóc, độ bền thu nhập, phân công trách nhiệm, phương án quay lại công việc hoặc mốc rà soát — nhưng chỉ nêu mục nào thực sự liên quan câu hỏi cụ thể.
 Không mở rộng sang chủ đề xa chỉ để bài dài hơn. related_considerations phải giải thích vì sao liên quan đến core_decision; scope_guard ghi rõ những điều không được suy thành fact.
 Không viết diễn giải dài. Mỗi note là một câu ngắn mô tả vai trò của căn cứ trong lập luận. Prediction ưu tiên kết quả và điều kiện đổi kết quả; strategy ưu tiên chuỗi quyết định; business ưu tiên pipeline thương vụ; negotiation ưu tiên đòn bẩy/giới hạn; timing/direction ưu tiên so sánh các lựa chọn đã tính.
-Đây là dàn ý nội bộ có cấu trúc. Bản viết cuối phải tự kiểm tra lại dàn ý với readingGraph và không coi semantic_frame hay deliberation là nguồn dữ kiện mới.`;
+Đây là dàn ý nội bộ có cấu trúc. Trả đúng JSON theo output schema; không Markdown, không tiêu đề, không code fence, không thêm khóa ngoài schema. Bản viết cuối phải tự kiểm tra lại dàn ý với readingGraph và không coi semantic_frame hay deliberation là nguồn dữ kiện mới.`;
 
-const arr=items=>({type:'array',items,uniqueItems:true});
+const arr=items=>({type:'array',items});
 const obj=properties=>({type:'object',additionalProperties:false,required:Object.keys(properties),properties});
 const str={type:'string'};
 const choice=values=>({type:'string',enum:values});

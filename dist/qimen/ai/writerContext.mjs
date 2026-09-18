@@ -47,6 +47,6 @@ export function buildWriterContext(context) {
     layout:concise?'concise':'full',
     coverage:{required:[...(coverageByMode[c.classification.mode]||[]),...(deep?['role_specific_modifiers','directed_relationships','counterfactual_check','action_provenance']:[])]},
     length:{depth:q.depth,target:deep?deepTarget[c.classification.mode]||'600–1100':targetByMode[c.classification.mode]||'350–750',
-      minWords:concise?70:180,maxWords:deep?1500:1000,
+      minWords:concise?70:180,maxWords:deep?1800:1000,
       counting:'Số đơn vị cách nhau bởi khoảng trắng trong phần văn luận; không tính căn cứ kỹ thuật và bảng so sánh.'}};
 }

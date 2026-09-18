@@ -44,3 +44,10 @@ test('planning schema lets the model expand directly related considerations with
   assert.deepEqual(frame.properties.related_considerations.items.properties.source.enum,['explicit','entailed','check_only']);
   assert.ok(schema.required.includes('semantic_frame'));
 });
+
+test('deliberation schema avoids unsupported Structured Outputs keywords',()=>{
+  const p=prepareReading({question,topic:'general',mode:'auto',method:'chaibu',input:{year:2026,month:9,day:17,hour:20,minute:15,tzOffset:7}});
+  const schema=deliberationSchema(p.context);
+  const serialized=JSON.stringify(schema);
+  assert.doesNotMatch(serialized,/uniqueItems|minItems|maxItems|minLength|maxLength/);
+});

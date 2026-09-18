@@ -1,8 +1,14 @@
 import {instructionsFor, readingSchema, validateReading, ReadingValidationError} from './reading.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {DELIBERATION_INSTRUCTIONS,deliberationSchema,shouldDeliberate} from '../dist/qimen/ai/deliberation.mjs';
-import {runCodex,READING_TIMEOUT_MS} from './codex-client.mjs';
+import {runCodex,READING_TIMEOUT_MS,REASONING_EFFORT} from './codex-client.mjs';
 import {verifiedFallback,clarificationReading} from '../dist/qimen/ai/verifiedFallback.mjs';
+
+function bindPlannedMetadata(result,context){
+  if(!result||!Array.isArray(result.development))return result;
+  const stages=context.allInOne.reasoning.likelyScenario.stages;
+  return {...result,development:result.development.map((step,index)=>({...step,interaction_ids:[...(stages[index]?.relationshipIds||[])]}))};
+}
 
 // A single bounded repair is allowed for invalid content, never for auth/network failures.
 // Production uses a separate bounded planning pass for synthesis-heavy modes. Tests and
@@ -15,10 +21,11 @@ export async function interpretReading(prepared,{runner=runCodex,planRunner,budg
   const combined=signal?AbortSignal.any([signal,deadline]):deadline;
   const baseWriterContext=buildWriterContext(prepared.context);
   const planner=planRunner===undefined?(runner===runCodex?runCodex:null):planRunner;
+  const deepEffort=prepared.context.allInOne.questionContext.depth==='deep'&&REASONING_EFFORT==='auto'?'high':undefined;
   let deliberation=null;
   if(planner&&shouldDeliberate(prepared.context)){
     combined.throwIfAborted();
-    deliberation=await planner(DELIBERATION_INSTRUCTIONS,baseWriterContext,deliberationSchema(prepared.context),{signal:combined});
+    deliberation=await planner(DELIBERATION_INSTRUCTIONS,baseWriterContext,deliberationSchema(prepared.context),{signal:combined,effort:deepEffort});
     combined.throwIfAborted();
   }
   const writerContext=deliberation?{...baseWriterContext,deliberation}:baseWriterContext;
@@ -26,7 +33,7 @@ export async function interpretReading(prepared,{runner=runCodex,planRunner,budg
   for(let attempt=0;attempt<2;attempt++) {
     combined.throwIfAborted();
     const context=revision?{...writerContext,revision}:writerContext;
-    const result=await runner(instructionsFor(prepared.context),context,readingSchema(prepared.facts,prepared.context),{signal:combined});
+    const result=bindPlannedMetadata(await runner(instructionsFor(prepared.context),context,readingSchema(prepared.facts,prepared.context),{signal:combined,effort:deepEffort}),prepared.context);
     combined.throwIfAborted();
     try{return validateReading(result,prepared.facts,prepared.context.selectedTopic,prepared.context);}
     catch(error) {

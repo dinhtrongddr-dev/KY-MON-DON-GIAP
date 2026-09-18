@@ -5,6 +5,7 @@ import {elementLink} from '../dist/reading-focus.mjs';
 import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,instructionsFor} from '../local/reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
+import {parseStructuredText} from '../local/codex-client.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
 
 test('all 25 element directions remain neutral between two business roles',()=>{
@@ -39,6 +40,16 @@ test('ordered stages require distinct explanations, actual assessments and share
   const generic=prepareReading({...body,topic:'general'}),r=readingFixture(generic);
   r.situation.claim_ids=['ref_work_0'];
   assert.throws(()=>validateReading(r,generic.facts,'general',generic.context),/căn cứ/);
+});
+
+test('deterministic interaction metadata is bound by the app instead of delegated to the model',async()=>{
+  const p=prepareReading(body);
+  const output=await interpretReading(p,{runner:async(_instructions,_context,schema)=>{
+    assert.equal(Object.hasOwn(schema.properties.development.items.properties,'interaction_ids'),false);
+    const r=readingFixture(p);for(const step of r.development)delete step.interaction_ids;return r;
+  }});
+  assert.equal(output.status,'reading');
+  assert.deepEqual(output.development.map(x=>x.interaction_ids),p.context.allInOne.reasoning.likelyScenario.stages.map(x=>x.relationshipIds));
 });
 
 test('brief content gets exactly one bounded rewrite with the same facts and question',async()=>{
@@ -76,4 +87,10 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
 test('v5 request fingerprint binds the planner, mode and depth',async()=>{
   const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.1');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
+});
+
+test('structured parser accepts schema JSON and one fenced JSON block, but not prose around it',()=>{
+  assert.deepEqual(parseStructuredText('{\"answer\":\"ok\"}'),{answer:'ok'});
+  assert.deepEqual(parseStructuredText('```json\n{\"answer\":\"ok\"}\n```'),{answer:'ok'});
+  assert.throws(()=>parseStructuredText('Kết quả: {\"answer\":\"ok\"}'),/chưa hợp lệ/);
 });

@@ -8,7 +8,7 @@ export function readingSchema(_facts,context) {
   const claims=arr(choice(g.claims.map(c=>c.id))),section={text:str,claim_ids:claims};
   const c=context.allInOne,rows=c.comparison?.ranking||c.plan.computed.ranking||[];
   return obj({status:{type:'string',enum:['reading','needs_clarification']},topic_id:choice([c.resolvedTopic]),mode:choice([c.classification.mode]),questionType:choice([c.questionContext.questionType]),
-    summary:obj(section),situation:obj(section),development:arr(obj({...section,stage:choice(STAGES),condition:str,interaction_ids:arr(choice(g.interactions.map(i=>i.edgeId)))})),
+    summary:obj(section),situation:obj(section),development:arr(obj({...section,stage:choice(STAGES),condition:str})),
     bottleneck:obj({...section,resolution:str}),actions:arr(obj({recommendation_id:choice(g.recommendations.map(r=>r.id)),text:str})),
     alternative:obj({...section,id:choice([g.likelyScenario.alternative.id,''])}),timing:obj(section),comparisons:arr(obj({id:choice(rows.map(r=>r.id)),reason:str})),questions:arr(str)});
 }
