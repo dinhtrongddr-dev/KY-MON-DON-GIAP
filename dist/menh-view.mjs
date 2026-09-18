@@ -160,7 +160,10 @@ function renderTechnical(prepared){
   const section=el('section','menh-technical-section'),head=el('div','menh-section-heading');
   head.append(el('p','eyebrow','Dữ liệu deterministic'),el('h2','','Thông tin kỹ thuật'));section.append(head);
   const meta=el('div','menh-meta-grid');
+  if(prepared.input.fullName)addMeta(meta,'Họ và tên',prepared.input.fullName);
+  if(prepared.input.birthPlace)addMeta(meta,'Nơi sinh',prepared.input.birthPlace);
   addMeta(meta,'Profile',prepared.result.profileId);
+  addMeta(meta,'Ngày sinh',prepared.input.birthDateLocal);
   addMeta(meta,'Giờ sinh',prepared.input.birthTimeMode==='KNOWN'?prepared.input.birthTimeLocal:'Không xác định');
   addMeta(meta,'Ứng viên',prepared.candidateCount);
   if(prepared.input.birthTimeMode==='KNOWN'){
@@ -224,9 +227,24 @@ export function renderMenhDeterministic(container,prepared){
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
   container.append(body);
 }
+const FOCUS_PATTERNS=Object.freeze([
+  /(?:Toàn bàn|Tổng thể|Trục bản thân|Điểm mạnh|Điểm cần tự quản|Gia đình gốc|Phía cha|Phía mẹ|Con cái|Hôn nhân|Tổng hợp các bộ giải|Tính chất nghề|Khai Môn|Đỗ Môn|Tài vận|Sinh Môn|Mậu|Tuổi \d+|Ba cửa sổ năm năm|Từ \d+[^,.]{0,45}|Lưu niên[^,.]{0,45}|Kết tinh toàn bàn)[^.!?;:]{0,120}/giu,
+  /(?:có xu hướng|dễ biểu hiện|có thể phù hợp|phù hợp hơn|mặt trái|mặt thuận|trọng tâm|lớp chính|lớp phụ|ưu tiên|đọc trước|không đồng nghĩa|không phải)[^.!?;]{0,105}/giu,
+]);
+function focusRanges(text){
+  const ranges=[];
+  for(const pattern of FOCUS_PATTERNS){pattern.lastIndex=0;for(const m of text.matchAll(pattern)){const start=m.index??0,end=start+m[0].length;if(end-start>=12)ranges.push([start,end]);}}
+  ranges.sort((a,b)=>a[0]-b[0]||b[1]-a[1]);const out=[];
+  for(const range of ranges){const last=out.at(-1);if(last&&range[0]<=last[1]+2)last[1]=Math.max(last[1],range[1]);else out.push([...range]);}
+  return out.slice(0,5);
+}
+function focusParagraph(text){
+  const p=el('p'),ranges=focusRanges(text);if(!ranges.length){p.textContent=text;return p;}
+  let cursor=0;for(const [start,end] of ranges){if(start>cursor)p.append(document.createTextNode(text.slice(cursor,start)));p.append(el('strong','menh-ai-focus',text.slice(start,end)));cursor=end;}if(cursor<text.length)p.append(document.createTextNode(text.slice(cursor)));return p;
+}
 function appendAiParagraphs(card,value){
   const parts=String(value||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean);
-  for(const part of parts)card.append(el('p','',part));
+  for(const part of parts)card.append(focusParagraph(part));
 }
 export function renderMenhAi(container,reading){
   container.replaceChildren();

@@ -29,6 +29,8 @@
       </div>
       <p class="menh-intro">Dùng Thời Gia Kỳ Môn · Chuyển Bàn · Tháo bổ. Nếu không nhớ giờ sinh, hệ thống không tự đặt giờ mà so toàn bộ các giờ đôi và chỉ giữ phần ổn định.</p>
       <form id="menh-form" class="menh-input-grid" novalidate>
+        <label class="field"><span>Họ và tên</span><input id="birth-name" type="text" maxlength="120" autocomplete="name" placeholder="Ví dụ: Nguyễn Đình Trọng" /><small>Dùng để hiển thị hồ sơ Mệnh; không làm thay đổi phép lập bàn.</small></label>
+        <label class="field"><span>Nơi sinh</span><input id="birth-place" type="text" maxlength="160" autocomplete="off" placeholder="Ví dụ: Hà Nội, Việt Nam" /><small>Ghi địa danh nơi sinh để lưu đúng ngữ cảnh giờ địa phương.</small></label>
         <label class="field"><span>Ngày sinh</span><input id="birth-date" type="date" min="1900-01-01" max="2100-12-31" required /><small>Ngày dương lịch tại nơi sinh</small></label>
         <label class="field"><span>Giờ sinh</span><input id="birth-time" type="time" required /><small id="birth-time-help">Nhập giờ dân dụng tại nơi sinh.</small></label>
         <label class="birth-time-toggle"><input id="birth-time-unknown" type="checkbox" /><span><strong>Không nhớ giờ sinh</strong><small>Tích vào đây nếu hoàn toàn không nhớ giờ.</small></span></label>

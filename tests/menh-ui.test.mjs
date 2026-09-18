@@ -52,3 +52,17 @@ test('Mệnh AI long-form renderer preserves paragraph breaks',()=>{
   assert.match(view,/appendAiParagraphs/);
   assert.match(view,/split\(\/\\n\{2,\}\//);
 });
+
+test('Mệnh profile accepts and displays full name and birthplace without changing the natal board method',()=>{
+  const core=readFileSync(new URL('../dist/menh-reading-core.mjs',import.meta.url),'utf8');
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(html,/id="birth-name"/);assert.match(html,/id="birth-place"/);
+  assert.match(app,/fullName:name\.value\.trim\(\)/);assert.match(app,/birthPlace:place\.value\.trim\(\)/);
+  assert.match(core,/fullName/);assert.match(core,/birthPlace/);
+  assert.match(view,/Họ và tên/);assert.match(view,/Nơi sinh/);
+});
+test('Mệnh long-form reading visually emphasizes fast-scan translated takeaways without HTML injection',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/FOCUS_PATTERNS/);assert.match(view,/menh-ai-focus/);
+  assert.match(view,/document\.createTextNode/);assert.doesNotMatch(view,/innerHTML/);
+});

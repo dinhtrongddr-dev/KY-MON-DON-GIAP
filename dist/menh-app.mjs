@@ -4,7 +4,7 @@ import {initMenhAi} from './menh-ai.mjs';
 import {createActivityLog} from './activity-log.mjs';
 
 const $=id=>document.getElementById(id);
-const form=$('menh-form'),date=$('birth-date'),time=$('birth-time'),unknown=$('birth-time-unknown');
+const form=$('menh-form'),name=$('birth-name'),place=$('birth-place'),date=$('birth-date'),time=$('birth-time'),unknown=$('birth-time-unknown');
 const timezone=$('menh-timezone'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year');
 const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic');
 const activity=createActivityLog();
@@ -12,6 +12,8 @@ let rememberedTime='',currentPrepared=null;
 
 export function collectMenhForm(){
   return {
+    fullName:name.value.trim()||null,
+    birthPlace:place.value.trim()||null,
     birthDateLocal:date.value,
     birthTimeMode:unknown.checked?'UNKNOWN':'KNOWN',
     birthTimeLocal:unknown.checked?null:time.value,

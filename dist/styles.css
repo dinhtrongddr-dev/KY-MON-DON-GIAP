@@ -879,3 +879,6 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-unknown-board-placeholder strong{display:block;color:#5d512f}
 .menh-unknown-board-placeholder p{margin:7px 0 0;color:#62593d;line-height:1.6}
 @media(max-width:680px){.menh-board-section{margin-top:20px}.menh-board-toolbar{gap:8px}.menh-board-key{font-size:.7rem}}
+
+.menh-ai-focus{font-weight:800;color:var(--jade-dark);text-decoration-thickness:.08em;text-underline-offset:.14em}
+.menh-ai-section p+p{margin-top:12px}

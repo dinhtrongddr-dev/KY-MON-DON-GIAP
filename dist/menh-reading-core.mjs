@@ -34,7 +34,9 @@ function normalizeBody(body={}){
   if(annualYear!=null&&(!Number.isInteger(annualYear)||annualYear<1900||annualYear>2100))throw new Error('Năm lưu niên phải từ 1900 đến 2100.');
   const sexMetadata=body.sexMetadata==null||body.sexMetadata===''?null:String(body.sexMetadata).toUpperCase();
   if(sexMetadata&&!['MALE','FEMALE'].includes(sexMetadata))throw new Error('Giới tính metadata không hợp lệ.');
-  return freeze({...date,...(time||{}),birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
+  const fullName=body.fullName==null||body.fullName===''?null:String(body.fullName).trim().slice(0,120)||null;
+  const birthPlace=body.birthPlace==null||body.birthPlace===''?null:String(body.birthPlace).trim().slice(0,160)||null;
+  return freeze({...date,...(time||{}),fullName,birthPlace,birthDateLocal:body.birthDateLocal,birthTimeMode:mode,birthTimeLocal:mode==='KNOWN'?body.birthTimeLocal:null,tzOffset,age,annualYear,sexMetadata});
 }
 function canonicalPillar(pillar){
   const stem=STEM[pillar?.stem?.han],branch=BRANCH[pillar?.branch?.han];
@@ -108,7 +110,7 @@ export async function menhReadingIdentity(prepared){
 export async function buildMenhReadingRequest(body){
   const prepared=prepareMenhReading(body),identity=await menhReadingIdentity(prepared);
   return {...prepared,...identity,request:{
-    birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
+    fullName:prepared.input.fullName,birthPlace:prepared.input.birthPlace,birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
     tzOffset:prepared.input.tzOffset,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,
     protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,...identity,
   }};
