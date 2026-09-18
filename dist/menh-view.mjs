@@ -179,7 +179,7 @@ function renderUnknownBoardNotice(prepared){
   const note=el('div','menh-unknown-board-placeholder');
   if(rect?.eventCount){
     const best=rect.ranked?.[0],second=rect.ranked?.[1];
-    const state=rect.status==='STRONG'?'Có một khung giờ nổi bật rõ hơn':rect.status==='LEADING'?'Đang có một khung giờ phù hợp hơn':rect.status==='TIED'?'Hai hoặc nhiều khung giờ còn rất sát nhau':'Chưa đủ dấu hiệu để phân biệt';
+    const state=rect.status==='STRONG'?'Có một khung giờ nổi bật rõ hơn':rect.status==='LEADING'?'Có một khung giờ đang dẫn nhưng chưa đủ để xác nhận':rect.status==='TIED'?'Chưa phân biệt được: các khung giờ còn quá sát nhau':'Chưa đủ dữ kiện độc lập để lọc giờ sinh';
     note.append(el('strong','',state+' · đã đối chiếu '+rect.eventCount+' mốc cuộc đời.'));
     if(best)note.append(el('p','','Đang dẫn đầu: giờ '+(HOUR_FAMILY_VI[best.family]||best.family)+' (bàn mẫu '+best.time+') · khớp '+best.points+'/'+best.maxPoints+' điểm kích hoạt.'+(second?' Khung kế tiếp '+(HOUR_FAMILY_VI[second.family]||second.family)+' '+second.points+'/'+second.maxPoints+'.':'')));
   }else{

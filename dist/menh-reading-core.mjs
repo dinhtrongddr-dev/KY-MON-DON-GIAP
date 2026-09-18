@@ -59,14 +59,23 @@ function rectifyCandidates(candidates,normalized){
       const annualPillar=annualPillarForYear(event.year,normalized.tzOffset);
       const timed=analyzeOne(inputFrom(normalized.birthDateLocal,c.time,normalized.tzOffset),{age:event.year-normalized.year,annualPillar,sexMetadata:normalized.sexMetadata}).result;
       const primary=timed.annual?.annualStemPalace,secondary=timed.annual?.annualBranchPalace,palaces=domainPalaces.get(event.domain);
-      const p=palaces.has(primary)?2:0,s=palaces.has(secondary)?1:0;points+=p+s;maxPoints+=3;
-      matches.push(freeze({kind:event.kind,year:event.year,primaryMatch:p>0,secondaryMatch:s>0}));
+      const luckPalace=timed.luck?.palace||null;
+      const primaryMatch=palaces.has(primary),secondaryMatch=palaces.has(secondary),luckMatch=palaces.has(luckPalace);
+      const sameAnnual=primary&&secondary&&primary===secondary;
+      const primaryScore=primaryMatch?4:-1,secondaryScore=secondaryMatch?2:0,luckScore=luckMatch?2:0;
+      const convergence=(primaryMatch&&secondaryMatch?2:0)+(primaryMatch&&luckMatch?2:0)+(secondaryMatch&&luckMatch?1:0)+(sameAnnual&&primaryMatch?1:0);
+      const eventScore=primaryScore+secondaryScore+luckScore+convergence;
+      points+=eventScore;maxPoints+=14;
+      matches.push(freeze({kind:event.kind,year:event.year,primaryMatch,secondaryMatch,luckMatch,eventScore,primary,secondary,luckPalace}));
     }
     return {id:c.id,family:c.family,time:c.time,points,maxPoints,matches,board:c.result.natal.baseBoard,evidence:c.result.evidence};
   }).sort((a,b)=>b.points-a.points||a.time.localeCompare(b.time));
-  const best=ranked[0]?.points??0,second=ranked[1]?.points??0;
-  const confidence=best===0?'INSUFFICIENT':best-second>=3?'STRONG':best-second>=1?'LEADING':'TIED';
-  return freeze({status:confidence,eventCount:events.length,bestId:ranked[0]?.id||null,ranked:ranked.map((x,i)=>freeze({...x,rank:i+1}))});
+  const best=ranked[0]?.points??0,second=ranked[1]?.points??0,gap=best-second;
+  const distinctKinds=new Set(events.map(e=>e.kind)).size;
+  const bestSupport=ranked[0]?.matches.filter(m=>m.eventScore>=4).length??0;
+  const minEvidence=events.length>=6&&distinctKinds>=3&&bestSupport>=Math.ceil(events.length*.6);
+  const confidence=!minEvidence||best<=0?'INSUFFICIENT':gap>=8?'STRONG':gap>=4?'LEADING':'TIED';
+  return freeze({status:confidence,eventCount:events.length,distinctKinds,bestSupport,gap,bestId:confidence==='STRONG'?ranked[0]?.id||null:null,ranked:ranked.map((x,i)=>freeze({...x,rank:i+1}))});
 }
 function annualPillarForYear(year,tzOffset){
   if(year==null)return null;
