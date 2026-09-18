@@ -1,0 +1,477 @@
+{
+  "schema": "KMMenhSourceSnapshots/1",
+  "specVersion": "KM-MENH-1.0",
+  "policy": {
+    "noInventedMissingData": true,
+    "snapshotsAreFullBirthCharts": false,
+    "purpose": "Only source-backed fields needed by frozen fixtures are copied here."
+  },
+  "count": 15,
+  "snapshots": [
+    {
+      "fixtureId": "F-S5-SHENQI-LEGACY-CENTER5",
+      "sourceRef": "SRC_Z_SHENQI",
+      "sourceCase": "S5",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-NATAL-002B"
+        ],
+        "profile": "ZHANG_SHENQI_GENERAL_NATAL_LEGACY",
+        "input": {
+          "birthApprox": "1942-01-13 05:00",
+          "pillars": [
+            "XIN_SI",
+            "XIN_CHOU",
+            "BING_YIN",
+            "XIN_MAO"
+          ],
+          "dun": "YANG_DUN",
+          "ju": 2
+        },
+        "expect": {
+          "center5LodgePalace": "KUN_2"
+        },
+        "negativeAssertions": [
+          {
+            "mustNotNormalizeTo": "GEN_8"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "F-LWF02-PROFILE-CONFLICT-ISOLATION",
+      "sourceRef": "SRC_LWF",
+      "sourceCase": "LWF-02",
+      "provenance": "TRANSMISSION_ZHANG_LINE_LWF",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_NEGATIVE",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-NATAL-002A",
+          "KMZ-NATAL-002B",
+          "KMZ-SOURCE-001"
+        ],
+        "observedSource": {
+          "pillars": [
+            "WU_XU",
+            "YI_MAO",
+            "GUI_MAO",
+            "JIA_YIN"
+          ],
+          "dun": "YANG_DUN",
+          "ju": 9,
+          "center5LodgePalace": "KUN_2"
+        },
+        "expect": {
+          "requireExplicitProfile": true,
+          "compatibleWithAdvancedClassFixture": false,
+          "silentCrossProfileComparison": "REJECT"
+        }
+      }
+    },
+    {
+      "fixtureId": "F-Z19-SOURCE-CONFLICT",
+      "sourceRef": "SRC_Z_ADV",
+      "sourceCase": "Z19",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_NEGATIVE",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-SOURCE-001"
+        ],
+        "sourceHeader": {
+          "dateTime": "1963-10-28 07:00-07:30",
+          "pillars": [
+            "GUI_MAO",
+            "REN_XU",
+            "JIA_CHEN",
+            "WU_CHEN"
+          ]
+        },
+        "sourceAnalysisConflict": {
+          "analyzedDayStem": "REN"
+        },
+        "expect": {
+          "fixtureStatus": "SOURCE_CONFLICT",
+          "eligibleAsGolden": false,
+          "chartGenerationScoreAllowed": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-Z16-LUCK-FROM-SI",
+      "sourceRef": "SRC_Z_ADV",
+      "sourceCase": "Z16",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-LUCK-001",
+          "KMZ-LUCK-002",
+          "KMZ-LUCK-003",
+          "KMZ-LUCK-004"
+        ],
+        "profile": "ZHANG_ADVANCED_CLASS_LIFETIME",
+        "input": {
+          "birthYearBranch": "SI"
+        },
+        "expect": {
+          "periods": [
+            {
+              "ages": "1-15",
+              "palace": "XUN_4"
+            },
+            {
+              "ages": "16-30",
+              "palace": "LI_9"
+            },
+            {
+              "ages": "31-45",
+              "palace": "KUN_2"
+            },
+            {
+              "ages": "46-60",
+              "palace": "DUI_7"
+            },
+            {
+              "ages": "61-75",
+              "palace": "QIAN_6"
+            },
+            {
+              "ages": "76-90",
+              "palace": "KAN_1"
+            },
+            {
+              "ages": "91-105",
+              "palace": "GEN_8"
+            },
+            {
+              "ages": "106-120",
+              "palace": "ZHEN_3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "F-WJG21-LUCK-FROM-HAI",
+      "sourceRef": "SRC_WJG_ADV",
+      "sourceCase": "WJG-21",
+      "provenance": "TRANSMISSION_WJG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-LUCK-001",
+          "KMZ-LUCK-002",
+          "KMZ-LUCK-003"
+        ],
+        "profile": "ZHANG_ADVANCED_CLASS_LIFETIME",
+        "input": {
+          "birthYearBranch": "HAI"
+        },
+        "expect": {
+          "firstFivePeriods": [
+            {
+              "ages": "1-15",
+              "palace": "QIAN_6"
+            },
+            {
+              "ages": "16-30",
+              "palace": "KAN_1"
+            },
+            {
+              "ages": "31-45",
+              "palace": "GEN_8"
+            },
+            {
+              "ages": "46-60",
+              "palace": "ZHEN_3"
+            },
+            {
+              "ages": "61-75",
+              "palace": "XUN_4"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "F-Z16-DAY-STEM-SELF",
+      "sourceRef": "SRC_Z_ADV",
+      "sourceCase": "Z16",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-SELF-001",
+          "KMZ-SELF-002"
+        ],
+        "input": {
+          "pillars": [
+            "GUI_SI",
+            "JIA_ZI",
+            "DING_YOU",
+            "JIA_CHEN"
+          ]
+        },
+        "expect": {
+          "selfStem": "DING",
+          "selfResolver": "DAY_STEM_PALACE",
+          "requireZhiFuZhiShiBaseline": true
+        }
+      }
+    },
+    {
+      "fixtureId": "F-Z17-HOUR-DAY-BASELINE",
+      "sourceRef": "SRC_Z_ADV",
+      "sourceCase": "Z17",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-SELF-003",
+          "KMZ-CHILD-001"
+        ],
+        "expect": {
+          "hourStemUsedForChildren": true,
+          "hourStemAlsoUsedInSelfProcessBaseline": true,
+          "duplicateEvidenceVote": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-Z18-GLOBAL-HARD-PRECEDENCE",
+      "sourceRef": "SRC_Z_ADV",
+      "sourceCase": "Z18",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-GLOBAL-001",
+          "KMZ-EVID-001"
+        ],
+        "observed": {
+          "favorableLocalSignals": [
+            "TIAN_XIN",
+            "KAI_MEN"
+          ],
+          "severeGlobalOrSelfSignals": [
+            "FU_YIN",
+            "SEVERE_SELF_STRUCTURE"
+          ]
+        },
+        "expect": {
+          "globalHardStructureEvaluatedBeforeDomainSynthesis": true,
+          "favorableLocalSignalsMayBeCapped": true,
+          "automaticBadFateVeto": false,
+          "rawVoteCounting": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-DIRECT-ZHANG-PARENT-PAIR-YANG",
+      "sourceRef": "SRC_Z_SHENQI",
+      "sourceCase": "SQ16-E2",
+      "provenance": "DIRECT_ZHANG_AUXILIARY",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-PARENT-001",
+          "KMZ-PARENT-005"
+        ],
+        "input": {
+          "yearStemPolarity": "YANG",
+          "yearStem": "BING"
+        },
+        "expect": {
+          "yearStemRole": "FATHER",
+          "pairedStem": "XIN",
+          "pairedStemRole": "MOTHER",
+          "resolverRole": "CORROBORATOR",
+          "soleParentResolver": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-SQ16-E4-FIVE-COMBINATION-SPOUSE-ACTIVE",
+      "sourceRef": "SRC_Z_SHENQI",
+      "sourceCase": "SQ16-E4",
+      "provenance": "DIRECT_ZHANG_AUXILIARY",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-MARR-002"
+        ],
+        "input": {
+          "dayStem": "XIN"
+        },
+        "expect": {
+          "fiveCombinationCounterpart": "BING",
+          "counterpartRemainsActiveSpouseEvidence": true,
+          "counterpartUniversalSolePrimary": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-LWF06-MARRIAGE-MULTI-RESOLVER",
+      "sourceRef": "SRC_LWF",
+      "sourceCase": "LWF-06",
+      "provenance": "TRANSMISSION_ZHANG_LINE_LWF",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-MARR-001",
+          "KMZ-MARR-002",
+          "KMZ-MARR-003"
+        ],
+        "input": {
+          "pillars": [
+            "GENG_YIN",
+            "YI_YOU",
+            "REN_SHEN",
+            "GUI_MAO"
+          ]
+        },
+        "expect": {
+          "inspect": [
+            "LIU_HE",
+            "YI_GENG",
+            "REN_DING"
+          ],
+          "singleResolverDecisionAllowed": false
+        }
+      }
+    },
+    {
+      "fixtureId": "F-LWF03-ANNUAL-TIANPAN-DING-HAI",
+      "sourceRef": "SRC_LWF",
+      "sourceCase": "LWF-03",
+      "provenance": "TRANSMISSION_ZHANG_LINE_LWF",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-YEAR-004"
+        ],
+        "input": {
+          "annualPillar": "DING_HAI"
+        },
+        "observedNatal": {
+          "heavenPlateStemPalace": {
+            "DING": "ZHEN_3"
+          },
+          "earthPlateStemAtZhen3": "XIN"
+        },
+        "expect": {
+          "annualStemPalace": "ZHEN_3",
+          "layerUsed": "TIAN_PAN_ACTIVE_STEM",
+          "mustNotAssertWholeChartProfile": true
+        },
+        "fixtureScope": "ANNUAL_LAYER_RESOLVER_ONLY",
+        "chartConstructionProfile": "SOURCE_NATIVE_NOT_ASSERTED"
+      }
+    },
+    {
+      "fixtureId": "F-LWF04-ANNUAL-TIANPAN-BING-CHEN",
+      "sourceRef": "SRC_LWF",
+      "sourceCase": "LWF-04",
+      "provenance": "TRANSMISSION_ZHANG_LINE_LWF",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-YEAR-004"
+        ],
+        "input": {
+          "annualPillar": "BING_CHEN"
+        },
+        "observedNatal": {
+          "heavenPlateStemPalace": {
+            "BING": "LI_9"
+          },
+          "earthPlateStemAtLi9": "GUI"
+        },
+        "expect": {
+          "annualStemPalace": "LI_9",
+          "layerUsed": "TIAN_PAN_ACTIVE_STEM",
+          "mustNotAssertWholeChartProfile": true
+        },
+        "fixtureScope": "ANNUAL_LAYER_RESOLVER_ONLY",
+        "chartConstructionProfile": "SOURCE_NATIVE_NOT_ASSERTED"
+      }
+    },
+    {
+      "fixtureId": "F-LWF08-ANNUAL-TIANPAN-BING-ZI",
+      "sourceRef": "SRC_LWF",
+      "sourceCase": "LWF-08",
+      "provenance": "TRANSMISSION_ZHANG_LINE_LWF",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-YEAR-004"
+        ],
+        "input": {
+          "annualPillar": "BING_ZI"
+        },
+        "observedNatal": {
+          "heavenPlateStemPalace": {
+            "BING": "QIAN_6"
+          },
+          "earthPlateStemAtQian6": "JI"
+        },
+        "expect": {
+          "annualStemPalace": "QIAN_6",
+          "layerUsed": "TIAN_PAN_ACTIVE_STEM",
+          "mustNotAssertWholeChartProfile": true
+        },
+        "fixtureScope": "ANNUAL_LAYER_RESOLVER_ONLY",
+        "chartConstructionProfile": "SOURCE_NATIVE_NOT_ASSERTED"
+      }
+    },
+    {
+      "fixtureId": "F-S1-TENDENCY-NOT-EVENT",
+      "sourceRef": "SRC_Z_SHENQI",
+      "sourceCase": "S1",
+      "provenance": "DIRECT_ZHANG",
+      "completeness": "PARTIAL_RULE_SNAPSHOT",
+      "payload": {
+        "kind": "SOURCE_GOLDEN",
+        "mandatory": true,
+        "ruleIds": [
+          "KMZ-OUTPUT-001"
+        ],
+        "expect": {
+          "natalAdverseSymbolismClaimType": "NATAL_TENDENCY",
+          "mayAutoPromoteToObservedEvent": false
+        }
+      }
+    }
+  ]
+}
