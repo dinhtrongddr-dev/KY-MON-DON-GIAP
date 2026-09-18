@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$ROOT"
+APP_ROOT="${QIMEN_APP_ROOT:-$ROOT}"
+cd "$APP_ROOT"
 
 : "${QIMEN_PAIRING_TOKEN:?Set QIMEN_PAIRING_TOKEN in the service environment}"
 
@@ -35,16 +36,42 @@ LOG_DIR="${QIMEN_LOG_DIR:-$ROOT/.vps-runtime}"
 mkdir -p "$LOG_DIR"
 TUNNEL_LOG="$LOG_DIR/cloudflared.log"
 SERVER_LOG="$LOG_DIR/server.log"
+PRISM_LOG="$LOG_DIR/prism.log"
 : >"$TUNNEL_LOG"
 : >"$SERVER_LOG"
+: >"$PRISM_LOG"
 
 server_pid=""
 tunnel_pid=""
+prism_pid=""
 cleanup(){
   [[ -n "$tunnel_pid" ]] && kill "$tunnel_pid" 2>/dev/null || true
   [[ -n "$server_pid" ]] && kill "$server_pid" 2>/dev/null || true
+  [[ -n "$prism_pid" ]] && kill "$prism_pid" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
+
+PRISM_ENV="${PRISM_ENV_FILE:-$HOME/.config/qimen-prism/env}"
+PRISM_BIN="${PRISM_INSTALL_DIR:-$HOME/.local/share/qimen-prism-proxy}/bin/prism-openai-proxy.mjs"
+if [[ -n "${PRISM_PROXY_API_KEY:-}" && -f "$PRISM_ENV" && -f "$PRISM_BIN" ]]; then
+  (
+    set -a
+    source "$PRISM_ENV"
+    set +a
+    exec node "$PRISM_BIN"
+  ) >>"$PRISM_LOG" 2>&1 &
+  prism_pid=$!
+  prism_ready=0
+  for _ in $(seq 1 60); do
+    if curl -fsS --connect-timeout 2 --max-time 5       -H "Authorization: Bearer $PRISM_PROXY_API_KEY"       "http://127.0.0.1:8787/v1/models" >/dev/null 2>&1; then
+      prism_ready=1
+      break
+    fi
+    kill -0 "$prism_pid" 2>/dev/null || { cat "$PRISM_LOG" >&2; exit 1; }
+    sleep 1
+  done
+  [[ "$prism_ready" == "1" ]] || { echo "Prism fallback runtime did not become ready" >&2; cat "$PRISM_LOG" >&2; exit 1; }
+fi
 
 node local/server.mjs >>"$SERVER_LOG" 2>&1 &
 server_pid=$!
@@ -85,10 +112,11 @@ echo "Model route: $QIMEN_MODEL"
 echo "Named Tunnel: $TUNNEL_URL"
 echo "Production relay: UNCHANGED (develop test mode)"
 
-while kill -0 "$server_pid" 2>/dev/null && kill -0 "$tunnel_pid" 2>/dev/null; do
+while kill -0 "$server_pid" 2>/dev/null && kill -0 "$tunnel_pid" 2>/dev/null && { [[ -z "$prism_pid" ]] || kill -0 "$prism_pid" 2>/dev/null; }; do
   sleep 5
 done
 
 wait "$server_pid" 2>/dev/null || true
 wait "$tunnel_pid" 2>/dev/null || true
+[[ -n "$prism_pid" ]] && wait "$prism_pid" 2>/dev/null || true
 exit 1
