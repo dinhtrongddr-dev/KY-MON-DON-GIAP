@@ -6,6 +6,7 @@ const html=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8');
 const app=readFileSync(new URL('../dist/menh-app.mjs',import.meta.url),'utf8');
 const core=readFileSync(new URL('../dist/menh-reading-core.mjs',import.meta.url),'utf8');
 const main=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
+const styles=readFileSync(new URL('../dist/styles.css',import.meta.url),'utf8');
 
 test('Mệnh UI exposes exactly known time input plus Không nhớ giờ sinh checkbox',()=>{
   assert.match(html,/id="birth-date"/);
@@ -16,15 +17,30 @@ test('Mệnh UI exposes exactly known time input plus Không nhớ giờ sinh ch
 });
 test('Mệnh UI never submits a hidden remembered time in UNKNOWN mode',()=>{
   assert.match(app,/birthTimeMode:unknown\.checked\?'UNKNOWN':'KNOWN'/);
-  assert.match(app,/birthTimeLocal:unknown\.checked\?null:time\.value/);
+  assert.match(app,/birthTimeLocal:unknown\.checked\?null:parseBirthTime\(time\.value\)/);
   assert.match(app,/time\.value='';time\.disabled=true;time\.required=false/);
 });
 test('question and natal products link to each other without replacing the question form',()=>{
-  assert.match(main,/href="\.\/menh\.html">Kỳ Môn Mệnh/);
-  assert.match(html,/href="\.\/index\.html">Hỏi việc/);
+  assert.match(main,/href="\.\/index\.html" aria-current="page">Kỳ Môn Hỏi Việc/);assert.match(main,/href="\.\/menh\.html">Kỳ Môn Mệnh/);
+  assert.match(html,/href="\.\/index\.html">Kỳ Môn Hỏi Việc/);
   assert.match(main,/id="chart-form"/);
   assert.match(html,/id="menh-form"/);
 });
+test('PC Mệnh form uses aligned four-column fields with Vietnamese date and 24-hour time entry',()=>{
+  assert.match(html,/id="birth-date" type="text"[^>]*placeholder="DD\/MM\/YYYY"/);
+  assert.match(html,/id="birth-date-picker"[^>]*>Lịch</);
+  assert.match(html,/id="birth-date-native"[^>]*type="date"/);
+  assert.match(html,/id="birth-time" type="text"[^>]*placeholder="HH:MM"/);
+  assert.match(app,/parseBirthDate\(date\.value\)/);assert.match(app,/parseBirthTime\(time\.value\)/);
+  assert.match(app,/showPicker/);assert.match(styles,/\.menh-input-grid>\.field\{grid-template-rows:18px 48px minmax\(34px,auto\)/);
+});
+
+test('primary Kỳ Môn product switch is centered on desktop and fully named',()=>{
+  assert.match(styles,/grid-template-columns:minmax\(0,1fr\) auto minmax\(0,1fr\)/);
+  assert.match(styles,/\.topbar>\.product-nav\{grid-column:2;justify-self:center\}/);
+  assert.match(main,/Kỳ Môn Hỏi Việc/);assert.match(html,/Kỳ Môn Hỏi Việc/);
+});
+
 test('Mệnh page loads calendar before the Mệnh app module',()=>{
   assert.ok(html.indexOf('./vendor/lunar.js')<html.indexOf('./menh-app.mjs'));
 });

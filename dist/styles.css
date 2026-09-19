@@ -901,3 +901,34 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-use-candidate{margin:0 16px 16px;width:calc(100% - 32px)}
 .menh-candidate-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}.menh-candidate-card>.menh-use-candidate{margin-top:10px;white-space:nowrap}@media(max-width:720px){.menh-candidate-card{grid-template-columns:1fr}.menh-candidate-card>.menh-use-candidate{width:100%;margin-top:-2px}}
 .report-pdf-button{margin-top:14px;min-height:46px}.report-pdf-button[hidden]{display:none}@media(max-width:720px){.report-pdf-button{width:100%}}
+
+/* Desktop form and primary product navigation polish */
+@media (min-width:901px){
+  .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;position:relative}
+  .topbar>.brand{grid-column:1;justify-self:start}
+  .topbar>.product-nav{grid-column:2;justify-self:center}
+  .topbar>.school-mark{grid-column:3;justify-self:end}
+}
+.product-nav{white-space:nowrap}
+.product-nav a{justify-content:center;min-width:150px}
+.menh-input-grid{align-items:start;gap:18px 14px}
+.menh-input-grid>.field{grid-template-rows:18px 48px minmax(34px,auto);align-content:start}
+.menh-input-grid>.field>span{align-self:end}
+.menh-input-grid>.field>small{min-height:34px}
+.menh-input-grid>.submit-field{grid-template-rows:18px 48px minmax(34px,auto)}
+.birth-time-toggle{align-self:stretch;min-height:114px;height:114px;justify-content:flex-start}
+.date-entry{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 58px;min-width:0}
+.date-entry>#birth-date{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}
+.date-picker-button{height:48px;border:1px solid var(--line-strong);border-radius:0 2px 2px 0;background:#f4f7f4;color:var(--jade-dark);font-weight:800;cursor:pointer}
+.date-picker-button:hover{background:var(--wood-soft)}
+.date-picker-button:focus-visible{outline:3px solid rgba(26,101,72,.18);outline-offset:2px}
+.native-date-picker{position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;padding:0;border:0}
+@media(max-width:900px){
+  .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding-block:12px}
+  .topbar>.brand{grid-column:1;justify-self:start}
+  .topbar>.school-mark{grid-column:2;justify-self:end}
+  .topbar>.product-nav{grid-column:1/-1;grid-row:2;width:100%;justify-self:stretch;margin-top:8px}
+  .product-nav a{min-width:0;flex:1}
+  .menh-input-grid>.field{grid-template-rows:auto 48px auto}
+  .birth-time-toggle{height:auto;min-height:74px}
+}
