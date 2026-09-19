@@ -14,6 +14,6 @@ test('browser UI exposes one PDF export/share button for both Hỏi việc and M
   const question=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8'),menh=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8'),client=readFileSync(new URL('../dist/report-export.mjs',import.meta.url),'utf8');
   assert.match(question,/id="report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);assert.match(menh,/id="menh-report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);
   assert.match(client,/title:'Kỳ Môn Bàn'/);assert.match(client,/ky-mon-ban-hoi-viec/);assert.match(client,/ky-mon-ban-menh/);
-  assert.match(client,/navigator\.share/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
+  assert.match(client,/isMobileShareDevice/);assert.match(client,/canMobileShare=isMobileShareDevice\(\)&&navigator\.share/);assert.match(client,/Đã tải file PDF về máy/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
   assert.doesNotMatch(client,/api\/export\/pdf/);
 });

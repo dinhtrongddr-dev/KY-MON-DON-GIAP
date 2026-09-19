@@ -90,14 +90,16 @@ export function buildImagePdf(canvases){
   const xref=offset;let table=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;for(let id=1;id<objects.length;id++)table+=`${String(offsets[id]).padStart(10,'0')} 00000 n \n`;table+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
   parts.push(ascii(table));return new Blob(parts,{type:'application/pdf'});
 }
-function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.rel='noopener';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);}
+function isMobileShareDevice(){const ua=String(navigator.userAgent||'');return /Android|iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
 export function initPdfExport({kind,buttonId,statusId,prepare,boardSelector}){
   const button=document.getElementById(buttonId),status=document.getElementById(statusId);let model='';if(!button)return {setModel(){},clear(){}};
   const clear=()=>{model='';button.hidden=true;},setModel=modelUsed=>{model=modelUsed?`${modelUsed.label} / ${modelUsed.effort}`:'';button.hidden=false;};
   button.addEventListener('click',async()=>{let body;try{body=prepare();}catch(e){status.textContent=e.message;return;}button.disabled=true;const before=status.textContent;status.textContent='Đang tạo file PDF…';
     try{const report=pdfReport(kind,body,model,boardSelector),blob=buildImagePdf(canvasReport(report)),name=report.filenameBase+'.pdf',file=new File([blob],name,{type:'application/pdf'});
-      if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({title:'Kỳ Môn Bàn',text:'Báo cáo Kỳ Môn Bàn',files:[file]});status.textContent='Đã mở bảng chia sẻ PDF.';}catch(e){if(e.name==='AbortError')status.textContent=before;else{download(blob,name);status.textContent='Đã tạo và tải file PDF.';}}}
-      else{download(blob,name);status.textContent='Đã tạo và tải file PDF.';}
+      const canMobileShare=isMobileShareDevice()&&navigator.share&&navigator.canShare?.({files:[file]});
+      if(canMobileShare){try{await navigator.share({title:'Kỳ Môn Bàn',text:'Báo cáo Kỳ Môn Bàn',files:[file]});status.textContent='Đã mở bảng chia sẻ PDF.';}catch(e){if(e.name==='AbortError')status.textContent=before;else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}}
+      else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}
     }catch(e){status.textContent=e.message||'Không tạo được PDF.';}finally{button.disabled=false;}});
   return {setModel,clear};
 }
