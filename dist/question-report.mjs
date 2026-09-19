@@ -1,4 +1,3 @@
-const WIDTH=900,SCALE=2;
 const EXCLUDED='button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical';
 
 // Read only already-validated rendered prose; never parse model HTML or broaden bold rules.
@@ -33,37 +32,6 @@ export function extractReadingBlocks(answer){
   visit(root);return blocks.filter(block=>block.runs.some(run=>run.text.trim()));
 }
 
-const EXPORT_CSS=`
-html,body{margin:0!important;padding:0!important;width:${WIDTH}px!important;background:white!important}
-*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}
-.export-page{width:${WIDTH}px;padding:28px;background:var(--paper);box-sizing:border-box;overflow:hidden}
-.export-page .topbar{min-height:80px;margin:0;padding:0 0 16px}
-.export-page .product-nav{display:none}
-.export-page .chart-meta{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:16px;margin:16px 0}
-.export-page .pillars{display:grid;grid-template-columns:repeat(4,1fr)}
-.export-page .calculation-summary{display:grid;grid-template-columns:repeat(3,1fr)}
-.export-page .workspace{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:14px;align-items:start}
-.export-page .board-column{width:100%;grid-column:auto;grid-row:auto}
-.export-page .element-panel{grid-column:auto;grid-row:auto;width:100%;height:auto}
-.export-roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.export-role{position:static;height:auto;min-width:0;padding:16px;overflow:visible}
-.export-role>h2{font-size:22px;line-height:1.4}
-.export-role>p{font-size:14px;overflow-wrap:anywhere}
-.export-role .palace-detail{padding:0;display:block}
-.export-role .semantic-components{display:block}
-.export-role details.semantic-components>summary{display:none}
-.export-role details.semantic-components>ul{display:grid!important}
-.export-role details[open]>summary~*{display:block}
-.export-page .menh-result-head{margin:0 0 12px}
-.export-page .menh-workspace>.menh-inspector{display:none}
-.export-page .menh-workspace>.element-panel{grid-column:2;grid-row:1}
-.export-page .menh-board-section{min-width:0;width:100%}
-.export-page .menh-method-details{margin-top:10px}
-.export-page .menh-method-details[open] .method-copy{display:block}
-.export-page .menh-basis-details{margin-top:12px}
-.export-page .taiji-export{display:grid;place-items:center;width:100%;height:100%;font:700 82px/1 Georgia,serif;color:#18231f;text-shadow:0 3px 7px rgba(20,25,22,.13)}
-`;
-
 async function fetchOk(url){const response=await fetch(url);if(!response.ok)throw new Error(`Không tải được tài nguyên PDF: ${url}`);return response;}
 function asDataUrl(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});}
 
@@ -78,83 +46,138 @@ export async function waitForExportLayout(doc){
   await new Promise(resolve=>doc.defaultView.requestAnimationFrame(()=>doc.defaultView.requestAnimationFrame(resolve)));
 }
 
-export async function captureQuestionPages(snapshot,{secondTitle='Đối chiếu đại diện trong bài luận'}={}){
+const PC_CAPTURE_WIDTH=1440,PC_CAPTURE_SLICE=2000;
+const PC_CAPTURE_REMOVE=[
+  '#local-setup','.local-controls','.local-preference','.ai-feedback','.activity-summary','.activity-history',
+  '#rule-analyze','#rule-preview','.report-pdf-button','.ai-trace','.ai-evidence','.ai-note',
+  '.menh-scope','.reading-strip'
+].join(',');
+
+function captureCssText(){
+  return [...document.styleSheets]
+    .filter(sheet=>!sheet.href||new URL(sheet.href).origin===location.origin)
+    .map(sheet=>[...sheet.cssRules].map(rule=>rule.cssText).join('\n'))
+    .join('\n');
+}
+
+function cleanupPcReport(root,kind){
+  root.hidden=false;root.removeAttribute('hidden');
+  root.querySelectorAll(PC_CAPTURE_REMOVE).forEach(node=>node.remove());
+  if(kind==='question'){
+    const basics=root.querySelector('#basics-title')?.closest('.learning-panel');if(basics)basics.remove();
+    const answer=root.querySelector('#ai-answer');if(answer){answer.hidden=false;answer.removeAttribute('hidden');}
+  }else{
+    const answer=root.querySelector('#menh-ai-answer');if(answer){answer.hidden=false;answer.removeAttribute('hidden');}
+  }
+  root.querySelectorAll('[hidden]').forEach(node=>{
+    if(node.matches('#ai-answer,#menh-ai-answer'))node.removeAttribute('hidden');
+  });
+  root.querySelectorAll('details').forEach(node=>node.open=true);
+  for(const img of root.querySelectorAll('img.taiji-ink')){const taiji=root.ownerDocument.createElement('span');taiji.className='taiji-export';taiji.textContent='☯';img.replaceWith(taiji);}
+  root.querySelectorAll('button').forEach(node=>{
+    if(node.closest('.element-diagram,.qimen-board,.menh-board-section')){node.tabIndex=-1;return;}
+    if(node.closest('#ai-answer,#menh-ai-answer'))node.remove();
+  });
+  return root;
+}
+
+function reportSource(kind){
+  const source=document.getElementById(kind==='menh'?'menh-result':'result');
+  if(!source)throw new Error(kind==='menh'?'Chưa có Mệnh bàn để xuất PDF.':'Chưa có bàn Hỏi việc để xuất PDF.');
+  return source;
+}
+
+function createPcShell(doc,kind){
+  const shell=doc.createElement('div');shell.className='page-shell pdf-pc-capture';
+  const topbar=document.querySelector('.topbar');if(topbar)shell.append(doc.importNode(topbar,true));
+  const main=doc.createElement('main');
+  const result=cleanupPcReport(doc.importNode(reportSource(kind),true),kind);
+  main.append(result);shell.append(main);doc.body.append(shell);return shell;
+}
+
+function relativeBox(root,node){
+  const rr=root.getBoundingClientRect(),r=node.getBoundingClientRect();
+  return {top:Math.max(0,r.top-rr.top),bottom:Math.min(rr.height,r.bottom-rr.top),height:r.height};
+}
+
+function pcPageSlices(root){
+  const total=Math.ceil(root.getBoundingClientRect().height);
+  if(total<=PC_CAPTURE_SLICE)return [{top:0,height:total}];
+  const keep=[...root.querySelectorAll('.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.qimen-board,.menh-board-section,.element-panel,.menh-claim,.menh-ai-section,.ai-narrative-block,.ai-actions>li')]
+    .map(node=>relativeBox(root,node)).filter(r=>r.height>40&&r.height<PC_CAPTURE_SLICE-100);
+  const points=[...root.querySelectorAll('h2,h3,h4,p,li,.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.element-panel,.menh-claim,.menh-ai-section,.ai-narrative-block')]
+    .flatMap(node=>{const r=relativeBox(root,node);return [r.top,r.bottom];})
+    .filter(y=>Number.isFinite(y)&&y>0&&y<total).sort((a,b)=>a-b);
+  const insideKeep=y=>keep.some(r=>y>r.top+8&&y<r.bottom-8);
+  const slices=[];let top=0;
+  while(top<total-1){
+    let bottom=Math.min(total,top+PC_CAPTURE_SLICE);
+    if(bottom<total){
+      const crossing=keep.filter(r=>r.top<bottom-8&&r.bottom>bottom+8).sort((a,b)=>b.height-a.height)[0];
+      if(crossing&&crossing.top-top>=1050)bottom=Math.floor(crossing.top);
+      else if(crossing&&crossing.bottom-top<=PC_CAPTURE_SLICE)bottom=Math.ceil(crossing.bottom);
+      else{
+        const candidates=points.filter(y=>y>=top+1200&&y<=bottom&&!insideKeep(y));
+        if(candidates.length)bottom=Math.floor(candidates[candidates.length-1]);
+      }
+    }
+    if(bottom<=top+300)bottom=Math.min(total,top+PC_CAPTURE_SLICE);
+    slices.push({top,height:Math.ceil(bottom-top)});top=bottom;
+  }
+  return slices;
+}
+
+async function inlinePcImages(doc){
+  await Promise.all([...doc.images].map(async img=>{
+    const src=img.getAttribute('src');if(!src)return;
+    const url=new URL(src,document.baseURI);
+    if(url.protocol!=='data:'){
+      if(url.origin!==location.origin)throw new Error('Hình xuất PDF phải cùng nguồn.');
+      img.src=await asDataUrl(await (await fetchOk(url)).blob());
+    }
+    img.removeAttribute('srcset');
+  }));
+}
+
+async function rasterPcSlice(doc,root,style,{top,height}){
+  const body=doc.createElement('body');body.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
+  const viewport=doc.createElement('div');viewport.className='pdf-slice-viewport';viewport.style.height=`${height}px`;
+  const shifted=root.cloneNode(true);shifted.style.transform=`translateY(-${top}px)`;shifted.style.transformOrigin='top left';
+  viewport.append(shifted);body.append(style.cloneNode(true),viewport);
+  const markup=new XMLSerializer().serializeToString(body);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${PC_CAPTURE_WIDTH}" height="${height}" viewBox="0 0 ${PC_CAPTURE_WIDTH} ${height}"><foreignObject width="100%" height="100%">${markup}</foreignObject></svg>`;
+  const image=new Image();image.src=await asDataUrl(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));await image.decode();
+  const canvas=document.createElement('canvas');canvas.width=PC_CAPTURE_WIDTH;canvas.height=height;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0);
+  return {url:canvas.toDataURL('image/jpeg',.9),width:canvas.width,height:canvas.height};
+}
+
+export async function capturePcReportPages(kind='question'){
   await document.fonts.ready;
-  const css=[...document.styleSheets].filter(sheet=>!sheet.href||new URL(sheet.href).origin===location.origin).map(sheet=>[...sheet.cssRules].map(rule=>rule.cssText).join('\n')).join('\n');
-  const frame=document.createElement('iframe');frame.title='Bản xuất PDF';frame.setAttribute('aria-hidden','true');
-  frame.style.cssText=`position:fixed;left:-20000px;top:0;width:${WIDTH}px;height:1800px;border:0;pointer-events:none;`;
+  const frame=document.createElement('iframe');frame.title='Ảnh chụp PDF giao diện PC';frame.setAttribute('aria-hidden','true');
+  frame.style.cssText=`position:fixed;left:-30000px;top:0;width:${PC_CAPTURE_WIDTH}px;height:1200px;border:0;pointer-events:none;visibility:hidden`;
   document.body.append(frame);
   try{
     const doc=frame.contentDocument;doc.open();doc.write('<!doctype html><html lang="vi"><head></head><body></body></html>');doc.close();
-    const style=doc.createElement('style');style.textContent=css+'\n'+EXPORT_CSS;doc.head.append(style);
-    const section=()=>{const node=doc.createElement('section');node.className='export-page';doc.body.append(node);return node;};
-    const first=section(),second=section();
-    const adopt=node=>doc.importNode(node,true);
-    if(snapshot.header)first.append(adopt(snapshot.header));
-    first.append(adopt(snapshot.question));
-    const meta=doc.createElement('div');meta.className='chart-meta';meta.append(adopt(snapshot.pillars),adopt(snapshot.summary));first.append(meta);
-    const workspace=doc.createElement('div');workspace.className='workspace';workspace.append(adopt(snapshot.board),adopt(snapshot.elements));first.append(workspace);
-    workspace.querySelectorAll('.is-selected,.is-active,.is-related').forEach(node=>node.classList.remove('is-selected','is-active','is-related'));
-    workspace.querySelectorAll('[aria-pressed]').forEach(node=>node.setAttribute('aria-pressed','false'));
-    const diagram=workspace.querySelector('#element-diagram');if(diagram)delete diagram.dataset.active;
-    const reading=workspace.querySelector('#element-reading');if(reading)reading.remove();
-    const title=doc.createElement('h2');title.textContent=secondTitle;second.append(title);
-    const roles=doc.createElement('div');roles.className='export-roles';roles.append(...snapshot.roles.map(adopt));second.append(roles);
-    roles.querySelectorAll('details').forEach(node=>node.open=true);
-    // Firefox can reject a raster image nested inside an SVG foreignObject under a page CSP.
-    // Keep the live app image unchanged; use a vector/text taiji only in the PDF clone.
-    for(const img of doc.querySelectorAll('img.taiji-ink')){const taiji=doc.createElement('span');taiji.className='taiji-export';taiji.textContent='☯';img.replaceWith(taiji);}
-    // Inline any other same-origin images before serialization.
-    await Promise.all([...doc.images].map(async img=>{
-      const url=new URL(img.getAttribute('src'),document.baseURI);
-      if(url.protocol!=='data:'){
-        if(url.origin!==location.origin)throw new Error('Hình xuất PDF phải cùng nguồn.');
-        img.src=await asDataUrl(await (await fetchOk(url)).blob());
-      }
-      img.removeAttribute('srcset');
-    }));
-    await waitForExportLayout(doc);
-    const pages=[];
-    for(const page of [first,second]){
-      const height=Math.ceil(page.getBoundingClientRect().height);
-      const container=doc.createElement('body');container.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
-      container.append(style.cloneNode(true),page.cloneNode(true));
-      const markup=new XMLSerializer().serializeToString(container);
-      const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}"><foreignObject width="100%" height="100%">${markup}</foreignObject></svg>`;
-      const image=new Image();image.src=await asDataUrl(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));await image.decode();
-      const canvas=document.createElement('canvas');canvas.width=WIDTH*SCALE;canvas.height=height*SCALE;
-      const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
-      pages.push({url:canvas.toDataURL('image/jpeg',.95),width:canvas.width,height:canvas.height});
-    }
+    const style=doc.createElement('style');
+    style.textContent=captureCssText()+`
+      html,body{margin:0!important;padding:0!important;width:${PC_CAPTURE_WIDTH}px!important;min-width:${PC_CAPTURE_WIDTH}px!important;max-width:none!important;background:#fff!important}
+      *,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}
+      .pdf-pc-capture{width:${PC_CAPTURE_WIDTH}px!important;max-width:none!important;margin:0!important;padding:0 54px 34px!important;box-sizing:border-box!important}
+      .pdf-pc-capture main{padding-top:24px!important}
+      .pdf-pc-capture .report-pdf-button{display:none!important}
+      .pdf-pc-capture .taiji-export{display:grid;place-items:center;width:100%;height:100%;font:700 92px/1 Georgia,serif;color:#18231f;text-shadow:0 3px 7px rgba(20,25,22,.13)}
+      .pdf-slice-viewport{position:relative;width:${PC_CAPTURE_WIDTH}px;overflow:hidden;background:#fff}
+    `;doc.head.append(style);
+    const root=createPcShell(doc,kind);await inlinePcImages(doc);await waitForExportLayout(doc);
+    const slices=pcPageSlices(root),pages=[];
+    for(const slice of slices)pages.push(await rasterPcSlice(doc,root,style,slice));
     return pages;
   }finally{frame.remove();}
 }
 
-
-export async function captureReadingPages(answer){
-  if(!answer)throw new Error('Không tìm thấy bài luận AI.');
-  await document.fonts.ready;
-  const css=[...document.styleSheets].filter(sheet=>!sheet.href||new URL(sheet.href).origin===location.origin).map(sheet=>[...sheet.cssRules].map(rule=>rule.cssText).join('\n')).join('\n');
-  const frame=document.createElement('iframe');frame.title='Bài luận xuất PDF';frame.setAttribute('aria-hidden','true');frame.style.cssText=`position:fixed;left:-20000px;top:0;width:${WIDTH}px;height:1800px;border:0;pointer-events:none;`;document.body.append(frame);
-  try{
-    const doc=frame.contentDocument;doc.open();doc.write('<!doctype html><html lang="vi"><head></head><body></body></html>');doc.close();
-    const style=doc.createElement('style');style.textContent=css+'\n'+EXPORT_CSS+'\n.export-reading{width:'+WIDTH+'px;padding:34px 42px;background:var(--paper);box-sizing:border-box}.export-reading .ai-answer{display:block!important}.export-reading details{display:block}.export-reading details>summary{display:none}.export-reading details>*{display:block!important}';doc.head.append(style);
-    const root=doc.createElement('section');root.className='export-page export-reading';const title=doc.createElement('h2');title.textContent='Bài luận AI';root.append(title);
-    const reading=doc.importNode(answer,true);reading.hidden=false;reading.removeAttribute('hidden');reading.querySelectorAll(EXCLUDED).forEach(node=>node.remove());reading.querySelectorAll('details').forEach(node=>node.open=true);root.append(reading);doc.body.append(root);
-    await waitForExportLayout(doc);
-    const total=Math.ceil(root.getBoundingClientRect().height),slice=1180,pages=[];
-    for(let top=0;top<total;top+=slice){
-      const height=Math.min(slice,total-top),wrap=doc.createElement('body');wrap.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
-      const viewport=doc.createElement('div');viewport.style.cssText=`position:relative;width:${WIDTH}px;height:${height}px;overflow:hidden;background:white`;const shifted=root.cloneNode(true);shifted.style.transform=`translateY(-${top}px)`;shifted.style.transformOrigin='top left';viewport.append(shifted);wrap.append(style.cloneNode(true),viewport);
-      const markup=new XMLSerializer().serializeToString(wrap),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}"><foreignObject width="100%" height="100%">${markup}</foreignObject></svg>`;
-      const image=new Image();image.src=await asDataUrl(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));await image.decode();const canvas=document.createElement('canvas');canvas.width=WIDTH*SCALE;canvas.height=height*SCALE;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);pages.push({url:canvas.toDataURL('image/jpeg',.95),width:canvas.width,height:canvas.height});
-    }
-    return pages;
-  }finally{frame.remove();}
-}
-
-export async function buildScreenshotPdf({snapshot,answer,secondTitle}){
-  const visual=await captureQuestionPages(snapshot,{secondTitle});const reading=await captureReadingPages(answer);return writeQuestionPdf({pages:[...visual,...reading],blocks:[]});
+export async function buildScreenshotPdf({kind='question'}={}){
+  return writeQuestionPdf({pages:await capturePcReportPages(kind),blocks:[]});
 }
 
 const encode=value=>new TextEncoder().encode(value);
@@ -197,7 +220,7 @@ export function writeQuestionPdf({pages=[],blocks=[],model='',glyphFactory=canva
   }
   const textPages=[];let commands=[],y=800;
   const nextPage=()=>{if(commands.length)textPages.push(commands.join('\n'));commands=[];y=800;};
-  const allBlocks=[{kind:'heading',runs:[{text:'Bài luận AI'}]},...blocks];
+  const allBlocks=blocks.length?[{kind:'heading',runs:[{text:'Bài luận AI'}]},...blocks]:[];
   for(const block of allBlocks){
     const heading=block.kind==='heading',size=heading?15:11,lineHeight=heading?22:17,left=42,width=511;
     if(heading&&y<42+lineHeight*3)nextPage();
@@ -242,14 +265,4 @@ export function writeQuestionPdf({pages=[],blocks=[],model='',glyphFactory=canva
   for(let id=1;id<objects.length;id++){offsets.push(offset);const part=joinBytes([encode(`${id} 0 obj\n`),objects[id],encode('\nendobj\n')]);parts.push(part);offset+=part.length;}
   parts.push(encode(`xref\n0 ${objects.length}\n0000000000 65535 f \n${offsets.slice(1).map(n=>`${String(n).padStart(10,'0')} 00000 n \n`).join('')}trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${offset}\n%%EOF`));
   return new Blob(parts,{type:'application/pdf'});
-}
-
-export async function buildQuestionPdf({snapshot,blocks,model}){
-  const pages=await captureQuestionPages(snapshot);
-  return writeQuestionPdf({pages,blocks,model});
-}
-
-export async function buildMenhPdf({snapshot,blocks,model}){
-  const pages=await captureQuestionPages(snapshot,{secondTitle:'Bản mệnh · đối chiếu cung và căn cứ'});
-  return writeQuestionPdf({pages,blocks,model});
 }

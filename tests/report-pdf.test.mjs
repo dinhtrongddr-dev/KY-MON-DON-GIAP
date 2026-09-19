@@ -91,12 +91,21 @@ test('reading extraction keeps inline strong emphasis in paragraphs and single b
   assert.equal(blocks[2].runs.find(r=>r.bold).text,'chờ');
 });
 
-test('question visuals use native fixed-width DOM capture and resolved role clones',()=>{
-  const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8');
-  for(const pattern of [/foreignObject/,/WIDTH=900/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
-  assert.match(app,/id==='self'/);assert.match(app,/id==='topic_0'/);assert.match(app,/topicRole\?\.palace!=null\?topicRole:.*id==='event'/);
-  assert.match(app,/NGƯỜI HỎI · NHẬT CAN/);assert.match(app,/SỰ VIỆC · DỤNG THẦN/);assert.match(app,/SỰ VIỆC · THỜI CAN/);assert.match(app,/node\.open=true/);
+test('question and Mệnh visuals rasterize the native 1440px desktop result without export reflow',()=>{
+  const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8');
+  for(const pattern of [/foreignObject/,/PC_CAPTURE_WIDTH=1440/,/position:fixed;left:-30000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/capturePcReportPages/,/reportSource\(kind\)/,/doc\.importNode\(reportSource\(kind\),true\)/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
+  assert.match(code,/kind==='menh'\?'menh-result':'result'/);
+  assert.match(code,/main\.append\(result\);shell\.append\(main\)/);
+  assert.doesNotMatch(code,/WIDTH=900|snapshot\.elements|snapshot\.roles|workspace\.append\(adopt/);
   assert.doesNotMatch(code,/pdfkit|\.ttf|\.woff|api\/export/);
+});
+
+test('screenshot-only PDF emits exactly its image pages with no synthetic reading page',async()=>{
+  const image={url:'data:image/jpeg;base64,/9j/2Q==',width:1440,height:1800};
+  const blob=writeQuestionPdf({pages:[image,image],blocks:[]});
+  const pdf=new TextDecoder().decode(new Uint8Array(await blob.arrayBuffer()));
+  assert.equal([...pdf.matchAll(/\/Type \/Page /g)].length,2);
+  assert.doesNotMatch(pdf,/\/Subtype \/Type3/);
 });
 
 const fakeGlyph=()=>({advance:520,width:8,height:8,x:0,y:-200,w:520,h:1000,mask:new Uint8Array(8).fill(255)});
