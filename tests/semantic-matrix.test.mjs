@@ -32,7 +32,7 @@ test('both AI prompts and UIs bind to the shared matrix and natural-language-onl
   const questionPrompt=readFileSync(new URL('../dist/qimen/ai/prompts.mjs',import.meta.url),'utf8'),menhPrompt=readFileSync(new URL('../dist/qimen/menh/ai/prompts.mjs',import.meta.url),'utf8');
   const app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8'),menhView=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   for(const prompt of [questionPrompt,menhPrompt]){assert.match(prompt,/semanticMatrix/);assert.match(prompt,/DỊCH LUẬN NGHĨA TỰ NHIÊN/);assert.match(prompt,/Niên can Giáp tại Tốn 4/);}
-  assert.match(app,/semanticCard/);assert.match(app,/semanticDomainForTopic/);assert.match(menhView,/renderMenhSemanticGuide/);assert.match(menhView,/automatic:false/);
+  assert.match(app,/semanticCard/);assert.match(app,/semanticDomainForTopic/);assert.match(menhView,/semanticCardNode/);assert.match(menhView,/mode:'destiny',domainId:'general_decision'/);assert.match(menhView,/automatic:false/);
 });
 
 test('palace bundle uses at most three keywords, domain overrides and state modifiers without assigning a role',()=>{

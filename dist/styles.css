@@ -829,7 +829,7 @@ textarea:focus { outline:3px solid #bce8ce; }
 .birth-time-toggle{min-height:74px;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);background:#f8faf8;cursor:pointer}
 .birth-time-toggle input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--jade)}
 .birth-time-toggle span{display:grid;gap:2px}.birth-time-toggle strong{font-size:.88rem}.birth-time-toggle small{color:var(--muted);font-size:.73rem;line-height:1.3}
-.menh-result{max-width:1280px;margin-inline:auto}
+.menh-result{max-width:1500px;margin-inline:auto}
 .menh-panel{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--jade-dark);box-shadow:var(--shadow);padding:clamp(18px,2.2vw,30px)}
 .menh-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .menh-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:18px 0;border:1px solid var(--line)}
@@ -863,6 +863,16 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-scope{border-left:4px solid var(--jade-dark)}.menh-scope p:last-child{margin-bottom:0;line-height:1.7}
 @media(max-width:980px){.menh-input-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.menh-claim-grid,.menh-ai-grid{grid-template-columns:1fr}}
 @media(max-width:680px){.topbar{align-items:flex-start;padding-block:12px;flex-wrap:wrap}.product-nav{width:100%}.product-nav a{flex:1;justify-content:center}.menh-input-grid{grid-template-columns:1fr}.birth-time-toggle{min-height:64px}.menh-result-head{align-items:flex-start;flex-direction:column}.menh-meta-grid{grid-template-columns:1fr}.menh-meta-item{border-right:0}}
+
+/* Mệnh result parity with Hỏi Việc */
+.menh-chart-meta{margin-top:18px}
+.menh-pillar-element{color:var(--muted);font-weight:500}
+.menh-workspace{margin-top:18px}
+.menh-workspace>.menh-board-section{max-width:none;margin:0}
+.menh-workspace .menh-inspector{min-width:0}
+.menh-method-details{margin-top:18px}
+@media(max-width:1220px){.menh-result{max-width:1280px}}
+@media(max-width:850px){.menh-workspace{margin-top:14px}}
 
 /* KM-MENH natal board */
 .menh-board-section{max-width:920px;margin:26px auto 0}

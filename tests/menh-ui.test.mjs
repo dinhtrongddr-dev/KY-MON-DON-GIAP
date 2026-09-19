@@ -60,6 +60,34 @@ test('Mệnh UI renders the exact natal QimenBoard already used by KM-MENH inste
   assert.match(view,/Phản Ngâm/);
   assert.doesNotMatch(view,/generateQimen|createQimenBoard/);
 });
+
+test('Mệnh known-time result mirrors Hỏi Việc chart meta, inspector, five elements and method details without recomputing a board',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/prepared\.result\?\.natal\?\.baseBoard/);
+  assert.match(view,/chart-meta menh-chart-meta/);
+  assert.match(view,/className='pillars'|el\('div','pillars'\)/);
+  assert.match(view,/calculation-summary/);
+  assert.match(view,/Tiết khí tại/);
+  assert.match(view,/formatInstantAtOffset\(board\.term\.utcMs/);
+  assert.match(view,/Tuần thủ · lục nghi ẩn Giáp/);
+  assert.match(view,/workspace menh-workspace/);
+  assert.match(view,/inspector menh-inspector/);
+  assert.match(view,/Luận tượng từng cung/);
+  assert.match(view,/mode:'destiny',domainId:'general_decision'/);
+  assert.match(view,/menh-element-panel-template/);
+  assert.match(view,/initMenhElementPanel/);
+  assert.match(view,/select\(fallback\)/);
+  assert.match(view,/renderMenhMethodDetails/);
+  assert.doesNotMatch(view,/generateQimen|createQimenBoard/);
+});
+test('Mệnh element diagram template is the same visual system as Hỏi Việc and UNKNOWN mode does not fabricate one fixed chart-meta',()=>{
+  assert.match(html,/id="menh-element-panel-template"/);
+  for(const text of ['Ngũ hành tương sinh · tương khắc','data-element-choice="Hỏa"','data-element-choice="Thổ"','data-element-choice="Kim"','data-element-choice="Thủy"','data-element-choice="Mộc"','Tương sinh','Tương khắc'])assert.ok(html.includes(text));
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/if\(prepared\.input\.birthTimeMode==='KNOWN'\)/);
+  assert.match(view,/else\{\s*container\.append\(renderUnknownBoardNotice\(prepared\)\)/);
+});
+
 test('Mệnh UI shows candidate boards for unknown birth time without pretending the leader is certain',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/Các Mệnh bàn có thể/);
@@ -83,8 +111,9 @@ test('Mệnh profile accepts and displays full name and birthplace without chang
 });
 test('Mệnh long-form reading visually emphasizes fast-scan translated takeaways without HTML injection',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
-  assert.doesNotMatch(view,/FOCUS_PATTERNS/);assert.match(view,/formatParts/);assert.match(view,/automatic:false/);assert.match(view,/menh-ai-focus/);assert.match(view,/renderMenhSemanticGuide/);
+  assert.doesNotMatch(view,/FOCUS_PATTERNS/);assert.match(view,/formatParts/);assert.match(view,/automatic:false/);assert.match(view,/menh-ai-focus/);assert.match(view,/semanticCardNode/);
   assert.match(view,/document\.createTextNode/);assert.doesNotMatch(view,/innerHTML/);
+  assert.match(view,/renderMenhPalaceDetail/);
 });
 
 test('unknown birth-time rectification uses remembered window and dated event precision instead of year buckets',()=>{

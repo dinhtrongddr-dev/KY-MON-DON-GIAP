@@ -1,4 +1,6 @@
-import {elementSlug} from './qimen/core/palace.mjs';
+import {STAR_QIN,elementSlug} from './qimen/core/palace.mjs';
+import {formatInstantAtOffset,formatOffset} from './qimen/core/calendar.mjs';
+import {CONTROLS,GENERATES,palaceConditions} from './guide.mjs';
 import {semanticBundle} from './qimen/semantic/matrix.mjs';
 import {formatParts} from './reading-format.mjs';
 
@@ -82,12 +84,13 @@ function makeEntity(className,label,item){
   node.append(el('span','entity-label',label),el('span','han',item?.han||'—'),el('span','vi',item?.vi||'—'));
   return node;
 }
-function natalPalaceNode(palace,board,selfPalaceNumber){
+function natalPalaceNode(palace,board,selfPalaceNumber,{interactive=false}={}){
   const isSelf=palace.number===selfPalaceNumber;
-  const node=el('div',(palace.number===5?'palace palace-center':'palace')+(isSelf?' menh-self-palace':''));
+  const node=el(interactive?'button':'div',(palace.number===5?'palace palace-center':'palace')+(isSelf?' menh-self-palace':''));
+  if(interactive){node.type='button';node.setAttribute('aria-pressed','false');}
   node.dataset.palace=String(palace.number);
   node.dataset.element=elementSlug(palace.element);
-  node.setAttribute('role','group');
+  node.setAttribute('role',interactive?'button':'group');
   node.setAttribute('aria-label',palace.vi+' cung '+palace.number);
 
   const head=el('span','palace-head');
@@ -141,24 +144,120 @@ function natalPalaceNode(palace,board,selfPalaceNumber){
 function addFlag(root,text,primary=false){
   root.append(el('span',primary?'flag flag-primary':'flag',text));
 }
-function renderMenhSemanticGuide(board){
-  const section=el('section','menh-semantic-guide'),head=el('div','menh-section-heading');
-  head.append(el('p','eyebrow','Dịch nghĩa nhanh theo ma trận ngữ nghĩa'),el('h3','','Luận nghĩa từng cung'));section.append(head);
-  const list=el('div','menh-semantic-list');
-  for(const palace of board.palaces){
-    const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board});
-    const details=el('details','menh-semantic-palace'),summary=el('summary');
-    const title=el('span','menh-semantic-title',palace.vi+' '+palace.number);
-    const chips=el('span','menh-semantic-keywords');
-    for(const word of semantic.keywords)chips.append(el('span','',word));
-    summary.append(title,chips);details.append(summary,el('p','menh-semantic-summary',semantic.summary));
-    const ul=el('ul','menh-semantic-components');
-    for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));ul.append(li);}
-    details.append(ul);
-    if(semantic.states.length)details.append(el('p','menh-semantic-state',semantic.states.map(x=>x.rule).join(' ')));
-    list.append(details);
+function detailItemNode(type,layer,title,subtitle,copy){
+  const item=el('div','detail-item item-'+type),top=el('div','detail-item-top');
+  top.append(el('strong','',title),el('small','',layer+(subtitle?' · '+subtitle:'')));
+  item.append(top,el('p','',copy));return item;
+}
+function semanticCardNode(palace,board,conditions=null){
+  const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board,conditions});
+  const section=el('section','semantic-card');section.setAttribute('aria-label','Dịch nghĩa nhanh theo Mệnh bàn');
+  const head=el('div','semantic-card-head'),eyebrow=el('p','eyebrow','Dịch nghĩa nhanh · '+semantic.domainLabel);
+  head.append(eyebrow,el('span','semantic-version',semantic.version));section.append(head);
+  const chips=el('div','semantic-keywords');for(const word of semantic.keywords)chips.append(el('span','',word));section.append(chips);
+  section.append(el('p','semantic-summary',semantic.summary));
+  if(semantic.states.length)section.append(el('p','semantic-state',semantic.states.map(x=>x.rule).join(' ')));
+  const details=el('details','semantic-components'),summary=el('summary','','Xem nghĩa từng thành phần'),list=el('ul');
+  for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));list.append(li);}
+  details.append(summary,list);section.append(details);return section;
+}
+function renderMenhPalaceDetail(detail,titleNode,palace,board){
+  titleNode.textContent=palace.vi+' '+palace.number+' cung';
+  detail.replaceChildren();
+  const conditions=palaceConditions(palace),title=el('div','detail-title');title.dataset.element=elementSlug(palace.element);
+  const main=el('div','detail-title-main'),name=el('span');
+  name.append(el('strong','',palace.vi+' · '+palace.han),el('small','',(palace.direction||'Trung tâm')+' · cung '+palace.number));
+  main.append(el('span','detail-gua',palace.trigram||'中'),name);title.append(main,el('span','element-chip',palace.element));
+  detail.append(title,el('p','detail-image',palace.image||''));
+  detail.append(semanticCardNode(palace,board,conditions));
+  const list=el('div','detail-list');
+  if(palace.number===5){
+    list.append(
+      detailItemNode('star','Cửu tinh',STAR_QIN.han+' · '+STAR_QIN.vi,STAR_QIN.element,STAR_QIN.meaning+' Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.'),
+      detailItemNode('stem','Địa bàn',palace.earthStem.han+' · '+palace.earthStem.vi,palace.earthStem.element,'Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.')
+    );
+    detail.append(list);return;
   }
-  section.append(list);return section;
+  const heavenText=palace.heavenStems.map(stem=>stem.han+' '+stem.vi).join(' + ');
+  const carries=palace.carriesQin?' Cung này đồng thời mang '+STAR_QIN.vi+': '+STAR_QIN.meaning:'';
+  list.append(
+    detailItemNode('spirit','Bát thần',palace.spirit.han+' · '+palace.spirit.vi,'thần',palace.spirit.meaning),
+    detailItemNode('star','Cửu tinh',palace.star.han+' · '+palace.star.vi,palace.star.element,palace.star.meaning+carries),
+    detailItemNode('door','Bát môn',palace.door.han+' · '+palace.door.vi,palace.door.quality,palace.door.meaning),
+    detailItemNode('stem','Thiên–Địa bàn',heavenText+' / '+palace.earthStem.han+' '+palace.earthStem.vi,'chủ–khách','Thiên bàn mang '+heavenText+'; địa bàn là '+palace.earthStem.han+' '+palace.earthStem.vi+'. Cần xét sinh–khắc, nhập mộ và bối cảnh Mệnh trước khi kết luận.')
+  );
+  detail.append(list);
+  const markers=el('div','detail-markers');
+  const values=[
+    palace.isDutyStar?'Trực Phù: '+board.zhiFu.star.vi:null,
+    palace.isDutyDoor?'Trực Sử: '+board.zhiShi.door.vi:null,
+    palace.voided?'Lâm Tuần Không':null,
+    palace.horse?'Lâm Dịch Mã':null,
+    conditions.doorPressure?'Môn bức cung':null,
+    conditions.punishment.length?'Kích hình: '+conditions.punishment.join(', '):null,
+    conditions.wonderTombs.length?'Tam kỳ nhập mộ: '+conditions.wonderTombs.join(', '):null,
+  ].filter(Boolean);
+  for(const value of values.length?values:['Không có dấu bổ sung trong phạm vi đã tính'])markers.append(el('span','detail-marker',value));
+  detail.append(markers,el('p','detail-image','Các dấu hiệu chỉ là lớp hiệu chỉnh của cung; không tự quyết định tốt/xấu khi đứng riêng.'));
+}
+function cloneMenhElementPanel(){
+  const template=document.getElementById('menh-element-panel-template');
+  if(!template?.content?.firstElementChild)throw new Error('Thiếu mẫu sơ đồ Ngũ hành.');
+  return template.content.firstElementChild.cloneNode(true);
+}
+function initMenhElementPanel(panel){
+  const diagram=panel.querySelector('.element-diagram'),reading=panel.querySelector('.element-reading'),elements=Object.keys(GENERATES);
+  const giver=(map,element)=>elements.find(item=>map[item]===element);
+  const reset=()=>{
+    delete diagram.dataset.active;
+    diagram.querySelectorAll('.element-orb').forEach(button=>{button.classList.remove('is-active');button.setAttribute('aria-pressed','false');});
+    diagram.querySelectorAll('.element-routes path').forEach(path=>path.classList.remove('is-related'));
+    reading.replaceChildren();reading.hidden=true;
+  };
+  const relation=(root,label,className,strong,small)=>{
+    const p=el('p'),tag=el('span','relation-label '+className,label);p.append(tag,el('strong','',strong),el('small','',small));root.append(p);
+  };
+  const select=element=>{
+    diagram.dataset.active=element;
+    diagram.querySelectorAll('.element-orb').forEach(button=>{const active=button.dataset.elementChoice===element;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active));});
+    diagram.querySelectorAll('.element-routes path').forEach(path=>path.classList.toggle('is-related',path.dataset.from===element||path.dataset.to===element));
+    reading.hidden=false;reading.replaceChildren();
+    const head=el('div','element-reading-head');head.append(el('h3','',element+' trong bốn chiều quan hệ'));
+    const resetButton=el('button','reading-reset','Xem toàn bộ sơ đồ');resetButton.type='button';resetButton.addEventListener('click',reset);head.append(resetButton);reading.append(head);
+    const cards=el('div','relation-cards');
+    relation(cards,'Sinh ra','relation-generate',element+' → '+GENERATES[element],element+' nuôi dưỡng '+GENERATES[element]);
+    relation(cards,'Được sinh','relation-generate',giver(GENERATES,element)+' → '+element,element+' nhận sự nâng đỡ từ '+giver(GENERATES,element));
+    relation(cards,'Khắc','relation-control',element+' → '+CONTROLS[element],element+' chế ước '+CONTROLS[element]);
+    relation(cards,'Bị khắc','relation-control',giver(CONTROLS,element)+' → '+element,element+' chịu sự chế ước của '+giver(CONTROLS,element));
+    reading.append(cards);
+  };
+  diagram.querySelectorAll('.element-orb').forEach(button=>button.addEventListener('click',()=>{const element=button.dataset.elementChoice;diagram.dataset.active===element?reset():select(element);}));
+  reset();
+}
+function renderMenhChartMeta(board){
+  const root=el('div','chart-meta menh-chart-meta'),pillars=el('div','pillars'),summary=el('div','calculation-summary');
+  const input=board.input,two=value=>String(value).padStart(2,'0'),weekdays=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const weekday=weekdays[new Date(Date.UTC(input.year,input.month-1,input.day)).getUTCDay()];
+  const labels=[['Năm',board.pillars.year,String(input.year)],['Tháng',board.pillars.month,'Tháng '+two(input.month)],['Ngày',board.pillars.day,weekday+' · '+two(input.day)+'/'+two(input.month)],['Giờ',board.pillars.hour,two(input.hour)+':'+two(input.minute)]];
+  for(const [label,pillar,calendar] of labels){
+    const box=el('div','pillar'),small=el('small'),han=el('span','han'),vi=el('span','vi');
+    small.append(el('span','',label),el('b','',calendar));han.textContent=pillar.han;han.style.color='var(--'+elementSlug(pillar.stem.element)+')';
+    vi.append(document.createTextNode(pillar.vi),el('br'),el('span','menh-pillar-element',pillar.stem.element));box.append(small,han,vi);pillars.append(box);
+  }
+  const item=(label,strongText,sub,className='')=>{const box=el('div','summary-item'+(className?' '+className:''));box.append(el('small','',label),el('strong','',strongText),el('em','',sub));summary.append(box);};
+  const instant=two(input.day)+'/'+two(input.month)+'/'+input.year+' · '+two(input.hour)+':'+two(input.minute),offset=input.tzOffset;
+  item('Độn · cục',(board.dun==='yang'?'Dương Độn':'Âm Độn')+' '+board.ju+' cục',board.yuan||'','dun');
+  item('Tiết khí tại '+instant,(board.term?.han||'')+' · '+(board.term?.vi||''),'Từ '+formatInstantAtOffset(board.term.utcMs,offset,true));
+  item('Tuần thủ · lục nghi ẩn Giáp',(board.xun?.head?.han||'—')+' · '+(board.xun?.instrument?.han||'—'),(board.xun?.head?.vi||'—')+' ẩn '+(board.xun?.instrument?.vi||'—'));
+  root.append(pillars,summary);return root;
+}
+function renderMenhMethodDetails(board){
+  const details=el('details','method-details menh-method-details'),copy=el('div','method-copy'),offset=board.input.tzOffset;
+  details.append(el('summary','','Quy tắc đang dùng và cách đối chiếu thời điểm sinh'));
+  const p1=el('p');p1.append(el('strong','','Định cục. '),document.createTextNode('Thời gia Kỳ Môn · Chuyển bàn · Tháo Bổ; '+(board.dun==='yang'?'Dương':'Âm')+' độn '+board.ju+' cục · '+(board.yuan||'')+'.'));
+  const p2=el('p');p2.append(el('strong','','Giao tiết. '),document.createTextNode((board.term?.vi||'Tiết khí')+' bắt đầu '+formatInstantAtOffset(board.term.utcMs,offset,true)+(board.nextTerm?' ; tiết kế '+board.nextTerm.vi+' lúc '+formatInstantAtOffset(board.nextTerm.utcMs,offset,true):'')+'.'));
+  const p3=el('p');p3.append(el('strong','','Thời gian đầu vào. '),document.createTextNode('Dùng giờ sinh đã nhập theo '+formatOffset(offset)+'; cùng quy ước đổi ngày và giao tiết của engine Hỏi Việc.'));
+  copy.append(p1,p2,p3);details.append(copy);return details;
 }
 function appendPatternFlags(root,board){
   const p=board.patterns||{};let fu=false,fan=false;
@@ -169,29 +268,41 @@ function appendPatternFlags(root,board){
   if(board.fuYin&&!fu)addFlag(root,'Phục Ngâm',true);
   if(board.fanYin&&!fan)addFlag(root,'Phản Ngâm',true);
 }
-function renderNatalBoard(board,selfPalaceNumber=null){
-  const section=el('section','menh-board-section');
+function renderNatalBoard(board,selfPalaceNumber=null,{interactive=false}={}){
+  const section=el('section',(interactive?'board-column ':'')+'menh-board-section');
   const toolbar=el('div','board-toolbar menh-board-toolbar'),title=el('div');
   title.append(el('p','eyebrow','Mệnh bàn theo giờ sinh'),el('h2','','Mệnh bàn Kỳ Môn'));
   const selfPalace=board.palaces.find(p=>p.number===selfPalaceNumber)||board.palaces.find(p=>(p.heavenStems||[]).some(s=>s.han===board.pillars.day.stem.han))||null;
-  const key=el('div','board-key');
-  key.append(el('span','menh-board-key-self','Bản mệnh: '+board.pillars.day.vi+(selfPalace?' · ở cung '+selfPalace.vi+' '+selfPalace.number:'')));
-  key.append(el('span','','Bàn Kỳ Môn dùng để luận Mệnh'));
+  const key=el('div','board-key'),selfKey=el('span','role-key role-key-person','◉ Bản mệnh · Nhật can '+board.pillars.day.stem.vi+(selfPalace?' · '+selfPalace.vi+' '+selfPalace.number:''));
+  key.append(selfKey);
+  for(const [slug,label] of [['wood','Mộc · xanh lá'],['fire','Hỏa · đỏ'],['earth','Thổ · nâu'],['metal','Kim · vàng'],['water','Thủy · xanh dương']]){const chip=el('span','element-chip',label);chip.dataset.element=slug;key.append(chip);}
   toolbar.append(title,key);section.append(toolbar);
-
   const frame=el('div','board-frame menh-board-frame'),grid=el('div','qimen-board menh-qimen-board');
   grid.setAttribute('role','group');grid.setAttribute('aria-label','Mệnh bàn Kỳ Môn chín cung theo giờ sinh');
-  for(const palace of board.palaces)grid.append(natalPalaceNode(palace,board,selfPalace?.number??null));
+  for(const palace of board.palaces)grid.append(natalPalaceNode(palace,board,selfPalace?.number??null,{interactive}));
   frame.append(grid);section.append(frame);
-
   const flags=el('div','board-flags menh-board-flags');
-  const voidPalaces=board.palaces.filter(p=>p.voided).map(p=>p.number).join(', ')||'—';
-  const horsePalace=board.palaces.find(p=>p.horse)?.number??'—';
+  const voidPalaces=board.palaces.filter(p=>p.voided).map(p=>p.number).join(', ')||'—',horsePalace=board.palaces.find(p=>p.horse)?.number??'—';
   addFlag(flags,'Trực Phù: '+(board.zhiFu?.star?.vi||'—')+' · cung '+(board.zhiFu?.palace??'—'),true);
   addFlag(flags,'Trực Sử: '+(board.zhiShi?.door?.vi||'—')+' · cung '+(board.zhiShi?.palace??'—'));
   addFlag(flags,'Không Vong: '+((board.voidBranches||[]).map(branch=>branch.vi).join('–')||'—')+' · cung '+voidPalaces);
   addFlag(flags,'Mã tinh: '+(board.horseBranch?.vi||'—')+' · cung '+horsePalace);
-  appendPatternFlags(flags,board);section.append(flags,renderMenhSemanticGuide(board));return section;
+  appendPatternFlags(flags,board);section.append(flags);return section;
+}
+function renderMenhWorkspace(board,selfPalaceNumber=null){
+  const workspace=el('div','workspace menh-workspace'),boardColumn=renderNatalBoard(board,selfPalaceNumber,{interactive:true});
+  const inspector=el('aside','inspector menh-inspector'),head=el('div','inspector-head'),title=el('h2','','Chọn một cung trên bàn'),detail=el('div','palace-detail');
+  head.append(el('div','menh-inspector-title-wrap'));head.firstChild.append(el('p','eyebrow','Luận tượng từng cung'),title);inspector.append(head,detail);
+  const elements=cloneMenhElementPanel();workspace.append(boardColumn,inspector,elements);
+  const buttons=[...boardColumn.querySelectorAll('.palace')];
+  const select=number=>{
+    const palace=board.palaces.find(item=>item.number===number)||board.palaces.find(item=>item.number===selfPalaceNumber)||board.palaces[0];
+    for(const button of buttons){const active=Number(button.dataset.palace)===palace.number;button.classList.toggle('is-selected',active);button.setAttribute('aria-pressed',String(active));}
+    renderMenhPalaceDetail(detail,title,palace,board);
+  };
+  for(const button of buttons)button.addEventListener('click',()=>select(Number(button.dataset.palace)));
+  const fallback=board.palaces.find(p=>p.number===selfPalaceNumber)?.number??board.palaces.find(p=>p.number!==5)?.number??board.palaces[0].number;
+  select(fallback);initMenhElementPanel(elements);return workspace;
 }
 const HOUR_FAMILY_VI=Object.freeze({ZI:'Tý',CHOU:'Sửu',YIN:'Dần',MAO:'Mão',CHEN:'Thìn',SI:'Tỵ',WU:'Ngọ',WEI:'Mùi',SHEN:'Thân',YOU:'Dậu',XU:'Tuất',HAI:'Hợi'});
 function candidateSelfPalace(candidate){
@@ -296,9 +407,14 @@ export function renderMenhDeterministic(container,prepared){
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
     const selfEvidence=(prepared.result.evidence||[]).find(e=>e.evidenceId==='SELF_DAY_STEM');
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
-    container.append(renderNatalBoard(board,selfPalaceNumber));
-  }else container.append(renderUnknownBoardNotice(prepared));
-  if(aiPanel)container.append(aiPanel);
+    container.append(renderMenhChartMeta(board));
+    container.append(renderMenhWorkspace(board,selfPalaceNumber));
+    if(aiPanel)container.append(aiPanel);
+    container.append(renderMenhMethodDetails(board));
+  }else{
+    container.append(renderUnknownBoardNotice(prepared));
+    if(aiPanel)container.append(aiPanel);
+  }
   container.append(renderTechnical(prepared));
   const body=el('div','menh-deterministic-body');
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
