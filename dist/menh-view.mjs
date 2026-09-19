@@ -23,6 +23,12 @@ const UI_TERM=Object.freeze({
   FATHER:'cha',MOTHER:'mẹ',YANG:'dương',YIN:'âm',PRESSURE:'chịu áp lực/kiểm soát',
   NINE_STAR:'Cửu tinh',EIGHT_DOOR:'Bát môn',TEN_STEM_KE_YING_AND_PALACE_STATE:'thiên can và trạng thái cung',
   LOCAL_OR_ANCESTRAL_BASE_MORE_SUPPORTIVE:'nguồn lực tại chỗ hoặc nền tảng gia đình có xu hướng hỗ trợ hơn',
+  CONTEXT_REQUIRED:'cần xem trong bối cảnh tổng thể',
+  ANCESTRAL_LOCAL_ASSETS_HARDER_TO_RETAIN:'nguồn lực hoặc tài sản sẵn có từ gia đình, quê nhà thường cần quản lý chặt hơn để giữ bền',
+  DEVELOPMENT_AWAY_FROM_ORIGIN:'dễ phát triển khi mở rộng ra ngoài môi trường quen thuộc',
+  DEVELOPMENT_OR_ENTERPRISE_AWAY_FROM_ORIGIN:'có xu hướng phát triển tốt hơn khi mở rộng hoạt động ra bên ngoài',
+  SUPPORT:'được hỗ trợ',ALIGNMENT:'khá đồng thuận',INPUT_COST:'cần đầu tư công sức hoặc nguồn lực',
+  INNER:'phạm vi gần / bên trong',OUTER:'phạm vi mở rộng / bên ngoài',
   SELF_GENERATES_CAREER:'bản thân phải chủ động tạo và nuôi cơ hội nghề nghiệp',
   CAREER_GENERATES_SELF:'môi trường nghề nghiệp có xu hướng hỗ trợ bản thân',
   CAREER_CONTROLS_SELF:'công việc tạo áp lực lên bản thân',SELF_CONTROLS_CAREER:'bản thân có xu hướng chủ động kiểm soát công việc',
@@ -31,7 +37,7 @@ function friendlyText(value){
   let s=String(value??'');
   for(const [code,label] of Object.entries(PALACE_VI))s=s.replaceAll(code,label);
   for(const [code,label] of Object.entries(UI_TERM))s=s.replaceAll(code,label);
-  s=s.replace(/\bnatal\b/gi,'Mệnh bàn').replace(/\bcorroborator\b/gi,'lớp đối chiếu bổ sung').replace(/\bPRIMARY\b/g,'chính').replace(/\bSECONDARY\b/g,'phụ');
+  s=s.replace(/\bnatal\b/gi,'Mệnh bàn').replace(/\bcorroborator\b/gi,'lớp đối chiếu bổ sung').replace(/\bbundle\b/gi,'nhóm dấu hiệu').replace(/\bdeterministic\b/gi,'đã tính từ bàn').replace(/\bcontext\s+required\b/gi,'cần xem trong bối cảnh tổng thể').replace(/\bPRIMARY\b/g,'chính').replace(/\bSECONDARY\b/g,'phụ');
   s=s.replace(/\b([A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+)\b/g,(_,code)=>code.toLowerCase().replaceAll('_',' '));
   return s;
 }
@@ -77,6 +83,7 @@ function makeEntity(className,label,item){
 function natalPalaceNode(palace,board,selfPalaceNumber){
   const isSelf=palace.number===selfPalaceNumber;
   const node=el('div',(palace.number===5?'palace palace-center':'palace')+(isSelf?' menh-self-palace':''));
+  node.dataset.palace=String(palace.number);
   node.dataset.element=elementSlug(palace.element);
   node.setAttribute('role','group');
   node.setAttribute('aria-label',palace.vi+' cung '+palace.number);
@@ -256,6 +263,7 @@ function renderUnknown(root,prepared){
   sensitive.append(grid);root.append(sensitive);
 }
 export function renderMenhDeterministic(container,prepared){
+  const aiPanel=document.querySelector('.menh-ai-panel');
   container.replaceChildren();
   const header=el('div','menh-result-head'),title=el('div');
   title.append(el('p','eyebrow','Kỳ Môn Mệnh'),el('h2','',prepared.input.birthTimeMode==='KNOWN'?'Mệnh bàn theo giờ sinh':'Phân tích khi không nhớ giờ sinh'));
@@ -269,7 +277,6 @@ export function renderMenhDeterministic(container,prepared){
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderNatalBoard(board,selfPalaceNumber));
   }else container.append(renderUnknownBoardNotice(prepared));
-  const aiPanel=document.querySelector('.menh-ai-panel');
   if(aiPanel)container.append(aiPanel);
   container.append(renderTechnical(prepared));
   const body=el('div','menh-deterministic-body');

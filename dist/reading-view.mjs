@@ -41,8 +41,7 @@ export function renderReading(answer,data,prepared) {
   const section=(title,value,parent,tracePanel=parent)=>{if(!parent||!value?.text)return null;const el=node('section','',parent,'ai-assessment');if(title)node('h3',title,el);prose(value.text,el);trace(value.claim_ids,el,tracePanel);return el;};
   answer.replaceChildren();node('h3',r.status==='needs_clarification'?'Cần làm rõ trước khi luận':'Nhận định cho sự việc này',answer);
   if(data.modelUsed){
-    const fallback=data.modelUsed.fallbackIndex>0?` · fallback ${data.modelUsed.fallbackIndex}`:'';
-    node('p',`Model vừa luận: ${data.modelUsed.label} · ${data.modelUsed.routeLabel} · suy luận ${data.modelUsed.effort}${fallback}`,answer,'ai-model-used');
+    node('p',`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`,answer,'ai-model-used');
   }
   if(r.status==='needs_clarification'){
     const opening=node('div','',answer,'ai-opening');prose(r.summary.text,opening);
@@ -122,5 +121,5 @@ export function renderReading(answer,data,prepared) {
   }
   if(r.questions.length){const questions=node('ul','',tabs.quick);for(const q of r.questions)node('li',q,questions);}
   finishEvidence();
-  node('p',`AI · ${data.rules} · Căn cứ khớp bàn; diễn giải cần đối chiếu thực tế.`,answer,'ai-note');answer.hidden=false;
+  node('p','Bài luận AI được tạo từ bàn Kỳ Môn ở trên và nên đối chiếu với thực tế.',answer,'ai-note');answer.hidden=false;
 }

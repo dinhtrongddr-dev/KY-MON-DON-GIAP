@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#15251f" />
-  <meta name="description" content="Kỳ Môn Mệnh KM-MENH-1.0 theo hệ Trương Chí Xuân: bản thân, gia đình, hôn nhân, sự nghiệp, tài vận, đại vận và lưu niên." />
-  <title>Kỳ Môn Mệnh · KM-MENH-1.0</title>
+  <meta name="description" content="Kỳ Môn Mệnh: lập Mệnh bàn và luận bản thân, gia đình, hôn nhân, sự nghiệp, tài vận, đại vận và lưu niên." />
+  <title>Kỳ Môn Mệnh</title>
   <link rel="canonical" href="https://kymon.pp.ua/menh.html" />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
@@ -15,7 +15,7 @@
   <header class="topbar">
     <a class="brand" href="./menh.html" aria-label="Kỳ Môn Mệnh">
       <span class="brand-seal" aria-hidden="true"><i>四</i><i>九</i><i>二</i><i>三</i><i>五</i><i>七</i><i>八</i><i>一</i><i>六</i></span>
-      <span><strong>Kỳ Môn Mệnh</strong><small>KM-MENH-1.0 · Trương Chí Xuân</small></span>
+      <span><strong>Kỳ Môn Mệnh</strong><small>Mệnh bàn theo thời điểm sinh</small></span>
     </a>
     <nav class="product-nav" aria-label="Chọn chức năng">
       <a href="./index.html">Hỏi việc</a><a href="./menh.html" aria-current="page">Kỳ Môn Mệnh</a>
@@ -50,7 +50,7 @@
     <section id="menh-result" class="result menh-result" aria-live="polite" hidden>
       <section id="menh-deterministic" class="menh-panel" aria-label="Kết quả Kỳ Môn Mệnh"></section>
       <section class="learning-panel ai-panel menh-ai-panel" aria-labelledby="menh-ai-title">
-        <div class="control-heading"><div><p class="eyebrow">Diễn giải có kiểm chứng</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
+        <div class="control-heading"><div><p class="eyebrow">Luận giải</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
         <p>AI diễn giải trực tiếp từ Mệnh bàn đã lập ở phía trên và không tự thay đổi dữ liệu của bàn.</p>
         <div class="local-controls">
           <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Dùng chung mã với phần Hỏi việc.</small></label>
@@ -63,9 +63,10 @@
         <div class="activity-summary" aria-label="Hoạt động hôm nay"><div><span>Lập bàn hôm nay</span><strong id="activity-chart-count">0</strong></div><div><span>Luận AI hôm nay</span><strong id="activity-reading-count">0</strong></div></div>
         <details class="activity-history"><summary>Lịch sử lượt luận gần đây</summary><p id="activity-storage-note" class="ai-note">Đang tải thống kê chung; nội dung luận không được lưu.</p><ol id="activity-reading-list" class="activity-reading-list"></ol></details>
         <div id="menh-ai-answer" class="menh-ai-answer" aria-live="polite" aria-busy="false" hidden></div>
+        <button id="menh-report-pdf" class="button button-primary report-pdf-button" type="button" hidden>Xuất / chia sẻ PDF</button>
       </section>
       <section class="learning-panel menh-scope">
-        <p class="eyebrow">Phạm vi KM-MENH-1.0</p><h2>Đọc xu hướng, không định mệnh hóa</h2>
+        <p class="eyebrow">Phạm vi luận Mệnh</p><h2>Đọc xu hướng, không định mệnh hóa</h2>
         <p>Không có điểm tổng mệnh, xác suất thành công, tuổi thọ/tuổi chết, số con/giới tính con chắc chắn, số lần kết hôn chính xác, tử vong cha mẹ, bệnh nặng hay tai nạn tất định. Lưu niên và đại vận là lớp kích hoạt/nền thời kỳ, không phải bằng chứng sự kiện chắc chắn.</p>
       </section>
     </section>

@@ -1,6 +1,7 @@
-import {buildReadingRequest,assertCompatible,validateReadingResponse,RULE_VERSION} from './reading-core.mjs';
+import {buildReadingRequest,assertCompatible,validateReadingResponse} from './reading-core.mjs';
 import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
+import {initPdfExport} from './report-export.mjs';
 export function initLocalAi({prepare,activity=null}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
@@ -10,6 +11,7 @@ export function initLocalAi({prepare,activity=null}) {
  let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
  const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
  const endpoint=AI_RELAY_ORIGIN;
+ const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',tokenId:'local-token',prepare,boardSelector:'#qimen-board'});
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
    if(saved){token.value=saved;remember.checked=true;rememberHint.textContent='Đã điền mã được ghi nhớ trên trình duyệt này.';}
@@ -47,7 +49,7 @@ export function initLocalAi({prepare,activity=null}) {
    read.textContent=isReading?'Đang luận AI…':readLabel;status.textContent=message;
    return controller;
  };
- const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();};
+ const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();pdf.clear();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
@@ -67,7 +69,7 @@ export function initLocalAi({prepare,activity=null}) {
    cancelWork();const v=version,controller=startWork('Đang kiểm tra kết nối AI…',false,8000);
    try{
      const data=await call('/api/status',null,controller.signal);assertCompatible(data);
-     if(v===version)status.textContent=`Kết nối sẵn sàng · ${RULE_VERSION}. Quyền truy cập AI sẽ được kiểm tra khi bắt đầu luận.`;
+     if(v===version)status.textContent='Kết nối AI sẵn sàng.';
    }catch(e){if(v===version)status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối. Hãy thử lại.':e.message;}
    finally{if(v===version){active=null;finishWork();}}
  });
@@ -80,16 +82,17 @@ export function initLocalAi({prepare,activity=null}) {
      status.textContent='Đang kiểm tra kết nối AI…';
      const health=await call('/api/status',null,controller.signal);assertCompatible(health);
      if(v!==version)return;
-     status.textContent=[...prepared.context.warnings,'AI đang ghép các căn cứ thành diễn biến cho sự việc đang hỏi. Bạn có thể Hủy trong lúc chờ.'].join(' ');
+     status.textContent='AI đang phân tích bàn và soạn bài luận. Bạn có thể Hủy trong lúc chờ.';
      activityReadingId=track('startReading');
      const data=await call('/api/read',prepared.request,controller.signal);
      if(v!==version)return;
-     status.textContent='Đang kiểm tra căn cứ và hoàn thiện bài luận…';
+     status.textContent='AI đang hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);
      const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
      if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
-     const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.routeLabel} / ${data.modelUsed.effort}`:'';
-     status.textContent=data.reading.status==='verified_fallback'?`AI đã trả bài nhưng chưa vượt kiểm tra căn cứ${modelText}. Đang hiển thị phần dữ kiện đã tính để bạn đối chiếu.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin ảnh hưởng cách luận.':`Đã nhận lời luận AI${modelText}; căn cứ và mã bàn khớp lượt hỏi này. Nội dung diễn giải vẫn cần đối chiếu thực tế.`;
+     const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
+     if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed);
+     status.textContent=data.reading.status==='verified_fallback'?`Đã nhận bài luận AI${modelText}. Một số phần còn cần đối chiếu thêm.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin để AI luận đúng sự việc.':`Đã nhận bài luận AI${modelText}.`;
    }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });
 }

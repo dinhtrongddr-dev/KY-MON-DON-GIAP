@@ -117,7 +117,7 @@ test('deep reading renders all three linked stages, alternatives and the actual 
   const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
   for(const part of [reading.situation.text,...reading.development.map(s=>s.text),reading.alternative.text])assert.ok(all.some(n=>n.textContent===part));
   assert.equal(all.filter(n=>n.className==='ai-stage-label').length,3);
-  const badge=all.find(n=>n.className==='ai-model-used');assert.ok(badge);assert.match(badge.textContent,/GPT-6 Astra.*Prism fallback.*xhigh.*fallback 2/);
+  const badge=all.find(n=>n.className==='ai-model-used');assert.ok(badge);assert.match(badge.textContent,/GPT-6 Astra.*xhigh/);assert.doesNotMatch(badge.textContent,/Prism fallback|fallback 2/);
   const button=all.find(n=>n.className==='jump-cung');await button.fire('click');assert.match(selected,/data-palace/);
 });
 
@@ -129,7 +129,7 @@ test('verified fallback still shows which model produced the rejected AI draft',
   const all=[];const walk=el=>{all.push(el);el.children.forEach(walk);};walk(ids['ai-answer']);
   assert.ok(all.some(n=>n.className==='ai-model-used'&&/GPT-5.6 Sol.*xhigh/.test(n.textContent)));
   assert.match(ids['ai-status'].textContent,/GPT-5.6 Sol.*xhigh/);
-  assert.match(ids['ai-status'].textContent,/chưa vượt kiểm tra căn cứ/i);
+  assert.match(ids['ai-status'].textContent,/còn cần đối chiếu thêm/i);
 });
 
 test('timing fallback keeps the deterministic comparison instead of looking empty',async t=>{

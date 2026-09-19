@@ -1,6 +1,7 @@
-import {buildMenhReadingRequest,assertMenhCompatible,validateMenhReadingResponse,MENH_RULE_VERSION} from './menh-reading-core.mjs';
+import {buildMenhReadingRequest,assertMenhCompatible,validateMenhReadingResponse} from './menh-reading-core.mjs';
 import {renderMenhAi} from './menh-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
+import {initPdfExport} from './report-export.mjs';
 
 export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
@@ -10,6 +11,7 @@ export function initMenhAi({prepare,activity=null}){
   const storageKey='qimen.ai.connection-code';
   let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
   const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
+  const pdf=initPdfExport({kind:'menh',buttonId:'menh-report-pdf',statusId:'menh-ai-status',tokenId:'local-token',prepare,boardSelector:'#menh-deterministic .menh-qimen-board'});
   try{
     const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
     if(saved){token.value=saved;remember.checked=true;rememberHint.textContent='Đã điền mã được ghi nhớ trên trình duyệt này.';}
@@ -36,7 +38,7 @@ export function initMenhAi({prepare,activity=null}){
     read.disabled=true;check.disabled=true;cancel.hidden=false;read.textContent='Đang luận Mệnh…';status.textContent=message;
     return controller;
   };
-  const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();};
+  const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();};
   const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
@@ -55,26 +57,27 @@ export function initMenhAi({prepare,activity=null}){
     return data;
   }
   check.addEventListener('click',async()=>{
-    cancelWork();const v=version,controller=start('Đang kiểm tra kết nối AI cho KM-MENH-1.0…',8000);
-    try{const data=await call('/api/status',null,controller.signal);assertMenhCompatible(data);if(v===version)status.textContent='Kết nối sẵn sàng · '+MENH_RULE_VERSION+'.';}
+    cancelWork();const v=version,controller=start('Đang kiểm tra kết nối AI…',8000);
+    try{const data=await call('/api/status',null,controller.signal);assertMenhCompatible(data);if(v===version)status.textContent='Kết nối AI sẵn sàng.';}
     catch(e){if(v===version)status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối.':e.message;}
     finally{if(v===version){active=null;finish();}}
   });
   read.addEventListener('click',async()=>{
     cancelWork();let body;
     try{body=prepare();}catch(e){status.textContent=e.message;return;}
-    const v=version,controller=start('Đang tự tính lại Mệnh bàn và kiểm tra fingerprint…',610000);
+    const v=version,controller=start('Đang chuẩn bị Mệnh bàn để AI phân tích…',610000);
     try{
       const prepared=await buildMenhReadingRequest(body);if(v!==version)return;
       const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
-      status.textContent=prepared.input.birthTimeMode==='UNKNOWN'?'AI chỉ được diễn giải phần ổn định qua các giờ sinh.':'AI đang diễn giải các claim deterministic của Mệnh bàn.';
+      status.textContent=prepared.input.birthTimeMode==='UNKNOWN'?'AI đang luận những phần ổn định giữa các khung giờ sinh.':'AI đang phân tích Mệnh bàn và soạn bài luận.';
       activityReadingId=track('startReading');
       const data=await call('/api/menh/read',prepared.request,controller.signal);if(v!==version)return;
       validateMenhReadingResponse(data,prepared);
-      renderMenhAi(answer,data.reading);answer.hidden=false;
+      renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;
       if(activityReadingId){track('finishReading',activityReadingId,{status:'completed',modelUsed:data.modelUsed});activityReadingId=null;}
-      const modelText=data.modelUsed?' · '+data.modelUsed.label+' / '+data.modelUsed.routeLabel+' / '+data.modelUsed.effort:'';
-      status.textContent='Đã nhận lời luận KM-MENH-1.0'+modelText+'. Nội dung AI bị giới hạn bởi claims/evidence đã tính.';
+      pdf.setModel(data.modelUsed);
+      const modelText=data.modelUsed?' · '+data.modelUsed.label+' / '+data.modelUsed.effort:'';
+      status.textContent='Đã nhận bài luận AI'+modelText+'.';
     }catch(e){
       if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}
       if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Hãy thử lại.':e.message;
