@@ -1,5 +1,5 @@
 const WIDTH=900,SCALE=2;
-const EXCLUDED='details,button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical';
+const EXCLUDED='button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical';
 
 // Read only already-validated rendered prose; never parse model HTML or broaden bold rules.
 export function extractReadingBlocks(answer){
@@ -51,6 +51,9 @@ html,body{margin:0!important;padding:0!important;width:${WIDTH}px!important;back
 .export-role>p{font-size:14px;overflow-wrap:anywhere}
 .export-role .palace-detail{padding:0;display:block}
 .export-role .semantic-components{display:block}
+.export-role details.semantic-components>summary{display:none}
+.export-role details.semantic-components>ul{display:grid!important}
+.export-role details[open]>summary~*{display:block}
 .export-page .menh-result-head{margin:0 0 12px}
 .export-page .menh-workspace>.menh-inspector{display:none}
 .export-page .menh-workspace>.element-panel{grid-column:2;grid-row:1}
@@ -97,6 +100,7 @@ export async function captureQuestionPages(snapshot,{secondTitle='Đối chiếu
     const reading=workspace.querySelector('#element-reading');if(reading)reading.remove();
     const title=doc.createElement('h2');title.textContent=secondTitle;second.append(title);
     const roles=doc.createElement('div');roles.className='export-roles';roles.append(...snapshot.roles.map(adopt));second.append(roles);
+    roles.querySelectorAll('details').forEach(node=>node.open=true);
     // Firefox can reject a raster image nested inside an SVG foreignObject under a page CSP.
     // Keep the live app image unchanged; use a vector/text taiji only in the PDF clone.
     for(const img of doc.querySelectorAll('img.taiji-ink')){const taiji=doc.createElement('span');taiji.className='taiji-export';taiji.textContent='☯';img.replaceWith(taiji);}
@@ -166,7 +170,7 @@ export function writeQuestionPdf({pages=[],blocks=[],model='',glyphFactory=canva
   }
   const textPages=[];let commands=[],y=800;
   const nextPage=()=>{if(commands.length)textPages.push(commands.join('\n'));commands=[];y=800;};
-  const allBlocks=[{kind:'heading',runs:[{text:'Bài luận AI'}]},...(model?[{kind:'paragraph',runs:[{text:`Model: ${model}`}]}]:[]),...blocks];
+  const allBlocks=[{kind:'heading',runs:[{text:'Bài luận AI'}]},...blocks];
   for(const block of allBlocks){
     const heading=block.kind==='heading',size=heading?15:11,lineHeight=heading?22:17,left=42,width=511;
     if(heading&&y<42+lineHeight*3)nextPage();
