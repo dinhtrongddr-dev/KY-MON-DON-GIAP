@@ -101,13 +101,22 @@ test('Mệnh AI long-form renderer preserves paragraph breaks',()=>{
   assert.match(view,/split\(\/\\n\{2,\}\//);
 });
 
-test('Mệnh profile accepts and displays full name and birthplace without changing the natal board method',()=>{
+test('Mệnh profile accepts identity inputs without duplicating a technical-information card in the result',()=>{
   const core=readFileSync(new URL('../dist/menh-reading-core.mjs',import.meta.url),'utf8');
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(html,/id="birth-name"/);assert.match(html,/id="birth-place"/);
   assert.match(app,/fullName:name\.value\.trim\(\)/);assert.match(app,/birthPlace:place\.value\.trim\(\)/);
   assert.match(core,/fullName/);assert.match(core,/birthPlace/);
-  assert.match(view,/Họ và tên/);assert.match(view,/Nơi sinh/);
+  assert.doesNotMatch(view,/Thông tin kỹ thuật|Dữ liệu lập bàn|renderTechnical/);
+});
+test('Mệnh deterministic basis is collapsed by default like Hỏi Việc evidence',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  const styles=readFileSync(new URL('../dist/styles.css',import.meta.url),'utf8');
+  assert.match(view,/el\('details','menh-basis-details'\)/);
+  assert.match(view,/details\.open=false/);
+  assert.match(view,/Căn cứ Kỳ Môn của bài luận/);
+  assert.match(view,/Các trục luận Mệnh/);
+  assert.match(styles,/\.menh-basis-details>summary/);
 });
 test('Mệnh long-form reading visually emphasizes fast-scan translated takeaways without HTML injection',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');

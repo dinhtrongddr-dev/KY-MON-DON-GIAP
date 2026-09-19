@@ -18,10 +18,6 @@ const el=(tag,className,text)=>{
   if(text!=null)node.textContent=String(text);
   return node;
 };
-function addMeta(grid,label,value){
-  const box=el('div','menh-meta-item');
-  box.append(el('span','',label),el('strong','',value==null?'—':value));grid.append(box);
-}
 const PALACE_VI=Object.freeze({KAN_1:'Khảm 1',KUN_2:'Khôn 2',ZHEN_3:'Chấn 3',XUN_4:'Tốn 4',CENTER_5:'Trung 5',QIAN_6:'Càn 6',DUI_7:'Đoài 7',GEN_8:'Cấn 8',LI_9:'Ly 9'});
 const UI_TERM=Object.freeze({
   FATHER:'cha',MOTHER:'mẹ',YANG:'dương',YIN:'âm',PRESSURE:'chịu áp lực/kiểm soát',
@@ -341,31 +337,13 @@ function renderUnknownBoardNotice(prepared){
   }
   section.append(chooser);return section;
 }
-function renderTechnical(prepared){
-  const section=el('section','menh-technical-section'),head=el('div','menh-section-heading');
-  head.append(el('p','eyebrow','Dữ liệu lập bàn'),el('h2','','Thông tin kỹ thuật'));section.append(head);
-  const meta=el('div','menh-meta-grid');
-  if(prepared.input.fullName)addMeta(meta,'Họ và tên',prepared.input.fullName);
-  if(prepared.input.birthPlace)addMeta(meta,'Nơi sinh',prepared.input.birthPlace);
-  addMeta(meta,'Ngày sinh',prepared.input.birthDateLocal);
-  addMeta(meta,'Giờ sinh',prepared.input.birthTimeMode==='KNOWN'?prepared.input.birthTimeLocal:'Không xác định');
-  addMeta(meta,'Ứng viên',prepared.candidateCount);
-  if(prepared.input.birthTimeMode==='KNOWN'){
-    addMeta(meta,'Tứ trụ',Object.values(prepared.technical.pillars).join(' · '));
-    addMeta(meta,'Độn · cục',(prepared.technical.dun==='yang'?'Dương':'Âm')+' độn '+prepared.technical.ju+' cục');
-  }else{
-    addMeta(meta,'Nhật trụ có thể có',prepared.technical.dayPillars.join(' · '));
-    addMeta(meta,'Biên 23:00',prepared.technical.dayBoundaryVariants.join(' · '));
-  }
-  if(prepared.input.age!=null)addMeta(meta,'Tuổi đang xét',prepared.input.age);
-  if(prepared.input.annualYear!=null)addMeta(meta,'Lưu niên',prepared.input.annualYear+' · '+prepared.annualPillar);
-  section.append(meta);return section;
-}
 function renderKnown(root,prepared){
-  const result=prepared.result,section=el('section','menh-domain-section'),head=el('div','menh-section-heading');
+  const result=prepared.result,details=el('details','menh-basis-details'),section=el('section','menh-domain-section'),head=el('div','menh-section-heading');
+  details.open=false;
+  details.append(el('summary','','Căn cứ Kỳ Môn của bài luận · '+result.claims.length+' mục'));
   head.append(el('p','eyebrow','Nội dung từ Mệnh bàn'),el('h2','','Các trục luận Mệnh'));section.append(head);
   const grid=el('div','menh-claim-grid');for(const claim of result.claims)grid.append(claimCard(claim,result));
-  section.append(grid);root.append(section);
+  section.append(grid);details.append(section);root.append(details);
 }
 function renderUnknown(root,prepared){
   const s=prepared.result.stability;
@@ -415,7 +393,6 @@ export function renderMenhDeterministic(container,prepared){
     container.append(renderUnknownBoardNotice(prepared));
     if(aiPanel)container.append(aiPanel);
   }
-  container.append(renderTechnical(prepared));
   const body=el('div','menh-deterministic-body');
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
   container.append(body);
