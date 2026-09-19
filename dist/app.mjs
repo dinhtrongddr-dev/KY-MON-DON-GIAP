@@ -7,6 +7,8 @@ import {initModeControls} from './qimen/ui-controls.mjs';
 import {prepareReading} from './reading-core.mjs';
 import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {createActivityLog} from './activity-log.mjs';
+import {semanticBundle,semanticDomainForTopic} from './qimen/semantic/matrix.mjs';
+import {classifyTopics} from './qimen/ai/classifier.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -217,6 +219,20 @@ function detailItem(type, layer, title, subtitle, copy) {
     </div>
   `;
 }
+function semanticCard(palace,chart,conditions=null){
+  const domainId=semanticDomainForTopic(topicInput.value),secondaryDomainId=classifyTopics(currentQuestion).map(semanticDomainForTopic).find(id=>id!==domainId)||null,semantic=semanticBundle(palace,{mode:'event',domainId,secondaryDomainId,board:chart,conditions});
+  const chips=semantic.keywords.map(word=>`<span>${escapeHtml(word)}</span>`).join('');
+  const items=semantic.items.map(item=>`<li><strong>${escapeHtml(item.layer)} · ${escapeHtml(item.name)}</strong><span>${escapeHtml(item.meaning)}</span></li>`).join('');
+  const states=semantic.states.length?`<p class="semantic-state">${escapeHtml(semantic.states.map(x=>x.rule).join(' '))}</p>`:'';
+  const domainLabel=semantic.secondaryDomainLabel?`${semantic.domainLabel} · phụ: ${semantic.secondaryDomainLabel}`:semantic.domainLabel;
+  return `<section class="semantic-card" aria-label="Dịch nghĩa nhanh theo ngữ cảnh">
+    <div class="semantic-card-head"><p class="eyebrow">Dịch nghĩa nhanh · ${escapeHtml(domainLabel)}</p><span class="semantic-version">${escapeHtml(semantic.version)}</span></div>
+    <div class="semantic-keywords">${chips}</div>
+    <p class="semantic-summary">${escapeHtml(semantic.summary)}</p>
+    ${states}
+    <details class="semantic-components"><summary>Xem nghĩa từng thành phần</summary><ul>${items}</ul></details>
+  </section>`;
+}
 
 function renderDetail(chart) {
   const palace = chart.palaces.find((item) => item.number === selectedPalace) || chart.palaces[0];
@@ -231,7 +247,7 @@ function renderDetail(chart) {
   `;
 
   if (palace.number === 5) {
-    detail.innerHTML = `${title}<div class="detail-list">
+    detail.innerHTML = `${title}${semanticCard(palace,chart)}<div class="detail-list">
       ${detailItem("star", "Cửu tinh", STAR_QIN.vi, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
       ${detailItem("stem", "Địa bàn", `${palace.earthStem.han} · ${palace.earthStem.vi}`, palace.earthStem.element, "Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.")}
     </div>`;
@@ -250,7 +266,7 @@ function renderDetail(chart) {
     conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
   ].join("");
-  detail.innerHTML = `${title}
+  detail.innerHTML = `${title}${semanticCard(palace,chart,conditions)}
     <div class="detail-list">
       ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
       ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}

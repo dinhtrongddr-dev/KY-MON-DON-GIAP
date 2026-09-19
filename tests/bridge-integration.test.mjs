@@ -38,7 +38,7 @@ test('the official website can reach protocol 5 through the existing tunnel',asy
   const call=await start(t);
   const result=await call('/api/status');
   assert.equal(result.status,200);
-  assert.equal(JSON.parse(result.text).rules,'TG-CB-6.2');
+  assert.equal(JSON.parse(result.text).rules,'TG-CB-6.3');
   assert.equal(JSON.parse(result.text).protocol,5);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);

@@ -937,3 +937,13 @@ textarea:focus { outline:3px solid #bce8ce; }
 .time-entry select{min-width:0;padding-right:28px;font-variant-numeric:tabular-nums}
 .time-entry select:disabled{cursor:not-allowed;background:#eef1ee;color:#8a948f}
 @media(max-width:430px){.time-entry{gap:6px}.time-entry select{padding-inline:8px}}
+
+/* KM Semantic Matrix 1.0 */
+.semantic-card{margin:14px 0 18px;padding:14px 15px;border:1px solid var(--line);border-left:4px solid var(--jade-dark);background:#f8fbf8}
+.semantic-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.semantic-card-head .eyebrow{margin:0}.semantic-version{font-size:.68rem;color:var(--muted);white-space:nowrap}
+.semantic-keywords,.menh-semantic-keywords{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}.semantic-keywords span,.menh-semantic-keywords span{padding:4px 8px;border:1px solid #bdd0c6;background:#edf6f0;color:var(--jade-dark);font-size:.72rem;font-weight:800;border-radius:999px}
+.semantic-summary,.menh-semantic-summary{margin:8px 0 0;line-height:1.58;font-weight:650}.semantic-state,.menh-semantic-state{margin:8px 0 0;color:#665a37;font-size:.84rem;line-height:1.55}
+.semantic-components{margin-top:10px}.semantic-components summary{cursor:pointer;color:var(--jade-dark);font-weight:800}.semantic-components ul,.menh-semantic-components{display:grid;gap:7px;margin:9px 0 0;padding:0;list-style:none}.semantic-components li,.menh-semantic-components li{display:grid;gap:2px;padding-top:7px;border-top:1px solid var(--line)}.semantic-components li span,.menh-semantic-components li span{color:var(--muted);line-height:1.5}
+.menh-semantic-guide{margin-top:16px;padding:16px;border:1px solid var(--line);background:#fbfcfa}.menh-semantic-guide h3{margin:2px 0 0;font-family:var(--display);font-size:1.05rem}.menh-semantic-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.menh-semantic-palace{border:1px solid var(--line);background:var(--paper)}.menh-semantic-palace>summary{display:grid;gap:5px;padding:10px;cursor:pointer}.menh-semantic-title{font-weight:900;color:var(--jade-dark)}.menh-semantic-palace>p,.menh-semantic-palace>ul{margin-left:10px;margin-right:10px}.menh-semantic-components{padding-bottom:10px}
+@media(max-width:900px){.menh-semantic-list{grid-template-columns:1fr 1fr}}@media(max-width:620px){.menh-semantic-list{grid-template-columns:1fr}.semantic-card-head{align-items:flex-start;flex-direction:column}}

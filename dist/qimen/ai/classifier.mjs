@@ -26,4 +26,8 @@ const DOMAINS=[['health',/\b(suc khoe|benh|dieu tri|dau nguc|kho tho)\b/],['inve
   ['contract',/bao gia|hop dong|dau thau|du an/],['debt',/doi no|tra no|thu hoi no/],['work',/\b(cong viec|su nghiep|viec lam|xin viec|chuyen viec|doi viec|nhan viec|thang chuc|thang tien)\b/],['study',/hoc|thi cu|chung chi/],['love',/\b(tinh cam|tinh yeu|nguoi yeu|hen ho)\b/],
   ['family',/\b(gia dinh|cha me|bo me|vo chong|vo toi|chong toi|ban doi|nguoi ban doi|con cai|con nho|em be|cham con|nuoi con|cham be|nuoi be|thai san|o nha cham)\b/],['property',/nha dat|bat dong san|mua nha/],['lost',/mat do|tim do|tim nguoi|that lac/],
   ['travel',/di xa|chuyen di|du lich/],['launch',/khai truong|ra mat/],['money',/tien|loi nhuan|kinh doanh/],['social',/ban be|quan he xa hoi/]];
-export function classifyTopic(question) {return DOMAINS.find(([,r])=>new RegExp(`\\b(?:${r.source})\\b`).test(normalizeQuestion(question)))?.[0]||'general';}
+export function classifyTopics(question) {
+  const q=normalizeQuestion(question);
+  return DOMAINS.filter(([,r])=>new RegExp(`\\b(?:${r.source})\\b`).test(q)).map(([id])=>id);
+}
+export function classifyTopic(question) {return classifyTopics(question)[0]||'general';}

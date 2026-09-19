@@ -37,6 +37,9 @@ test('P9 writer context contains only prepared deterministic claims and locks mu
   assert.equal(ctx.restrictions.rebuildChart,false);
   assert.equal(ctx.restrictions.alterProfile,false);
   assert.equal(ctx.restrictions.probability,false);
+  assert.equal(ctx.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.0');
+  assert.ok(ctx.semanticMatrix.claims.some(x=>x.claimId==='CAREER_1'&&x.domainId==='career'));
+  assert.equal(ctx.semanticMatrix.domains.career.id,'career');
   assert.ok(Object.isFrozen(ctx));
 });
 test('P9 prompt explicitly forbids chart rebuild, scores, probabilities and deterministic prohibited claims',()=>{
@@ -52,6 +55,13 @@ test('P9 reading audit accepts claim-bound prose and rejects fabricated claim id
   assert.equal(validateMenhReading(r,ctx),r);
   const bad=structuredClone(r);bad.career.claim_ids=['MADE_UP'];
   assert.throws(()=>validateMenhReading(bad,ctx),/ngoài deterministic context/);
+});
+test('Mệnh AI rejects bold technical basis but accepts bold natural translated meaning',()=>{
+  const ctx=context(),bad=validReading(ctx);
+  bad.self.text='Cha mẹ và **gia đình gốc trước hết lấy Niên can Giáp tại Tốn 4 hành Mộc làm trục tổng hợp**.';
+  assert.throws(()=>validateMenhReading(bad,ctx),/dịch nghĩa tự nhiên.*căn cứ kỹ thuật/i);
+  const good=validReading(ctx);good.self.text='Niên can Giáp tại Tốn 4 là căn cứ kỹ thuật của đoạn này. **Nền gia đình thiên về kết nối và thích nghi, nhưng cần tránh để môi trường chi phối quá mạnh.**';
+  assert.equal(validateMenhReading(good,ctx),good);
 });
 test('P9 reading audit rejects changed profile and numeric destiny probability',()=>{
   const ctx=context(),r=validReading(ctx);

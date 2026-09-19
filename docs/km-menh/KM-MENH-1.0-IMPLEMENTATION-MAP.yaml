@@ -4,7 +4,7 @@ repoBaseline:
   repository: dinhtrongddr-dev/KY-MON-DON-GIAP
   branch: develop
   observedHead: e214379cd93b91b757a12271398718005f39f509
-  packageVersion: 17.2.4
+  packageVersion: 17.3.0
   protectedCorePolicy: NO_CHANGES_TO_DIST_QIMEN_MJS_VENDOR_LUNAR_OR_DIST_QIMEN_CORE
 fixtures:
 - id: F-CENTER5-ADV-YANG

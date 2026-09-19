@@ -1,8 +1,10 @@
 export const plainReadingText=text=>text.replace(/\*\*([^*]+)\*\*/g,'$1');
+const TECHNICAL_BOLD=/\b(?:cung\s*\d+|niên can|nhật can|thời can|thiên can|địa can|thiên bàn|địa bàn|bát môn|cửu tinh|bát thần|trực phù|trực sử|phục ngâm|phản ngâm|không vong|mã tinh|hưu môn|sinh môn|thương môn|đỗ môn|cảnh môn|tử môn|kinh môn|khai môn|thiên bồng|thiên nhậm|thiên xung|thiên phụ|thiên anh|thiên nhuế|thiên trụ|thiên tâm|thiên cầm|đằng xà|thái âm|lục hợp|bạch hổ|huyền vũ|cửu địa|cửu thiên|can\s+(?:giáp|ất|bính|đinh|mậu|kỷ|canh|tân|nhâm|quý))\b/iu;
 export function formatError(text,{allowComparisonEmphasis=false}={}) {
   if((text.match(/\*\*/g)||[]).length%2||/\*{3,}/.test(text))return 'Dấu tô đậm chưa cân bằng.';
   for(const paragraph of text.split(/\n\s*\n/)){
     const matches=[...paragraph.matchAll(/\*\*([^*]+)\*\*/g)];
+    if(matches.some(m=>TECHNICAL_BOLD.test(m[1])))return 'Chỉ tô đậm câu dịch nghĩa tự nhiên; không tô đậm căn cứ kỹ thuật Kỳ Môn.';
     if(matches.length>(allowComparisonEmphasis?3:2)||matches.some(m=>m[1].length>240))return allowComparisonEmphasis?'Chỉ nhấn tối đa ba cụm ngắn trong đoạn so sánh.':'Chỉ nhấn một đến hai cụm ngắn trong mỗi đoạn.';
     if(matches.some(m=>{
       if(/^(?:chắc chắn|đảm bảo)\b/iu.test(m[1]))return true;
@@ -22,7 +24,7 @@ export function formatParts(text,{automatic=true}={}) {
   }else if(automatic){
     // Emphasize an intact existing sentence, including its condition; never rewrite it.
     const sentences=[...text.matchAll(/[^.!?\n]+[.!?]?/g)];
-    const chosen=sentences.filter(m=>m[0].trim().length>=25&&m[0].trim().length<=220&&/^(?:Chưa|Không đủ|Nếu|Chỉ khi|Cần|Hãy|Bước tiếp|Có thể)/u.test(m[0].trim())).slice(0,2);
+    const chosen=sentences.filter(m=>m[0].trim().length>=25&&m[0].trim().length<=220&&/^(?:Chưa|Không đủ|Nếu|Chỉ khi|Cần|Hãy|Bước tiếp|Có thể)/u.test(m[0].trim())&&!TECHNICAL_BOLD.test(m[0])).slice(0,2);
     for(const m of chosen){const start=m.index+m[0].length-m[0].trimStart().length;if(start>end)parts.push({text:text.slice(end,start),strong:false});parts.push({text:m[0].trimStart(),strong:true});end=m.index+m[0].length;}
   }
   if(end<text.length)parts.push({text:text.slice(end),strong:false});

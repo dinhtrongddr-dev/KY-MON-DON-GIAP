@@ -1,5 +1,6 @@
 import {validateMenhResult} from '../audit.mjs';
 import {MENH_RULE_VERSION,MENH_PROTOCOL} from '../../../menh-core.mjs';
+import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForMenh,semanticDomainVocabulary,semanticGuideForBoard} from '../../semantic/matrix.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const PALACE_CODE=Object.freeze({1:'KAN_1',2:'KUN_2',3:'ZHEN_3',4:'XUN_4',5:'CENTER_5',6:'QIAN_6',7:'DUI_7',8:'GEN_8',9:'LI_9'});
@@ -48,6 +49,16 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     }
     return {claimId:c.claimId,palaces:[...palaces],evidenceIds:[...c.evidenceIds]};
   });
+  const natalBoard=result.natal?.baseBoard||null;
+  const palaceNumber=value=>typeof value==='number'?value:Number(String(value||'').match(/(\d+)$/)?.[1]||0);
+  const semanticClaims=claims.map(claim=>{
+    const support=claimSupport.find(x=>x.claimId===claim.claimId),domainId=semanticDomainForMenh(claim.domain);
+    const palaceNumbers=[...new Set((support?.palaces||[]).map(palaceNumber).filter(Boolean))];
+    const palaces=natalBoard?semanticGuideForBoard(natalBoard,{mode:'destiny',domainId,palaceNumbers}).map(p=>({palace:p.palace,keywords:p.keywords,summary:p.summary,items:p.items.map(i=>({layer:i.layer,name:i.name,tags:i.tags,meaning:i.meaning})),states:p.states.map(s=>({id:s.id,rule:s.rule}))})):[];
+    return {claimId:claim.claimId,domainId,palaces};
+  });
+  const domainIds=[...new Set(semanticClaims.map(x=>x.domainId))],semanticDomains=Object.fromEntries(domainIds.map(id=>[id,semanticDomainVocabulary(id)]));
+  const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'destiny',assemblyRules:semanticAssemblyRules(),domains:semanticDomains,claims:semanticClaims};
   return freeze({
     protocol:MENH_PROTOCOL,
     ruleVersion:MENH_RULE_VERSION,
@@ -66,6 +77,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     boardFacts:boardFacts(result,birthTimeMode),
     claims,
     claimSupport,
+    semanticMatrix,
     evidence:visibleEvidence.map(e=>({
       evidenceId:e.evidenceId,ruleId:e.ruleId,domain:e.domain,palace:e.palace,mechanism:e.mechanism,effectTag:e.effectTag,
       severity:e.severity,priorityClass:e.priorityClass,affectedDomains:[...(e.affectedDomains||[])],summary:e.metadata?.summary||null,relation:e.relation||null,

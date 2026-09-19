@@ -22,6 +22,15 @@ test('bold preserves all words, qualifiers, Vietnamese and line breaks',()=>{
   assert.equal(formatError('**20/09** hoặc **21/09**; **19/09 xếp sau**.',{allowComparisonEmphasis:true}),null);
   assert.ok(formatError('**20/09** **21/09** **19/09** **18/09**.',{allowComparisonEmphasis:true}));
 });
+test('technical Kỳ Môn basis can never be bold; natural translated meaning can',()=>{
+  const bad='Cha mẹ và **gia đình gốc trước hết lấy Niên can Giáp tại Tốn 4 hành Mộc làm trục tổng hợp**.';
+  assert.match(formatError(bad),/dịch nghĩa tự nhiên.*căn cứ kỹ thuật/i);
+  const good='Cha mẹ và gia đình gốc trước hết lấy Niên can Giáp tại Tốn 4 hành Mộc làm trục tổng hợp. **Nền gia đình thiên về kết nối và thích nghi, nhưng cần tránh để môi trường chi phối quá mạnh.**';
+  assert.equal(formatError(good),null);
+  const auto=formatParts('Cần xét Khai Môn tại cung 6 trước khi kết luận. Có thể ưu tiên cách làm rõ ràng và dễ kiểm chứng.');
+  assert.ok(!auto.some(p=>p.strong&&/Khai Môn|cung 6/.test(p.text)));
+  assert.ok(auto.some(p=>p.strong&&/Có thể ưu tiên/.test(p.text)));
+});
 test('safe DOM rendering supports line breaks and tables without interpreting model HTML',()=>{
   const root=new Node('div');
   renderProse('**Cần xác nhận lại điều kiện trước khi hứa**.\n<script>alert(1)</script>\n\n| Môn | Ý nghĩa |\n| --- | --- |\n| Sinh Môn | Có thể mở việc |',root,doc);

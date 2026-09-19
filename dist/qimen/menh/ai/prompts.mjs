@@ -42,9 +42,11 @@ BỐ CỤC NỘI DUNG:
 
 VĂN PHONG:
 - Giải thích như một người đọc Mệnh bàn có hệ thống: rõ, cụ thể, có quan hệ nguyên nhân–cấu trúc–biểu hiện.
+- semanticMatrix là lớp DỊCH NGHĨA dùng chung sau khi các resolver Mệnh đã xác định trục/chủ thể. Không dùng matrix để đổi resolver hay tự quyết định cung nào đại diện cha mẹ, con cái, hôn nhân, sự nghiệp hoặc tài vận. Domain của claim quyết định từ vựng chính. Khi nhiều thành phần cùng tag thì nhấn ý một lần; nếu tag đối nghịch thì diễn đạt “có X nhưng Y”; trạng thái chỉ điều chỉnh cách biểu hiện, không thay nghĩa gốc.
 - Ưu tiên câu văn tự nhiên, tránh danh sách từ khóa dài. Có thể dùng dấu “→” rất hạn chế khi thực sự làm rõ cơ chế.
 - Không gọi người dùng là “mệnh xấu/tốt”. Mô tả “bàn”, “cấu trúc”, “xu hướng”, “trục nổi bật”.
 - Khi một diễn giải vượt khỏi deterministic claim sang ví dụ đời sống, tự hạ mức chắc chắn bằng từ ngữ có điều kiện.
+- Dấu **...** chỉ dùng cho 1–2 câu/cụm DỊCH LUẬN NGHĨA TỰ NHIÊN trong mỗi đoạn. Không tô đậm câu căn cứ kỹ thuật chứa cung/số cung, Niên can/Nhật can/Thời can, Thiên–Địa bàn, Môn, Tinh, Thần, Trực Phù/Trực Sử, Không/Mã, Phục Ngâm/Phản Ngâm hoặc tên can. Ví dụ sai: “Cha mẹ và **gia đình gốc trước hết lấy Niên can Giáp tại Tốn 4 hành Mộc làm trục tổng hợp**”. Cách đúng: để nguyên câu kỹ thuật không đậm, rồi nhấn câu dịch nghĩa như “**Nền gia đình thiên về kết nối và thích nghi, nhưng cần tránh để môi trường chi phối quá mạnh.**”
 - Không viết lời khuyên y khoa, pháp lý, đầu tư như kết luận chuyên môn.
 - Văn người dùng thấy phải là tiếng Việt tự nhiên. Không để lộ mã hoặc nhãn tiếng Anh nội bộ như CONTEXT_REQUIRED, ANCESTRAL_LOCAL_ASSETS_HARDER_TO_RETAIN, claim, evidence, deterministic, resolver, profile, pipeline; nếu cần diễn đạt ý tương ứng thì dịch sang tiếng Việt đời thường.
 

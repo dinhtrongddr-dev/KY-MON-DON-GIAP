@@ -7,6 +7,7 @@ import {interpretReading} from '../local/interpret.mjs';
 import {attachAiRoute,aiRouteOf} from '../local/ai-client.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {parseStructuredText} from '../local/codex-client.mjs';
+import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
 
 test('all 25 element directions remain neutral between two business roles',()=>{
@@ -41,6 +42,14 @@ test('ordered stages require distinct explanations, actual assessments and share
   const generic=prepareReading({...body,topic:'general'}),r=readingFixture(generic);
   r.situation.claim_ids=['ref_work_0'];
   assert.throws(()=>validateReading(r,generic.facts,'general',generic.context),/căn cứ/);
+});
+
+test('Hỏi Việc audit rejects bold technical basis and accepts bold natural translation',()=>{
+  const p=prepareReading(body),bad=readingFixture(p);
+  bad.summary.text='Khai Môn là căn cứ. **Khai Môn tại Càn 6 là trục kỹ thuật của sự việc.** '+bad.summary.text;
+  assert.throws(()=>validateReading(bad,p.facts,body.topic,p.context),/dịch nghĩa tự nhiên.*căn cứ kỹ thuật/i);
+  const good=readingFixture(p);good.summary.text='Khai Môn tại Càn 6 là căn cứ kỹ thuật. **Cách tiếp cận cởi mở có thể giúp tiến thêm một bước nếu điều kiện thực tế đáp ứng.** '+good.summary.text;
+  assert.equal(validateReading(good,p.facts,body.topic,p.context),good);
 });
 
 test('deterministic interaction metadata is bound by the app instead of delegated to the model',async()=>{
@@ -87,9 +96,16 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
   assert.equal(count,1);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
 });
 
-test('v5 request fingerprint binds the planner, mode and depth',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.2');
+test('v5 request fingerprint binds the planner, mode and depth plus shared semantic matrix',async()=>{
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.3');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
+  const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.0');assert.equal(writer.semanticMatrix.domain.id,'business');assert.ok(writer.semanticMatrix.palaces.length>0);
+});
+
+test('mixed family and money question keeps family primary and finance secondary only in semantic translation',()=>{
+  const p=prepareReading({...body,question:'Vợ tôi có nên ở nhà chăm con, tôi có đủ tiền và thu nhập không?',topic:'family'}),writer=buildWriterContext(p.context);
+  assert.equal(writer.semanticMatrix.domain.id,'children_parenting');assert.equal(writer.semanticMatrix.secondaryDomain.id,'investment_finance');
+  assert.equal(p.context.allInOne.resolvedTopic,'family');
 });
 
 test('structured parser accepts schema JSON and one fenced JSON block, but not prose around it',()=>{

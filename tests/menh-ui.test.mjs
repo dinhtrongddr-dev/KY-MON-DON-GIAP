@@ -83,7 +83,7 @@ test('Mệnh profile accepts and displays full name and birthplace without chang
 });
 test('Mệnh long-form reading visually emphasizes fast-scan translated takeaways without HTML injection',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
-  assert.match(view,/FOCUS_PATTERNS/);assert.match(view,/menh-ai-focus/);
+  assert.doesNotMatch(view,/FOCUS_PATTERNS/);assert.match(view,/formatParts/);assert.match(view,/automatic:false/);assert.match(view,/menh-ai-focus/);assert.match(view,/renderMenhSemanticGuide/);
   assert.match(view,/document\.createTextNode/);assert.doesNotMatch(view,/innerHTML/);
 });
 

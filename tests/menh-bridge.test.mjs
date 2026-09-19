@@ -31,7 +31,7 @@ test('bridge recomputes KM-MENH, checks fingerprints and preserves existing serv
   const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'menh-test-token',Origin:'https://kymon.pp.ua','Content-Type':'application/json'};
   const status=await(await fetchLocal(url+'/api/status',{headers})).json();
   assert.equal(status.menhRules,MENH_RULE_VERSION);assert.equal(status.menhProtocol,MENH_PROTOCOL);
-  assert.equal(status.rules,'TG-CB-6.2');assert.equal(status.protocol,5);
+  assert.equal(status.rules,'TG-CB-6.3');assert.equal(status.protocol,5);
 
   const prepared=await buildMenhReadingRequest(payload);
   const legacy=await fetchLocal(url+'/api/menh/read',{method:'POST',headers,body:JSON.stringify(payload)});
@@ -51,4 +51,6 @@ test('bridge recomputes KM-MENH, checks fingerprints and preserves existing serv
   assert.equal((await fetchLocal(url+'/menh.html',{headers})).status,200);
   assert.equal((await fetchLocal(url+'/menh-reading-core.mjs',{headers})).status,200);
   assert.equal((await fetchLocal(url+'/qimen/menh/ai/schema.mjs',{headers})).status,200);
+  assert.equal((await fetchLocal(url+'/qimen/semantic/matrix.mjs',{headers})).status,200);
+  assert.equal((await fetchLocal(url+'/qimen/semantic/matrix-data.mjs',{headers})).status,200);
 });

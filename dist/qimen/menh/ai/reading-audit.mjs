@@ -1,3 +1,4 @@
+import {formatError} from '../../../reading-format.mjs';
 const SECTION_KEYS=['overview','self','family','marriage','career','wealth','luck','annual','birthTimeNote'];
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const text=value=>typeof value==='string'&&value.length<=8000;
@@ -82,6 +83,7 @@ export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
     const section=reading[key];
     if(!exact(section,['text','claim_ids'])||!text(section.text)||!Array.isArray(section.claim_ids))
       reject(key+': section không hợp lệ.');
+    const formatting=formatError(section.text);if(formatting)reject(key+': '+formatting);
     if(new Set(section.claim_ids).size!==section.claim_ids.length||section.claim_ids.some(id=>!allowed.has(id)))
       reject(key+': dùng claim id ngoài deterministic context.');
     if(section.text.trim()&&!section.claim_ids.length&&key!=='birthTimeNote')

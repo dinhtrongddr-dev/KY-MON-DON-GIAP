@@ -1,4 +1,6 @@
 import {buildPresentationProfile} from './presentation.mjs';
+import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForTopic,semanticDomainVocabulary,semanticGuideForBoard} from '../semantic/matrix.mjs';
+import {classifyTopics} from './classifier.mjs';
 
 export function buildWriterContext(context) {
   const c=context.allInOne,g=c.reasoning,q=c.questionContext;
@@ -33,6 +35,9 @@ export function buildWriterContext(context) {
     direction:'300–650'
   };
   const deepTarget={prediction:'600–1100',strategy:'700–1250',business:'750–1350',negotiation:'650–1200',timing:'450–850',direction:'450–850'};
+  const semanticDomainId=semanticDomainForTopic(c.resolvedTopic),secondaryDomainId=classifyTopics(context.question).map(semanticDomainForTopic).find(id=>id!==semanticDomainId)||null;
+  const semanticPalaces=semanticGuideForBoard(c.board,{mode:'event',domainId:semanticDomainId,secondaryDomainId,palaceNumbers:[...new Set(g.evidenceBundles.map(b=>b.palace))]}).map(p=>({palace:p.palace,keywords:p.keywords,summary:p.summary,items:p.items.map(i=>({layer:i.layer,name:i.name,tags:i.tags,meaning:i.meaning})),states:p.states.map(s=>({id:s.id,rule:s.rule}))}));
+  const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'event',domain:semanticDomainVocabulary(semanticDomainId),secondaryDomain:secondaryDomainId?semanticDomainVocabulary(secondaryDomainId):null,assemblyRules:semanticAssemblyRules(),palaces:semanticPalaces};
   const coverageByMode={
     prediction:['answer_stage','decisive_evidence','counterevidence','outcome_condition'],
     strategy:['current_position','bottleneck','reversible_step','response_signal','stop_or_escalate'],
@@ -43,7 +48,7 @@ export function buildWriterContext(context) {
   };
   return {rules:context.rules,question:context.question,topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:q.questionType,
     readingGraph,evidence,comparisons,comparisonConvention:c.comparison?.convention||c.plan.computed.convention||null,
-    warnings:context.warnings,unsupported:context.unsupported,presentation,
+    semanticMatrix,warnings:context.warnings,unsupported:context.unsupported,presentation,
     layout:concise?'concise':'full',
     coverage:{required:[...(coverageByMode[c.classification.mode]||[]),...(deep?['role_specific_modifiers','directed_relationships','counterfactual_check','action_provenance']:[])]},
     length:{depth:q.depth,target:deep?deepTarget[c.classification.mode]||'600–1100':targetByMode[c.classification.mode]||'350–750',

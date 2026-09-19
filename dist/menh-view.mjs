@@ -1,4 +1,6 @@
 import {elementSlug} from './qimen/core/palace.mjs';
+import {semanticBundle} from './qimen/semantic/matrix.mjs';
+import {formatParts} from './reading-format.mjs';
 
 const DOMAIN_LABEL=Object.freeze({
   GLOBAL:'Cấu trúc toàn cục',SELF:'Bản thân & tổng thể',FAMILY:'Gia đình & cha mẹ',CHILDREN:'Con cái',
@@ -139,6 +141,25 @@ function natalPalaceNode(palace,board,selfPalaceNumber){
 function addFlag(root,text,primary=false){
   root.append(el('span',primary?'flag flag-primary':'flag',text));
 }
+function renderMenhSemanticGuide(board){
+  const section=el('section','menh-semantic-guide'),head=el('div','menh-section-heading');
+  head.append(el('p','eyebrow','Dịch nghĩa nhanh theo ma trận ngữ nghĩa'),el('h3','','Luận nghĩa từng cung'));section.append(head);
+  const list=el('div','menh-semantic-list');
+  for(const palace of board.palaces){
+    const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board});
+    const details=el('details','menh-semantic-palace'),summary=el('summary');
+    const title=el('span','menh-semantic-title',palace.vi+' '+palace.number);
+    const chips=el('span','menh-semantic-keywords');
+    for(const word of semantic.keywords)chips.append(el('span','',word));
+    summary.append(title,chips);details.append(summary,el('p','menh-semantic-summary',semantic.summary));
+    const ul=el('ul','menh-semantic-components');
+    for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));ul.append(li);}
+    details.append(ul);
+    if(semantic.states.length)details.append(el('p','menh-semantic-state',semantic.states.map(x=>x.rule).join(' ')));
+    list.append(details);
+  }
+  section.append(list);return section;
+}
 function appendPatternFlags(root,board){
   const p=board.patterns||{};let fu=false,fan=false;
   if(p.starFuYin){addFlag(root,'Cửu Tinh Phục Ngâm',true);fu=true;}
@@ -170,7 +191,7 @@ function renderNatalBoard(board,selfPalaceNumber=null){
   addFlag(flags,'Trực Sử: '+(board.zhiShi?.door?.vi||'—')+' · cung '+(board.zhiShi?.palace??'—'));
   addFlag(flags,'Không Vong: '+((board.voidBranches||[]).map(branch=>branch.vi).join('–')||'—')+' · cung '+voidPalaces);
   addFlag(flags,'Mã tinh: '+(board.horseBranch?.vi||'—')+' · cung '+horsePalace);
-  appendPatternFlags(flags,board);section.append(flags);return section;
+  appendPatternFlags(flags,board);section.append(flags,renderMenhSemanticGuide(board));return section;
 }
 const HOUR_FAMILY_VI=Object.freeze({ZI:'Tý',CHOU:'Sửu',YIN:'Dần',MAO:'Mão',CHEN:'Thìn',SI:'Tỵ',WU:'Ngọ',WEI:'Mùi',SHEN:'Thân',YOU:'Dậu',XU:'Tuất',HAI:'Hợi'});
 function candidateSelfPalace(candidate){
@@ -283,20 +304,13 @@ export function renderMenhDeterministic(container,prepared){
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
   container.append(body);
 }
-const FOCUS_PATTERNS=Object.freeze([
-  /(?:Toàn bàn|Tổng thể|Trục bản thân|Điểm mạnh|Điểm cần tự quản|Gia đình gốc|Phía cha|Phía mẹ|Con cái|Hôn nhân|Tổng hợp các bộ giải|Tính chất nghề|Khai Môn|Đỗ Môn|Tài vận|Sinh Môn|Mậu|Tuổi \d+|Ba cửa sổ năm năm|Từ \d+[^,.]{0,45}|Lưu niên[^,.]{0,45}|Kết tinh toàn bàn)[^.!?;:]{0,120}/giu,
-  /(?:có xu hướng|dễ biểu hiện|có thể phù hợp|phù hợp hơn|mặt trái|mặt thuận|trọng tâm|lớp chính|lớp phụ|ưu tiên|đọc trước|không đồng nghĩa|không phải)[^.!?;]{0,105}/giu,
-]);
-function focusRanges(text){
-  const ranges=[];
-  for(const pattern of FOCUS_PATTERNS){pattern.lastIndex=0;for(const m of text.matchAll(pattern)){const start=m.index??0,end=start+m[0].length;if(end-start>=12)ranges.push([start,end]);}}
-  ranges.sort((a,b)=>a[0]-b[0]||b[1]-a[1]);const out=[];
-  for(const range of ranges){const last=out.at(-1);if(last&&range[0]<=last[1]+2)last[1]=Math.max(last[1],range[1]);else out.push([...range]);}
-  return out.slice(0,5);
-}
 function focusParagraph(text){
-  const p=el('p'),ranges=focusRanges(text);if(!ranges.length){p.textContent=text;return p;}
-  let cursor=0;for(const [start,end] of ranges){if(start>cursor)p.append(document.createTextNode(text.slice(cursor,start)));p.append(el('strong','menh-ai-focus',text.slice(start,end)));cursor=end;}if(cursor<text.length)p.append(document.createTextNode(text.slice(cursor)));return p;
+  const p=el('p');
+  for(const part of formatParts(String(text||''),{automatic:false})){
+    if(part.strong)p.append(el('strong','menh-ai-focus',part.text));
+    else p.append(document.createTextNode(part.text));
+  }
+  return p;
 }
 function appendAiParagraphs(card,value){
   const parts=String(value||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean);
