@@ -1,7 +1,8 @@
 import {runCodex,READING_TIMEOUT_MS} from './codex-client.mjs';
 import {runPrism} from './prism-client.mjs';
+import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 
-export const ROUTING_MODE='fallback-chain';
+export const ROUTING_MODE='quota-fallback-chain';
 export const MODEL='sol → gemini → prism-astra';
 export const REASONING_EFFORT='xhigh';
 export const AI_ROUTES=Object.freeze([
@@ -15,7 +16,7 @@ export function attachAiRoute(value,route){
   return value;
 }
 export const aiRouteOf=value=>value?.__aiRoute||null;
-export async function runAI(instructions,input,schema,{signal,codexRunner=runCodex,prismRunner=runPrism,routeStartIndex=0}={}){
+export async function runAI(instructions,input,schema,{signal,codexRunner=runCodex,prismRunner=runPrism,routeStartIndex=0,diagnostics=recordAiDiagnostic}={}){
   const failures=[];
   const start=Number.isInteger(routeStartIndex)&&routeStartIndex>=0&&routeStartIndex<AI_ROUTES.length?routeStartIndex:0;
   for(const [index,route] of AI_ROUTES.entries()){
@@ -28,10 +29,18 @@ export async function runAI(instructions,input,schema,{signal,codexRunner=runCod
       return attachAiRoute(value,Object.freeze({...route,fallbackIndex:index}));
     }catch(error){
       if(aborted(signal,error))throw error;
-      failures.push({id:route.id,message:error?.message||String(error)});
+      const fallbackAllowed=error?.code==='AI_QUOTA_EXHAUSTED'&&error?.fallbackAllowed===true;
+      const failure={id:route.id,model:route.modelId,code:error?.code||'AI_ROUTE_ERROR',message:error?.message||String(error),fallbackAllowed};
+      failures.push(failure);
+      diagnostics?.({type:'route_failure',flow:'runtime',stage:'model_call',route:route.id,model:route.modelId,code:failure.code,fallbackAllowed,message:failure.message});
+      if(!fallbackAllowed){
+        Object.defineProperty(error,'routeFailures',{value:[...failures],enumerable:false,configurable:true});
+        throw error;
+      }
     }
   }
-  const error=new Error('Cả Sol, Gemini và Prism Astra đều chưa hoàn tất lượt luận. Hãy thử lại sau.');
+  const error=new Error('Các model dự phòng đều đã hết hạn mức. Hãy thử lại sau.');
+  Object.defineProperty(error,'code',{value:'AI_ALL_QUOTA_EXHAUSTED',enumerable:false});
   Object.defineProperty(error,'routeFailures',{value:failures,enumerable:false});
   throw error;
 }

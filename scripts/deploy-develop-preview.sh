@@ -114,6 +114,7 @@ set +a
 export QIMEN_PREVIEW_PORT="$PREVIEW_PORT"
 export QIMEN_TUNNEL_HOSTNAME=
 export QIMEN_ACTIVITY_LOG="${QIMEN_ACTIVITY_LOG:-$PREVIEW_DIR/activity-dev.json}"
+export QIMEN_AI_ERROR_LOG="${QIMEN_AI_ERROR_LOG:-$PREVIEW_DIR/ai-errors-dev.jsonl}"
 
 nohup node "$PREVIEW_DIR/local/server.mjs" >"$PREVIEW_DIR/bridge.log" 2>&1 </dev/null &
 BRIDGE_PID=$!

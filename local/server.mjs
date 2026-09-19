@@ -10,6 +10,7 @@ import {interpretReading} from './interpret.mjs';
 import {prepareMenhReading,menhReadingIdentity,MENH_RULE_VERSION,MENH_PROTOCOL} from './menh-reading.mjs';
 import {interpretMenhReading} from './menh-interpret.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
+import {defaultAiDiagnosticPath,recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
@@ -146,6 +147,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
           }
         }finally{stopKeepAlive();busy=false;}
       }catch(e){
+        recordAiDiagnostic({type:'request_failure',flow:isMenhRead?'menh':'question',stage:'request',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
         if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'cancelled':'error'});activityReadingId=null;}
         if(!res.destroyed){
           const data={error:e.message||'Không kết nối được AI.'};
@@ -174,7 +176,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const bridge=createBridge({activityStore});
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
-   console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
+   console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nNhật ký lỗi AI: ${defaultAiDiagnosticPath()}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
    if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
      const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler',SITE_ORIGIN+'/'],{detached:true,stdio:'ignore',windowsHide:true});
      browser.unref();

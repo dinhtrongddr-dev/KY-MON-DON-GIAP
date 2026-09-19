@@ -2,7 +2,8 @@ import {buildMenhWriterContext} from '../dist/qimen/menh/ai/writer-context.mjs';
 import {menhWriterInstructions} from '../dist/qimen/menh/ai/prompts.mjs';
 import {validateMenhReading,MenhReadingValidationError} from '../dist/qimen/menh/ai/reading-audit.mjs';
 import {menhReadingSchema,MENH_READING_SECTIONS} from '../dist/qimen/menh/ai/schema.mjs';
-import {runAI,READING_TIMEOUT_MS,attachAiRoute,aiRouteOf,AI_ROUTES} from './ai-client.mjs';
+import {runAI,READING_TIMEOUT_MS,attachAiRoute,aiRouteOf} from './ai-client.mjs';
+import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 
 function empty(){return {text:'',claim_ids:[]};}
 function fallback(context){
@@ -31,7 +32,7 @@ function fallback(context){
   if(context.birthTimeMode==='UNKNOWN')out.birthTimeNote={text:'Không nhớ giờ sinh: chỉ các kết luận ổn định qua toàn bộ ứng viên giờ sinh được hiển thị; các phần còn lại phụ thuộc giờ sinh và không được bỏ phiếu đa số.',claim_ids:[]};
   return out;
 }
-export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READING_TIMEOUT_MS,signal}={}){
+export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READING_TIMEOUT_MS,signal,diagnostics=recordAiDiagnostic}={}){
   const context=buildMenhWriterContext(prepared.result,{birthTimeMode:prepared.input.birthTimeMode,stability:prepared.result.stability||null});
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
   let revision,routeStartIndex=0;
@@ -45,8 +46,9 @@ export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READI
     catch(error){
       if(!(error instanceof MenhReadingValidationError))throw error;
       const used=aiRouteOf(result);
+      if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'menh',stage:'writer_validation',attempt:attempt+1,route:used?.id||'',model:used?.modelId||'',code:'MENH_READING_VALIDATION',fallbackAllowed:false,message:error.message});
       if(attempt===1)return attachAiRoute(validateMenhReading(fallback(context),context),used);
-      if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=Math.min(used.fallbackIndex+1,AI_ROUTES.length-1);
+      if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=used.fallbackIndex;
       revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa đúng lỗi contract KM-MENH. Chỉ dùng claims/evidence/boardFacts trong context; boardFacts chỉ làm sâu các claim đã có, không tạo claim mới. Không thêm rule, giờ sinh, xác suất, điểm số hoặc sự kiện tất định. Nếu globalStructure.active, phải nêu đúng Phục Ngâm/Phản Ngâm ở overview, thể hiện precedence/cap trước tín hiệu cục bộ và gắn GLOBAL_STRUCTURE vào các section bị ảnh hưởng. Nếu lỗi là bài quá ngắn, hãy viết lại đầy đủ theo COMPREHENSIVE_ONE_SHOT, phát triển cơ chế → biểu hiện có điều kiện, không lặp câu để lấy độ dài. Trả lại JSON đầy đủ theo schema.'};
     }
   }

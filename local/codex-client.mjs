@@ -92,9 +92,10 @@ async function stopProcess(proc){
    try{proc.kill();}catch{done();}
  });
 }
+function codedError(message,code,{fallbackAllowed=false}={}){const error=new Error(message);Object.defineProperty(error,'code',{value:code,enumerable:false});Object.defineProperty(error,'fallbackAllowed',{value:fallbackAllowed,enumerable:false});return error;}
 function turnFailure(error,runtime){
- if(error?.codexErrorInfo==='usageLimitExceeded')return new Error(runtime.is9Router?'9router chưa tìm được route còn hạn mức. Kiểm tra account pool/combo rồi thử lại.':'Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex. Chờ hạn mức được đặt lại rồi thử lại.');
- return new Error(runtime.is9Router?'AI chưa hoàn tất lượt luận qua 9router. Kiểm tra 9router, combo/model và provider rồi thử lại.':'AI chưa hoàn tất lượt luận. Kiểm tra hạn mức, đăng nhập và kết nối Codex rồi thử lại.');
+ if(error?.codexErrorInfo==='usageLimitExceeded')return codedError(runtime.is9Router?'Route 9router của model này đã hết hạn mức.':'Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex.','AI_QUOTA_EXHAUSTED',{fallbackAllowed:true});
+ return codedError(runtime.is9Router?'AI chưa hoàn tất lượt luận qua 9router. Kiểm tra 9router, combo/model và provider rồi thử lại.':'AI chưa hoàn tất lượt luận. Kiểm tra đăng nhập và kết nối Codex rồi thử lại.','AI_ROUTE_ERROR');
 }
 export async function runCodex(instructions,input,schema,{signal,model,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
  if(signal?.aborted)throw new Error('Đã hủy.');
