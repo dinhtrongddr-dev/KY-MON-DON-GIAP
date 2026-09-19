@@ -90,3 +90,9 @@ test('unknown candidate can be explicitly promoted to the known board used by AI
   assert.match(app,/unknown\.checked=false/);
   assert.match(app,/form\.requestSubmit\(\)/);
 });
+
+test('rectification accepts comma-separated dates and ignores whitespace',()=>{
+  assert.match(app,/split\(\/\[,;\\n\]\+\//);
+  assert.match(app,/replace\(\/\\s\+\/g,''\)/);
+  assert.match(html,/Khoảng trắng không ảnh hưởng/);
+});

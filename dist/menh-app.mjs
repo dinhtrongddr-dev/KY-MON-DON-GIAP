@@ -15,13 +15,14 @@ function addRectEvent(value={}){
   row.querySelector('.rect-remove').addEventListener('click',()=>{row.remove();clearResult();});rectEventList.append(row);
 }
 function parseEventDate(raw){
-  const v=String(raw||'').trim();let m;
+  const v=String(raw||'').trim().replace(/\s+/g,'');let m;
   if((m=/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/.exec(v)))return {year:+m[3],month:+m[2],day:+m[1],precision:'DAY',date:v};
   if((m=/^(\d{1,2})[\/-](\d{4})$/.exec(v)))return {year:+m[2],month:+m[1],day:null,precision:'MONTH',date:v};
   if((m=/^(\d{4})$/.exec(v)))return {year:+m[1],month:null,day:null,precision:'YEAR',date:v};
   return null;
 }
-function collectRectEvents(){return [...rectEventList.querySelectorAll('.rect-event-row')].map(row=>{const d=parseEventDate(row.querySelector('.rect-date').value);return d?{kind:row.querySelector('.rect-kind').value,...d}:null;}).filter(Boolean);}
+function parseEventDates(raw){return String(raw||'').split(/[,;\n]+/).map(parseEventDate).filter(Boolean);}
+function collectRectEvents(){return [...rectEventList.querySelectorAll('.rect-event-row')].flatMap(row=>parseEventDates(row.querySelector('.rect-date').value).map(d=>({kind:row.querySelector('.rect-kind').value,...d})));}
 const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic');
 const activity=createActivityLog();
 let rememberedTime='',currentPrepared=null;

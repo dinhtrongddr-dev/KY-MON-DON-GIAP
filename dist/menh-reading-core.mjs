@@ -65,7 +65,13 @@ function rectifyCandidates(candidates,normalized){
       const timed=analyzeOne(inputFrom(normalized.birthDateLocal,c.time,normalized.tzOffset),{age:event.year-normalized.year,annualPillar,sexMetadata:normalized.sexMetadata}).result;
       const primary=timed.annual?.annualStemPalace,secondary=timed.annual?.annualBranchPalace,luckPalace=timed.luck?.palace||null,palaces=domainPalaces.get(domain);
       const primaryMatch=palaces.has(primary),secondaryMatch=palaces.has(secondary),luckMatch=palaces.has(luckPalace),sameAnnual=primary&&secondary&&primary===secondary;
-      const raw=(primaryMatch?4:-1)+(secondaryMatch?2:0)+(luckMatch?2:0)+(primaryMatch&&secondaryMatch?2:0)+(primaryMatch&&luckMatch?2:0)+(secondaryMatch&&luckMatch?1:0)+(sameAnnual&&primaryMatch?1:0);
+      const globalFuYin=timed.claims.some(x=>x.claimId==='GLOBAL_STRUCTURE'&&/FU_YIN/.test(JSON.stringify(x)));
+      const domainEvidence=timed.evidence.filter(e=>palaces.has(e.palace));
+      const activeEvidence=domainEvidence.length>0;
+      const convergence=(primaryMatch?3:0)+(secondaryMatch?1.5:0)+(luckMatch?2.5:0)+(primaryMatch&&secondaryMatch?1.5:0)+(primaryMatch&&luckMatch?2:0)+(secondaryMatch&&luckMatch?1:0);
+      const contradiction=!primaryMatch&&!secondaryMatch&&!luckMatch?-1.5:0;
+      const structureModifier=globalFuYin&&activeEvidence?.5:0;
+      const raw=convergence+contradiction+structureModifier;
       const weight=PRECISION_WEIGHT[event.precision]||.55,eventScore=Math.round(raw*weight*100)/100;
       points+=eventScore;maxPoints+=14*weight;
       matches.push(freeze({kind:event.kind,date:event.date,precision:event.precision,weight,primaryMatch,secondaryMatch,luckMatch,eventScore,primary,secondary,luckPalace}));
