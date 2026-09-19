@@ -93,7 +93,7 @@ test('reading extraction keeps inline strong emphasis in paragraphs and single b
 
 test('question visuals use native fixed-width DOM capture and resolved role clones',()=>{
   const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8');
-  for(const pattern of [/foreignObject/,/WIDTH=1160/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
+  for(const pattern of [/foreignObject/,/WIDTH=1160/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
   assert.match(app,/id==='self'/);assert.match(app,/id==='topic_0'/);assert.match(app,/topicRole\?\.palace!=null\?topicRole:.*id==='event'/);
   assert.match(app,/NGƯỜI HỎI · NHẬT CAN/);assert.match(app,/SỰ VIỆC · DỤNG THẦN/);assert.match(app,/SỰ VIỆC · THỜI CAN/);assert.match(app,/node\.open=true/);
   assert.doesNotMatch(code,/pdfkit|\.ttf|\.woff|api\/export/);

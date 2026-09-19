@@ -51,6 +51,7 @@ html,body{margin:0!important;padding:0!important;width:${WIDTH}px!important;back
 .export-role>p{font-size:14px;overflow-wrap:anywhere}
 .export-role .palace-detail{padding:0;display:block}
 .export-role .semantic-components{display:block}
+.export-page .taiji-export{display:grid;place-items:center;width:100%;height:100%;font:700 82px/1 Georgia,serif;color:#18231f;text-shadow:0 3px 7px rgba(20,25,22,.13)}
 `;
 
 async function fetchOk(url){const response=await fetch(url);if(!response.ok)throw new Error(`Không tải được tài nguyên PDF: ${url}`);return response;}
@@ -89,7 +90,10 @@ export async function captureQuestionPages(snapshot){
     const reading=workspace.querySelector('#element-reading');if(reading)reading.remove();
     const title=doc.createElement('h2');title.textContent='Đối chiếu đại diện trong bài luận';second.append(title);
     const roles=doc.createElement('div');roles.className='export-roles';roles.append(...snapshot.roles.map(adopt));second.append(roles);
-    // SVG image documents cannot load external assets. Inline images before serialization.
+    // Firefox can reject a raster image nested inside an SVG foreignObject under a page CSP.
+    // Keep the live app image unchanged; use a vector/text taiji only in the PDF clone.
+    for(const img of doc.querySelectorAll('img.taiji-ink')){const taiji=doc.createElement('span');taiji.className='taiji-export';taiji.textContent='☯';img.replaceWith(taiji);}
+    // Inline any other same-origin images before serialization.
     await Promise.all([...doc.images].map(async img=>{
       const url=new URL(img.getAttribute('src'),document.baseURI);
       if(url.protocol!=='data:'){
