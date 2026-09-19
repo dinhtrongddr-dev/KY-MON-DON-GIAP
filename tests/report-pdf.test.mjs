@@ -57,7 +57,7 @@ test('browser UI exposes one PDF export/share button for both Hỏi việc and M
   const question=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8'),menh=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8'),client=readFileSync(new URL('../dist/report-export.mjs',import.meta.url),'utf8'),server=readFileSync(new URL('../local/server.mjs',import.meta.url),'utf8');
   assert.match(question,/id="report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);assert.match(menh,/id="menh-report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);
   assert.match(client,/title:'Kỳ Môn Bàn'/);assert.match(client,/ky-mon-ban-hoi-viec/);assert.match(client,/ky-mon-ban-menh/);
-  assert.match(client,/richParagraph/);assert.match(client,/menh-ai-focus/);assert.match(client,/isMobileShareDevice/);assert.match(client,/canMobileShare=isMobileShareDevice\(\)&&navigator\.share/);assert.match(client,/Đã tải file PDF về máy/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
+  assert.match(client,/richParagraph/);assert.match(client,/menh-ai-focus/);assert.match(client,/captureMenhVisual/);assert.match(client,/buildMenhPdf/);assert.match(client,/extractReadingBlocks\(document\.getElementById\('menh-ai-answer'\)\)/);assert.match(client,/isMobileShareDevice/);assert.match(client,/canMobileShare=isMobileShareDevice\(\)&&navigator\.share/);assert.match(client,/Đã tải file PDF về máy/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
   assert.match(server,/['\"]\/question-report\.mjs['\"]/);assert.doesNotMatch(client,/api\/export\/pdf/);
 });
 
@@ -93,7 +93,7 @@ test('reading extraction keeps inline strong emphasis in paragraphs and single b
 
 test('question visuals use native fixed-width DOM capture and resolved role clones',()=>{
   const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8');
-  for(const pattern of [/foreignObject/,/WIDTH=1160/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
+  for(const pattern of [/foreignObject/,/WIDTH=900/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
   assert.match(app,/id==='self'/);assert.match(app,/id==='topic_0'/);assert.match(app,/topicRole\?\.palace!=null\?topicRole:.*id==='event'/);
   assert.match(app,/NGƯỜI HỎI · NHẬT CAN/);assert.match(app,/SỰ VIỆC · DỤNG THẦN/);assert.match(app,/SỰ VIỆC · THỜI CAN/);assert.match(app,/node\.open=true/);
   assert.doesNotMatch(code,/pdfkit|\.ttf|\.woff|api\/export/);
@@ -106,7 +106,7 @@ test('hybrid PDF uses text operators, separate Type3 variants, Unicode maps and 
   const blob=writeQuestionPdf({pages:[{url:'data:image/jpeg;base64,/9j/2Q==',width:1160,height:900}],blocks,glyphFactory:fakeGlyph});
   const bytes=new Uint8Array(await blob.arrayBuffer()),pdf=new TextDecoder().decode(bytes);
   assert.equal(pdf.slice(0,8),'%PDF-1.4');assert.match(pdf,/\/Subtype \/Type3/);assert.match(pdf,/\/ToUnicode \d+ 0 R/);assert.match(pdf,/BT \/F\d+ 11 Tf .* Tm <[0-9A-F]+> Tj ET/);
-  assert.match(pdf,/<D83DDE00>/);assert.match(pdf,/<1EBF>/);assert.match(pdf,/\/MediaBox \[0 0 1191 842\]/);assert.match(pdf,/\/MediaBox \[0 0 595 842\]/);
+  assert.match(pdf,/<D83DDE00>/);assert.match(pdf,/<1EBF>/);assert.match(pdf,/\/MediaBox \[0 0 595 842\]/);assert.doesNotMatch(pdf,/\/MediaBox \[0 0 1191 842\]/);
   const sizes=[...pdf.matchAll(/\/LastChar (\d+)/g)].map(m=>Number(m[1]));assert.ok(sizes.length>=4);assert.ok(sizes.every(n=>n<=220));
   const maps=new Map();
   for(const match of pdf.matchAll(/\/Subtype \/Type3 \/Name \/(F\d+)[\s\S]*?\/ToUnicode (\d+) 0 R/g)){

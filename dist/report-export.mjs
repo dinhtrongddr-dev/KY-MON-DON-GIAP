@@ -1,4 +1,4 @@
-import {buildQuestionPdf,extractReadingBlocks} from './question-report.mjs';
+import {buildQuestionPdf,buildMenhPdf,extractReadingBlocks} from './question-report.mjs';
 const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
 const selectedText=id=>{const el=document.getElementById(id);return clean(el?.selectedOptions?.[0]?.textContent||el?.value);};
 const PAGE_W=1240,PAGE_H=1754,MARGIN=82,CONTENT_W=PAGE_W-MARGIN*2,PAGE_BOTTOM=PAGE_H-96;
@@ -46,6 +46,27 @@ function inputFields(kind,body){
   return [{label:'Sự việc cần hỏi',value:body.question},{label:'Nhóm sự việc',value:selectedText('topic')},{label:'Chế độ luận',value:selectedText('qimen-mode')},{label:'Thời điểm lập bàn',value:clean(document.getElementById('datetime')?.value)},{label:'Múi giờ',value:selectedText('timezone')},{label:'Pháp định cục',value:selectedText('method')}].filter(x=>x.value);
 }
 function filenameBase(kind,body){return kind==='menh'?`ky-mon-ban-menh-${slug(body.fullName||body.birthDateLocal||'bao-cao')}-${localStamp()}`:`ky-mon-ban-hoi-viec-${localStamp()}`;}
+function captureMenhVisual(){
+  const root=document.getElementById('menh-deterministic'),workspace=root?.querySelector('.menh-workspace'),chartMeta=root?.querySelector('.menh-chart-meta');
+  if(!root||!workspace||!chartMeta)throw new Error('Chưa có Mệnh bàn để xuất PDF.');
+  const selected=workspace.querySelector('.palace.is-selected'),self=workspace.querySelector('.palace.menh-self-palace'),clone=node=>node?.cloneNode(true);
+  try{
+    if(self&&self!==selected)self.click();
+    const resultHead=clone(root.querySelector('.menh-result-head')),profile=document.createElement('p');
+    profile.className='question-summary';
+    const name=clean(document.getElementById('birth-name')?.value),place=clean(document.getElementById('birth-place')?.value),date=clean(document.getElementById('birth-date')?.value),time=clean(document.getElementById('birth-time')?.value);
+    profile.textContent=['Hồ sơ Mệnh'+(name?' · '+name:''),place,date+(time?' · '+time:'')].filter(Boolean).join(' · ');
+    resultHead?.append(profile);
+    const inspector=clone(workspace.querySelector('.menh-inspector'));if(!inspector)throw new Error('Thiếu phần luận tượng cung Mệnh.');
+    inspector.classList.add('export-role');inspector.querySelectorAll('details').forEach(node=>node.open=true);
+    const basis=document.createElement('article');basis.className='export-role';const heading=document.createElement('h2');heading.textContent='CĂN CỨ MỆNH · PHƯƠNG PHÁP';basis.append(heading);
+    const method=clone(root.querySelector('.menh-method-details'));if(method){method.open=true;basis.append(method);}
+    const basisDetails=clone(root.querySelector('.menh-basis-details'));if(basisDetails){basisDetails.open=false;basis.append(basisDetails);}
+    const snapshot={header:clone(document.querySelector('.topbar')),question:resultHead,pillars:clone(chartMeta.querySelector('.pillars')),summary:clone(chartMeta.querySelector('.calculation-summary')),board:clone(workspace.querySelector('.menh-board-section')),elements:clone(workspace.querySelector(':scope > .element-panel')),roles:[inspector,basis]};
+    if(!snapshot.question||!snapshot.pillars||!snapshot.summary||!snapshot.board||!snapshot.elements)throw new Error('Thiếu thành phần Mệnh bàn để xuất PDF.');
+    return snapshot;
+  }finally{if(selected&&self&&self!==selected)selected.click();}
+}
 function pdfReport(kind,body,model,boardSelector){return {title:'Kỳ Môn Bàn',reportType:kind==='menh'?'Mệnh':'Hỏi việc',generatedAt:new Date().toLocaleString('vi-VN'),filenameBase:filenameBase(kind,body),model,inputFields:inputFields(kind,body),board:extractBoard(boardSelector),analysisSections:extractAnalysisSections(kind),aiSections:extractAiSections(kind)};}
 function makeCanvas(){const canvas=document.createElement('canvas');canvas.width=PAGE_W;canvas.height=PAGE_H;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,PAGE_W,PAGE_H);ctx.textBaseline='top';return {canvas,ctx,y:MARGIN};}
 function font(ctx,size,weight=400){ctx.font=`${weight} ${size}px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif`;}
@@ -114,9 +135,9 @@ export function initPdfExport({kind,buttonId,statusId,prepare,boardSelector,capt
     if(kind==='question'){
       if(!exactPrepared)throw new Error('Hãy luận bằng AI trước khi xuất PDF.');
       body=exactPrepared.request;snapshot=captureReportVisual(exactPrepared);blocks=extractReadingBlocks(document.getElementById('ai-answer'));
-    }else body=prepare();
+    }else{body=prepare();snapshot=captureMenhVisual();blocks=extractReadingBlocks(document.getElementById('menh-ai-answer'));}
   }catch(e){status.textContent=e.message;return;}button.disabled=true;const before=status.textContent;status.textContent='Đang tạo file PDF…';
-    try{const blob=kind==='question'?await buildQuestionPdf({snapshot,blocks,model,prepared:exactPrepared}):buildImagePdf(canvasReport(pdfReport(kind,body,model,boardSelector))),name=filenameBase(kind,body)+'.pdf',file=new File([blob],name,{type:'application/pdf'});const canMobileShare=isMobileShareDevice()&&navigator.share&&navigator.canShare?.({files:[file]});if(canMobileShare){try{await navigator.share({title:'Kỳ Môn Bàn',text:'Báo cáo Kỳ Môn Bàn',files:[file]});status.textContent='Đã mở bảng chia sẻ PDF.';}catch(e){if(e.name==='AbortError')status.textContent=before;else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}}else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}
+    try{const blob=kind==='question'?await buildQuestionPdf({snapshot,blocks,model,prepared:exactPrepared}):await buildMenhPdf({snapshot,blocks,model}),name=filenameBase(kind,body)+'.pdf',file=new File([blob],name,{type:'application/pdf'});const canMobileShare=isMobileShareDevice()&&navigator.share&&navigator.canShare?.({files:[file]});if(canMobileShare){try{await navigator.share({title:'Kỳ Môn Bàn',text:'Báo cáo Kỳ Môn Bàn',files:[file]});status.textContent='Đã mở bảng chia sẻ PDF.';}catch(e){if(e.name==='AbortError')status.textContent=before;else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}}else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}
     catch(e){status.textContent=e.message||'Không tạo được PDF.';}finally{button.disabled=false;}});
   return {setModel,clear};
 }

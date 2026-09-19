@@ -1,4 +1,4 @@
-const WIDTH=1160,SCALE=2;
+const WIDTH=900,SCALE=2;
 const EXCLUDED='details,button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical';
 
 // Read only already-validated rendered prose; never parse model HTML or broaden bold rules.
@@ -42,15 +42,22 @@ html,body{margin:0!important;padding:0!important;width:${WIDTH}px!important;back
 .export-page .chart-meta{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:16px;margin:16px 0}
 .export-page .pillars{display:grid;grid-template-columns:repeat(4,1fr)}
 .export-page .calculation-summary{display:grid;grid-template-columns:repeat(3,1fr)}
-.export-page .workspace{display:grid;grid-template-columns:760px minmax(0,1fr);gap:16px;align-items:start}
+.export-page .workspace{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:14px;align-items:start}
 .export-page .board-column{width:100%;grid-column:auto;grid-row:auto}
 .export-page .element-panel{grid-column:auto;grid-row:auto;width:100%;height:auto}
 .export-roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.export-role{position:static;height:auto;min-width:0;padding:16px}
+.export-role{position:static;height:auto;min-width:0;padding:16px;overflow:visible}
 .export-role>h2{font-size:22px;line-height:1.4}
 .export-role>p{font-size:14px;overflow-wrap:anywhere}
 .export-role .palace-detail{padding:0;display:block}
 .export-role .semantic-components{display:block}
+.export-page .menh-result-head{margin:0 0 12px}
+.export-page .menh-workspace>.menh-inspector{display:none}
+.export-page .menh-workspace>.element-panel{grid-column:2;grid-row:1}
+.export-page .menh-board-section{min-width:0;width:100%}
+.export-page .menh-method-details{margin-top:10px}
+.export-page .menh-method-details[open] .method-copy{display:block}
+.export-page .menh-basis-details{margin-top:12px}
 .export-page .taiji-export{display:grid;place-items:center;width:100%;height:100%;font:700 82px/1 Georgia,serif;color:#18231f;text-shadow:0 3px 7px rgba(20,25,22,.13)}
 `;
 
@@ -68,7 +75,7 @@ export async function waitForExportLayout(doc){
   await new Promise(resolve=>doc.defaultView.requestAnimationFrame(()=>doc.defaultView.requestAnimationFrame(resolve)));
 }
 
-export async function captureQuestionPages(snapshot){
+export async function captureQuestionPages(snapshot,{secondTitle='Đối chiếu đại diện trong bài luận'}={}){
   await document.fonts.ready;
   const css=[...document.styleSheets].filter(sheet=>!sheet.href||new URL(sheet.href).origin===location.origin).map(sheet=>[...sheet.cssRules].map(rule=>rule.cssText).join('\n')).join('\n');
   const frame=document.createElement('iframe');frame.title='Bản xuất PDF';frame.setAttribute('aria-hidden','true');
@@ -88,7 +95,7 @@ export async function captureQuestionPages(snapshot){
     workspace.querySelectorAll('[aria-pressed]').forEach(node=>node.setAttribute('aria-pressed','false'));
     const diagram=workspace.querySelector('#element-diagram');if(diagram)delete diagram.dataset.active;
     const reading=workspace.querySelector('#element-reading');if(reading)reading.remove();
-    const title=doc.createElement('h2');title.textContent='Đối chiếu đại diện trong bài luận';second.append(title);
+    const title=doc.createElement('h2');title.textContent=secondTitle;second.append(title);
     const roles=doc.createElement('div');roles.className='export-roles';roles.append(...snapshot.roles.map(adopt));second.append(roles);
     // Firefox can reject a raster image nested inside an SVG foreignObject under a page CSP.
     // Keep the live app image unchanged; use a vector/text taiji only in the PDF clone.
@@ -154,7 +161,7 @@ export function writeQuestionPdf({pages=[],blocks=[],model='',glyphFactory=canva
   for(const page of pages){
     const binary=atob(page.url.split(',')[1]),bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
     const image=stream(bytes,`/Type /XObject /Subtype /Image /Width ${page.width} /Height ${page.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode`);
-    const width=1191,height=842,scale=Math.min((width-40)/page.width,(height-40)/page.height),w=page.width*scale,h=page.height*scale;
+    const width=595,height=842,scale=Math.min((width-40)/page.width,(height-40)/page.height),w=page.width*scale,h=page.height*scale;
     addPage(width,height,`q ${w} 0 0 ${h} ${(width-w)/2} ${(height-h)/2} cm /Visual Do Q`,`<< /XObject << /Visual ${image} 0 R >> >>`);
   }
   const textPages=[];let commands=[],y=800;
@@ -208,5 +215,10 @@ export function writeQuestionPdf({pages=[],blocks=[],model='',glyphFactory=canva
 
 export async function buildQuestionPdf({snapshot,blocks,model}){
   const pages=await captureQuestionPages(snapshot);
+  return writeQuestionPdf({pages,blocks,model});
+}
+
+export async function buildMenhPdf({snapshot,blocks,model}){
+  const pages=await captureQuestionPages(snapshot,{secondTitle:'Bản mệnh · đối chiếu cung và căn cứ'});
   return writeQuestionPdf({pages,blocks,model});
 }
