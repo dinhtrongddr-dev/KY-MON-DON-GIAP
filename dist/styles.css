@@ -932,3 +932,8 @@ textarea:focus { outline:3px solid #bce8ce; }
   .menh-input-grid>.field{grid-template-rows:auto 48px auto}
   .birth-time-toggle{height:auto;min-height:74px}
 }
+.time-entry{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;min-width:0}
+.time-entry>span{font-weight:900;color:var(--jade-dark);font-size:1.15rem;text-align:center}
+.time-entry select{min-width:0;padding-right:28px;font-variant-numeric:tabular-nums}
+.time-entry select:disabled{cursor:not-allowed;background:#eef1ee;color:#8a948f}
+@media(max-width:430px){.time-entry{gap:6px}.time-entry select{padding-inline:8px}}

@@ -4,16 +4,32 @@ import {initMenhAi} from './menh-ai.mjs';
 import {createActivityLog} from './activity-log.mjs';
 
 const $=id=>document.getElementById(id);
-const form=$('menh-form'),name=$('birth-name'),place=$('birth-place'),date=$('birth-date'),dateNative=$('birth-date-native'),datePicker=$('birth-date-picker'),time=$('birth-time'),unknown=$('birth-time-unknown');
+const form=$('menh-form'),name=$('birth-name'),place=$('birth-place'),date=$('birth-date'),dateNative=$('birth-date-native'),datePicker=$('birth-date-picker'),time=$('birth-time'),hour=$('birth-hour'),minute=$('birth-minute'),unknown=$('birth-time-unknown');
 const timezone=$('menh-timezone'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year'),rectification=$('birth-time-rectification');
 const rectWindow=$('rect-time-window'),rectEventList=$('rect-event-list'),rectAdd=$('rect-add-event');
 const EVENT_OPTIONS=[['MARRIAGE','Kết hôn / chia tay lớn'],['CHILDREN','Sinh con / thay đổi lớn vì con'],['CAREER','Đổi nghề / khởi nghiệp / bước ngoặt công việc'],['WEALTH','Tài chính biến động lớn'],['FAMILY','Biến cố gia đình / cha mẹ'],['RELOCATION','Chuyển nhà / chuyển nơi sống lớn']];
 const two=n=>String(n).padStart(2,'0');
-function maskDate(value){const raw=String(value||'').replace(/[^\d/]/g,'');if((raw.match(/\//g)||[]).length>=2)return raw.slice(0,10);const digits=raw.replace(/\D/g,'').slice(0,8);return digits.length<=2?digits:digits.length<=4?digits.slice(0,2)+'/'+digits.slice(2):digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);}
+function maskDate(value,{deleting=false}={}){
+  const digits=String(value||'').replace(/\D/g,'').slice(0,8);
+  if(!digits)return '';
+  if(digits.length===1)return digits;
+  if(digits.length===2)return deleting?digits:digits+'/';
+  if(digits.length===3)return digits.slice(0,2)+'/'+digits.slice(2);
+  if(digits.length===4)return deleting?digits.slice(0,2)+'/'+digits.slice(2):digits.slice(0,2)+'/'+digits.slice(2)+'/';
+  return digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+}
 function parseBirthDate(value){const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(value||'').trim());if(!m)throw new Error('Ngày sinh phải theo định dạng DD/MM/YYYY.');const day=+m[1],month=+m[2],year=+m[3];if(year<1900||year>2100)throw new Error('Năm sinh phải nằm trong khoảng 1900–2100.');const check=new Date(Date.UTC(year,month-1,day));if(check.getUTCFullYear()!==year||check.getUTCMonth()!==month-1||check.getUTCDate()!==day)throw new Error('Ngày sinh không hợp lệ.');return `${year}-${two(month)}-${two(day)}`;}
 function formatBirthDateIso(value){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value||''));return m?`${m[3]}/${m[2]}/${m[1]}`:'';}
-function maskTime(value){const raw=String(value||'');if(raw.includes(':'))return raw.replace(/[^\d:]/g,'').slice(0,5);const digits=raw.replace(/\D/g,'').slice(0,4);return digits.length<=2?digits:digits.slice(0,2)+':'+digits.slice(2);}
-function parseBirthTime(value){const m=/^(\d{1,2}):(\d{2})$/.exec(String(value||'').trim());if(!m)throw new Error('Giờ sinh phải theo định dạng 24 giờ HH:MM.');const hour=+m[1],minute=+m[2];if(hour>23||minute>59)throw new Error('Giờ sinh không hợp lệ.');return `${two(hour)}:${two(minute)}`;}
+function parseBirthTime(value){const m=/^(\d{2}):(\d{2})$/.exec(String(value||'').trim());if(!m)throw new Error('Hãy chọn đủ giờ và phút sinh.');const h=+m[1],min=+m[2];if(h>23||min>59)throw new Error('Giờ sinh không hợp lệ.');return `${two(h)}:${two(min)}`;}
+function populateTimeSelectors(){
+  for(let h=0;h<24;h++)hour.add(new Option(two(h),two(h)));
+  for(let m=0;m<60;m++)minute.add(new Option(two(m),two(m)));
+}
+function syncTimeValueFromSelectors(){time.value=hour.value&&minute.value?`${hour.value}:${minute.value}`:'';}
+function syncTimeSelectorsFromValue(value){
+  const m=/^(\d{2}):(\d{2})$/.exec(String(value||''));
+  hour.value=m?m[1]:'';minute.value=m?m[2]:'';
+}
 function addRectEvent(value={}){
   const row=document.createElement('div');row.className='rect-event-row';
   const opts=EVENT_OPTIONS.map(([v,t])=>`<option value="${v}"${value.kind===v?' selected':''}>${t}</option>`).join('');
@@ -52,23 +68,23 @@ export function syncUnknownBirthTime(){
   rectification.hidden=!unknown.checked;
   if(unknown.checked){
     if(time.value)rememberedTime=time.value;
-    time.value='';time.disabled=true;time.required=false;
-    $('birth-time-help').textContent='Không cần nhập giờ. Hệ thống sẽ đối chiếu các khung giờ sinh và các mốc cuộc đời bạn cung cấp.';
+    time.value='';hour.value='';minute.value='';hour.disabled=true;minute.disabled=true;
+    $('birth-time-help').textContent='Không cần chọn giờ. Hệ thống sẽ đối chiếu các khung giờ sinh và các mốc cuộc đời bạn cung cấp.';
   }else{
-    time.disabled=false;time.required=true;
+    hour.disabled=false;minute.disabled=false;
     if(!time.value&&rememberedTime)time.value=rememberedTime;
-    $('birth-time-help').textContent='Nhập giờ theo định dạng 24 giờ, ví dụ 07:30.';
+    syncTimeSelectorsFromValue(time.value);
+    $('birth-time-help').textContent='Cuộn danh sách để chọn giờ và phút theo định dạng 24 giờ.';
   }
 }
 function clearResult(){
   currentPrepared=null;result.hidden=true;deterministic.replaceChildren();error.hidden=true;error.textContent='';
 }
-date.addEventListener('input',()=>{date.value=maskDate(date.value);date.setCustomValidity('');});
+date.addEventListener('input',event=>{date.value=maskDate(date.value,{deleting:String(event.inputType||'').startsWith('delete')});date.setCustomValidity('');});
 date.addEventListener('blur',()=>{try{const iso=parseBirthDate(date.value);date.value=formatBirthDateIso(iso);dateNative.value=iso;date.setCustomValidity('');}catch(e){date.setCustomValidity(e.message);}});
 dateNative.addEventListener('change',()=>{if(dateNative.value){date.value=formatBirthDateIso(dateNative.value);date.setCustomValidity('');clearResult();}});
 datePicker.addEventListener('click',()=>{try{dateNative.value=parseBirthDate(date.value);}catch{};if(typeof dateNative.showPicker==='function')dateNative.showPicker();else{dateNative.focus();dateNative.click();}});
-time.addEventListener('input',()=>{time.value=maskTime(time.value);time.setCustomValidity('');});
-time.addEventListener('blur',()=>{if(unknown.checked||!time.value)return;try{time.value=parseBirthTime(time.value);time.setCustomValidity('');}catch(e){time.setCustomValidity(e.message);}});
+for(const select of [hour,minute])select.addEventListener('change',()=>{syncTimeValueFromSelectors();time.dispatchEvent(new Event('input',{bubbles:true}));});
 unknown.addEventListener('change',()=>{syncUnknownBirthTime();clearResult();});
 rectAdd.addEventListener('click',()=>addRectEvent());
 if(!rectEventList.children.length){addRectEvent({kind:'MARRIAGE'});addRectEvent({kind:'CAREER'});addRectEvent({kind:'FAMILY'});}
@@ -84,10 +100,11 @@ form.addEventListener('submit',event=>{
 });
 deterministic.addEventListener('click',event=>{
   const button=event.target.closest?.('.menh-use-candidate');if(!button)return;
-  rememberedTime=button.dataset.candidateTime;unknown.checked=false;syncUnknownBirthTime();time.value=rememberedTime;
+  rememberedTime=button.dataset.candidateTime;unknown.checked=false;time.value=rememberedTime;syncUnknownBirthTime();
   clearResult();form.requestSubmit();
   requestAnimationFrame(()=>document.getElementById('menh-ai-read')?.scrollIntoView?.({behavior:'smooth',block:'center'}));
 });
 annual.value=String(new Date().getFullYear());
+populateTimeSelectors();
 syncUnknownBirthTime();
 initMenhAi({prepare:()=>collectMenhForm(),activity});

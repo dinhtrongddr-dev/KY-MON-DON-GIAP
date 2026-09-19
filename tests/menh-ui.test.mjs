@@ -18,7 +18,7 @@ test('Mệnh UI exposes exactly known time input plus Không nhớ giờ sinh ch
 test('Mệnh UI never submits a hidden remembered time in UNKNOWN mode',()=>{
   assert.match(app,/birthTimeMode:unknown\.checked\?'UNKNOWN':'KNOWN'/);
   assert.match(app,/birthTimeLocal:unknown\.checked\?null:parseBirthTime\(time\.value\)/);
-  assert.match(app,/time\.value='';time\.disabled=true;time\.required=false/);
+  assert.match(app,/time\.value='';hour\.value='';minute\.value='';hour\.disabled=true;minute\.disabled=true/);
 });
 test('question and natal products link to each other without replacing the question form',()=>{
   assert.match(main,/href="\.\/index\.html" aria-current="page">Kỳ Môn Hỏi Việc/);assert.match(main,/href="\.\/menh\.html">Kỳ Môn Mệnh/);
@@ -30,8 +30,8 @@ test('PC Mệnh form uses aligned four-column fields with Vietnamese date and 24
   assert.match(html,/id="birth-date" type="text"[^>]*placeholder="DD\/MM\/YYYY"/);
   assert.match(html,/id="birth-date-picker"[^>]*>Lịch</);
   assert.match(html,/id="birth-date-native"[^>]*type="date"/);
-  assert.match(html,/id="birth-time" type="text"[^>]*placeholder="HH:MM"/);
-  assert.match(app,/parseBirthDate\(date\.value\)/);assert.match(app,/parseBirthTime\(time\.value\)/);
+  assert.match(html,/id="birth-hour"[^>]*><option value="">Giờ<\/option>/);assert.match(html,/id="birth-minute"[^>]*><option value="">Phút<\/option>/);assert.match(html,/id="birth-time" type="hidden"/);
+  assert.match(app,/parseBirthDate\(date\.value\)/);assert.match(app,/parseBirthTime\(time\.value\)/);assert.match(app,/populateTimeSelectors/);assert.match(app,/syncTimeValueFromSelectors/);assert.match(app,/digits\.length===2.*digits\+'\/'/);assert.match(app,/digits\.length===4.*digits\.slice\(0,2\).*'\/'/);
   assert.match(app,/showPicker/);assert.match(styles,/\.menh-input-grid>\.field\{grid-template-rows:18px 48px minmax\(34px,auto\)/);
 });
 
