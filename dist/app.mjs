@@ -219,8 +219,8 @@ function detailItem(type, layer, title, subtitle, copy) {
     </div>
   `;
 }
-function semanticCard(palace,chart,conditions=null){
-  const domainId=semanticDomainForTopic(topicInput.value),secondaryDomainId=classifyTopics(currentQuestion).map(semanticDomainForTopic).find(id=>id!==domainId)||null,semantic=semanticBundle(palace,{mode:'event',domainId,secondaryDomainId,board:chart,conditions});
+function semanticCard(palace,chart,conditions=null,prepared=null){
+  const domainId=semanticDomainForTopic(prepared?.context.allInOne.resolvedTopic||topicInput.value),secondaryDomainId=classifyTopics(prepared?.context.question||currentQuestion).map(semanticDomainForTopic).find(id=>id!==domainId)||null,semantic=semanticBundle(palace,{mode:'event',domainId,secondaryDomainId,board:chart,conditions});
   const chips=semantic.keywords.map(word=>`<span>${escapeHtml(word)}</span>`).join('');
   const items=semantic.items.map(item=>`<li><strong>${escapeHtml(item.layer)} · ${escapeHtml(item.name)}</strong><span>${escapeHtml(item.meaning)}</span></li>`).join('');
   const states=semantic.states.length?`<p class="semantic-state">${escapeHtml(semantic.states.map(x=>x.rule).join(' '))}</p>`:'';
@@ -234,7 +234,7 @@ function semanticCard(palace,chart,conditions=null){
   </section>`;
 }
 
-function renderDetail(chart) {
+function renderDetail(chart,prepared=null) {
   const palace = chart.palaces.find((item) => item.number === selectedPalace) || chart.palaces[0];
   inspectorTitle.textContent = `${palace.vi} ${palace.number} cung`;
   const palaceElement = elementSlug(palace.element);
@@ -247,7 +247,7 @@ function renderDetail(chart) {
   `;
 
   if (palace.number === 5) {
-    detail.innerHTML = `${title}${semanticCard(palace,chart)}<div class="detail-list">
+    detail.innerHTML = `${title}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
       ${detailItem("star", "Cửu tinh", STAR_QIN.vi, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
       ${detailItem("stem", "Địa bàn", `${palace.earthStem.han} · ${palace.earthStem.vi}`, palace.earthStem.element, "Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.")}
     </div>`;
@@ -266,7 +266,7 @@ function renderDetail(chart) {
     conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
   ].join("");
-  detail.innerHTML = `${title}${semanticCard(palace,chart,conditions)}
+  detail.innerHTML = `${title}${semanticCard(palace,chart,conditions,prepared)}
     <div class="detail-list">
       ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
       ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}
@@ -402,7 +402,31 @@ function prepareAiInput(){
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
   return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input},...readingOptions()};
 }
-initLocalAi({prepare:prepareAiInput,activity});
+// Render with the same components and exact AI chart, then restore live nodes and selection.
+function captureReportVisual(prepared){
+  const targets=[pillars,summary,board,flags,detail,inspectorTitle];
+  const saved=targets.map(node=>[node,[...node.childNodes]]),selection=selectedPalace;
+  const clone=selector=>document.querySelector(selector).cloneNode(true);
+  try{
+    renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart);renderFlags(prepared.chart);
+    const topicRole=prepared.analysis.roles.find(item=>item.id==='topic_0');
+    const subject=topicRole?.palace!=null?topicRole:prepared.analysis.roles.find(item=>item.id==='event');
+    const roles=[prepared.analysis.roles.find(item=>item.id==='self'),subject].map((role,index)=>{
+      if(!role)throw new Error('Thiếu đại diện trong dữ liệu AI.');
+      const id=role.id;
+      const card=document.createElement('article');card.className='inspector export-role';card.dataset.role=id;
+      const heading=document.createElement('h2');heading.textContent=index===0?'NGƯỜI HỎI · NHẬT CAN':id==='topic_0'?'SỰ VIỆC · DỤNG THẦN':'SỰ VIỆC · THỜI CAN';card.append(heading);
+      const basis=document.createElement('p');basis.textContent=`${role.label} · ${role.basis} · ${role.status}`;card.append(basis);
+      if(role.palace==null){const note=document.createElement('p');note.textContent='Chưa xác định cung đại diện.';card.append(note);}
+      else{selectedPalace=role.palace;renderDetail(prepared.chart,prepared);card.append(detail.cloneNode(true));}
+      card.querySelectorAll('details').forEach(node=>node.open=true);
+      return card;
+    });
+    const question=clone('#question-summary');question.textContent=`Câu hỏi của bàn: ${prepared.context.question}`;
+    return {header:clone('.topbar'),question,pillars:clone('#pillars'),summary:clone('#calculation-summary'),board:clone('.board-column'),elements:clone('.element-panel'),roles};
+  }finally{selectedPalace=selection;for(const [node,children] of saved)node.replaceChildren(...children);}
+}
+initLocalAi({prepare:prepareAiInput,activity,captureReportVisual});
 const rulePreview=document.getElementById('rule-preview');
 const clearRules=()=>{rulePreview.replaceChildren();rulePreview.hidden=true;};
 form.addEventListener('input',clearRules);form.addEventListener('change',clearRules);document.addEventListener('qimen-chart',clearRules);

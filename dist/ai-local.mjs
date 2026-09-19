@@ -2,7 +2,7 @@ import {buildReadingRequest,assertCompatible,validateReadingResponse} from './re
 import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
 import {initPdfExport} from './report-export.mjs';
-export function initLocalAi({prepare,activity=null}) {
+export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
  const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check');
@@ -11,7 +11,7 @@ export function initLocalAi({prepare,activity=null}) {
  let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
  const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
  const endpoint=AI_RELAY_ORIGIN;
- const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',tokenId:'local-token',prepare,boardSelector:'#qimen-board'});
+ const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
    if(saved){token.value=saved;remember.checked=true;rememberHint.textContent='Đã điền mã được ghi nhớ trên trình duyệt này.';}
@@ -91,7 +91,7 @@ export function initLocalAi({prepare,activity=null}) {
      const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
      if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
-     if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed);
+     if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed,prepared);
      status.textContent=data.reading.status==='verified_fallback'?`Đã nhận bài luận AI${modelText}. Một số phần còn cần đối chiếu thêm.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin để AI luận đúng sự việc.':`Đã nhận bài luận AI${modelText}.`;
    }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });

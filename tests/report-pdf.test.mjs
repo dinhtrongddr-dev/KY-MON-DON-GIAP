@@ -60,3 +60,66 @@ test('browser UI exposes one PDF export/share button for both Hỏi việc and M
   assert.match(client,/richParagraph/);assert.match(client,/menh-ai-focus/);assert.match(client,/isMobileShareDevice/);assert.match(client,/canMobileShare=isMobileShareDevice\(\)&&navigator\.share/);assert.match(client,/Đã tải file PDF về máy/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
   assert.doesNotMatch(client,/api\/export\/pdf/);
 });
+
+const {writeQuestionPdf,extractReadingBlocks}=await import('../dist/question-report.mjs');
+const {initPdfExport}=await import('../dist/report-export.mjs');
+
+test('question click passes the exact retained prepared object and never prepares again',async t=>{
+  const previous=globalThis.document;t.after(()=>{globalThis.document=previous;});
+  let click,captured,prepares=0;
+  const button={addEventListener(name,handler){click=handler;}},status={};
+  globalThis.document={getElementById:id=>id==='button'?button:status};
+  const pdf=initPdfExport({kind:'question',buttonId:'button',statusId:'status',prepare(){prepares++;throw Error('must not prepare');},captureReportVisual(prepared){captured=prepared;throw Error('capture reached');}});
+  const exact={request:{question:'Câu hỏi'},chart:{},analysis:{},context:{}};
+  pdf.setModel({label:'Model',effort:'high'},exact);await click();
+  assert.strictEqual(captured,exact);assert.equal(prepares,0);assert.equal(status.textContent,'capture reached');
+  pdf.clear();captured=null;await click();assert.equal(captured,null);assert.equal(button.hidden,true);
+  const ai=readFileSync(new URL('../dist/ai-local.mjs',import.meta.url),'utf8');
+  assert.match(ai,/const prepared=await buildReadingRequest\(body\)/);assert.match(ai,/pdf\.setModel\(data\.modelUsed,prepared\)/);
+});
+
+function element(tag,...children){
+  const node={nodeType:1,tagName:tag,childNodes:children.map(c=>typeof c==='string'?{nodeType:3,textContent:c}:c),querySelectorAll(){return [];},cloneNode(){return this;}};
+  node.children=node.childNodes.filter(c=>c.nodeType===1);for(const child of node.childNodes)child.parentNode=node;return node;
+}
+test('reading extraction keeps inline strong emphasis in paragraphs and single bullets',()=>{
+  const root=element('DIV',element('H3','Kết luận'),element('P','Trước ',element('STRONG',element('SPAN','điểm chính')),' sau.'),element('UL',element('LI','Nên ',element('STRONG','chờ'),' thêm.')));
+  const blocks=extractReadingBlocks(root);
+  assert.deepEqual(blocks.map(b=>b.kind),['heading','paragraph','bullet']);
+  assert.equal(blocks[1].runs.find(r=>r.bold).text,'điểm chính');
+  assert.equal(blocks[2].runs.map(r=>r.text).join(''),'• Nên chờ thêm.');
+  assert.equal(blocks[2].runs.find(r=>r.bold).text,'chờ');
+});
+
+test('question visuals use native fixed-width DOM capture and resolved role clones',()=>{
+  const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8'),app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8');
+  for(const pattern of [/foreignObject/,/WIDTH=1160/,/position:fixed;left:-20000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/snapshot\.header/,/snapshot\.elements/,/snapshot\.roles/,/delete diagram\.dataset\.active/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
+  assert.match(app,/id==='self'/);assert.match(app,/id==='topic_0'/);assert.match(app,/topicRole\?\.palace!=null\?topicRole:.*id==='event'/);
+  assert.match(app,/NGƯỜI HỎI · NHẬT CAN/);assert.match(app,/SỰ VIỆC · DỤNG THẦN/);assert.match(app,/SỰ VIỆC · THỜI CAN/);assert.match(app,/node\.open=true/);
+  assert.doesNotMatch(code,/pdfkit|\.ttf|\.woff|api\/export/);
+});
+
+const fakeGlyph=()=>({advance:520,width:8,height:8,x:0,y:-200,w:520,h:1000,mask:new Uint8Array(8).fill(255)});
+test('hybrid PDF uses text operators, separate Type3 variants, Unicode maps and valid byte offsets',async()=>{
+  const alphabet=Array.from({length:450},(_,i)=>String.fromCodePoint(0x400+i)).join('');
+  const blocks=[{kind:'paragraph',runs:[{text:'Tiếng Việt 😀 ',bold:false},{text:'đậm',bold:true},{text:alphabet}]},...Array.from({length:150},()=>({kind:'paragraph',runs:[{text:'Một dòng dài để kiểm tra phân trang. '.repeat(4)}]})),{kind:'paragraph',runs:[{text:'KẾT THÚC'}]}];
+  const blob=writeQuestionPdf({pages:[{url:'data:image/jpeg;base64,/9j/2Q==',width:1160,height:900}],blocks,glyphFactory:fakeGlyph});
+  const bytes=new Uint8Array(await blob.arrayBuffer()),pdf=new TextDecoder().decode(bytes);
+  assert.equal(pdf.slice(0,8),'%PDF-1.4');assert.match(pdf,/\/Subtype \/Type3/);assert.match(pdf,/\/ToUnicode \d+ 0 R/);assert.match(pdf,/BT \/F\d+ 11 Tf .* Tm <[0-9A-F]+> Tj ET/);
+  assert.match(pdf,/<D83DDE00>/);assert.match(pdf,/<1EBF>/);assert.match(pdf,/\/MediaBox \[0 0 1191 842\]/);assert.match(pdf,/\/MediaBox \[0 0 595 842\]/);
+  const sizes=[...pdf.matchAll(/\/LastChar (\d+)/g)].map(m=>Number(m[1]));assert.ok(sizes.length>=4);assert.ok(sizes.every(n=>n<=220));
+  const maps=new Map();
+  for(const match of pdf.matchAll(/\/Subtype \/Type3 \/Name \/(F\d+)[\s\S]*?\/ToUnicode (\d+) 0 R/g)){
+    const cmap=pdf.match(new RegExp(`(?:^|\\n)${match[2]} 0 obj\\n[\\s\\S]*?stream\\n([\\s\\S]*?)\\nendstream`))[1];
+    const map=new Map();
+    for(const pair of cmap.matchAll(/<([0-9A-F]{2})> <([0-9A-F]{4,})>/g))map.set(pair[1],pair[2].match(/.{4}/g).map(unit=>String.fromCharCode(parseInt(unit,16))).join(''));
+    maps.set(match[1],map);
+  }
+  const extracted=[...pdf.matchAll(/BT \/(F\d+) [^\n]*? <([0-9A-F]{2})> Tj ET/g)].map(m=>maps.get(m[1]).get(m[2])).join('');
+  assert.ok(extracted.includes('Tiếng Việt 😀 đậm'+alphabet));assert.ok(extracted.endsWith('KẾT THÚC'));
+  assert.ok([...pdf.matchAll(/\/Type \/Page /g)].length>5);
+  for(const match of pdf.matchAll(/Tf 1 0 0 1 ([\d.]+) (\d+) Tm/g)){assert.ok(Number(match[1])<553);assert.ok(Number(match[2])>=42&&Number(match[2])<=800);}
+  const xref=Number(pdf.match(/startxref\n(\d+)/)[1]);assert.equal(new TextDecoder().decode(bytes.slice(xref,xref+4)),'xref');
+  const table=new TextDecoder().decode(bytes.slice(xref)).split('\n'),count=Number(table[1].split(' ')[1]);
+  for(let id=1;id<count;id++){const offset=Number(table[id+2].slice(0,10));assert.equal(new TextDecoder().decode(bytes.slice(offset,offset+`${id} 0 obj`.length)),`${id} 0 obj`);}
+});
