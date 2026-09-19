@@ -15,6 +15,7 @@
     "prepare:windows": "node scripts/prepare-windows.mjs",
     "build:launcher": "node scripts/build-launcher.mjs",
     "verify:package": "python scripts/package-local.py --check",
-    "package:local": "python scripts/package-local.py"
+    "package:local": "python scripts/package-local.py",
+    "test:menh-rectification": "node scripts/menh-rectification-backtest.mjs"
   }
 }

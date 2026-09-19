@@ -1,0 +1,25 @@
+{
+  "schema":"KMMenhRectificationBlind/1",
+  "status":"RESEARCH",
+  "note":"Known birth times are evaluation labels only; never used by scoring. Add independent profiles before enabling any accuracy claim.",
+  "cases":[
+    {
+      "id":"R-NDT-1994",
+      "birthDateLocal":"1994-07-17",
+      "knownBirthTimeLocal":"07:30",
+      "birthTimeWindow":"MORNING",
+      "tzOffset":7,
+      "lifeEvents":[
+        {"kind":"MARRIAGE","year":2011,"precision":"YEAR","date":"2011"},
+        {"kind":"MARRIAGE","year":2020,"month":12,"day":12,"precision":"DAY","date":"12/12/2020"},
+        {"kind":"CAREER","year":2018,"precision":"YEAR","date":"2018"},
+        {"kind":"CAREER","year":2022,"precision":"YEAR","date":"2022"},
+        {"kind":"CAREER","year":2025,"precision":"YEAR","date":"2025"},
+        {"kind":"RELOCATION","year":2022,"precision":"YEAR","date":"2022"},
+        {"kind":"RELOCATION","year":2024,"precision":"YEAR","date":"2024"},
+        {"kind":"CHILDREN","year":2026,"month":3,"day":8,"precision":"DAY","date":"08/03/2026"},
+        {"kind":"WEALTH","year":2022,"precision":"YEAR","date":"2022"}
+      ]
+    }
+  ]
+}
