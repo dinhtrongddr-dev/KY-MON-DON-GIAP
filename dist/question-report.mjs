@@ -130,6 +130,33 @@ export async function captureQuestionPages(snapshot,{secondTitle='Đối chiếu
   }finally{frame.remove();}
 }
 
+
+export async function captureReadingPages(answer){
+  if(!answer)throw new Error('Không tìm thấy bài luận AI.');
+  await document.fonts.ready;
+  const css=[...document.styleSheets].filter(sheet=>!sheet.href||new URL(sheet.href).origin===location.origin).map(sheet=>[...sheet.cssRules].map(rule=>rule.cssText).join('\n')).join('\n');
+  const frame=document.createElement('iframe');frame.title='Bài luận xuất PDF';frame.setAttribute('aria-hidden','true');frame.style.cssText=`position:fixed;left:-20000px;top:0;width:${WIDTH}px;height:1800px;border:0;pointer-events:none;`;document.body.append(frame);
+  try{
+    const doc=frame.contentDocument;doc.open();doc.write('<!doctype html><html lang="vi"><head></head><body></body></html>');doc.close();
+    const style=doc.createElement('style');style.textContent=css+'\n'+EXPORT_CSS+'\n.export-reading{width:'+WIDTH+'px;padding:34px 42px;background:var(--paper);box-sizing:border-box}.export-reading .ai-answer{display:block!important}.export-reading details{display:block}.export-reading details>summary{display:none}.export-reading details>*{display:block!important}';doc.head.append(style);
+    const root=doc.createElement('section');root.className='export-page export-reading';const title=doc.createElement('h2');title.textContent='Bài luận AI';root.append(title);
+    const reading=doc.importNode(answer,true);reading.hidden=false;reading.removeAttribute('hidden');reading.querySelectorAll(EXCLUDED).forEach(node=>node.remove());reading.querySelectorAll('details').forEach(node=>node.open=true);root.append(reading);doc.body.append(root);
+    await waitForExportLayout(doc);
+    const total=Math.ceil(root.getBoundingClientRect().height),slice=1180,pages=[];
+    for(let top=0;top<total;top+=slice){
+      const height=Math.min(slice,total-top),wrap=doc.createElement('body');wrap.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
+      const viewport=doc.createElement('div');viewport.style.cssText=`position:relative;width:${WIDTH}px;height:${height}px;overflow:hidden;background:white`;const shifted=root.cloneNode(true);shifted.style.transform=`translateY(-${top}px)`;shifted.style.transformOrigin='top left';viewport.append(shifted);wrap.append(style.cloneNode(true),viewport);
+      const markup=new XMLSerializer().serializeToString(wrap),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}"><foreignObject width="100%" height="100%">${markup}</foreignObject></svg>`;
+      const image=new Image();image.src=await asDataUrl(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));await image.decode();const canvas=document.createElement('canvas');canvas.width=WIDTH*SCALE;canvas.height=height*SCALE;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);pages.push({url:canvas.toDataURL('image/jpeg',.95),width:canvas.width,height:canvas.height});
+    }
+    return pages;
+  }finally{frame.remove();}
+}
+
+export async function buildScreenshotPdf({snapshot,answer,secondTitle}){
+  const visual=await captureQuestionPages(snapshot,{secondTitle});const reading=await captureReadingPages(answer);return writeQuestionPdf({pages:[...visual,...reading],blocks:[]});
+}
+
 const encode=value=>new TextEncoder().encode(value);
 const hex=value=>value.toString(16).padStart(2,'0').toUpperCase();
 const unicodeHex=text=>Array.from({length:text.length},(_,i)=>text.charCodeAt(i).toString(16).padStart(4,'0')).join('').toUpperCase();
