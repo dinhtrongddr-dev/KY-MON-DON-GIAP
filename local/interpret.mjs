@@ -4,6 +4,7 @@ import {DELIBERATION_INSTRUCTIONS,deliberationSchema,shouldDeliberate} from '../
 import {runAI,READING_TIMEOUT_MS,attachAiRoute,aiRouteOf} from './ai-client.mjs';
 import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {verifiedFallback,clarificationReading} from '../dist/qimen/ai/verifiedFallback.mjs';
+import {normalizeQuestion} from '../dist/qimen/ai/classifier.mjs';
 
 function bindPlannedMetadata(result,context){
   if(!result||!Array.isArray(result.development))return result;
@@ -25,6 +26,24 @@ function repairUnsupportedTiming(reading,message){
   for(const action of copy.actions||[])action.text=clean(action.text);
   for(const row of copy.comparisons||[])row.reason=clean(row.reason);
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
+  return attachAiRoute(copy,route);
+}
+const EVENT_ASSERTION_ERROR=/Bài luận tự khẳng định sự kiện ngoài điều người dùng đã kể/;
+const EVENT_ASSERTION_PATTERN=/\b(?:khach hang|doi tac|khoan thu|hop dong(?: moi)?|tien|ban)\s+(?:da|dang|se)\s+(?:duoc )?(?:dong y|chuyen tien|nhan|xac nhan|ky|thanh toan|phe duyet|vao tai khoan)\b/;
+function repairUnsupportedEvents(reading,message){
+  if(!EVENT_ASSERTION_ERROR.test(message)||!reading||typeof reading!=='object')return null;
+  const route=aiRouteOf(reading),copy=structuredClone(reading);
+  const safe={summary:'Kết luận chỉ phản ánh xu hướng của bàn; sự kiện ngoài đời ở bước này vẫn cần được xác nhận.',situation:'Phần này mô tả điều kiện biểu tượng đang có, không xác nhận một sự kiện ngoài đời đã xảy ra.',development:'Ở chặng này chỉ nên theo dõi dấu hiệu thực tế tương ứng; chưa coi phản hồi, ký kết hay tiền về là sự kiện đã xảy ra.',bottleneck:'Nút thắt cần được kiểm tra bằng dữ liệu thực tế trước khi nâng thành kết quả.',alternative:'Nhánh khác chỉ là khả năng có điều kiện, chưa phải sự kiện thực tế.',timing:'Mốc này chỉ là cửa sổ kiểm chứng; không khẳng định sự kiện đã xảy ra.',resolution:'Cần xác minh điều kiện thực tế trước khi coi nút thắt đã được tháo.',action:'Hãy dùng bước này để kiểm chứng phản hồi thực tế thay vì giả định kết quả đã xảy ra.',comparison:'Đây chỉ là so sánh tương đối giữa các lựa chọn, không xác nhận sự kiện.',question:'Cần xác nhận thêm dữ kiện thực tế trước khi kết luận.'};
+  const clean=(value,slot)=>{
+    if(typeof value!=='string')return value;
+    return value.split(/(?<=[.!?])\s+/).map(sentence=>EVENT_ASSERTION_PATTERN.test(normalizeQuestion(sentence))?safe[slot]:sentence).join(' ');
+  };
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text,key);
+  if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution,'resolution');
+  for(const step of copy.development||[]){step.text=clean(step.text,'development');step.condition=clean(step.condition,'development');}
+  for(const action of copy.actions||[])action.text=clean(action.text,'action');
+  for(const row of copy.comparisons||[])row.reason=clean(row.reason,'comparison');
+  if(Array.isArray(copy.questions))copy.questions=copy.questions.map(value=>clean(value,'question'));
   return attachAiRoute(copy,route);
 }
 
@@ -59,7 +78,8 @@ export async function interpretReading(prepared,{runner=runAI,planRunner,budgetM
       const used=aiRouteOf(result);
       if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'writer_validation',attempt:attempt+1,route:used?.id||'',model:used?.modelId||'',code:'READING_VALIDATION',fallbackAllowed:false,message:error.message});
       if(attempt===1){
-        const repaired=repairUnsupportedTiming(result,error.message);
+        let repaired=repairUnsupportedTiming(result,error.message);
+        const eventRepaired=repairUnsupportedEvents(repaired||result,error.message);if(eventRepaired)repaired=eventRepaired;
         if(repaired){
           try{return attachAiRoute(validateReading(repaired,prepared.facts,prepared.context.selectedTopic,prepared.context),used);}
           catch(repairError){if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'timing_repair_validation',attempt:3,route:used?.id||'',model:used?.modelId||'',code:'READING_TIMING_REPAIR',fallbackAllowed:false,message:repairError.message});}

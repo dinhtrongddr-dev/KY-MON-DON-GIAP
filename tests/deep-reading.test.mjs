@@ -131,3 +131,14 @@ test('a repeated unsupported timing claim no longer discards the whole valid AI 
   assert.match(result.timing.text,/mốc thời gian chưa xác định/i);
   assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
 });
+
+test('a repeated invented event assertion is neutralized without discarding the rest of the valid reading',async()=>{
+  const p=prepareReading(body);let count=0;
+  const result=await interpretReading(p,{runner:async()=>{
+    count++;const r=readingFixture(p);r.situation.text+=' Khoản thu sẽ được xác nhận và chuyển tiền.';return r;
+  }});
+  assert.equal(count,2);assert.equal(result.status,'reading');
+  assert.doesNotMatch(JSON.stringify(result),/Khoản thu sẽ được xác nhận/);
+  assert.match(result.situation.text,/không xác nhận một sự kiện ngoài đời/i);
+  assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
+});
