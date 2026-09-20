@@ -64,11 +64,13 @@ export function prepareReading(body) {
       '23:00 đổi ngày. Giáp tìm nghi ẩn theo tuần của chính trụ; Nhật/Thời can ở thiên bàn, quan hệ người–việc xét hành cung.',
       'Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can ký sau đó cùng chuyển với Thiên Nhuế.',
       'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất→2, Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
-      'Môn bức = Môn khắc cung. Khai–Hưu–Sinh là ba cát môn theo quy ước; Cảnh dùng tùy việc, không tự động là thuận.',
+      'KM-STRUCTURE-2.0 lưu riêng chiều Môn khắc Cung và Cung khắc Môn; tên “Môn bức/Cung bức” có dị bản nên không dùng tên gọi để thay logic ngũ hành. Khai–Hưu–Sinh là ba cát môn theo quy ước; Cảnh dùng tùy việc, không tự động là thuận.',
+      'Thập Can Khắc Ứng bao phủ 81 tổ hợp Tam Kỳ/Lục Nghi nhìn thấy trên thiên–địa bàn; chỉ tổ hợp gắn đúng Dụng Thần/vai mới được nâng trọng số. Cách cục thuận/nghịch là điều kiện cấu trúc, không phải xác suất hay kết quả đã xảy ra.',
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
       'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
+      'KM-STRUCTURE-2.0 chưa bao phủ toàn bộ Bát Môn khắc ứng, Cửu Tinh trị thời, Tam Kỳ đáo cung và Tam Trá/Ngũ Giả/Cửu Độn; không tự suy các corpus này khi chưa có rule deterministic tương ứng.',
     ],
   };
   return {context, chart, facts, board:allInOne.board, analysis:allInOne.analysis};

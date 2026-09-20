@@ -16,7 +16,8 @@ export function buildOutcomeDimensions(selected,context,interactions) {
   for(const [index,key] of keys.entries()) {
     const relevant=selected.filter(b=>b.actorIds.some(id=>rolesByStage[index].includes(id)));
     // A whole cluster supports a goal; an alias in the same palace adds no vote.
-    const supportive=relevant.filter(b=>['kai','sheng','xiu'].includes(b.symbols.door.id)||context.intent==='reply'&&b.symbols.door.id==='jing');
+    const supportive=relevant.filter(b=>['kai','sheng','xiu'].includes(b.symbols.door.id)||context.intent==='reply'&&b.symbols.door.id==='jing'||
+      b.stemResponses?.some(r=>r.actorIds?.some(id=>rolesByStage[index].includes(id))&&r.weight>=0.75));
     const conflicts=selected.flatMap(b=>b.conflicts.filter(c=>c.affectedDimensions.includes(key)||
       index>=3&&c.effect==='not_yet_realized'&&c.actorIds.includes('event')));
     const relationEffects=interactions.filter(i=>!i.samePalace&&i.affectsGoal&&index>=2);
@@ -35,7 +36,10 @@ export function buildOutcomeDimensions(selected,context,interactions) {
       '', '', '', 'Khoản thu có nội dung cam kết cụ thể.', 'Có bước xử lý được thực hiện.',
       'Có khoản thực nhận quan sát được; không dùng cơ hội hoặc lời hẹn thay bằng chứng nhận tiền.', 'Các phần việc còn lại đã kết thúc.'
     ][index]:['','','','Có sự thống nhất rõ về bước tiếp.','Bước thực hiện đã diễn ra.','Kết quả được ghi nhận trong thực tế.','Không còn phần việc chưa hoàn tất.'][index]);
-    const symbols=unique(supportive.map(b=>`${b.symbols.door.vi} + ${b.symbols.star.vi} + ${b.symbols.deity.vi} tại cung ${b.palace}`));
+    const symbols=unique(supportive.map(b=>{
+      const stemSupport=b.stemResponses?.filter(r=>r.actorIds?.some(id=>rolesByStage[index].includes(id))&&r.weight>=0.75).map(r=>`${r.pair}: ${r.plainMeaning}`).join(', ');
+      return `${b.symbols.door.vi} + ${b.symbols.star.vi} + ${b.symbols.deity.vi}${stemSupport?` + cấu trúc ${stemSupport}`:''} tại cung ${b.palace}`;
+    }));
     result[key]={status,supportingEvidenceIds:supports.length?supports:index>=3&&upstreamSupport?[...result[keys[1]].supportingEvidenceIds]:[],
       limitingEvidenceIds:limits,conditions,confidenceLevel:supportive.length?'moderate':'low',
       reason:index===6?'Chưa có dữ kiện thực tế xác nhận hoàn tất; không suy việc đã xong từ tượng.':

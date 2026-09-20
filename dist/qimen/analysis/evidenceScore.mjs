@@ -15,9 +15,10 @@ export function scoreEvidence(bundles,context,graph) {
     const neighbours=new Set(graph.relations.filter(e=>b.relationshipIds.includes(e.id)&&!e.samePalace).map(e=>e.fromPalace===b.palace?e.toPalace:e.fromPalace));
     const corroboration=Math.min(neighbours.size,3)/3;
     const modifierImportance=Math.max(0,...b.conflicts.map(c=>c.severity==='high'?1:0.6));
-    const conflictPriority=Number((modifierImportance*(0.5+goalRelevance+stageRelevance)).toFixed(3));
-    const score=Number((questionRelevance+actorRelevance+3*goalRelevance+2*stageRelevance+0.8*yongshenWeight+0.4*structuralStrength+0.2*corroboration).toFixed(3));
-    return {...b,relevance:{score,evidenceScore:score,questionRelevance,actorRelevance,goalRelevance,stageRelevance,yongshenWeight,structuralStrength,corroboration,modifierImportance,conflictPriority,
+    const structureImportance=Math.min(1,b.structurePriority||0);
+    const conflictPriority=Number(((modifierImportance+0.5*structureImportance)*(0.5+goalRelevance+stageRelevance)).toFixed(3));
+    const score=Number((questionRelevance+actorRelevance+3*goalRelevance+2*stageRelevance+0.8*yongshenWeight+0.35*structureImportance+0.4*structuralStrength+0.2*corroboration).toFixed(3));
+    return {...b,relevance:{score,evidenceScore:score,questionRelevance,actorRelevance,goalRelevance,stageRelevance,yongshenWeight,structureImportance,structuralStrength,corroboration,modifierImportance,conflictPriority,
       meaning:'Ưu tiên căn cứ theo câu hỏi và giai đoạn; độ ưu tiên mâu thuẫn được xét riêng, không phải xác suất.'}};
   }).sort((a,b)=>b.relevance.score-a.relevance.score||a.palace-b.palace);
   const required=ranked.filter(b=>b.actorIds.some(id=>['self','event'].includes(id))||b.roles.some(r=>r.status==='user_supplied'||r.yongshenTier==='primary'));

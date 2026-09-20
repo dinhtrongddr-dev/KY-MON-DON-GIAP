@@ -27,8 +27,10 @@ export function resolveContradictions(bundle,context) {
         'Tuần Không giới hạn mức thành thực, không phủ định tự động cơ hội hoặc phát sinh','realization_condition',v.resolution,v.dimension,'not_yet_realized','high',[id]);
     }
   }
-  if(has('door_pressure'))add('action_environment_mismatch',d.opportunity,'Môn khắc cung: cách triển khai gặp sức cản của hoàn cảnh','execution_condition',
+  if(has('door_pressure'))add('action_environment_mismatch',d.opportunity,'Môn khắc Cung: cách triển khai tạo sức ép lên hoàn cảnh','execution_condition',
     `Điều chỉnh cách làm cho phù hợp ${d.vocabulary[0]}; thử một bước nhỏ trước khi tăng quy mô.`,execution,'obstruction','high');
+  if(has('palace_pressure'))add('environment_constrains_method',d.opportunity,'Cung khắc Môn: hoàn cảnh đang hạn chế cách triển khai','environment_condition',
+    `Giảm mức cam kết và kiểm tra điều kiện thực địa của ${d.vocabulary[0]} trước khi tiếp tục.`,execution,'obstruction','medium');
   for(const state of bundle.states.filter(s=>['tomb','punishment'].includes(s.code)))add(state.code,'Năng lực của vai đang xét',
     state.code==='tomb'?'Can đại diện Tam kỳ nhập mộ: khả năng bị giữ lại':'Can đại diện kích hình: cách triển khai có ràng buộc',
     'actor_specific_condition',state.code==='tomb'?'Giải phóng phần nguồn lực đang bị giữ ở vai này trước khi giao thêm việc.':'Sửa phạm vi hoặc cách thực hiện đang tạo sức ép cho vai này.',
@@ -39,5 +41,13 @@ export function resolveContradictions(bundle,context) {
     `Thay đổi một điều kiện của ${d.vocabulary[0]} để thử khả năng chuyển bước.`,execution,'needs_activation');
   if(has('horse')&&(has('void')||has('fu_yin')))add('movement_held',d.movement,'Có tượng động nhưng khả năng triển khai còn bị giữ','realization_condition',
     'Chọn một thay đổi nằm trong khả năng của vai này, theo dõi tác dụng của bước thử trước khi mở rộng.',execution,'conditional_activation');
+  for(const response of (bundle.stemResponses||[]).filter(r=>r.actorIds?.length&&r.weight<0)){
+    const primary=response.actorIds.some(id=>bundle.roles.find(r=>r.id===id)?.yongshenTier==='primary');
+    const severity=response.tone==='severe_adverse'&&primary?'high':response.tone==='severe_adverse'?'medium':'medium';
+    add('stem_response_adverse','Năng lực của Dụng Thần đang xét',response.plainMeaning,
+      primary?'primary_structure_condition':'supporting_structure_condition',
+      primary?'Xử lý điều kiện cản tại Dụng Thần chính trước khi nâng mức kết luận hoặc mở rộng cam kết.':'Dùng cấu trúc này để hạ mức chắc chắn và kiểm tra chéo; không cho nó tự lấn át Dụng Thần chính.',
+      execution,'obstruction',severity,response.actorIds);
+  }
   return conflicts;
 }

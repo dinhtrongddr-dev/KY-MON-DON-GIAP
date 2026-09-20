@@ -20,10 +20,11 @@ are 1900 through 2100. Chaibu and Mao Shan remain separate yuan methods.
 | Worked classical boards | Eight externally transcribed configurations in Dun Jia Yan Yi, volume 2 | Fixed reference examples, not generated snapshots |
 | Door pressure, punishment, tombs | Door controls palace; Wu3/Ji2/Geng8/Xin9/Ren4/Gui4; Yi2/Bing6/Ding8; main and carried stems independently | Tomb coverage deliberately limited to three wonders; Yi→Kun 2 correction is source-backed by Dun Jia Yan Yi vol. 2 and Qimen Fa Qiao |
 | Star seasonal strength | Yan Bo Diao Sou Ge mapping for all five element relationships | Not ordinary seasonal strength for stems/doors; no Earth 18-day rule |
-| Special combinations | Six explicit stem pairs, Tian/Di/Ren Dun; Wu Bu Yu Shi requires hour-over-day control with equal polarity | Not the entire ten-stem response corpus |
+| Legacy core special detector | Six explicit stem pairs, Tian/Di/Ren Dun; Wu Bu Yu Shi requires hour-over-day control with equal polarity | Kept for backward compatibility; full 81-pair interpretation is provided separately by KM-STRUCTURE-2.0 |
 | Core immutability | Six source hashes plus the unchanged 480-board output SHA-256; mutation and extra-file checks | A hash detects drift; it is not an independent proof of rule correctness |
 | Analysis/context/planner | 16 topics x 2 methods; roles, unresolved people, bundles, all directional element links, same-palace aliases, dominant conflicts and graph endpoints | Symbolic scenarios and finite intent classification are not empirical causal models |
 | KM-YONGSHEN-2.0 | Domain resolver with primary/secondary/counterpart/corroborator/operational tiers; career, finance, relationship, family, study, health, legal, property, search, travel and social profiles; named family relatives activate Year/Month/Hour stems | Multi-source interpretation convention, not a universal school table or empirical probability; unknown people remain unresolved |
+| KM-STRUCTURE-2.0 | 81 visible Ten-Stem responses with distinct modern meanings; actor-specific Void/Door-pressure/Punishment/Tomb; explicit Door-controls-Palace vs Palace-controls-Door; bounded major patterns including Green Dragon Returns, Flying Bird Falls Nest, Geng structures, Three Wonders Gain Use, Jade Woman Guards Door and Tian/Di/Ren Dun | Classical corpus is a symbolic interpretation system, not empirical probability; full Eight-Door responses, Nine-Star time responses, Three-Wonders-to-palace and Three Deceptions/Five Fakes/Nine Escapes remain outside scope |
 | Modes/comparisons | Distinct prediction/strategy/business/negotiation plans; 2-12 timing candidates and eight directions; original self pillar preserved | Relative comparison scores are not calibrated probabilities |
 | KM-YINGQI-2.0 timing | Explicit user horizon only; pace signal from inner/outer plate plus Fu/Fan Yin; dated trigger priority Void fill/clash → Horse arrival/clash → Three-Wonder Tomb arrival/clash | Pace does not fabricate dates; punishment, stem/door timing, Fu/Fan Yin dates and non-Three-Wonder tomb dates remain unsupported |
 | Writer/validation | Frozen claims, actions, edges and candidates; words/conditions/resolution checked; one repair; fabricated references and some certainty forms rejected | Lexical/schema checks cannot guarantee every sentence is grounded or useful |
@@ -46,6 +47,9 @@ change and a new upgrade branch. Keep the original frozen tag intact.
 - Secondary procedural Ying-Qi reference (pace and trigger ordering context): https://www.yjgov.com/30.html
 - KM-YONGSHEN-2.0 domain mapping references: https://www.qimena.com/wiki/qimen-yongshen/ ; https://qimen.pro/ask/ ; https://dougleschan.com/chinese/
 - Six-relative Useful-God references: https://d1peixun.com/m/view.php?aid=1248 ; https://www.sohu.com/a/449137793_121020386
+- Ten-Stem response corpus: https://www.shidianguji.com/book/SDZJ0630/chapter/1lx9g1urkiyp2 ; cross-check https://fengshui678.com/show/106.html
+- Structure/pattern references: https://zh.wikisource.org/wiki/遁甲演義_(四庫全書本)/卷2 ; https://ctext.org/wiki.pl?chapter=665347&if=gb&remap=gb
+- Door/Palace pressure directional reference: https://shuyuan.zhiming.life/read/奇门法窍/4
 - HKO 2024 major terms: https://www.hko.gov.hk/en/gts/astron2024/files/2024SolarTerms24.pdf
 - HKO term definitions: https://www.hko.gov.hk/en/gts/time/24solarterms.htm
 - Vendored calendar source: https://github.com/6tail/lunar-javascript

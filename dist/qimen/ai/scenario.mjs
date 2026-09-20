@@ -2,7 +2,7 @@ import {domainSemantics} from '../modes/semantics.mjs';
 export function buildScenario(selected,context,graph,interactions=[],modePlan={computed:{}},processed={}) {
   const primary=selected.filter(b=>b.actorIds.some(id=>['self','event'].includes(id))),main=primary.length?primary:selected.slice(0,1);
   const relevantRoles=new Set([...domainSemantics(context.domain).roles,...(modePlan.roleIds||[])]);
-  const conditionWeight={realization_condition:4,actor_specific_condition:4,execution_condition:3,decision_stability:2,activation_condition:2};
+  const conditionWeight={realization_condition:4,actor_specific_condition:4,primary_structure_condition:4,execution_condition:3,environment_condition:2.5,supporting_structure_condition:2,decision_stability:2,activation_condition:2};
   // A blocked goal or known decision maker may govern the next step even when
   // self/event are in a different palace. This ranks attention, not probability.
   const conflicts=selected.flatMap(b=>b.conflicts.map(c=>{

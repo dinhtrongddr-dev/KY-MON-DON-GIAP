@@ -25,14 +25,14 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
   const claims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
     mechanism:b.translation.mechanism,interpretation:b.translation.interaction,
     realWorldManifestation:b.translation.manifestation,implication:b.translation.implication,
-    ruleIds:['rule_board','rule_elements','rule_conditions','rule_strength','rule_synthesis','rule_stages','rule_timing_scope',...new Set(b.actorIds.map(id=>analysis.roles.find(r=>r.id===id).selectionRule.id))],
+    ruleIds:['rule_board','rule_elements','rule_conditions','rule_strength','rule_structure_v2','rule_synthesis','rule_stages','rule_timing_scope',...new Set(b.actorIds.map(id=>analysis.roles.find(r=>r.id===id).selectionRule.id))],
     counterEvidenceIds:b.conflicts.length?[`c${b.palace}`,...(b.states.some(s=>['fan_yin','fu_yin'].includes(s.code))?['patterns']:[])]:[],
     limitations:[RULE_REGISTRY.rule_synthesis.conditions,...new Set(b.actorIds.flatMap(id=>analysis.roles.find(r=>r.id===id).limitations))],
     semanticTags:[...new Set([b.translation.mechanism,...b.actorIds.filter(id=>!id.startsWith('topic_')),...b.states.map(s=>s.code)])],
     conflicts:b.conflicts,priority:b.relevance.score,status:'conditional_interpretation'}));
   const selectedPalaces=new Set(selected.map(b=>b.palace));
   return freezeData({schemaVersion:'ReadingEvidenceGraph/2',questionContext,mode:questionContext.mode,modeRuleSet:modePlan.ruleSet,
-    usefulGodProfile:analysis.yongshenProfile,
+    usefulGodProfile:analysis.yongshenProfile,structureProfile:{version:analysis.structures.version,profile:analysis.structures.profile,coverage:analysis.structures.coverage,limitations:analysis.structures.limitations},
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),
     rules:RULE_REGISTRY,evidenceBundles:selected,claims,interactions,conflicts:selected.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`}))),

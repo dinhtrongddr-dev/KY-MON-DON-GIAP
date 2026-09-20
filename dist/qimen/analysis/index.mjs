@@ -5,6 +5,7 @@ import {seasonalStrength} from './strength.mjs';
 import {palaceRelationships,elementLink} from './relationships.mjs';
 import {usefulGods,normalizeActors} from './usefulGod.mjs';
 import {resolveYongshenProfile} from './yongshenResolver.mjs';
+import {analyzeStructures} from './structureEngine.mjs';
 export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.pillars.day,questionContext=null}={}) {
   validateBoard(board);
   const yongshenProfile=resolveYongshenProfile({topic,questionContext});
@@ -13,6 +14,7 @@ export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.p
     starDoor:elementLink(p.star.element,p.door.element),doorPalace:elementLink(p.door.element,p.element),
     stemPairs:p.heavenStems.map((s,i)=>({heaven:s,earth:p.earthStem,carried:i>0,relation:elementLink(s.element,p.earthStem.element),
       punishment:palaceConditions(p).punishment.includes(s.vi),wonderTomb:palaceConditions(p).wonderTombs.includes(s.vi)}))}));
+  const structures=analyzeStructures(board,palaces,roles);
   const contradictions=[];
   for(const p of palaces) {
     const add=(kind,text)=>contradictions.push({id:`conflict_${p.number}_${kind}`,palace:p.number,kind,text});
@@ -23,8 +25,8 @@ export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.p
   }
   const self=roles.find(r=>r.id==='self'),event=roles.find(r=>r.id==='event');
   return freezeData(validateAnalysis({schemaVersion:'QimenAnalysis/1',boardVersion:board.schemaVersion,
-    roles,yongshenProfile,palaces,relations:palaceRelationships(board),patterns:specialPatterns(board),contradictions,
+    roles,yongshenProfile,palaces,structures,relations:palaceRelationships(board),patterns:specialPatterns(board),contradictions,
     hostGuest:{host:self.palace,guest:event.palace,convention:'Cung ta–sự việc là trục tham khảo; không mặc định sự việc là đối phương. Chủ tĩnh / khách động là cách chọn hành động, không phải danh tính khách hàng.'},
-    coverage:{computed:['Nhật/Thời can và Giáp ẩn','KM-YONGSHEN-2.0 theo domain và thứ bậc Dụng Thần','64 quan hệ cung có chiều','Tinh vượng suy theo tháng tiết khí','Không/Mã','Môn bức','kích hình từng can','Tam kỳ nhập mộ Ất→2/Bính→6/Đinh→8','các lớp phản/phục ngâm','Ứng kỳ v2: nhịp Nội/Ngoại + Không/Mã/Mộ','tổ hợp can đã khai báo','mâu thuẫn'],
-      unsupported:['Nhập mộ các can ngoài Tam kỳ','Thập can khắc ứng đầy đủ','Ứng kỳ bằng Hình/Can/Môn hoặc Phản/Phục ngâm định ngày','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
+    coverage:{computed:['Nhật/Thời can và Giáp ẩn','KM-YONGSHEN-2.0 theo domain và thứ bậc Dụng Thần','KM-STRUCTURE-2.0: 81 Thập Can Khắc Ứng + Tứ hại + cách cục ưu tiên','64 quan hệ cung có chiều','Tinh vượng suy theo tháng tiết khí','Không/Mã','hai chiều Môn–Cung','kích hình từng can','Tam kỳ nhập mộ Ất→2/Bính→6/Đinh→8','các lớp phản/phục ngâm','Ứng kỳ v2: nhịp Nội/Ngoại + Không/Mã/Mộ','mâu thuẫn'],
+      unsupported:['Nhập mộ các can ngoài Tam kỳ','Bát Môn khắc ứng đầy đủ','Cửu Tinh trị thời đầy đủ','Tam Kỳ đáo cung đầy đủ','Tam Trá/Ngũ Giả/Cửu Độn đầy đủ','Ứng kỳ bằng Hình/Can/Môn hoặc Phản/Phục ngâm định ngày','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
 }
