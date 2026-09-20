@@ -113,3 +113,21 @@ test('structured parser accepts schema JSON and one fenced JSON block, but not p
   assert.deepEqual(parseStructuredText('```json\n{\"answer\":\"ok\"}\n```'),{answer:'ok'});
   assert.throws(()=>parseStructuredText('Kết quả: {\"answer\":\"ok\"}'),/chưa hợp lệ/);
 });
+
+test('timing audit keeps valid prose, accepts deterministic response dates, and does not mistake ordinal thứ năm for Thursday',()=>{
+  const p=prepareReading(body),r=readingFixture(p);
+  r.situation.text+=' Yếu tố thứ năm trong chuỗi căn cứ chỉ là thứ tự trình bày, không phải một ngày trong tuần.';
+  r.timing.text+=' Mốc 17/09/2026 là cửa sổ kích hoạt để kiểm chứng, không phải ngày bảo đảm kết quả.';
+  assert.doesNotThrow(()=>validateReading(r,p.facts,body.topic,p.context));
+});
+
+test('a repeated unsupported timing claim no longer discards the whole valid AI reading',async()=>{
+  const p=prepareReading(body);let count=0;
+  const result=await interpretReading(p,{runner:async()=>{
+    count++;const r=readingFixture(p);r.timing.text+=' Kết quả sẽ rõ trong 5 ngày.';return r;
+  }});
+  assert.equal(count,2);assert.equal(result.status,'reading');
+  assert.doesNotMatch(JSON.stringify(result),/5 ngày/);
+  assert.match(result.timing.text,/mốc thời gian chưa xác định/i);
+  assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
+});

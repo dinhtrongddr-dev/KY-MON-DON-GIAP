@@ -8,7 +8,7 @@ export const RULE_REGISTRY=Object.freeze({
   rule_strength:{id:'rule_strength',source:'https://zh.wikisource.org/wiki/煙波釣叟歌',verification:'source_cited_scope_limited',conditions:'Quy ước vượng suy Cửu Tinh theo tháng tiết khí; không áp sang Can, Môn hay hành cung. Nguồn trích dẫn không tự xác minh mọi quy tắc của app.'},
   rule_synthesis:{id:'rule_synthesis',source:'dist/qimen/ai/reasoningPlanner.mjs',verification:'app_convention_unverified',conditions:'Tổng hợp tượng thành giả thuyết có điều kiện; điểm ưu tiên chỉ là tiêu chí nội bộ, không phải công thức cổ truyền hoặc xác suất.'},
   rule_stages:{id:'rule_stages',source:'dist/qimen/ai/outcomeDimensions.mjs',verification:'app_convention_unverified',conditions:'Bảy tầng phân biệt hỗ trợ biểu tượng với sự kiện đã xảy ra. Môn thuận cần phối hợp vai sự việc và cụm Tinh/Thần/Can; Không giới hạn đúng tầng, không phủ định tự động cơ hội.'},
-  rule_timing_scope:{id:'rule_timing_scope',source:'dist/qimen/ai/timingEngine.mjs',verification:'tested_calendar_scope_only',conditions:'Khoảng lịch theo múi giờ người dùng chỉ biểu diễn thời hạn câu hỏi; chưa tính xuất Không, điền thực, xung Không hay ngày ứng nghiệm.'},
+  rule_timing_scope:{id:'rule_timing_scope',source:'dist/qimen/ai/timingEngine.mjs',verification:'tested_response_window_scan',conditions:'Chỉ quét ứng kỳ khi người dùng đã nêu phạm vi thời gian. Ưu tiên Không vong: điền thực/xung Không; nếu không có Không mới xét Mã tinh lâm/xung. Các mốc là cửa sổ kích hoạt để kiểm chứng, không phải ngày bảo đảm kết quả; Mộ/Hình, Phản/Phục ngâm và Can/Môn chưa được tự định ngày.'},
 });
 export function selectionProvenance(role) {
   const id=role.status==='user_supplied'?'rule_user_mapping':['self','event'].includes(role.id)?'rule_actor':'rule_proxy';
