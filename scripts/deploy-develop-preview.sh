@@ -55,14 +55,8 @@ stage = Path(sys.argv[1])
 
 site = stage / "dist/site-config.mjs"
 text = site.read_text()
-needle = "export const AI_RELAY_ORIGIN = 'https://ai-origin.kymon.pp.ua';"
-if needle not in text:
-    raise SystemExit("Không tìm thấy AI_RELAY_ORIGIN chuẩn để tạo same-origin preview.")
-site.write_text(text.replace(
-    needle,
-    "export const AI_RELAY_ORIGIN = ''; // preview only: same-origin bridge",
-    1,
-))
+if "relayOriginFor" not in text or ".trycloudflare.com" not in text:
+    raise SystemExit("site-config chưa hỗ trợ same-origin bridge cho Quick Tunnel.")
 
 server = stage / "local/server.mjs"
 text = server.read_text()
@@ -137,7 +131,8 @@ URL="$(grep -Eo 'https://[a-z0-9-]+[.]trycloudflare[.]com' "$PREVIEW_DIR/tunnel.
 
 curl -fsS --max-time 10 "$URL/" >/dev/null
 CONFIG="$(curl -fsS --max-time 10 "$URL/site-config.mjs")"
-grep -Fq "AI_RELAY_ORIGIN = ''" <<<"$CONFIG" || die "Preview chưa dùng same-origin AI relay."
+grep -Fq "AI_RELAY_ORIGIN = relayOriginFor()" <<<"$CONFIG" || die "Preview chưa dùng relay runtime-aware."
+grep -Fq ".trycloudflare.com" <<<"$CONFIG" || die "Preview config thiếu Quick Tunnel same-origin rule."
 PUBLIC_STATUS="$(curl -fsS --max-time 10 \
   -H 'Sec-Fetch-Site: same-origin' \
   -H "X-Qimen-Token: $QIMEN_PAIRING_TOKEN" \
