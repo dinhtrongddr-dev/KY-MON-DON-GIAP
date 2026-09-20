@@ -25,7 +25,13 @@ export function semanticRoles(domain) {
   return {self:'chủ thể người hỏi',event:'mục tiêu sự việc',opportunity:d.opportunity,contract:d.agreement,money:d.value,
     capital:'nguồn lực đã hoặc dự kiến bỏ ra',quote:domain==='business'?'hồ sơ / phạm vi / báo giá':'thông tin được bộc lộ hoặc trình bày',
     authority:'vai trò thẩm quyền cần kiểm chứng',service:domain==='business'?'sản phẩm / dịch vụ đang hỏi':'nội dung công việc hoặc nhu cầu đang hỏi',
-    execution:'cách thực hiện / khâu xử lý',movement:d.movement,customer:domain==='business'?'khách hàng':'phía liên quan',competitor:'bên cạnh tranh nếu có',decisionMaker:'người có thẩm quyền nếu đã xác định'};
+    execution:'cách thực hiện / khâu xử lý',movement:d.movement,customer:domain==='business'?'khách hàng':'phía liên quan',competitor:'bên cạnh tranh nếu có',decisionMaker:'người có thẩm quyền nếu đã xác định',
+    learning:'năng lực học tập / chuyên môn',document:'bài vở / hồ sơ / phần trình bày',ding_document:'chi tiết văn thư',
+    relationship_rest:'nhịp hòa hoãn của quan hệ',partner_yi:'một đầu trục Ất–Canh',partner_geng:'một đầu trục Ất–Canh',family_rest:'nhịp sinh hoạt và hòa khí',
+    family_parent:'cha mẹ / trưởng bối',family_peer:'anh chị em / đồng bối',family_child:'con cái / hậu bối',
+    health_issue:'phần cần chăm sóc / xử lý',health_support:'nguồn hỗ trợ / y dược theo biểu tượng',dispute:'trục tranh luận / tranh chấp',geng_obstacle:'trục trở lực / đối kháng',
+    property_asset:'tài sản / khả năng khai thác',property_ground:'nền tảng thực địa / độ ổn định',hidden_clue:'dấu vết kín / thông tin thiếu',blocked_clue:'điểm bị che hoặc khó tiếp cận',
+    travel_support:'lực đi xa / mở rộng',social_rest:'nhịp giao tiếp hòa hoãn'};
 }
 export const SECTOR_VOCABULARY=[
   {match:/\b(ve sinh cong nghiep|tap vu)\b/,terms:['khảo sát','định biên nhân sự','vật tư','tiêu chuẩn dịch vụ','nghiệm thu']},

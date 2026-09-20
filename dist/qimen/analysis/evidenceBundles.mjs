@@ -18,7 +18,8 @@ export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
     const edges=graph.relations.filter(e=>actorIds.includes(e.from)||actorIds.includes(e.to));
     const special=analysis.patterns.matches.map((m,i)=>({...m,evidenceId:`special_${i}`})).filter(m=>m.palace===p.number);
     const b={id:`bundle_${p.number}`,palace:p.number,element:p.element,actorIds,
-      roles:roles.map(r=>({id:r.id,meaning:r.semanticRole,status:r.status,stem:r.stem||null})),
+      roles:roles.map(r=>({id:r.id,meaning:r.semanticRole,status:r.status,stem:r.stem||null,
+        yongshenTier:r.yongshenTier||null,yongshenOrder:r.yongshenOrder||null,yongshenPurpose:r.yongshenPurpose||null,yongshenDomain:r.yongshenDomain||null,yongshenWeight:r.yongshenWeight||0})),
       symbols:{door:symbol(p.door),star:symbol(p.star),deity:symbol(p.spirit),heavenStems:p.heavenStems.map(s=>({han:s.han,vi:s.vi,element:s.element})),earthStem:{han:p.earthStem.han,vi:p.earthStem.vi,element:p.earthStem.element}},
       strength:p.strength.star,states,specialPatterns:special.map(m=>({name:m.name,carried:m.carried,evidenceId:m.evidenceId})),
       structuralRelations:{starDoor:p.starDoor,doorPalace:p.doorPalace,stemPairs:p.stemPairs},

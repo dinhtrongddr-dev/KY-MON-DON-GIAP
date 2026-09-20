@@ -68,7 +68,7 @@ export function prepareReading(body) {
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
-      'Dụng thần chủ đề là quy ước nhập môn của app, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
+      'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
     ],
   };
   return {context, chart, facts, board:allInOne.board, analysis:allInOne.analysis};

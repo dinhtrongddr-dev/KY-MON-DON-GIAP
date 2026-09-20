@@ -4,8 +4,10 @@ import {domainSemantics} from '../modes/semantics.mjs';
 export function relevantActorIds(context,roles,modePlan={}) {
   if(!context)return roles.map(r=>r.id);
   const q=normalizeQuestion(context.question),finance=context.domain==='finance';
-  const ids=new Set(['self','event','opportunity',...(finance?['money','capital']:domainSemantics(context.domain).roles)]);
-  for(const id of ['authority','customer','competitor','decisionMaker'])ids.delete(id);
+  const ids=new Set(['self','event',...(finance?['money','capital']:domainSemantics(context.domain).roles)]);
+  for(const r of roles)if(r.resolverVersion==='KM-YONGSHEN-2.0'&&r.yongshenTier!=='counterpart')ids.add(r.id);
+  for(const id of ['customer','competitor','decisionMaker'])ids.delete(id);
+  if(!roles.find(r=>r.id==='authority')?.resolverVersion)ids.delete('authority');
   const commercial=context.domain==='business'&&(['contract','negotiation','reply'].includes(context.intent)||/\b(bao gia|giao dich)\b/.test(q));
   if(commercial)ids.add('customer');
   for(const s of context.stakeholders)if(s.status==='mentioned')ids.add(s.role);
@@ -16,8 +18,9 @@ export function relevantActorIds(context,roles,modePlan={}) {
     for(const id of ['service','quote','contract'])if(!finance||commercial)ids.add(id);
   }
   if(['execution','completion','cash_realization','realization'].includes(context.outcomeTarget?.stageAsked))ids.add('execution');
-  if(context.depth==='deep'||/\b(chuyen|di chuyen|di xa|thay doi|chu dong)\b/.test(q))ids.add('movement');
+  if(roles.find(r=>r.id==='movement')?.resolverVersion||/\b(chuyen|di chuyen|di xa|thay doi|chu dong)\b/.test(q))ids.add('movement');
   if(['timing','direction'].includes(context.mode))for(const id of modePlan.roleIds||[])if(!['customer','authority','competitor','decisionMaker'].includes(id))ids.add(id);
-  for(const r of roles)if(r.id.startsWith('topic_')||r.status==='user_supplied')ids.add(r.id);
+  const hasResolver=roles.some(r=>r.resolverVersion==='KM-YONGSHEN-2.0');
+  for(const r of roles)if((r.id.startsWith('topic_')&&!hasResolver)||r.status==='user_supplied')ids.add(r.id);
   return roles.filter(r=>ids.has(r.id)).map(r=>r.id);
 }

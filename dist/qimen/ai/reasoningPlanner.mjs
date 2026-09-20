@@ -32,6 +32,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     conflicts:b.conflicts,priority:b.relevance.score,status:'conditional_interpretation'}));
   const selectedPalaces=new Set(selected.map(b=>b.palace));
   return freezeData({schemaVersion:'ReadingEvidenceGraph/2',questionContext,mode:questionContext.mode,modeRuleSet:modePlan.ruleSet,
+    usefulGodProfile:analysis.yongshenProfile,
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),
     rules:RULE_REGISTRY,evidenceBundles:selected,claims,interactions,conflicts:selected.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`}))),

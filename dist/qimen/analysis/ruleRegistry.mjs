@@ -1,6 +1,7 @@
 export const RULE_REGISTRY=Object.freeze({
   rule_board:{id:'rule_board',source:'docs/releases/RULE-COVERAGE.md',verification:'tested_implementation',conditions:'Thời Gia Chuyển Bàn, cùng pháp và giờ dân dụng; dữ kiện từ core, không phải bằng chứng dự báo.'},
   rule_actor:{id:'rule_actor',source:'dist/qimen/analysis/usefulGod.mjs',verification:'app_convention_unverified',conditions:'Nhật can chỉ đại diện người hỏi việc của mình; hỏi thay dùng Can Chi được người dùng xác nhận. Thời can là bối cảnh sự việc, không tự là khách hàng.'},
+  rule_yongshen_v2:{id:'rule_yongshen_v2',source:'docs/releases/KM-YONGSHEN-2.0.md',verification:'multi_source_domain_convention',conditions:'KM-YONGSHEN-2.0 chọn Dụng Thần theo domain và xếp primary/secondary/counterpart/corroborator/operational. Các ánh xạ là quy ước luận có nguồn đối chiếu; không xác minh danh tính, động cơ, chẩn đoán hoặc kết quả ngoài thực tế.'},
   rule_proxy:{id:'rule_proxy',source:'dist/qimen/modes/semantics.mjs',verification:'app_convention_unverified',conditions:'Ánh xạ vai hiện đại là quy ước của ứng dụng, chưa xác minh nguồn truyền thống cho từng trường hợp; không chứng minh danh tính, doanh thu hay lợi nhuận.'},
   rule_user_mapping:{id:'rule_user_mapping',source:'user_input',verification:'user_confirmed_mapping',conditions:'Người dùng xác nhận Can Chi đại diện; code định vị can, không xác thực căn cứ chọn Can Chi của người dùng.'},
   rule_elements:{id:'rule_elements',source:'docs/releases/RULE-COVERAGE.md',verification:'declared_convention',conditions:'Sinh/khắc xét hành cung theo đúng chiều, không phải quan hệ nhân quả hay xác suất.'},
@@ -11,6 +12,6 @@ export const RULE_REGISTRY=Object.freeze({
   rule_timing_scope:{id:'rule_timing_scope',source:'dist/qimen/ai/timingEngine.mjs',verification:'tested_response_window_scan_v2',conditions:'KM-YINGQI-2.0 chỉ quét ứng kỳ khi người dùng đã nêu phạm vi thời gian. Nhịp nhanh/chậm dùng Nội/Ngoại bàn và Phản/Phục ngâm như tín hiệu riêng; không tự tạo ngày. Trigger định ngày ưu tiên Không vong: điền/xung Không → Mã tinh: lâm/xung Mã → Tam kỳ nhập mộ: đến Mộ/xung Mộ. Mốc chỉ là cửa sổ kích hoạt để kiểm chứng; Hình, Phản/Phục ngâm, Can/Môn và nhập mộ ngoài Tam kỳ chưa tự định ngày.'},
 });
 export function selectionProvenance(role) {
-  const id=role.status==='user_supplied'?'rule_user_mapping':['self','event'].includes(role.id)?'rule_actor':'rule_proxy';
+  const id=role.status==='user_supplied'?'rule_user_mapping':['self','event'].includes(role.id)?'rule_actor':role.resolverVersion==='KM-YONGSHEN-2.0'?'rule_yongshen_v2':'rule_proxy';
   return {selectionRule:RULE_REGISTRY[id],limitations:[RULE_REGISTRY[id].conditions,...(role.status==='unresolved'?['Chưa xác định đại diện; không gán cung của một biểu tượng cho người này.']:[])]};
 }

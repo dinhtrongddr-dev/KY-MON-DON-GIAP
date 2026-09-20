@@ -23,7 +23,10 @@ export function buildAnalysisContext(chart,body,facts) {
   const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors,selfPillar}):null;
   const roleIds=relevantActorIds(questionContext,analysis.roles,plan);
   const graph=relationGraph(analysis,[...new Set(['event','self',...roleIds])]);
-  for(const role of analysis.roles)facts[role.evidenceId]=`${role.label}: ${role.palace===null?'chưa xác định cung':`cung ${role.palace}`}; ${role.status}; căn cứ ${role.basis}. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.`;
+  for(const role of analysis.roles){
+    const tier=role.yongshenTier?`; Dụng Thần ${role.yongshenTier}${role.yongshenPurpose?` — ${role.yongshenPurpose}`:''}`:'';
+    facts[role.evidenceId]=`${role.label}: ${role.palace===null?'chưa xác định cung':`cung ${role.palace}`}; ${role.status}; căn cứ ${role.basis}${tier}. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.`;
+  }
   for(const p of analysis.palaces)facts[`strength_${p.number}`]=`Cung ${p.number}: ${p.star.vi} ${p.strength.star.status} theo tháng ${board.pillars.month.vi} (${p.strength.monthElement}). ${p.strength.convention}`;
   facts.special=`Ngũ bất ngộ thời: ${analysis.patterns.wuBuYuShi?'có':'không'} (Thời can khắc Nhật can cùng âm/dương). ${analysis.patterns.coverage}`;
   for(const [i,p] of analysis.patterns.matches.entries())facts[`special_${i}`]=`${p.name} tại cung ${p.palace}: ${p.heavenStem} trên ${p.earthStem}${p.carried?', xét can ký':''}. Chỉ là tổ hợp, không kết luận thành/bại.`;

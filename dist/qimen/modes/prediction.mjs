@@ -3,7 +3,8 @@ export function prediction(a) {
   const self=roleState(a,'self'),event=roleState(a,'event'),link=relationOf(a,'self','event');
   const blockers=[...self.friction,...event.friction];
   const volatile=a.patterns.layers.starFanYin||a.patterns.layers.doorFanYin;
-  const anchors=a.roles.filter(r=>r.id.startsWith('topic_')).map(r=>r.id);
+  const anchors=a.roles.filter(r=>r.yongshenTier&&['primary','secondary'].includes(r.yongshenTier)&&!['self','event'].includes(r.id)).map(r=>r.id);
+  if(!anchors.length)anchors.push(...a.roles.filter(r=>r.id.startsWith('topic_')).map(r=>r.id));
   const chain=steps('prediction',[
     ['current','Hiện trạng',['event'],'Phân biệt điều người hỏi kể với điều chưa biết.'],
     ['subject','Chủ thể',['self'],'Nguồn lực và mức tham gia của người hỏi.'],

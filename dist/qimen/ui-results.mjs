@@ -25,9 +25,11 @@ export function renderTechnical(root,prepared,{includeJson=false,expanded=false}
   node('p','Chỉ hiển thị tượng, vị trí cung, trạng thái và quan hệ đã tính trực tiếp từ bàn Kỳ Môn.',root,'ai-note');
 
   const roles=node('div','',root,'rule-actors');
+  const tierLabel={primary:'Dụng thần chính',secondary:'Dụng thần phụ',counterpart:'Phía đối ứng',corroborator:'Đối chiếu bổ sung',operational:'Khâu thực hiện'};
   for(const r of c.graph.nodes){
     const item=node('div','',roles);node('strong',r.label,item);
-    node('span',r.palace?`Cung ${r.palace}`:'Chưa xác định đại diện trên bàn',item);
+    const where=r.palace?`Cung ${r.palace}`:'Chưa xác định đại diện trên bàn';
+    node('span',`${where}${r.yongshenTier?` · ${tierLabel[r.yongshenTier]||r.yongshenTier}`:''}`,item);
   }
 
   const palaceNumbers=[...new Set(c.relevantPalaces||[])].filter(n=>n!==5);
