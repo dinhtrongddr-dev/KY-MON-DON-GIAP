@@ -55,7 +55,7 @@ stage = Path(sys.argv[1])
 
 site = stage / "dist/site-config.mjs"
 text = site.read_text()
-needle = "export const AI_RELAY_ORIGIN = 'https://ky-mon-codex-relay.dinhtrongddr.workers.dev';"
+needle = "export const AI_RELAY_ORIGIN = 'https://ai-origin.kymon.pp.ua';"
 if needle not in text:
     raise SystemExit("Không tìm thấy AI_RELAY_ORIGIN chuẩn để tạo same-origin preview.")
 site.write_text(text.replace(

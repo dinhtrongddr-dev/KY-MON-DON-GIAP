@@ -62,7 +62,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
    res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Frame-Options','DENY');
    res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ky-mon-codex-relay.dinhtrongddr.workers.dev; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ky-mon-codex-relay.dinhtrongddr.workers.dev https://ai-origin.kymon.pp.ua; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
    const host=parseAllowedHost(req.headers.host,port,tunnelHostname);
    if(!host)return send(403,{error:'Host không hợp lệ.'});
    const requestUrl=new URL(req.url,origin),path=requestUrl.pathname;
