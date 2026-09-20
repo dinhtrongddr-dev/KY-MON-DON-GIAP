@@ -2,15 +2,22 @@ import {buildReadingRequest,assertCompatible,validateReadingResponse} from './re
 import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
 import {initPdfExport} from './report-export.mjs';
+import {createReadingJobClient} from './reading-job-client.mjs';
 export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
  const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
- let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
+ let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
  const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
  const endpoint=AI_RELAY_ORIGIN;
+ const jobClient=createReadingJobClient({
+   endpoint,
+   getToken:()=>token.value.trim(),
+   onRunning:()=>{status.textContent='AI vẫn đang luận trên server. Bạn có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';},
+   onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
+ });
  const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
@@ -50,7 +57,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    return controller;
  };
  const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
- const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();pdf.clear();};
+ const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();pdf.clear();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
@@ -83,9 +90,17 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      status.textContent='Đang kiểm tra kết nối AI…';
      const health=await call('/api/status',null,controller.signal);assertCompatible(health);
      if(v!==version)return;
-     status.textContent='AI đang phân tích bàn và soạn bài luận. Bạn có thể Hủy trong lúc chờ.';
+     status.textContent='AI đang gửi lượt luận lên server…';
      activityReadingId=track('startReading');
-     const data=await call('/api/read',prepared.request,controller.signal);
+     const started=await jobClient.start('/api/read/start',prepared.request,controller.signal);
+     let data=started.legacyResult;
+     if(!data){
+       activeJobId=started.jobId;
+       clearTimeout(requestTimeout);requestTimeout=null;
+       status.textContent=started.reused?'Đã nối lại lượt luận đang chạy trên server.':'AI đang luận trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
+       data=await jobClient.wait(started.jobId,controller.signal);
+       if(activeJobId===started.jobId)activeJobId=null;
+     }
      if(v!==version)return;
      status.textContent='AI đang hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);

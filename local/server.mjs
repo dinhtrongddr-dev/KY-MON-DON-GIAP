@@ -52,11 +52,57 @@ export function isAllowedOrigin(value,port,host){
 }
 export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
- let busy=false;
+ let busy=false,activeJob=null;
+ const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map(),activityClients=new Map();
  const track=(method,...args)=>{try{return activityStore?.[method]?.(...args)??null;}catch{return null;}};
- const files=new Set(['/index.html','/menh.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/report-export.mjs','/question-report.mjs','/share-view.mjs','/reading-core.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const pruneJobs=()=>{
+   const cutoff=Date.now()-JOB_TTL_MS;
+   for(const [id,job] of jobs)if(job.finishedAt&&job.finishedAt<cutoff)jobs.delete(id);
+   const finished=[...jobs.values()].filter(job=>job.finishedAt).sort((a,b)=>a.finishedAt-b.finishedAt);
+   while(jobs.size>20&&finished.length){const job=finished.shift();jobs.delete(job.id);}
+ };
+ const readingData=(isMenh,prepared,identity,result)=>{
+   const used=aiRouteOf(result);
+   const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
+   const data=isMenh
+     ?{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,...identity,reading:result}
+     :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,...identity,reading:result,facts:prepared.facts};
+   return {data,modelUsed};
+ };
+ const startReadingJob=({isMenh,prepared,identity})=>{
+   pruneJobs();
+   const kind=isMenh?'menh':'question',fingerprint=identity.requestFingerprint;
+   if(busy){
+     if(activeJob?.status==='running'&&activeJob.kind===kind&&activeJob.requestFingerprint===fingerprint)return {job:activeJob,reused:true};
+     return null;
+   }
+   const job={id:randomBytes(18).toString('base64url'),kind,requestFingerprint:fingerprint,status:'running',createdAt:Date.now(),finishedAt:0,result:null,error:null,controller:new AbortController()};
+   jobs.set(job.id,job);activeJob=job;busy=true;
+   job.promise=(async()=>{
+     let activityReadingId=track('startReading');
+     try{
+       const result=isMenh?await interpretMenhReading(prepared,{runner,signal:job.controller.signal}):await interpretReading(prepared,{runner,signal:job.controller.signal});
+       const {data,modelUsed}=readingData(isMenh,prepared,identity,result);
+       const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
+       if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
+       job.result=data;job.status='completed';
+     }catch(e){
+       const cancelled=job.controller.signal.aborted;
+       recordAiDiagnostic({type:'request_failure',flow:kind,stage:'async_job',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
+       if(activityReadingId){track('finishReading',activityReadingId,{status:cancelled?'cancelled':'error'});activityReadingId=null;}
+       job.error=cancelled?'Đã hủy lượt luận.':(e?.message||'Không kết nối được AI.');
+       job.status=cancelled?'cancelled':'error';
+     }finally{
+       job.finishedAt=Date.now();
+       if(activeJob===job)activeJob=null;
+       busy=false;pruneJobs();
+     }
+   })();
+   return {job,reused:false};
+ };
+ const files=new Set(['/index.html','/menh.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/report-export.mjs','/question-report.mjs','/share-view.mjs','/reading-core.mjs','/reading-job-client.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -72,7 +118,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginPublic)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
-     res.setHeader('Access-Control-Allow-Methods','POST, GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
+     res.setHeader('Access-Control-Allow-Methods','POST, GET, DELETE, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
    }
    if(path.startsWith('/api/')){
      if(publicShareMatch&&req.method==='GET'){
@@ -114,6 +160,37 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
      }
      if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
+     const jobMatch=/^\/api\/jobs\/([A-Za-z0-9_-]{20,64})$/.exec(path);
+     if(jobMatch&&['GET','DELETE'].includes(req.method)){
+       pruneJobs();const job=jobs.get(jobMatch[1]);
+       if(!job)return send(404,{error:'Lượt luận không tồn tại hoặc đã hết thời gian lưu.'});
+       if(req.method==='DELETE'){
+         if(job.status==='running')job.controller.abort();
+         return send(202,{jobId:job.id,status:job.status==='running'?'cancelling':job.status});
+       }
+       if(job.status==='completed')return send(200,{jobId:job.id,status:'completed',result:job.result});
+       if(job.status==='error'||job.status==='cancelled')return send(200,{jobId:job.id,status:job.status,error:job.error});
+       return send(200,{jobId:job.id,status:'running',createdAt:job.createdAt});
+     }
+     const isAsyncMenhStart=path==='/api/menh/read/start'&&req.method==='POST';
+     const isAsyncQuestionStart=path==='/api/read/start'&&req.method==='POST';
+     if(isAsyncQuestionStart||isAsyncMenhStart){
+       if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
+       const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
+       let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
+       const isMenh=isAsyncMenhStart;let prepared,identity;
+       try{
+         prepared=isMenh?prepareMenhReading(body):prepareReading(body);
+         identity=isMenh?await menhReadingIdentity(prepared):await readingIdentity(prepared);
+       }catch(e){return send(400,{error:e.message});}
+       const identityMismatch=isMenh
+         ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
+         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
+       if(identityMismatch)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       const started=startReadingJob({isMenh,prepared,identity});
+       if(!started)return send(429,{error:'Đang có một lượt luận khác. Đợi lượt đó xong rồi thử lại.'});
+       return send(202,{jobId:started.job.id,status:started.job.status,reused:started.reused});
+     }
      const isMenhRead=path==='/api/menh/read'&&req.method==='POST';
      const isQuestionRead=path==='/api/read'&&req.method==='POST';
      if(!isQuestionRead&&!isMenhRead)return send(404,{error:'Không có chức năng này.'});

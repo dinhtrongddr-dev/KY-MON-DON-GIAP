@@ -2,6 +2,7 @@ import {buildMenhReadingRequest,assertMenhCompatible,validateMenhReadingResponse
 import {renderMenhAi} from './menh-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
 import {initPdfExport} from './report-export.mjs';
+import {createReadingJobClient} from './reading-job-client.mjs';
 
 export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
@@ -9,9 +10,15 @@ export function initMenhAi({prepare,activity=null}){
   const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check');
   const progress=$('menh-ai-progress'),elapsed=$('menh-ai-elapsed'),readLabel=read.textContent;
   const storageKey='qimen.ai.connection-code';
-  let active=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
+  let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
   const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
   const pdf=initPdfExport({kind:'menh',buttonId:'menh-report-pdf',statusId:'menh-ai-status',tokenId:'local-token',prepare,boardSelector:'#menh-deterministic .menh-qimen-board'});
+  const jobClient=createReadingJobClient({
+    endpoint:AI_RELAY_ORIGIN,
+    getToken:()=>token.value.trim(),
+    onRunning:()=>{status.textContent='AI vẫn đang luận Mệnh trên server. Bạn có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';},
+    onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
+  });
   try{
     const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
     if(saved){token.value=saved;remember.checked=true;rememberHint.textContent='Đã điền mã được ghi nhớ trên trình duyệt này.';}
@@ -39,7 +46,7 @@ export function initMenhAi({prepare,activity=null}){
     return controller;
   };
   const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
-  const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();};
+  const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();};
   const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
@@ -70,9 +77,18 @@ export function initMenhAi({prepare,activity=null}){
     try{
       const prepared=await buildMenhReadingRequest(body);if(v!==version)return;
       const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
-      status.textContent=prepared.input.birthTimeMode==='UNKNOWN'?'AI đang luận những phần ổn định giữa các khung giờ sinh.':'AI đang phân tích Mệnh bàn và soạn bài luận.';
+      status.textContent='AI đang gửi lượt luận Mệnh lên server…';
       activityReadingId=track('startReading');
-      const data=await call('/api/menh/read',prepared.request,controller.signal);if(v!==version)return;
+      const started=await jobClient.start('/api/menh/read/start',prepared.request,controller.signal);
+      let data=started.legacyResult;
+      if(!data){
+        activeJobId=started.jobId;
+        clearTimeout(requestTimeout);requestTimeout=null;
+        status.textContent=started.reused?'Đã nối lại lượt luận Mệnh đang chạy trên server.':'AI đang luận Mệnh trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
+        data=await jobClient.wait(started.jobId,controller.signal);
+        if(activeJobId===started.jobId)activeJobId=null;
+      }
+      if(v!==version)return;
       validateMenhReadingResponse(data,prepared);
       renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;
       if(activityReadingId){track('finishReading',activityReadingId,{status:'completed',modelUsed:data.modelUsed});activityReadingId=null;}

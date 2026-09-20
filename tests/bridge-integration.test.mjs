@@ -16,8 +16,9 @@ async function start(t,options={}) {
   const {server}=createBridge({token:'integration-token',...options});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   t.after(()=>{server.closeAllConnections();server.close();});
-  return (path,{headers={},body,onData}={})=>new Promise((resolve,reject)=>{
-    const req=request({host:'127.0.0.1',port:server.address().port,path,method:body?'POST':'GET',headers:{Host:'integration.trycloudflare.com',Origin:origin,'X-Qimen-Token':'integration-token',...(body?{'Content-Type':'application/json'}:{}),...headers}},res=>{
+  return (path,{headers={},body,onData,method}={})=>new Promise((resolve,reject)=>{
+    const verb=method||(body?'POST':'GET');
+    const req=request({host:'127.0.0.1',port:server.address().port,path,method:verb,headers:{Host:'integration.trycloudflare.com',Origin:origin,'X-Qimen-Token':'integration-token',...(body?{'Content-Type':'application/json'}:{}),...headers}},res=>{
       const chunks=[];res.on('data',c=>{chunks.push(c);onData?.(c);});res.on('error',reject);
       res.on('end',()=>resolve({status:res.statusCode,headers:res.headers,text:Buffer.concat(chunks).toString('utf8')}));
     });
@@ -113,4 +114,33 @@ test('repeated wrong pairing attempts are throttled separately for each relay cl
   for(let n=0;n<7;n++)assert.equal((await call('/api/status',{headers:{'X-Qimen-Token':'wrong','X-Qimen-Client':client}})).status,401);
   assert.equal((await call('/api/status',{headers:{'X-Qimen-Token':'wrong','X-Qimen-Client':client}})).status,429);
   assert.equal((await call('/api/status',{headers:{'X-Qimen-Client':'b'.repeat(64)}})).status,200);
+});
+
+test('async reading job survives client disconnect semantics and can be reattached without a second AI call',async t=>{
+  const prepared=await buildReadingRequest(payload),answer=readingFixture(prepareReading(payload));
+  let release,calls=0;const gate=new Promise(resolve=>release=resolve);
+  const call=await start(t,{runner:async()=>{calls++;await gate;return answer;}});
+  const first=await call('/api/read/start',{body:prepared.request});assert.equal(first.status,202);
+  const started=JSON.parse(first.text);assert.match(started.jobId,/^[A-Za-z0-9_-]{20,64}$/);assert.equal(started.reused,false);
+  const duplicate=await call('/api/read/start',{body:prepared.request});assert.equal(duplicate.status,202);
+  const duplicateData=JSON.parse(duplicate.text);assert.equal(duplicateData.jobId,started.jobId);assert.equal(duplicateData.reused,true);
+  const running=await call('/api/jobs/'+started.jobId);assert.equal(JSON.parse(running.text).status,'running');assert.equal(calls,1);
+  release();
+  let finished;
+  for(let i=0;i<50;i++){finished=JSON.parse((await call('/api/jobs/'+started.jobId)).text);if(finished.status!=='running')break;await new Promise(r=>setTimeout(r,5));}
+  assert.equal(finished.status,'completed');assert.equal(calls,1);
+  assert.deepEqual(validateReadingResponse(finished.result,prepared).reading,answer);
+});
+
+test('async reading job can be explicitly cancelled instead of depending on a dropped HTTP connection',async t=>{
+  const prepared=await buildReadingRequest(payload);
+  let aborted=false;
+  const call=await start(t,{runner:async(_instructions,_input,_schema,{signal}={})=>new Promise((resolve,reject)=>{
+    signal?.addEventListener('abort',()=>{aborted=true;reject(Object.assign(new Error('aborted'),{name:'AbortError'}));},{once:true});
+  })});
+  const first=JSON.parse((await call('/api/read/start',{body:prepared.request})).text);
+  const cancelled=await call('/api/jobs/'+first.jobId,{method:'DELETE'});assert.equal(cancelled.status,202);
+  let state;
+  for(let i=0;i<50;i++){state=JSON.parse((await call('/api/jobs/'+first.jobId)).text);if(state.status!=='running')break;await new Promise(r=>setTimeout(r,5));}
+  assert.equal(aborted,true);assert.equal(state.status,'cancelled');
 });
