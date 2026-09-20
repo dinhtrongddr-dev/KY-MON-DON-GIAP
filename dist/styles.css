@@ -832,10 +832,12 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-result{max-width:1500px;margin-inline:auto}
 .menh-panel{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--jade-dark);box-shadow:var(--shadow);padding:clamp(18px,2.2vw,30px)}
 .menh-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
-.menh-result-profile{display:grid;grid-template-columns:minmax(0,2fr) minmax(120px,1fr);gap:10px;margin:16px 0 0}
-.menh-result-profile-item{display:grid;gap:4px;padding:12px 14px;border:1px solid var(--line);background:#f7faf8}
-.menh-result-profile-item span{color:var(--muted);font-size:.78rem;font-weight:760;text-transform:uppercase;letter-spacing:.08em}
-.menh-result-profile-item strong{color:var(--ink);font-size:1rem;line-height:1.35;overflow-wrap:anywhere}
+.menh-result-profile{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 2px;padding:11px 13px;border-block:1px solid var(--line);background:linear-gradient(90deg,#f7faf8 0%,rgba(247,250,248,.35) 72%,transparent 100%)}
+.menh-result-identity{display:flex;align-items:baseline;gap:10px;min-width:0}
+.menh-result-profile-label{flex:0 0 auto;color:var(--muted);font-size:.74rem;font-weight:760;text-transform:uppercase;letter-spacing:.1em}
+.menh-result-name{min-width:0;color:var(--ink);font-size:1rem;line-height:1.35;overflow-wrap:anywhere}
+.menh-result-sex{flex:0 0 auto;display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:#e8f1ec;color:var(--jade-dark);font-size:.78rem;font-weight:800}
+@media(max-width:480px){.menh-result-profile{padding-inline:10px}.menh-result-identity{gap:7px}.menh-result-profile-label{font-size:.68rem}.menh-result-name{font-size:.95rem}.menh-result-sex{min-height:26px;padding-inline:9px}}
 .menh-claim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .menh-claim{min-width:0;padding:17px;border:1px solid var(--line);border-top:3px solid var(--jade);background:#fbfcfa}
 .menh-claim .eyebrow{margin-bottom:8px}.menh-claim-text{margin:0;line-height:1.68}

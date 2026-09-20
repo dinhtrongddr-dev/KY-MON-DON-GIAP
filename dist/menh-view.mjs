@@ -381,9 +381,10 @@ export function renderMenhDeterministic(container,prepared){
   header.append(el('span','menh-mode-badge',prepared.input.birthTimeMode==='KNOWN'?'Biết giờ sinh':'Không nhớ giờ sinh'));
   container.append(header);
   const profile=el('div','menh-result-profile');
-  const profileItem=(label,value)=>{const item=el('div','menh-result-profile-item');item.append(el('span','',label),el('strong','',value));return item;};
+  const identity=el('div','menh-result-identity');
+  identity.append(el('span','menh-result-profile-label','Đương số'),el('strong','menh-result-name',prepared.input.fullName||'Chưa nhập'));
   const sexLabel=prepared.input.sexMetadata==='MALE'?'Nam':prepared.input.sexMetadata==='FEMALE'?'Nữ':'Không khai báo';
-  profile.append(profileItem('Họ và tên',prepared.input.fullName||'Chưa nhập'),profileItem('Giới tính',sexLabel));
+  profile.append(identity,el('span','menh-result-sex',sexLabel));
   container.append(profile);
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
