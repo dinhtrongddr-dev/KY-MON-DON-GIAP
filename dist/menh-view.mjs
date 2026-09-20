@@ -380,6 +380,11 @@ export function renderMenhDeterministic(container,prepared){
   header.append(title);
   header.append(el('span','menh-mode-badge',prepared.input.birthTimeMode==='KNOWN'?'Biết giờ sinh':'Không nhớ giờ sinh'));
   container.append(header);
+  const profile=el('div','menh-result-profile');
+  const profileItem=(label,value)=>{const item=el('div','menh-result-profile-item');item.append(el('span','',label),el('strong','',value));return item;};
+  const sexLabel=prepared.input.sexMetadata==='MALE'?'Nam':prepared.input.sexMetadata==='FEMALE'?'Nữ':'Không khai báo';
+  profile.append(profileItem('Họ và tên',prepared.input.fullName||'Chưa nhập'),profileItem('Giới tính',sexLabel));
+  container.append(profile);
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');

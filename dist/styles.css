@@ -832,6 +832,10 @@ textarea:focus { outline:3px solid #bce8ce; }
 .menh-result{max-width:1500px;margin-inline:auto}
 .menh-panel{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--jade-dark);box-shadow:var(--shadow);padding:clamp(18px,2.2vw,30px)}
 .menh-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.menh-result-profile{display:grid;grid-template-columns:minmax(0,2fr) minmax(120px,1fr);gap:10px;margin:16px 0 0}
+.menh-result-profile-item{display:grid;gap:4px;padding:12px 14px;border:1px solid var(--line);background:#f7faf8}
+.menh-result-profile-item span{color:var(--muted);font-size:.78rem;font-weight:760;text-transform:uppercase;letter-spacing:.08em}
+.menh-result-profile-item strong{color:var(--ink);font-size:1rem;line-height:1.35;overflow-wrap:anywhere}
 .menh-claim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .menh-claim{min-width:0;padding:17px;border:1px solid var(--line);border-top:3px solid var(--jade);background:#fbfcfa}
 .menh-claim .eyebrow{margin-bottom:8px}.menh-claim-text{margin:0;line-height:1.68}
