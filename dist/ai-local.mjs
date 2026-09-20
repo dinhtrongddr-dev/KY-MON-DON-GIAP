@@ -49,6 +49,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    read.textContent=isReading?'Đang luận AI…':readLabel;status.textContent=message;
    return controller;
  };
+ const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
  const cancelWork=()=>{version++;active?.abort();active=null;if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();pdf.clear();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
@@ -93,6 +94,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
      if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed,prepared);
      status.textContent=data.reading.status==='verified_fallback'?`Đã nhận bài luận AI${modelText}. Một số phần còn cần đối chiếu thêm.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin để AI luận đúng sự việc.':`Đã nhận bài luận AI${modelText}.`;
+     scrollToAnswer();
    }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });
 }

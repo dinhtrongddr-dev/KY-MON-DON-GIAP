@@ -18,6 +18,7 @@ class Element {
   replaceChildren(){this.children=[];}
   setAttribute(name,value){(this.attributes??={})[name]=value;}
   focus(){this.focused=true;}
+  scrollIntoView(options){this.scrolled=options;}
 }
 class MemoryStorage {
   constructor(){this.values=new Map();}
@@ -105,6 +106,7 @@ test('successful AI reading is recorded without passing the question to activity
   assert.deepEqual(calls[0],['start',[]]);
   assert.equal(calls[1][0],'finish');assert.equal(calls[1][1][0],'r1');assert.equal(calls[1][1][1].status,'completed');assert.equal(calls[1][1][1].modelUsed.label,'GPT-5.6 Sol');
   assert.equal(JSON.stringify(calls).includes(payload.question),false);
+  assert.deepEqual(ids['ai-answer'].scrolled,{behavior:'smooth',block:'start'});
 });
 
 test('deep reading renders all three linked stages, alternatives and the actual model used',async t=>{
