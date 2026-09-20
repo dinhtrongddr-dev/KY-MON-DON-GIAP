@@ -27,11 +27,20 @@ export function buildOutcomeDimensions(selected,context,interactions) {
     const upstreamSupport=index>1&&['positive','conditional'].includes(result[keys[1]]?.status);
     const hasSupport=supportive.length>0||(index>=3&&upstreamSupport);
     const specific=relevant.length>0;
-    const directEvent=supportive.find(b=>b.actorIds.includes('event'));
-    const clustered=directEvent&&(['vượng','tướng'].includes(directEvent.strength.status)||['ren','xin','fu','chong'].includes(directEvent.symbols.star.id));
+    const strengthBand=b=>{
+      const relevant=(b.capacityStrength?.roles||[]).filter(r=>rolesByStage[index].includes(r.roleId));
+      if(!relevant.length)return b.capacityStrength?.band||null;
+      const primaryIds=new Set((b.roles||[]).filter(r=>r.yongshenTier==='primary'&&rolesByStage[index].includes(r.id)).map(r=>r.id));
+      const source=primaryIds.size?relevant.filter(r=>primaryIds.has(r.roleId)):relevant;
+      const best=[...source].sort((a,b)=>(b.weight??0)-(a.weight??0))[0];
+      return best?.band||b.capacityStrength?.band||null;
+    };
+    const directEvent=supportive.find(b=>b.actorIds.includes('event'))||supportive[0];
+    const clustered=directEvent?(strengthBand(directEvent)==='strong'||(!directEvent.capacityStrength&&(['vượng','tướng'].includes(directEvent.strength.status)||['ren','xin','fu','chong'].includes(directEvent.symbols.star.id)))):false;
+    const weakSupport=supportive.filter(b=>strengthBand(b)==='weak');
     const status=index===6?'unresolved':index>=3?(hasSupport&&specific?'conditional':specific?'uncertain':'unresolved'):
-      supportive.length?(conflicts.length||index===2&&pressure.length||!clustered?'conditional':'positive'):'uncertain';
-    const conditions=unique([...conflicts.map(c=>c.resolution),...pressure.map(i=>i.implication)]);
+      supportive.length?(conflicts.length||weakSupport.length||index===2&&pressure.length||!clustered?'conditional':'positive'):'uncertain';
+    const conditions=unique([...conflicts.map(c=>c.resolution),...pressure.map(i=>i.implication),...(weakSupport.length?['Biểu tượng hỗ trợ đang ở mức lực yếu theo mô hình mùa của chính Dụng Thần; cần thêm điều kiện thực tế hoặc hỗ trợ khác trước khi nâng kết luận.']:[])]);
     if(index>=3)conditions.push(finance?[
       '', '', '', 'Khoản thu có nội dung cam kết cụ thể.', 'Có bước xử lý được thực hiện.',
       'Có khoản thực nhận quan sát được; không dùng cơ hội hoặc lời hẹn thay bằng chứng nhận tiền.', 'Các phần việc còn lại đã kết thúc.'

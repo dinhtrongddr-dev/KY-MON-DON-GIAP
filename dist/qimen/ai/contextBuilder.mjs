@@ -28,7 +28,8 @@ export function buildAnalysisContext(chart,body,facts) {
     facts[role.evidenceId]=`${role.label}: ${role.palace===null?'chưa xác định cung':`cung ${role.palace}`}; ${role.status}; căn cứ ${role.basis}${tier}. Đại diện là quy ước hoặc thông tin người dùng, không xác minh danh tính/tâm ý thực tế.`;
   }
   for(const p of analysis.palaces){
-    facts[`strength_${p.number}`]=`Cung ${p.number}: ${p.star.vi} ${p.strength.star.status} theo tháng ${board.pillars.month.vi} (${p.strength.monthElement}). ${p.strength.convention}`;
+    const stemStrength=p.strength.stems.map(s=>`${s.stem}: ${s.capacityWeight>=0.8?'mạnh':s.capacityWeight>=0.6?'khá mạnh':s.capacityWeight>=0.4?'trung bình':s.capacityWeight>=0.2?'yếu':'rất yếu'}${s.carried?' (can ký)':''} — ${s.longevity.meaning}`).join(' | ');
+    facts[`strength_${p.number}`]=`Cung ${p.number}: Cửu Tinh ${p.star.vi} ${p.strength.star.level}; Bát Môn ${p.door.vi} ${p.strength.door.level}; môi trường cung ${p.strength.palace.level}; Can: ${stemStrength}. Tháng ${board.pillars.month.vi} (${p.strength.monthElement}). KM-STRENGTH-2.0 dùng mô hình riêng cho Tinh/Môn/Can/Cung; các mức này là lực biểu tượng, không phải xác suất.`;
     const s=analysis.structures.byPalace[p.number];
     const roleResponses=s.stemResponses.filter(x=>x.actorIds.length).map(x=>`${x.pair}: ${x.plainMeaning}${x.carried?' (can ký)':''}`);
     const harms=s.fourHarms.map(x=>x.code+(x.stem?`:${x.stem}`:''));

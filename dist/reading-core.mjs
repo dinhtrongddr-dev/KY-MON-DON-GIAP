@@ -66,6 +66,7 @@ export function prepareReading(body) {
       'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất→2, Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
       'KM-STRUCTURE-2.0 lưu riêng chiều Môn khắc Cung và Cung khắc Môn; tên “Môn bức/Cung bức” có dị bản nên không dùng tên gọi để thay logic ngũ hành. Khai–Hưu–Sinh là ba cát môn theo quy ước; Cảnh dùng tùy việc, không tự động là thuận.',
       'Thập Can Khắc Ứng bao phủ 81 tổ hợp Tam Kỳ/Lục Nghi nhìn thấy trên thiên–địa bàn; chỉ tổ hợp gắn đúng Dụng Thần/vai mới được nâng trọng số. Cách cục thuận/nghịch là điều kiện cấu trúc, không phải xác suất hay kết quả đã xảy ra.',
+      'KM-STRENGTH-2.0 tách Cửu Tinh, Bát Môn, Thập Can–Thập Nhị Trường Sinh và môi trường Cung. Không lấy sức của Tinh thay cho Môn/Can; Dụng Thần yếu chỉ làm hạ mức phát huy, không tự biến thành kết quả xấu chắc chắn.',
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',

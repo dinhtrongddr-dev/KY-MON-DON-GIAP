@@ -1,5 +1,6 @@
 import {resolveContradictions} from './contradictions.mjs';
 import {relevantActorIds} from './actorRelevance.mjs';
+import {aggregateRoleStrength} from './strength.mjs';
 const symbol=s=>s?{id:s.id,han:s.han,vi:s.vi,element:s.element}:null;
 export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
   const relevant=new Set(relevantActorIds(context,analysis.roles,modePlan));
@@ -22,7 +23,7 @@ export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
       roles:roles.map(r=>({id:r.id,meaning:r.semanticRole,status:r.status,stem:r.stem||null,
         yongshenTier:r.yongshenTier||null,yongshenOrder:r.yongshenOrder||null,yongshenPurpose:r.yongshenPurpose||null,yongshenDomain:r.yongshenDomain||null,yongshenWeight:r.yongshenWeight||0})),
       symbols:{door:symbol(p.door),star:symbol(p.star),deity:symbol(p.spirit),heavenStems:p.heavenStems.map(s=>({han:s.han,vi:s.vi,element:s.element})),earthStem:{han:p.earthStem.han,vi:p.earthStem.vi,element:p.earthStem.element}},
-      strength:p.strength.star,states,
+      strength:p.strength.star,strengthProfile:p.strength,capacityStrength:aggregateRoleStrength(roles,p.strength),states,
       fourHarms:structure?.fourHarms||[],
       stemResponses:(structure?.stemResponses||[]).map(r=>({...r,evidenceId:`structure_${p.number}_${r.pair}_${r.carried?'carried':'main'}`})),
       structurePatterns:(structure?.patterns||[]).map((r,i)=>({...r,evidenceId:`structure_pattern_${p.number}_${i}`})),
