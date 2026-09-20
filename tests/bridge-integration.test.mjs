@@ -56,7 +56,7 @@ test('a shared result gets a public unguessable web link that opens without the 
   const payload={schemaVersion:'QimenShare/1',kind:'question',report:{reportType:'Hỏi việc',generatedAt:'20/09/2026 10:30',model:'GPT-5.6 Sol / high',inputFields:[{label:'Sự việc cần hỏi',value:'<script>alert(1)</script> hợp đồng SNP'}],board:{palaces:[{number:1,title:'Khảm 1',subtitle:'Bắc · Thủy',spirit:{vi:'Trực Phù'},star:{vi:'Thiên Tâm'},heaven:{vi:'Giáp'},door:{vi:'Khai Môn'},earth:{vi:'Mậu'}}],flags:['Trực Phù: Thiên Tâm']},contextSections:[{title:'Luận tượng',text:'Nội dung đối chiếu'}],analysisSections:[],aiSections:[{title:'Bài luận',paragraphs:[[{text:'Kết quả đã chia sẻ.',bold:true}]]}]}};
   assert.equal((await call('/api/share',{body:payload,headers:{'X-Qimen-Token':'wrong'}})).status,401);
   const created=await call('/api/share',{body:payload});assert.equal(created.status,201);
-  const data=JSON.parse(created.text);assert.match(data.id,/^[A-Za-z0-9_-]{20,64}$/);assert.equal(data.url,'https://integration.trycloudflare.com/s/'+data.id);
+  const data=JSON.parse(created.text);assert.match(data.id,/^[A-Za-z0-9_-]{20,64}$/);assert.equal(data.url,'https://integration.trycloudflare.com/s/'+data.id);assert.ok(Date.parse(data.expiresAt)>Date.parse(data.createdAt));
   const page=await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':''}});
   assert.equal(page.status,200);assert.match(page.headers['content-type'],/^text\/html/);assert.match(page.headers['x-robots-tag'],/noindex/);
   assert.match(page.text,/Kỳ Môn Hỏi Việc/);assert.match(page.text,/Kết quả đã chia sẻ/);assert.match(page.text,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);assert.doesNotMatch(page.text,/<script>alert\(1\)<\/script>/);

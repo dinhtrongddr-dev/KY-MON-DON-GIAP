@@ -9,7 +9,7 @@ const payload=(label='x')=>({schemaVersion:SHARE_SCHEMA,kind:'question',report:{
 async function temp(t){const dir=await mkdtemp(join(tmpdir(),'qimen-share-store-'));t.after(()=>rm(dir,{recursive:true,force:true}));return dir;}
 
 test('shared results expire after 90 days and expired data is deleted on access',async t=>{
-  const dir=await temp(t),record=await saveShare(dir,payload('ttl')),file=join(dir,record.id+'.json'),info=await stat(file);
+  const dir=await temp(t),record=await saveShare(dir,payload('ttl')),file=join(dir,record.id+'.json'),info=await stat(file);assert.equal(Date.parse(record.expiresAt)-Date.parse(record.createdAt),90*24*60*60*1000);
   assert.ok(await loadShare(dir,record.id,{now:info.mtimeMs+89*24*60*60*1000}));
   assert.equal(await loadShare(dir,record.id,{now:info.mtimeMs+91*24*60*60*1000}),null);
   assert.equal((await readdir(dir)).length,0);

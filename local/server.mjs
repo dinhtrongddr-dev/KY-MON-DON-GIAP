@@ -12,7 +12,7 @@ import {interpretMenhReading} from './menh-interpret.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {defaultAiDiagnosticPath,recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
-import {defaultShareDir,loadShare,renderSharePage,saveShare} from './share-store.mjs';
+import {defaultShareDir,loadShare,pruneShares,renderSharePage,saveShare} from './share-store.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
@@ -104,7 +104,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
          let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
          const record=await saveShare(shareDir,body);
          const publicOrigin=host.type==='tunnel'?('https://'+host.hostname):origin;
-         return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt});
+         return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt,expiresAt:record.expiresAt});
        }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
      }
      if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
@@ -191,6 +191,9 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.zip':'application/zip'})[extname(file)]||'text/plain');res.writeHead(200);res.end(req.method==='HEAD'?undefined:data);
    }catch{send(404,{error:'Thiếu tệp giao diện.'});}
  });
+ const sharePruneTimer=setInterval(()=>{pruneShares(shareDir).catch(()=>{});},6*60*60*1000);sharePruneTimer.unref?.();
+ pruneShares(shareDir).catch(()=>{});
+ server.on('close',()=>clearInterval(sharePruneTimer));
  return {server,token,origin};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
