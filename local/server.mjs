@@ -12,6 +12,7 @@ import {interpretMenhReading} from './menh-interpret.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {defaultAiDiagnosticPath,recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
+import {defaultShareDir,loadShare,renderSharePage,saveShare} from './share-store.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
@@ -49,7 +50,7 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
  let busy=false;
  const origin=`http://127.0.0.1:${port}`;
@@ -95,6 +96,17 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
      }
      failures.delete(client);
+     if(path==='/api/share'&&req.method==='POST'){
+       if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
+       try{
+         const chunks=[];let size=0;
+         for await(const c of req){size+=c.length;if(size>256000)return send(413,{error:'Dữ liệu chia sẻ quá lớn.'});chunks.push(c);}
+         let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
+         const record=await saveShare(shareDir,body);
+         const publicOrigin=host.type==='tunnel'?('https://'+host.hostname):origin;
+         return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt});
+       }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
+     }
      if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
      const isMenhRead=path==='/api/menh/read'&&req.method==='POST';
      const isQuestionRead=path==='/api/read'&&req.method==='POST';
@@ -156,6 +168,16 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
         }
       }
      return;
+   }
+   const shareMatch=/^\/s\/([A-Za-z0-9_-]{20,64})$/.exec(path);
+   if(shareMatch&&['GET','HEAD'].includes(req.method)){
+     const record=await loadShare(shareDir,shareMatch[1]);
+     if(!record){res.writeHead(404,{'Content-Type':'text/html; charset=utf-8','X-Robots-Tag':'noindex, nofollow, noarchive'});return res.end(req.method==='HEAD'?undefined:'<!doctype html><meta charset="utf-8"><title>Link không tồn tại</title><p>Link chia sẻ không tồn tại hoặc đã bị xóa.</p>');}
+     const page=renderSharePage(record);
+     res.setHeader('Content-Type','text/html; charset=utf-8');
+     res.setHeader('X-Robots-Tag','noindex, nofollow, noarchive');
+     res.setHeader('Content-Security-Policy',"default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
+     res.writeHead(200);return res.end(req.method==='HEAD'?undefined:page);
    }
    if(host.type==='tunnel'){
      res.writeHead(302,{Location:SITE_ORIGIN+'/','Cache-Control':'no-store'});

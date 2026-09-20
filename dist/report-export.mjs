@@ -1,4 +1,4 @@
-import {buildScreenshotPdf} from './question-report.mjs';
+import {SHARE_ORIGIN} from './site-config.mjs';
 const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
 const selectedText=id=>{const el=document.getElementById(id);return clean(el?.selectedOptions?.[0]?.textContent||el?.value);};
 const PAGE_W=1240,PAGE_H=1754,MARGIN=82,CONTENT_W=PAGE_W-MARGIN*2,PAGE_BOTTOM=PAGE_H-96;
@@ -68,6 +68,36 @@ function captureMenhVisual(){
   }finally{if(selected&&self&&self!==selected)selected.click();}
 }
 function pdfReport(kind,body,model,boardSelector){return {title:'Kỳ Môn Bàn',reportType:kind==='menh'?'Mệnh':'Hỏi việc',generatedAt:new Date().toLocaleString('vi-VN'),filenameBase:filenameBase(kind,body),model,inputFields:inputFields(kind,body),board:extractBoard(boardSelector),analysisSections:extractAnalysisSections(kind),aiSections:extractAiSections(kind)};}
+function extractContextSections(kind){
+  const rows=[];
+  const add=(title,node)=>{if(!node)return;const value=textWithoutTechnical(node);if(value)rows.push({title,text:value});};
+  if(kind==='menh'){
+    add('Luận tượng cung bản mệnh',document.querySelector('#menh-deterministic .menh-inspector'));
+    add('Quan hệ Ngũ hành',document.querySelector('#menh-deterministic .element-panel'));
+    const method=document.querySelector('#menh-deterministic .menh-method-details');if(method){const value=clean(method.textContent);if(value)rows.push({title:'Quy tắc và thời điểm sinh',text:value});}
+  }else{
+    add('Luận tượng cung đang xem',document.querySelector('#result .inspector'));
+    add('Quan hệ Ngũ hành',document.querySelector('#result .element-panel'));
+  }
+  return rows;
+}
+export function buildSharePayload(kind,body,model,boardSelector){
+  const report=pdfReport(kind,body,model,boardSelector);
+  report.contextSections=extractContextSections(kind);
+  return {schemaVersion:'QimenShare/1',kind,report};
+}
+function shareApiEndpoint(){
+  const host=String(globalThis.location?.hostname||'').toLowerCase();
+  if(host==='127.0.0.1'||host==='localhost'||host.endsWith('.trycloudflare.com'))return (globalThis.location?.origin||'')+'/api/share';
+  return SHARE_ORIGIN+'/api/share';
+}
+async function requestShare(payload,token){
+  if(!token)throw new Error('Nhập mã kết nối AI trước khi tạo link chia sẻ.');
+  const response=await fetch(shareApiEndpoint(),{method:'POST',headers:{'Content-Type':'application/json','X-Qimen-Token':token},body:JSON.stringify(payload),credentials:'omit',cache:'no-store'});
+  let data;try{data=await response.json();}catch{throw new Error('Máy chủ chia sẻ trả dữ liệu không đọc được.');}
+  if(!response.ok||!data?.url)throw new Error(data?.error||'Không tạo được link chia sẻ.');
+  return data;
+}
 function makeCanvas(){const canvas=document.createElement('canvas');canvas.width=PAGE_W;canvas.height=PAGE_H;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,PAGE_W,PAGE_H);ctx.textBaseline='top';return {canvas,ctx,y:MARGIN};}
 function font(ctx,size,weight=400){ctx.font=`${weight} ${size}px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif`;}
 function setFont(ctx,size,bold){font(ctx,size,bold?750:400);}
@@ -127,17 +157,32 @@ export function buildImagePdf(canvases){
   const parts=[ascii('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n')],offsets=[0];let offset=parts[0].length;for(let id=1;id<objects.length;id++){offsets[id]=offset;const part=concat([ascii(`${id} 0 obj\n`),objects[id],ascii('\nendobj\n')]);parts.push(part);offset+=part.length;}const xref=offset;let table=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;for(let id=1;id<objects.length;id++)table+=`${String(offsets[id]).padStart(10,'0')} 00000 n \n`;table+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;parts.push(ascii(table));return new Blob(parts,{type:'application/pdf'});
 }
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.rel='noopener';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);}
-function isMobileShareDevice(){const ua=String(navigator.userAgent||'');return /Android|iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
 export function initPdfExport({kind,buttonId,statusId,prepare,boardSelector,captureReportVisual}){
-  const button=document.getElementById(buttonId),status=document.getElementById(statusId);let model='',preparedContext=null; if(!button)return {setModel(){},clear(){}};
-  const clear=()=>{model='';preparedContext=null;button.hidden=true;},setModel=(modelUsed,prepared)=>{model=modelUsed?`${modelUsed.label} / ${modelUsed.effort}`:'';preparedContext=prepared;button.hidden=false;};
-  button.addEventListener('click',async()=>{let body,snapshot,answer;const exactPrepared=preparedContext;try{
-    if(kind==='question'){
-      if(!exactPrepared)throw new Error('Hãy luận bằng AI trước khi xuất PDF.');
-      body=exactPrepared.request;snapshot=captureReportVisual(exactPrepared);answer=document.getElementById('ai-answer');
-    }else{body=prepare();snapshot=captureMenhVisual();answer=document.getElementById('menh-ai-answer');}
-  }catch(e){status.textContent=e.message;return;}button.disabled=true;const before=status.textContent;status.textContent='Đang tạo file PDF…';
-    try{const blob=await buildScreenshotPdf({kind}),name=filenameBase(kind,body)+'.pdf',file=new File([blob],name,{type:'application/pdf'});const canMobileShare=isMobileShareDevice()&&navigator.share&&navigator.canShare?.({files:[file]});if(canMobileShare){try{await navigator.share({title:'Kỳ Môn Bàn',text:'Báo cáo Kỳ Môn Bàn',files:[file]});status.textContent='Đã mở bảng chia sẻ PDF.';}catch(e){if(e.name==='AbortError')status.textContent=before;else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}}else{download(blob,name);status.textContent='Đã tải file PDF về máy.';}}
-    catch(e){status.textContent=e.message||'Không tạo được PDF.';}finally{button.disabled=false;}});
+  const button=document.getElementById(buttonId),status=document.getElementById(statusId);let model='',preparedContext=null;
+  if(!button)return {setModel(){},clear(){}};
+  const shareLink=document.createElement('a');shareLink.className='share-result-link';shareLink.hidden=true;shareLink.target='_blank';shareLink.rel='noopener noreferrer';shareLink.textContent='Mở link chia sẻ';button.insertAdjacentElement('afterend',shareLink);
+  const clear=()=>{model='';preparedContext=null;button.hidden=true;shareLink.hidden=true;shareLink.removeAttribute('href');};
+  const setModel=(modelUsed,prepared)=>{model=modelUsed?(modelUsed.label+' / '+modelUsed.effort):'';preparedContext=prepared;button.hidden=false;};
+  button.addEventListener('click',async()=>{
+    let body;const exactPrepared=preparedContext;
+    try{
+      if(kind==='question'){if(!exactPrepared)throw new Error('Hãy luận bằng AI trước khi chia sẻ.');body=exactPrepared.request;}
+      else body=prepare();
+    }catch(e){status.textContent=e.message;return;}
+    const token=clean(document.getElementById('local-token')?.value);
+    button.disabled=true;const before=status.textContent;status.textContent='Đang tạo link chia sẻ…';
+    try{
+      const data=await requestShare(buildSharePayload(kind,body,model,boardSelector),token);
+      shareLink.href=data.url;shareLink.hidden=false;
+      if(navigator.share){
+        try{await navigator.share({title:'Kỳ Môn Bàn',text:'Xem kết quả Kỳ Môn đã chia sẻ',url:data.url});status.textContent='Đã mở bảng chia sẻ link.';}
+        catch(e){status.textContent='Link đã tạo. Bấm Mở link chia sẻ để xem.';}
+      }else{
+        let copied=false;try{await navigator.clipboard?.writeText(data.url);copied=true;}catch{}
+        status.textContent=copied?'Đã sao chép link chia sẻ.':'Link đã tạo. Bấm Mở link chia sẻ để xem.';
+      }
+    }catch(e){status.textContent=e.message||'Không tạo được link chia sẻ.';shareLink.hidden=true;}
+    finally{button.disabled=false;if(!status.textContent)status.textContent=before;}
+  });
   return {setModel,clear};
 }

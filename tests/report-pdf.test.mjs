@@ -53,31 +53,41 @@ test('PDF preserves emphasized AI phrases as bold and renders an app-like colore
   assert.ok(ops.some(x=>x.op==='text'&&x.text.includes('BẢN MỆNH · BẠN Ở ĐÂY')));
 });
 
-test('browser UI exposes one PDF export/share button for both Hỏi việc and Mệnh',()=>{
+test('browser UI exposes a cross-device web-link share action for Hỏi việc and Mệnh',()=>{
   const question=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8'),menh=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8'),client=readFileSync(new URL('../dist/report-export.mjs',import.meta.url),'utf8'),server=readFileSync(new URL('../local/server.mjs',import.meta.url),'utf8');
-  assert.match(question,/id="report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);assert.match(menh,/id="menh-report-pdf"[^>]*>Xuất \/ chia sẻ PDF</);
-  assert.match(client,/title:'Kỳ Môn Bàn'/);assert.match(client,/ky-mon-ban-hoi-viec/);assert.match(client,/ky-mon-ban-menh/);
-  assert.match(client,/captureMenhVisual/);assert.match(client,/buildScreenshotPdf/);assert.match(client,/answer=document\.getElementById\('menh-ai-answer'\)/);assert.match(client,/isMobileShareDevice/);assert.match(client,/canMobileShare=isMobileShareDevice\(\)&&navigator\.share/);assert.match(client,/Đã tải file PDF về máy/);assert.match(client,/toDataURL\('image\/jpeg'/);assert.match(client,/details,button,\.ai-trace,\.ai-evidence/);
-  assert.match(server,/['\"]\/question-report\.mjs['\"]/);assert.doesNotMatch(client,/api\/export\/pdf/);
+  assert.match(question,/id="report-pdf"[^>]*>Chia sẻ link kết quả</);assert.match(menh,/id="menh-report-pdf"[^>]*>Chia sẻ link kết quả</);
+  assert.match(client,/schemaVersion:'QimenShare\/1'/);assert.match(client,/SHARE_ORIGIN/);assert.match(client,/\/api\/share/);assert.match(client,/navigator\.share\(\{title:'Kỳ Môn Bàn'.*url:data\.url/);
+  assert.match(client,/navigator\.clipboard\?\.writeText\(data\.url\)/);assert.match(client,/Mở link chia sẻ/);assert.doesNotMatch(client,/buildScreenshotPdf/);
+  assert.match(server,/path==='\/api\/share'/);assert.match(server,/\/s\//);assert.match(server,/X-Robots-Tag/);
 });
 
 const {writeQuestionPdf,extractReadingBlocks}=await import('../dist/question-report.mjs');
 const {initPdfExport}=await import('../dist/report-export.mjs');
 
-test('question click passes the exact retained prepared object and never prepares again',async t=>{
-  const previous=globalThis.document;t.after(()=>{globalThis.document=previous;});
-  let click,captured,prepares=0;
-  const button={addEventListener(name,handler){click=handler;}},status={};
-  globalThis.document={getElementById:id=>id==='button'?button:status};
-  const pdf=initPdfExport({kind:'question',buttonId:'button',statusId:'status',prepare(){prepares++;throw Error('must not prepare');},captureReportVisual(prepared){captured=prepared;throw Error('capture reached');}});
-  const exact={request:{question:'Câu hỏi'},chart:{},analysis:{},context:{}};
-  pdf.setModel({label:'Model',effort:'high'},exact);await click();
-  assert.strictEqual(captured,exact);assert.equal(prepares,0);assert.equal(status.textContent,'capture reached');
-  pdf.clear();captured=null;await click();assert.equal(captured,null);assert.equal(button.hidden,true);
+test('question link sharing uses the exact retained AI request and never prepares again',async t=>{
+  const saved={document:globalThis.document,fetch:globalThis.fetch,location:globalThis.location,navigator:globalThis.navigator};
+  t.after(()=>{for(const [k,v] of Object.entries(saved)){if(v===undefined)delete globalThis[k];else Object.defineProperty(globalThis,k,{value:v,writable:true,configurable:true});}});
+  let click,prepares=0,captureCalls=0,fetchBody,linkNode;
+  const button={hidden:true,disabled:false,addEventListener(name,handler){click=handler;},insertAdjacentElement(where,node){linkNode=node;}},status={textContent:''};
+  const token={value:'share-token'},blank={value:'',selectedOptions:[]};
+  const doc={
+    getElementById(id){return id==='button'?button:id==='status'?status:id==='local-token'?token:null;},
+    querySelector(){return null;},
+    createElement(){return {hidden:false,className:'',target:'',rel:'',textContent:'',href:'',removeAttribute(name){delete this[name];}};}
+  };
+  Object.defineProperty(globalThis,'document',{value:doc,writable:true,configurable:true});
+  Object.defineProperty(globalThis,'location',{value:{hostname:'localhost',origin:'http://localhost:8765'},writable:true,configurable:true});
+  Object.defineProperty(globalThis,'navigator',{value:{clipboard:{async writeText(){}}},writable:true,configurable:true});
+  globalThis.fetch=async(url,options)=>{fetchBody=JSON.parse(options.body);return {ok:true,async json(){return {url:'http://localhost:8765/s/abcdefghijklmnopqrstuvwx'};}};};
+  const share=initPdfExport({kind:'question',buttonId:'button',statusId:'status',prepare(){prepares++;throw Error('must not prepare');},boardSelector:'#qimen-board',captureReportVisual(){captureCalls++;}});
+  const exact={request:{question:'Câu hỏi chính xác'},chart:{},analysis:{},context:{}};
+  share.setModel({label:'Model',effort:'high'},exact);await click();
+  assert.equal(prepares,0);assert.equal(captureCalls,0);assert.equal(fetchBody.kind,'question');assert.equal(fetchBody.report.inputFields[0].value,'Câu hỏi chính xác');
+  assert.equal(fetchBody.shareToken,undefined);assert.equal(linkNode.href,'http://localhost:8765/s/abcdefghijklmnopqrstuvwx');assert.equal(linkNode.hidden,false);
+  share.clear();assert.equal(button.hidden,true);assert.equal(linkNode.hidden,true);
   const ai=readFileSync(new URL('../dist/ai-local.mjs',import.meta.url),'utf8');
   assert.match(ai,/const prepared=await buildReadingRequest\(body\)/);assert.match(ai,/pdf\.setModel\(data\.modelUsed,prepared\)/);
 });
-
 function element(tag,...children){
   const node={nodeType:1,tagName:tag,childNodes:children.map(c=>typeof c==='string'?{nodeType:3,textContent:c}:c),querySelectorAll(){return [];},cloneNode(){return this;}};
   node.children=node.childNodes.filter(c=>c.nodeType===1);for(const child of node.childNodes)child.parentNode=node;return node;
