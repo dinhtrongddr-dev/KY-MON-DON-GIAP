@@ -107,6 +107,10 @@ export function renderReading(answer,data,prepared) {
   if(tabs.timing){
     section(profile.labels.timing,r.timing,tabs.timing,tabs.timing);
     if(profile.mode==='prediction'&&!g.timing?.allowedPredictions?.length)prose(g.timing?.limit||g.likelyScenario.timing.limit,tabs.timing);
+    if(profile.mode==='prediction'&&g.timing?.pace&&g.timing.pace.tendency!=='unknown'){
+      const paceLabel={fast:'thiên nhanh/gần',slow:'thiên chậm/xa',mixed:'nhanh/chậm đan xen'}[g.timing.pace.tendency]||'chưa rõ';
+      node('p',`Nhịp ứng kỳ: ${paceLabel}. Đây là nhịp tương đối của bàn, không phải ngày xảy ra sự việc.`,tabs.timing,'ai-note');
+    }
     if(profile.mode==='prediction'&&g.timing?.window)node('p',`Khoảng hỏi: ${g.timing.window.start} đến ${g.timing.window.end} (UTC${g.timing.window.tzOffset>=0?'+':''}${g.timing.window.tzOffset}). Đây là phạm vi lịch, không phải ngày dự báo.`,tabs.timing,'ai-note');
     renderComparison(tabs.timing,prepared);
     const rows=prepared.context.allInOne.comparison?.ranking||prepared.context.allInOne.plan.computed.ranking||[];

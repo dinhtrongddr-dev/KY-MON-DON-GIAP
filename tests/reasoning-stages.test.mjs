@@ -78,7 +78,8 @@ for(const [name,type,effect] of [['counterflow','control','pressure'],['supporti
 test('timing: explicit horizon scans deterministic Void/Horse response candidates without promising outcomes',()=>{
   const t=graph(prepare()).timing;
   assert.equal(t.window.start,'2026-09-14');assert.equal(t.window.end,'2026-09-20');
-  assert.equal(t.timingConfidence,'medium');assert.equal(t.basis,'deterministic_response_scan');
+  assert.equal(t.timingConfidence,'medium');assert.equal(t.basis,'deterministic_response_scan_v2');
+  assert.equal(t.version,'KM-YINGQI-2.0');assert.equal(t.pace.tendency,'slow');
   assert.deepEqual(t.candidates.map(x=>x.display),['17/09/2026','18/09/2026','19/09/2026']);
   assert.ok(t.candidates.every(x=>x.rule==='void_release'&&x.reasons.some(r=>/Không/.test(r))));
   assert.ok(t.allowedPredictions.includes('17/09/2026'));assert.match(t.limit,/không phải ngày bảo đảm/i);

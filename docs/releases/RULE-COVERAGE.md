@@ -18,12 +18,13 @@ are 1900 through 2100. Chaibu and Mao Shan remain separate yuan methods.
 | Center hosting | Center 5 target hosted at Kun 2; Qin and center stem travel with Rui; independent carried-stem conditions | The selected center convention is explicitly part of this engine |
 | Void/horse, Fu/Fan Yin | Six xun heads, void branches, horse branches/palaces, star and door layers | Symbolic conditions do not establish real events |
 | Worked classical boards | Eight externally transcribed configurations in Dun Jia Yan Yi, volume 2 | Fixed reference examples, not generated snapshots |
-| Door pressure, punishment, tombs | Door controls palace; Wu3/Ji2/Geng8/Xin9/Ren4/Gui4; Yi6/Bing6/Ding8; main and carried stems independently | Tomb coverage deliberately limited to three wonders |
+| Door pressure, punishment, tombs | Door controls palace; Wu3/Ji2/Geng8/Xin9/Ren4/Gui4; Yi2/Bing6/Ding8; main and carried stems independently | Tomb coverage deliberately limited to three wonders; Yi→Kun 2 correction is source-backed by Dun Jia Yan Yi vol. 2 and Qimen Fa Qiao |
 | Star seasonal strength | Yan Bo Diao Sou Ge mapping for all five element relationships | Not ordinary seasonal strength for stems/doors; no Earth 18-day rule |
 | Special combinations | Six explicit stem pairs, Tian/Di/Ren Dun; Wu Bu Yu Shi requires hour-over-day control with equal polarity | Not the entire ten-stem response corpus |
 | Core immutability | Six source hashes plus the unchanged 480-board output SHA-256; mutation and extra-file checks | A hash detects drift; it is not an independent proof of rule correctness |
 | Analysis/context/planner | 16 topics x 2 methods; roles, unresolved people, bundles, all directional element links, same-palace aliases, dominant conflicts and graph endpoints | Symbolic scenarios and finite intent classification are not empirical causal models |
 | Modes/comparisons | Distinct prediction/strategy/business/negotiation plans; 2-12 timing candidates and eight directions; original self pillar preserved | Relative comparison scores are not calibrated probabilities |
+| KM-YINGQI-2.0 timing | Explicit user horizon only; pace signal from inner/outer plate plus Fu/Fan Yin; dated trigger priority Void fill/clash → Horse arrival/clash → Three-Wonder Tomb arrival/clash | Pace does not fabricate dates; punishment, stem/door timing, Fu/Fan Yin dates and non-Three-Wonder tomb dates remain unsupported |
 | Writer/validation | Frozen claims, actions, edges and candidates; words/conditions/resolution checked; one repair; fabricated references and some certainty forms rejected | Lexical/schema checks cannot guarantee every sentence is grounded or useful |
 | Transport/browser | Fingerprints recomputed server-side; pairing, Host/Origin, cancellation, stale responses, errors after keepalive; relay preserves streaming JSON; safe text rendering and five tabs | Offline tests use controlled model responses; real-provider availability is external |
 | Distribution | Required Windows inputs and SHA-256 pins; deterministic ZIP, stale-source/CRC checks; launcher compilation and self-test | The legacy C# compiler is not byte-reproducible; the shipped EXE is separately pinned |
@@ -40,6 +41,8 @@ change and a new upgrade branch. Keep the original frozen tag intact.
 
 - Yan Bo Diao Sou Ge: https://zh.wikisource.org/wiki/煙波釣叟歌
 - Dun Jia Yan Yi, volume 2: https://zh.wikisource.org/wiki/遁甲演義_(四庫全書本)/卷2
+- Qimen Fa Qiao, volume 2 (Void/Tomb discussion): https://ctext.org/wiki.pl?chapter=118328&if=gb
+- Secondary procedural Ying-Qi reference (pace and trigger ordering context): https://www.yjgov.com/30.html
 - HKO 2024 major terms: https://www.hko.gov.hk/en/gts/astron2024/files/2024SolarTerms24.pdf
 - HKO term definitions: https://www.hko.gov.hk/en/gts/time/24solarterms.htm
 - Vendored calendar source: https://github.com/6tail/lunar-javascript

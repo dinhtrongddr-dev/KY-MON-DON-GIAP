@@ -23,6 +23,6 @@ export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.p
   return freezeData(validateAnalysis({schemaVersion:'QimenAnalysis/1',boardVersion:board.schemaVersion,
     roles,palaces,relations:palaceRelationships(board),patterns:specialPatterns(board),contradictions,
     hostGuest:{host:self.palace,guest:event.palace,convention:'Cung ta–sự việc là trục tham khảo; không mặc định sự việc là đối phương. Chủ tĩnh / khách động là cách chọn hành động, không phải danh tính khách hàng.'},
-    coverage:{computed:['Nhật/Thời can và Giáp ẩn','dụng thần','64 quan hệ cung có chiều','Tinh vượng suy theo tháng tiết khí','Không/Mã','Môn bức','kích hình từng can','Tam kỳ nhập mộ','các lớp phản/phục ngâm','tổ hợp can đã khai báo','mâu thuẫn'],
-      unsupported:['Nhập mộ các can ngoài Tam kỳ','Thập can khắc ứng đầy đủ','Phép ứng kỳ định ngày chắc chắn','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
+    coverage:{computed:['Nhật/Thời can và Giáp ẩn','dụng thần','64 quan hệ cung có chiều','Tinh vượng suy theo tháng tiết khí','Không/Mã','Môn bức','kích hình từng can','Tam kỳ nhập mộ Ất→2/Bính→6/Đinh→8','các lớp phản/phục ngâm','Ứng kỳ v2: nhịp Nội/Ngoại + Không/Mã/Mộ','tổ hợp can đã khai báo','mâu thuẫn'],
+      unsupported:['Nhập mộ các can ngoài Tam kỳ','Thập can khắc ứng đầy đủ','Ứng kỳ bằng Hình/Can/Môn hoặc Phản/Phục ngâm định ngày','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
 }

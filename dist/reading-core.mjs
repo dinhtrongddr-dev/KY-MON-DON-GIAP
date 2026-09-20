@@ -63,11 +63,11 @@ export function prepareReading(body) {
       'Giờ dân dụng theo UTC offset cố định do người dùng nhập; chưa hiệu chỉnh chân thái dương hoặc tự áp dụng giờ mùa hè lịch sử.',
       '23:00 đổi ngày. Giáp tìm nghi ẩn theo tuần của chính trụ; Nhật/Thời can ở thiên bàn, quan hệ người–việc xét hành cung.',
       'Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can ký sau đó cùng chuyển với Thiên Nhuế.',
-      'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất/Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
+      'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất→2, Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
       'Môn bức = Môn khắc cung. Khai–Hưu–Sinh là ba cát môn theo quy ước; Cảnh dùng tùy việc, không tự động là thuận.',
     ],
     unsupported:[
-      'Chưa tính nhập mộ các can ngoài Tam kỳ, thập can khắc ứng đầy đủ và ứng kỳ định ngày chắc chắn. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
+      'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
       'Dụng thần chủ đề là quy ước nhập môn của app, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
     ],
   };

@@ -144,7 +144,7 @@ test('civil-day/hour formulas independent of lunar library across 1900–2100, l
 });
 
 test('all six punishments, three wonder tombs and direction of door pressure, including carried stems',()=>{
-  const punish={'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4},tombs={'乙':6,'丙':6,'丁':8};
+  const punish={'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4},tombs={'乙':2,'丙':6,'丁':8};
   for(const number of ring) for(const stem of STEMS.slice(1)) {
     const p={...PALACES[number],heavenStems:[stem],door:{element:'Mộc'}};
     const c=palaceConditions(p);
