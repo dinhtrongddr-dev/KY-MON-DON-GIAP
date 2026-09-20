@@ -62,8 +62,9 @@ export async function saveShare(shareDir,payload){
   const raw=JSON.stringify(payload);
   if(Buffer.byteLength(raw)>MAX_SHARE_BYTES)throw new Error('Dữ liệu chia sẻ quá lớn.');
   if(payload?.schemaVersion!==SHARE_SCHEMA||!['question','menh'].includes(payload.kind)||!payload.report||typeof payload.report!=='object')throw new Error('Dữ liệu chia sẻ không hợp lệ.');
+  if(payload.snapshot!=null&&(payload.snapshot?.version!==1||typeof payload.snapshot?.html!=='string'||typeof payload.snapshot?.className!=='string'))throw new Error('Snapshot giao diện chia sẻ không hợp lệ.');
   await pruneShares(shareDir);
-  const id=randomBytes(18).toString('base64url'),createdAt=new Date(),record={id,schemaVersion:SHARE_SCHEMA,kind:payload.kind,createdAt:createdAt.toISOString(),expiresAt:new Date(createdAt.getTime()+SHARE_TTL_MS).toISOString(),report:payload.report};
+  const id=randomBytes(18).toString('base64url'),createdAt=new Date(),record={id,schemaVersion:SHARE_SCHEMA,kind:payload.kind,createdAt:createdAt.toISOString(),expiresAt:new Date(createdAt.getTime()+SHARE_TTL_MS).toISOString(),report:payload.report,...(payload.snapshot?{snapshot:payload.snapshot}:{})};
   const tmp=join(shareDir,'.'+id+'.'+process.pid+'.tmp'),file=join(shareDir,id+'.json');
   await writeFile(tmp,JSON.stringify(record),{encoding:'utf8',mode:0o600});await rename(tmp,file);
   await pruneShares(shareDir);

@@ -958,3 +958,18 @@ textarea:focus { outline:3px solid #bce8ce; }
 @media(max-width:900px){.menh-semantic-list{grid-template-columns:1fr 1fr}}@media(max-width:620px){.menh-semantic-list{grid-template-columns:1fr}.semantic-card-head{align-items:flex-start;flex-direction:column}}
 
 .share-result-link{display:inline-flex;align-items:center;justify-content:center;margin:14px 0 0 10px;min-height:46px;padding:0 16px;border:1px solid #2c6a53;border-radius:10px;color:#173f32;background:#fff;font-weight:750;text-decoration:none}.share-result-link[hidden]{display:none}@media(max-width:720px){.share-result-link{width:100%;margin-left:0}}
+
+
+body.share-view-mode .control-panel{display:none!important}
+body.share-view-mode .report-pdf-button,
+body.share-view-mode .share-result-link,
+body.share-view-mode .local-controls,
+body.share-view-mode .local-preference,
+body.share-view-mode .ai-feedback,
+body.share-view-mode .activity-summary,
+body.share-view-mode .activity-history,
+body.share-view-mode #local-setup,
+body.share-view-mode #rule-analyze,
+body.share-view-mode #rule-preview{display:none!important}
+body.share-view-mode main{padding-top:18px}
+.share-view-error{margin:24px 0}

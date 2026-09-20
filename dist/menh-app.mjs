@@ -1,3 +1,4 @@
+import {initSharedView} from './share-view.mjs';
 import {prepareMenhReading} from './menh-reading-core.mjs';
 import {renderMenhDeterministic} from './menh-view.mjs';
 import {initMenhAi} from './menh-ai.mjs';
@@ -108,3 +109,4 @@ annual.value=String(new Date().getFullYear());
 populateTimeSelectors();
 syncUnknownBirthTime();
 initMenhAi({prepare:()=>collectMenhForm(),activity});
+initSharedView({kind:'menh',resultSelector:'#menh-result'});

@@ -1,3 +1,4 @@
+import {initSharedView} from './share-view.mjs';
 import {BRANCHES, STAR_QIN, elementSlug} from './qimen/core/palace.mjs';
 import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
 import {generateQimen} from './qimen/core/board.mjs';
@@ -435,3 +436,4 @@ document.getElementById('rule-analyze').addEventListener('click',()=>{
   catch(e){rulePreview.textContent=e.message;rulePreview.hidden=false;}
 });
 initElementDiagram();
+initSharedView({kind:'question',resultSelector:'#result'});

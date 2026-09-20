@@ -81,10 +81,25 @@ function extractContextSections(kind){
   }
   return rows;
 }
+
+function captureAppSnapshot(kind){
+  const root=document.querySelector(kind==='menh'?'#menh-result':'#result');
+  if(!root)throw new Error('Chưa có kết quả để chia sẻ.');
+  const clone=root.cloneNode(true);
+  clone.querySelectorAll('.local-controls,.local-preference,.ai-feedback,.activity-summary,.activity-history,#local-setup,#rule-analyze,#rule-preview,.report-pdf-button,.share-result-link').forEach(node=>node.remove());
+  clone.querySelectorAll('script').forEach(node=>node.remove());
+  clone.querySelectorAll('*').forEach(node=>{
+    for(const attr of [...node.attributes]){
+      const name=attr.name.toLowerCase(),value=String(attr.value||'').trim().toLowerCase();
+      if(name.startsWith('on')||(name==='href'&&value.startsWith('javascript:'))||(name==='src'&&value.startsWith('javascript:')))node.removeAttribute(attr.name);
+    }
+  });
+  return {version:1,className:root.className,html:clone.innerHTML};
+}
 export function buildSharePayload(kind,body,model,boardSelector){
   const report=pdfReport(kind,body,model,boardSelector);
   report.contextSections=extractContextSections(kind);
-  return {schemaVersion:'QimenShare/1',kind,report};
+  return {schemaVersion:'QimenShare/1',kind,report,snapshot:captureAppSnapshot(kind)};
 }
 function shareApiEndpoint(){
   const host=String(globalThis.location?.hostname||'').toLowerCase();

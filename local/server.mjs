@@ -56,7 +56,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
  const origin=`http://127.0.0.1:${port}`;
  const failures=new Map(),activityClients=new Map();
  const track=(method,...args)=>{try{return activityStore?.[method]?.(...args)??null;}catch{return null;}};
- const files=new Set(['/index.html','/menh.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/report-export.mjs','/question-report.mjs','/reading-core.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const files=new Set(['/index.html','/menh.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/qimen.mjs','/ai-local.mjs','/report-export.mjs','/question-report.mjs','/share-view.mjs','/reading-core.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -67,13 +67,19 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    if(!host)return send(403,{error:'Host không hợp lệ.'});
    const requestUrl=new URL(req.url,origin),path=requestUrl.pathname;
    const requestOrigin=req.headers.origin;
-   const sameOriginPublic=host.type==='tunnel'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin'&&((path==='/api/status'&&req.method==='GET')||(path==='/api/activity'&&req.method==='GET')||(path==='/api/activity/chart'&&req.method==='POST'));
+   const publicShareMatch=/^\/api\/share\/([A-Za-z0-9_-]{20,64})$/.exec(path);
+   const sameOriginPublic=host.type==='tunnel'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin'&&((path==='/api/status'&&req.method==='GET')||(path==='/api/activity'&&req.method==='GET')||(path==='/api/activity/chart'&&req.method==='POST')||(publicShareMatch&&req.method==='GET'));
    if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginPublic)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
      res.setHeader('Access-Control-Allow-Methods','POST, GET, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
    }
    if(path.startsWith('/api/')){
+     if(publicShareMatch&&req.method==='GET'){
+       const record=await loadShare(shareDir,publicShareMatch[1]);
+       if(!record)return send(404,{error:'Link chia sẻ không tồn tại hoặc đã hết hạn.'});
+       return send(200,{id:record.id,kind:record.kind,createdAt:record.createdAt,expiresAt:record.expiresAt,snapshot:record.snapshot||null});
+     }
      const relayClient=String(req.headers['x-qimen-client']||'');
      const client=/^[a-f0-9]{64}$/i.test(relayClient)?relayClient:String(req.headers['cf-connecting-ip']||req.socket.remoteAddress||'unknown').slice(0,128);
      const now=Date.now();
@@ -173,6 +179,11 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    if(shareMatch&&['GET','HEAD'].includes(req.method)){
      const record=await loadShare(shareDir,shareMatch[1]);
      if(!record){res.writeHead(404,{'Content-Type':'text/html; charset=utf-8','X-Robots-Tag':'noindex, nofollow, noarchive'});return res.end(req.method==='HEAD'?undefined:'<!doctype html><meta charset="utf-8"><title>Link không tồn tại</title><p>Link chia sẻ không tồn tại hoặc đã bị xóa.</p>');}
+     if(record.snapshot?.html){
+       const appOrigin=host.hostname.endsWith(TUNNEL_SUFFIX)?('https://'+host.hostname):SITE_ORIGIN;
+       const target=appOrigin+(record.kind==='menh'?'/menh.html':'/')+'?share='+encodeURIComponent(record.id);
+       res.writeHead(302,{Location:target,'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow, noarchive'});return res.end();
+     }
      const page=renderSharePage(record);
      res.setHeader('Content-Type','text/html; charset=utf-8');
      res.setHeader('X-Robots-Tag','noindex, nofollow, noarchive');

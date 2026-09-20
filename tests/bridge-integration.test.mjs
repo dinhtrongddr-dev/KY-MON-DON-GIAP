@@ -53,14 +53,15 @@ test('the official website can reach protocol 5 through the existing tunnel',asy
 test('a shared result gets a public unguessable web link that opens without the pairing code',async t=>{
   const shareDir=await mkdtemp(join(tmpdir(),'qimen-share-test-'));t.after(()=>rm(shareDir,{recursive:true,force:true}));
   const call=await start(t,{shareDir});
-  const payload={schemaVersion:'QimenShare/1',kind:'question',report:{reportType:'Hỏi việc',generatedAt:'20/09/2026 10:30',model:'GPT-5.6 Sol / high',inputFields:[{label:'Sự việc cần hỏi',value:'<script>alert(1)</script> hợp đồng SNP'}],board:{palaces:[{number:1,title:'Khảm 1',subtitle:'Bắc · Thủy',spirit:{vi:'Trực Phù'},star:{vi:'Thiên Tâm'},heaven:{vi:'Giáp'},door:{vi:'Khai Môn'},earth:{vi:'Mậu'}}],flags:['Trực Phù: Thiên Tâm']},contextSections:[{title:'Luận tượng',text:'Nội dung đối chiếu'}],analysisSections:[],aiSections:[{title:'Bài luận',paragraphs:[[{text:'Kết quả đã chia sẻ.',bold:true}]]}]}};
+  const payload={schemaVersion:'QimenShare/1',kind:'question',report:{reportType:'Hỏi việc',generatedAt:'20/09/2026 10:30',model:'GPT-5.6 Sol / high',inputFields:[{label:'Sự việc cần hỏi',value:'<script>alert(1)</script> hợp đồng SNP'}],board:{palaces:[{number:1,title:'Khảm 1',subtitle:'Bắc · Thủy',spirit:{vi:'Trực Phù'},star:{vi:'Thiên Tâm'},heaven:{vi:'Giáp'},door:{vi:'Khai Môn'},earth:{vi:'Mậu'}}],flags:['Trực Phù: Thiên Tâm']},contextSections:[{title:'Luận tượng',text:'Nội dung đối chiếu'}],analysisSections:[],aiSections:[{title:'Bài luận',paragraphs:[[{text:'Kết quả đã chia sẻ.',bold:true}]]}]},snapshot:{version:1,className:'result',html:'<p id="question-summary">Kết quả đã chia sẻ.</p><div class="qimen-board">Bàn Kỳ Môn</div>'}};
   assert.equal((await call('/api/share',{body:payload,headers:{'X-Qimen-Token':'wrong'}})).status,401);
   const created=await call('/api/share',{body:payload});assert.equal(created.status,201);
   const data=JSON.parse(created.text);assert.match(data.id,/^[A-Za-z0-9_-]{20,64}$/);assert.equal(data.url,'https://integration.trycloudflare.com/s/'+data.id);assert.ok(Date.parse(data.expiresAt)>Date.parse(data.createdAt));
   const page=await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':''}});
-  assert.equal(page.status,200);assert.match(page.headers['content-type'],/^text\/html/);assert.match(page.headers['x-robots-tag'],/noindex/);
-  assert.match(page.text,/Kỳ Môn Hỏi Việc/);assert.match(page.text,/Kết quả đã chia sẻ/);assert.match(page.text,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);assert.doesNotMatch(page.text,/<script>alert\(1\)<\/script>/);
-  assert.equal((await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':'wrong'}})).status,200);
+  assert.equal(page.status,302);assert.equal(page.headers.location,'https://integration.trycloudflare.com/?share='+data.id);assert.match(page.headers['x-robots-tag'],/noindex/);
+  const shared=await call('/api/share/'+data.id,{headers:{Origin:origin,'X-Qimen-Token':''}});
+  assert.equal(shared.status,200);const sharedData=JSON.parse(shared.text);assert.equal(sharedData.kind,'question');assert.equal(sharedData.snapshot.html,payload.snapshot.html);assert.equal(sharedData.report,undefined);
+  assert.equal((await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':'wrong'}})).status,302);
 });
 
 test('slow tunnel readings preserve one complete validated protocol 5 JSON document',async t=>{

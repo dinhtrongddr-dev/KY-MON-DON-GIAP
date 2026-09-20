@@ -70,9 +70,11 @@ test('question link sharing uses the exact retained AI request and never prepare
   let click,prepares=0,captureCalls=0,fetchBody,linkNode;
   const button={hidden:true,disabled:false,addEventListener(name,handler){click=handler;},insertAdjacentElement(where,node){linkNode=node;}},status={textContent:''};
   const token={value:'share-token'},blank={value:'',selectedOptions:[]};
+  const snapshotClone={innerHTML:'<div class="qimen-board">Bàn Kỳ Môn</div>',querySelectorAll(){return [];}};
+  const snapshotRoot={className:'result',cloneNode(){return snapshotClone;}};
   const doc={
     getElementById(id){return id==='button'?button:id==='status'?status:id==='local-token'?token:null;},
-    querySelector(){return null;},
+    querySelector(selector){return selector==='#result'?snapshotRoot:null;},
     createElement(){return {hidden:false,className:'',target:'',rel:'',textContent:'',href:'',removeAttribute(name){delete this[name];}};}
   };
   Object.defineProperty(globalThis,'document',{value:doc,writable:true,configurable:true});
