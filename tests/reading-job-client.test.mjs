@@ -8,9 +8,9 @@ test('job client survives a temporary mobile network loss and later returns the 
   const original={fetch:globalThis.fetch,document:globalThis.document};
   t.after(()=>{globalThis.fetch=original.fetch;globalThis.document=original.document;});
   globalThis.document={hidden:false};
-  let polls=0,reconnects=0,running=0;
+  let starts=0,polls=0,reconnects=0,running=0;
   globalThis.fetch=async url=>{
-    if(url.endsWith('/api/read/start'))return response({jobId:'abcdefghijklmnopqrstuvwx',status:'running'},202);
+    if(url.endsWith('/api/read/start')){starts++;if(starts===1)throw new TypeError('response lost while app backgrounds');return response({jobId:'abcdefghijklmnopqrstuvwx',status:'running',reused:true},202);}
     if(url.includes('/api/jobs/')){
       polls++;
       if(polls===1)throw new TypeError('network lost');
@@ -24,7 +24,7 @@ test('job client survives a temporary mobile network loss and later returns the 
   assert.equal(started.jobId,'abcdefghijklmnopqrstuvwx');
   const result=await client.wait(started.jobId,new AbortController().signal);
   assert.deepEqual(result,{reading:{status:'completed'},ok:true});
-  assert.equal(reconnects,1);assert.equal(running,1);assert.equal(polls,3);
+  assert.equal(starts,2);assert.equal(reconnects,2);assert.equal(running,1);assert.equal(polls,3);
 });
 
 test('job client cancel uses the explicit DELETE job endpoint',async t=>{

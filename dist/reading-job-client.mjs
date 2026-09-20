@@ -20,8 +20,18 @@ export function createReadingJobClient({endpoint,getToken,onRunning,onReconnect,
     return data;
   }
   async function start(path,body,signal){
-    const data=await request(path,{method:'POST',body,signal});
-    return data?.jobId?{jobId:data.jobId,reused:Boolean(data.reused)}:{legacyResult:data};
+    let reconnecting=false;
+    while(true){
+      try{
+        const data=await request(path,{method:'POST',body,signal});
+        return data?.jobId?{jobId:data.jobId,reused:Boolean(data.reused)}:{legacyResult:data};
+      }catch(e){
+        if(e.name==='AbortError'||signal?.aborted)throw e;
+        if(!e.retryable)throw e;
+        if(!reconnecting){reconnecting=true;onReconnect?.();}
+        await pause(globalThis.document?.hidden?hiddenPollMs:pollMs,signal);
+      }
+    }
   }
   async function wait(jobId,signal){
     let reconnecting=false;
