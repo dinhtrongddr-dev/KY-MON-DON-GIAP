@@ -942,7 +942,7 @@ textarea:focus { outline:3px solid #bce8ce; }
 .date-picker-button{height:48px;border:1px solid var(--line-strong);border-radius:0 2px 2px 0;background:#f4f7f4;color:var(--jade-dark);font-weight:800;cursor:pointer}
 .date-picker-button:hover{background:var(--wood-soft)}
 .date-picker-button:focus-visible{outline:3px solid rgba(26,101,72,.18);outline-offset:2px}
-.native-date-picker{position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;padding:0;border:0}
+.native-date-picker{position:absolute;right:0;top:0;z-index:2;width:58px;height:48px;opacity:.001;pointer-events:auto;padding:0;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}.native-date-picker::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;cursor:pointer}.date-entry:focus-within .date-picker-button{outline:3px solid rgba(26,101,72,.18);outline-offset:2px}
 @media(max-width:900px){
   .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding-block:12px}
   .topbar>.brand{grid-column:1;justify-self:start}
