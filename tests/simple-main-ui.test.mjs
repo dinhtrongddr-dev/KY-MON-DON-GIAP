@@ -5,9 +5,12 @@ import {readFileSync} from 'node:fs';
 const read=name=>readFileSync(new URL('../dist/'+name,import.meta.url),'utf8');
 const main=read('index.html'),menh=read('menh.html'),guide=read('guide.html'),server=read('server.html'),info=read('info.html'),infoJs=read('info.mjs'),css=read('styles.css');
 
-test('primary pages expose three secondary indexes without changing the product switch',()=>{
+test('primary pages place three text utilities in the top-left header without changing the product switch',()=>{
   for(const html of [main,menh]){
-    assert.match(html,/class="utility-index"/);
+    const headerStart=html.indexOf('<header class="topbar">'),headerEnd=html.indexOf('</header>',headerStart);
+    const utility=html.indexOf('class="utility-index utility-topbar"',headerStart);
+    assert.ok(utility>headerStart&&utility<headerEnd,'utility nav must live inside topbar');
+    for(const label of ['Hướng dẫn','Thông tin','Kết nối'])assert.ok(html.slice(headerStart,headerEnd).includes('>'+label+'</a>'));
     for(const href of ['./guide.html','./server.html','./info.html'])assert.ok(html.includes('href="'+href+'"'));
     assert.match(html,/Kỳ Môn Hỏi Việc/);assert.match(html,/Kỳ Môn Mệnh/);
   }
@@ -27,6 +30,16 @@ test('Mệnh main uses the same compact AI connection and removes activity/scope
   assert.equal(menh.includes('menh-scope'),false);
   assert.match(menh,/id="menh-ai-connection-icon"[^>]*>×<\/span>/);
   assert.match(menh,/id="menh-local-check"[^>]*>[\s\S]*↵[\s\S]*<\/button>/);
+});
+
+test('primary inputs hide advanced time/place controls and verbose mode explanation while keeping the selects',()=>{
+  assert.match(main,/Nhóm sự việc<\/span><select id="topic"/);
+  assert.match(main,/id="qimen-mode"/);
+  assert.match(main,/id="mode-explanation"[^>]*hidden/);
+  assert.match(main,/class="timeplace-details" hidden/);
+  assert.match(menh,/class="timeplace-details menh-timeplace-details" hidden/);
+  assert.match(css,/\.mode-controls\{padding:0;border:0/);
+  assert.match(css,/\.timeplace-details\[hidden\]\{display:none!important\}/);
 });
 
 test('Guide covers modes, AI wait expectation, Mệnh use and beginner board reading',()=>{

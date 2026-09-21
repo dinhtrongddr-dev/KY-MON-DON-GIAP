@@ -38,7 +38,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    if(!resultSwitch)return;
    const aiTarget=target==='ai'&&floatingAiReady;
    resultSwitch.dataset.target=aiTarget?'ai':'board';
-   resultSwitch.textContent=aiTarget?'Xem luận AI':'Xem bàn';
+   resultSwitch.textContent=aiTarget?'AI':'Bàn';
    resultSwitch.setAttribute('aria-label',aiTarget?'Xem phần luận AI':'Xem bàn Kỳ Môn');
    resultSwitch.classList.toggle('is-ready',floatingAiReady);
  };
