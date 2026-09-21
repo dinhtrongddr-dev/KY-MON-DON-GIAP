@@ -31,8 +31,13 @@ const finiteMs=value=>{
   return null;
 };
 const cleanText=(value,max=240)=>typeof value==='string'?value.trim().replace(/\s+/g,' ').slice(0,max):'';
-const OPAQUE_REF=/^[A-Za-z0-9][A-Za-z0-9._:\/?#=&%+~-]{5,239}$/;
-const opaqueRef=(value,max=240)=>{const v=cleanText(value,max);return OPAQUE_REF.test(v)?v:null;};
+const OPAQUE_REF=/^[A-Za-z0-9][A-Za-z0-9._:\/?#=&%+~@-]{2,}$/;
+const opaqueRef=(value,max=240)=>{
+  if(typeof value!=='string')return null;
+  const v=value.trim();
+  if(!v||v.length>max||/\s/.test(v)||!OPAQUE_REF.test(v))return null;
+  return v;
+};
 
 function civilInstant(input){
   if(!input||!Number.isInteger(input.year)||!Number.isInteger(input.month)||!Number.isInteger(input.day)||!Number.isInteger(input.hour)||!Number.isInteger(input.minute)||!Number.isFinite(input.tzOffset))throw new Error('KM-VALIDATION: thiếu thời điểm bàn hợp lệ.');
