@@ -189,6 +189,6 @@ export function analyzeStructures(board,palaces,roles=[]){
       'Thập Can Khắc Ứng là corpus diễn giải truyền thống; tone chỉ dùng xếp ưu tiên nội bộ, không phải xác suất.',
       'Tên Môn bức/Cung bức có dị bản; engine lưu chiều ngũ hành thật và không suy logic từ tên gọi.',
       'Tam Kỳ đắc sử có điều kiện/diễn giải khác nhau giữa truyền bản; các tổ hợp đồng thời phạm cách xấu bị hạ mức.',
-      'Chưa triển khai toàn bộ Bát Môn khắc ứng, Cửu Tinh trị thời, Tam Kỳ đáo cung, Tam Trá Ngũ Giả Cửu Độn.'
+      'Bát Môn Khắc Ứng và Tam Kỳ đáo cung đã được tách sang KM-KEYING-3.0 để tránh trộn với 81 Thập Can; Cửu Tinh trị thời ở Phase 9 mới chỉ có chỉ mục classical_context_only. Tam Trá/Ngũ Giả/Cửu Độn vẫn ngoài scope KM-STRUCTURE-2.0.'
     ]});
 }

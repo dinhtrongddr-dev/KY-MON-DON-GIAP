@@ -39,7 +39,7 @@ export function renderTechnical(root,prepared,{includeJson=false,expanded=false}
   node(expanded?'h4':'summary','Cụm tượng tại các cung liên quan',clusters);
   for(const n of palaceNumbers){
     node('h4',`Cung ${n}`,clusters);
-    for(const id of [`p${n}`,`mix${n}`,`c${n}`,`strength_${n}`,`structure_${n}`])if(prepared.facts[id])node('p',prepared.facts[id],clusters);
+    for(const id of [`p${n}`,`mix${n}`,`c${n}`,`strength_${n}`,`structure_${n}`,`keying_${n}`])if(prepared.facts[id])node('p',prepared.facts[id],clusters);
   }
 
   const links=node(expanded?'section':'details','',root);

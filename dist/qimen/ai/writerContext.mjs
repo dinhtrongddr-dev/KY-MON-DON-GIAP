@@ -25,7 +25,7 @@ export function buildWriterContext(context) {
       roles:g.roleProfile.roles.filter(r=>actors.has(r.id)||r.status==='unresolved'),
       sharedPalaceClusters:g.roleProfile.sharedPalaceClusters.filter(c=>c.roleIds.some(id=>actors.has(id))),
       influences:g.roleProfile.influences.filter(i=>actors.has(i.from)&&actors.has(i.to)),multiActor:g.roleProfile.multiActor,limitations:g.roleProfile.limitations},
-    strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
+    strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,keyingProfile:g.keyingProfile,nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
       element:n.element,door:n.door,star:n.star,deity:n.deity,strength:n.strength,specialStates:n.specialStates,selectionRule:n.selectionRule,limitations:n.limitations,
       party:n.party,zone:n.zone,hostGuest:n.hostGuest,agencyBand:n.agencyBand,agencyMeaning:n.agencyMeaning,evidenceIndependence:n.evidenceIndependence,
       yongshenTier:n.yongshenTier||null,yongshenOrder:n.yongshenOrder||null,yongshenPurpose:n.yongshenPurpose||null,yongshenDomain:n.yongshenDomain||null})),
@@ -38,7 +38,15 @@ export function buildWriterContext(context) {
       states:b.states,fourHarms:b.fourHarms,
       stemResponses:b.stemResponses.map(r=>({id:r.id,pair:r.pair,tone:r.tone,weight:r.weight,plainMeaning:r.plainMeaning,actorIds:r.actorIds,roleTiers:r.roleTiers,carried:r.carried})),
       structurePatterns:b.structurePatterns.map(r=>({id:r.id,tone:r.tone,qualified:r.qualified??null,plainMeaning:r.plainMeaning,pair:r.pair||null})),
-      doorRelation:b.doorRelation,structurePriority:b.structurePriority,specialPatterns:b.specialPatterns})),
+      doorRelation:b.doorRelation,structurePriority:b.structurePriority,
+      keying:b.keying?{
+        doorDoor:{tone:b.keying.doorDoor.tone,plainMeaning:b.keying.doorDoor.plainMeaning,actorIds:b.keying.doorDoor.actorIds},
+        doorStems:b.keying.doorStems.map(x=>({stem:x.stem,tone:x.tone,plainMeaning:x.plainMeaning,actorIds:x.actorIds,carried:x.carried})),
+        wonders:b.keying.wonders.map(x=>({stem:x.stem,tone:x.tone,plainMeaning:x.plainMeaning,actorIds:x.actorIds,carried:x.carried})),
+        doorPalace:{code:b.keying.doorPalace.code,classicalLabel:b.keying.doorPalace.classicalLabel,plainMeaning:b.keying.doorPalace.plainMeaning},
+        starHour:{starVi:b.keying.starHour.starVi,branchVi:b.keying.starHour.branchVi,scope:b.keying.starHour.scope,plainMeaning:b.keying.starHour.plainMeaning},
+        meaning:b.keying.meaning
+      }:null,specialPatterns:b.specialPatterns})),
     claims:g.claims.map(claim=>({...claim,realWorldManifestation:{status:claim.realWorldManifestation.status,concepts:claim.realWorldManifestation.concepts}})),
     rules:g.rules,outcomeDimensions:g.outcomeDimensions,eventStages:g.eventStages,primaryJudgment:g.primaryJudgment,timing:g.timing,
     likelyScenario:g.likelyScenario,recommendations:g.recommendations,unresolved:g.unresolved,coverage:g.coverage};

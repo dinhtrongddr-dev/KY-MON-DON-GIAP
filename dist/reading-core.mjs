@@ -75,11 +75,12 @@ export function prepareReading(body) {
       'Thập Can Khắc Ứng bao phủ 81 tổ hợp Tam Kỳ/Lục Nghi nhìn thấy trên thiên–địa bàn; chỉ tổ hợp gắn đúng Dụng Thần/vai mới được nâng trọng số. Cách cục thuận/nghịch là điều kiện cấu trúc, không phải xác suất hay kết quả đã xảy ra.',
       'KM-STRENGTH-2.0 tách Cửu Tinh, Bát Môn, Thập Can–Thập Nhị Trường Sinh và môi trường Cung. Không lấy sức của Tinh thay cho Môn/Can; Dụng Thần yếu chỉ làm hạ mức phát huy, không tự biến thành kết quả xấu chắc chắn.',
       'KM-ROLE-2.0 coi Chủ–Khách là tư thế theo sự việc: động/đi trước thiên Khách, tĩnh/hậu ứng thiên Chủ; can giờ chỉ cho thiên hướng hành động. Nội/Ngoại là xu hướng gần–xa/nhanh–chậm. Agency không phải quyền lực thực tế và không dùng để tuyên bố bên thắng/thua.',
+      'KM-KEYING-3.0 thêm Bát Môn Khắc Ứng, Môn–Kỳ/Nghi, Tam Kỳ đáo cung và Hòa/Nghĩa/Bức/Chế như lớp điều kiện gắn đúng cung/vai. Cửu Tinh trị thời hiện chỉ lập chỉ mục cổ điển 108 tổ hợp với trọng số verdict bằng 0; không cộng các corpus này như nhiều phiếu độc lập.',
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
       'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
-      'KM-STRUCTURE-2.0 chưa bao phủ toàn bộ Bát Môn khắc ứng, Cửu Tinh trị thời, Tam Kỳ đáo cung và Tam Trá/Ngũ Giả/Cửu Độn; không tự suy các corpus này khi chưa có rule deterministic tương ứng.',
+      'KM-KEYING-3.0 đã phủ Bát Môn Khắc Ứng và Tam Kỳ đáo cung; Cửu Tinh trị thời mới chỉ có chỉ mục classical_context_only, chưa có diễn giải hiện đại dùng chốt kết quả. Tam Trá/Ngũ Giả/Cửu Độn và Thiên Tam Môn/Địa Tứ Hộ vẫn chưa triển khai.',
     ],
   };
   return {context, chart, facts, timePlace,board:allInOne.board, analysis:allInOne.analysis};
