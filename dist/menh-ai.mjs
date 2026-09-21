@@ -7,12 +7,35 @@ import {createReadingJobClient} from './reading-job-client.mjs';
 export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
   const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
-  const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check');
+  const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check'),resultSwitch=$('menh-result-switch');
   const progress=$('menh-ai-progress'),elapsed=$('menh-ai-elapsed'),readLabel=read.textContent;
   const storageKey='qimen.ai.connection-code';
   let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
   const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
   const pdf=initPdfExport({kind:'menh',buttonId:'menh-report-pdf',statusId:'menh-ai-status',tokenId:'local-token',prepare,boardSelector:'#menh-deterministic .menh-qimen-board'});
+  let floatingAiReady=false;
+  const setSwitchTarget=target=>{
+    if(!resultSwitch)return;
+    const aiTarget=target==='ai'&&floatingAiReady;
+    resultSwitch.dataset.target=aiTarget?'ai':'board';
+    resultSwitch.textContent=aiTarget?'Xem luận AI':'Xem bàn';
+    resultSwitch.setAttribute('aria-label',aiTarget?'Xem phần luận AI':'Xem bàn Kỳ Môn');
+    resultSwitch.classList.toggle('is-ready',floatingAiReady);
+  };
+  const setFloatingAiReady=ready=>{floatingAiReady=!!ready;setSwitchTarget('board');};
+  setFloatingAiReady(false);
+  resultSwitch?.addEventListener('click',()=>{
+    if(resultSwitch.disabled)return;
+    if(resultSwitch.dataset.target==='ai'&&floatingAiReady&&!answer.hidden&&answer.childElementCount){
+      answer.scrollIntoView?.({behavior:'smooth',block:'start'});
+      setSwitchTarget('board');
+      return;
+    }
+    const boardTarget=document.querySelector('#menh-deterministic .menh-workspace .board-column, #menh-deterministic .menh-board-unknown, #menh-deterministic .menh-board-section');
+    if(!boardTarget)return;
+    boardTarget.scrollIntoView?.({behavior:'smooth',block:'start'});
+    setSwitchTarget(floatingAiReady?'ai':'board');
+  });
   const jobClient=createReadingJobClient({
     endpoint:AI_RELAY_ORIGIN,
     getToken:()=>token.value.trim(),
@@ -47,7 +70,7 @@ export function initMenhAi({prepare,activity=null}){
   };
   const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
   const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();};
-  const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
+  const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
   token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
@@ -90,7 +113,7 @@ export function initMenhAi({prepare,activity=null}){
       }
       if(v!==version)return;
       validateMenhReadingResponse(data,prepared);
-      renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;
+      renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;setFloatingAiReady(answer.childElementCount>0);
       if(activityReadingId){track('finishReading',activityReadingId,{status:'completed',modelUsed:data.modelUsed});activityReadingId=null;}
       pdf.setModel(data.modelUsed);
       const modelText=data.modelUsed?' · '+data.modelUsed.label+' / '+data.modelUsed.effort:'';

@@ -89,6 +89,23 @@ test('Mệnh element diagram template is the same visual system as Hỏi Việc 
   assert.match(view,/else\{\s*container\.append\(renderUnknownBoardNotice\(prepared\)\)/);
 });
 
+test('Mệnh puts AI before Tứ Trụ, uses the same single floating switch, and removes textual color legends',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  const ai=readFileSync(new URL('../dist/menh-ai.mjs',import.meta.url),'utf8');
+  assert.match(html,/id="menh-floating-nav"[^>]*class="floating-result-nav"/);
+  assert.match(html,/id="menh-result-switch"[^>]*data-target="board"[^>]*>Xem bàn<\/button>/);
+  const aiAppend=view.indexOf('if(aiPanel)container.append(aiPanel);');
+  const metaAppend=view.indexOf('container.append(renderMenhChartMeta(board));');
+  assert.ok(aiAppend>0&&metaAppend>aiAppend,'Mệnh AI panel must appear before Tứ Trụ');
+  assert.match(ai,/resultSwitch\.dataset\.target=aiTarget\?'ai':'board'/);
+  assert.match(ai,/answer\.childElementCount>0/);
+  assert.match(app,/floatingNav\.hidden=false/);
+  for(const label of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành']){
+    assert.equal(html.includes(label),false);
+    assert.equal(view.includes(label),false);
+  }
+});
+
 test('Mệnh UI shows candidate boards for unknown birth time without pretending the leader is certain',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/Các Mệnh bàn có thể/);

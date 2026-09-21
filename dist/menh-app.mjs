@@ -46,7 +46,7 @@ function parseEventDate(raw){
 }
 function parseEventDates(raw){return String(raw||'').split(/[,;\n]+/).map(parseEventDate).filter(Boolean);}
 function collectRectEvents(){return [...rectEventList.querySelectorAll('.rect-event-row')].flatMap(row=>parseEventDates(row.querySelector('.rect-date').value).map(d=>({kind:row.querySelector('.rect-kind').value,...d})));}
-const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic');
+const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic'),floatingNav=$('menh-floating-nav'),resultSwitch=$('menh-result-switch');
 const activity=createActivityLog();
 let rememberedTime='',currentPrepared=null;
 
@@ -93,6 +93,8 @@ export function syncUnknownBirthTime(){
 }
 function clearResult(){
   currentPrepared=null;result.hidden=true;deterministic.replaceChildren();error.hidden=true;error.textContent='';
+  if(floatingNav)floatingNav.hidden=true;
+  if(resultSwitch){resultSwitch.disabled=true;resultSwitch.setAttribute('aria-disabled','true');resultSwitch.dataset.target='board';resultSwitch.textContent='Xem bàn';resultSwitch.setAttribute('aria-label','Xem bàn Kỳ Môn');}
 }
 date.addEventListener('input',event=>{date.value=maskDate(date.value,{deleting:String(event.inputType||'').startsWith('delete')});date.setCustomValidity('');});
 date.addEventListener('blur',()=>{try{const iso=parseBirthDate(date.value);date.value=formatBirthDateIso(iso);dateNative.value=iso;date.setCustomValidity('');}catch(e){date.setCustomValidity(e.message);}});
@@ -109,7 +111,10 @@ form.addEventListener('submit',event=>{
   try{
     currentPrepared=prepareMenhReading(collectMenhForm());
     renderMenhDeterministic(deterministic,currentPrepared);
-    result.hidden=false;activity.recordChart();
+    result.hidden=false;
+    if(floatingNav)floatingNav.hidden=false;
+    if(resultSwitch){resultSwitch.disabled=false;resultSwitch.setAttribute('aria-disabled','false');resultSwitch.dataset.target='board';resultSwitch.textContent='Xem bàn';resultSwitch.setAttribute('aria-label','Xem bàn Kỳ Môn');}
+    activity.recordChart();
     result.scrollIntoView?.({behavior:'smooth',block:'start'});
   }catch(e){error.textContent=e.message;error.hidden=false;result.hidden=true;}
 });

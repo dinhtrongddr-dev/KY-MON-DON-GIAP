@@ -137,18 +137,12 @@
           <p id="form-error" class="form-error" role="alert" hidden></p>
         </section>
 
-        <nav class="floating-result-nav" aria-label="Đi nhanh đến kết quả">
-          <button id="float-board" class="floating-result-button" type="button">Xem bàn</button>
-          <button id="float-ai" class="floating-result-button" type="button" disabled aria-disabled="true">Xem luận AI</button>
+        <nav class="floating-result-nav" aria-label="Chuyển nhanh giữa bàn và luận AI">
+          <button id="result-switch" class="floating-result-button" type="button" data-target="board" aria-label="Xem bàn Kỳ Môn">Xem bàn</button>
         </nav>
 
         <section id="result" class="result" aria-live="polite" aria-busy="false">
           <p id="question-summary" class="question-summary"></p>
-          <div class="chart-meta">
-            <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
-            <div class="calculation-summary" id="calculation-summary"></div>
-          </div>
-
           <section class="learning-panel ai-panel" aria-labelledby="ai-title">
             <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
             <p>Luận đúng việc đang hỏi: phối hợp các tượng, làm rõ điểm thuận–vướng và nối thành diễn biến có điều kiện. Mỗi nhận định đều có căn cứ để đối chiếu ngay trên bàn.</p>
@@ -192,6 +186,12 @@
             </details>
           </section>
 
+
+          <div class="chart-meta">
+            <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
+            <div class="calculation-summary" id="calculation-summary"></div>
+          </div>
+
           <div class="workspace">
             <div class="board-column">
               <div class="board-toolbar">
@@ -206,11 +206,6 @@
                   <span class="attention-key attention-key-support"><b aria-hidden="true">●</b> Thuận mạnh</span>
                   <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b> Cảnh báo mạnh</span>
                   <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b> Xung đột</span>
-                  <span class="element-chip" data-element="wood">Mộc · xanh lá</span>
-                  <span class="element-chip" data-element="fire">Hỏa · đỏ</span>
-                  <span class="element-chip" data-element="earth">Thổ · nâu</span>
-                  <span class="element-chip" data-element="metal">Kim · vàng</span>
-                  <span class="element-chip" data-element="water">Thủy · xanh dương</span>
                 </div>
               </div>
               <div class="board-frame">
@@ -270,7 +265,6 @@
             <div class="element-reading" id="element-reading" aria-live="polite" hidden></div>
               </div>
               <div class="element-panel-guide">
-            <p class="source-note">Màu dùng để nhận diện hành, không tự biểu thị tốt hoặc xấu. Bát Thần vẫn dùng màu tím riêng.</p>
             <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
             <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
               <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>

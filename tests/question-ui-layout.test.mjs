@@ -17,13 +17,14 @@ test('desktop result order puts AI before the board and keeps Five Elements belo
   assert.match(html,/element-panel-guide/);
 });
 
-test('floating result navigation is persistent and AI jump starts disabled',()=>{
+test('floating result navigation is one persistent switch and AI sits before Tứ Trụ',()=>{
   assert.match(html,/class="floating-result-nav"/);
-  assert.match(html,/id="float-board"[^>]*>Xem bàn<\/button>/);
-  assert.match(html,/id="float-ai"[^>]*disabled[^>]*aria-disabled="true"[^>]*>Xem luận AI<\/button>/);
+  assert.match(html,/id="result-switch"[^>]*data-target="board"[^>]*>Xem bàn<\/button>/);
+  assert.doesNotMatch(html,/id="float-board"|id="float-ai"/);
   assert.match(css,/\.floating-result-nav\s*\{[\s\S]*position:fixed/);
-  assert.match(css,/\.floating-result-button:disabled/);
-  assert.match(app,/floatBoard\?\.addEventListener\('click',[\s\S]*board-column[\s\S]*scrollIntoView/);
+  const ai=html.indexOf('class="learning-panel ai-panel"'),meta=html.indexOf('class="chart-meta"');
+  assert.ok(ai>0&&meta>ai,'AI panel must appear before Tứ Trụ/chart meta');
+  for(const label of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành'])assert.equal(html.includes(label),false);
 });
 
 test('selected palace separates modern translation from traditional gloss and keeps the full modern Cung-Thần-Tinh-Môn-Can breakdown',()=>{

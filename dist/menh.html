@@ -58,11 +58,14 @@
       </form>
       <p id="menh-form-error" class="form-error" role="alert" hidden></p>
     </section>
+    <nav id="menh-floating-nav" class="floating-result-nav" aria-label="Chuyển nhanh giữa bàn và luận AI" hidden>
+      <button id="menh-result-switch" class="floating-result-button" type="button" data-target="board" aria-label="Xem bàn Kỳ Môn" disabled aria-disabled="true">Xem bàn</button>
+    </nav>
     <section id="menh-result" class="result menh-result" aria-live="polite" hidden>
       <section id="menh-deterministic" class="menh-panel" aria-label="Kết quả Kỳ Môn Mệnh"></section>
       <section class="learning-panel ai-panel menh-ai-panel" aria-labelledby="menh-ai-title">
         <div class="control-heading"><div><p class="eyebrow">Luận giải</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
-        <p>AI diễn giải trực tiếp từ Mệnh bàn đã lập ở phía trên và không tự thay đổi dữ liệu của bàn.</p>
+        <p>AI diễn giải trực tiếp từ Mệnh bàn vừa lập; Tứ Trụ và bàn chi tiết nằm phía dưới để đối chiếu. AI không tự thay đổi dữ liệu của bàn.</p>
         <div class="local-controls">
           <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Dùng chung mã với phần Hỏi việc.</small></label>
           <button id="menh-local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button>
@@ -123,7 +126,6 @@
             </div>
             <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>
             <div class="element-reading" id="element-reading" aria-live="polite" hidden></div>
-            <p class="source-note">Màu dùng để nhận diện hành, không tự biểu thị tốt hoặc xấu. Bát Thần vẫn dùng màu tím riêng.</p>
             <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
             <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
               <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>

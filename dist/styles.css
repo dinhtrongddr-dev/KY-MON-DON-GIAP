@@ -818,11 +818,11 @@ textarea:focus { outline:3px solid #bce8ce; }
     right:auto;
     left:50%;
     bottom:calc(12px + env(safe-area-inset-bottom,0px));
-    width:min(calc(100vw - 24px),360px);
+    width:auto;
+    max-width:calc(100vw - 24px);
     transform:translateX(-50%);
-    justify-content:stretch;
   }
-  .floating-result-button{flex:1;padding-inline:10px;font-size:.8rem}
+  .floating-result-button{min-width:154px;padding-inline:14px;font-size:.8rem}
 }
 .local-controls { display:grid; grid-template-columns:minmax(240px,1fr) auto auto auto; align-items:end; gap:12px; margin:16px 0; }
 .local-controls .field { min-width:0; }

@@ -6,7 +6,7 @@ import {createReadingJobClient} from './reading-job-client.mjs';
 export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
- const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check'),floatAi=$('float-ai');
+ const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check'),resultSwitch=$('result-switch');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
  let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
@@ -19,16 +19,30 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
  });
  const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
+ let floatingAiReady=false;
+ const setSwitchTarget=target=>{
+   if(!resultSwitch)return;
+   const aiTarget=target==='ai'&&floatingAiReady;
+   resultSwitch.dataset.target=aiTarget?'ai':'board';
+   resultSwitch.textContent=aiTarget?'Xem luận AI':'Xem bàn';
+   resultSwitch.setAttribute('aria-label',aiTarget?'Xem phần luận AI':'Xem bàn Kỳ Môn');
+   resultSwitch.classList.toggle('is-ready',floatingAiReady);
+ };
  const setFloatingAiReady=ready=>{
-   if(!floatAi)return;
-   floatAi.disabled=!ready;
-   floatAi.setAttribute('aria-disabled',String(!ready));
-   floatAi.classList.toggle('is-ready',!!ready);
+   floatingAiReady=!!ready;
+   setSwitchTarget('board');
  };
  setFloatingAiReady(false);
- floatAi?.addEventListener('click',()=>{
-   if(floatAi.disabled||answer.hidden||!answer.childElementCount)return;
-   answer.scrollIntoView?.({behavior:'smooth',block:'start'});
+ resultSwitch?.addEventListener('click',()=>{
+   if(resultSwitch.dataset.target==='ai'&&floatingAiReady&&!answer.hidden&&answer.childElementCount){
+     answer.scrollIntoView?.({behavior:'smooth',block:'start'});
+     setSwitchTarget('board');
+     return;
+   }
+   const boardTarget=document.querySelector('.board-column');
+   if(!boardTarget)return;
+   boardTarget.scrollIntoView?.({behavior:'smooth',block:'start'});
+   setSwitchTarget(floatingAiReady?'ai':'board');
  });
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();

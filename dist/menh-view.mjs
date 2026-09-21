@@ -299,7 +299,6 @@ function renderNatalBoard(board,selfPalaceNumber=null,{interactive=false}={}){
   const selfPalace=board.palaces.find(p=>p.number===selfPalaceNumber)||board.palaces.find(p=>(p.heavenStems||[]).some(s=>s.han===board.pillars.day.stem.han))||null;
   const key=el('div','board-key'),selfKey=el('span','role-key role-key-person','◉ Bản mệnh · Nhật can '+board.pillars.day.stem.vi+(selfPalace?' · '+selfPalace.vi+' '+selfPalace.number:''));
   key.append(selfKey);
-  for(const [slug,label] of [['wood','Mộc · xanh lá'],['fire','Hỏa · đỏ'],['earth','Thổ · nâu'],['metal','Kim · vàng'],['water','Thủy · xanh dương']]){const chip=el('span','element-chip',label);chip.dataset.element=slug;key.append(chip);}
   toolbar.append(title,key);section.append(toolbar);
   const frame=el('div','board-frame menh-board-frame'),grid=el('div','qimen-board menh-qimen-board');
   grid.setAttribute('role','group');grid.setAttribute('aria-label','Mệnh bàn Kỳ Môn chín cung theo giờ sinh');
@@ -415,6 +414,7 @@ export function renderMenhDeterministic(container,prepared){
   const sexLabel=prepared.input.sexMetadata==='MALE'?'Nam':prepared.input.sexMetadata==='FEMALE'?'Nữ':'Không khai báo';
   profile.append(identity,el('span','menh-result-sex',sexLabel));
   container.append(profile);
+  if(aiPanel)container.append(aiPanel);
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
@@ -422,11 +422,9 @@ export function renderMenhDeterministic(container,prepared){
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderMenhChartMeta(board));
     container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));
-    if(aiPanel)container.append(aiPanel);
     container.append(renderMenhMethodDetails(board,prepared.technical?.timePlace||null));
   }else{
     container.append(renderUnknownBoardNotice(prepared));
-    if(aiPanel)container.append(aiPanel);
   }
   const body=el('div','menh-deterministic-body');
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
