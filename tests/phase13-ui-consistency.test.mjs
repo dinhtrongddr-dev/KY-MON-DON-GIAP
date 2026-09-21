@@ -49,11 +49,12 @@ test('Semantic state modifier applies Nhập Mộ to Six-Register tombs, not onl
   assert.match(value.summary,/bị giữ|đóng|cất|hạn chế/i);
 });
 
-test('Visible Hỏi Việc copy and palace detail no longer contradict KM-TIMING-3.0',()=>{
+test('Visible help/system copy and palace detail no longer contradict KM-TIMING-3.0',()=>{
   const html=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
+  const info=readFileSync(new URL('../dist/info.html',import.meta.url),'utf8');
   const app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8');
   assert.doesNotMatch(html,/Chưa hỗ trợ nhập mộ ngoài Tam kỳ/);
-  assert.match(html,/KM-TIMING-3\.0/);
+  assert.match(info,/KM-TIMING-3\.0/);
   assert.match(app,/Lục nghi nhập mộ/);
   assert.match(app,/KM-TIMING-3\.0 đã phủ cả Tam Kỳ và Lục Nghi/);
 });

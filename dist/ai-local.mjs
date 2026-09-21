@@ -7,6 +7,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
  const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check'),resultSwitch=$('result-switch');
+ const tokenShell=$('ai-token-shell'),connectionIcon=$('ai-connection-icon');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
  let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
@@ -19,6 +20,19 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
  });
  const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
+ const setConnectionState=(state)=>{
+   if(!tokenShell||!connectionIcon)return;
+   const map={
+     connected:{glyph:'✓',label:'AI đã kết nối'},
+     checking:{glyph:'…',label:'Đang kiểm tra kết nối AI'},
+     disconnected:{glyph:'×',label:'AI chưa kết nối'},
+   },next=map[state]||map.disconnected;
+   tokenShell.dataset.state=state in map?state:'disconnected';
+   connectionIcon.textContent=next.glyph;
+   connectionIcon.setAttribute('aria-label',next.label);
+   connectionIcon.title=next.label;
+ };
+ setConnectionState('disconnected');
  let floatingAiReady=false;
  const setSwitchTarget=target=>{
    if(!resultSwitch)return;
@@ -87,8 +101,8 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
  document.addEventListener('qimen-chart',invalidate);
- token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
- cancel.addEventListener('click',()=>{cancelWork();status.textContent='Đã hủy yêu cầu AI.';});
+ token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();setConnectionState('disconnected');status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
+ cancel.addEventListener('click',()=>{const wasChecking=tokenShell?.dataset.state==='checking';cancelWork();if(wasChecking)setConnectionState('disconnected');status.textContent='Đã hủy yêu cầu AI.';});
  async function call(path,body,signal){
    const connectionCode=token.value.trim();
    if(!connectionCode)throw new Error('Nhập mã kết nối AI. Mở hướng dẫn kết nối nếu cần trợ giúp.');
@@ -99,11 +113,11 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    if(!response.ok)throw new Error('AI báo lỗi.');return data;
  }
  check.addEventListener('click',async()=>{
-   cancelWork();const v=version,controller=startWork('Đang kiểm tra kết nối AI…',false,8000);
+   cancelWork();setConnectionState('checking');const v=version,controller=startWork('Đang kiểm tra kết nối AI…',false,8000);
    try{
      const data=await call('/api/status',null,controller.signal);assertCompatible(data);
-     if(v===version)status.textContent='Kết nối AI sẵn sàng.';
-   }catch(e){if(v===version)status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối. Hãy thử lại.':e.message;}
+     if(v===version){setConnectionState('connected');status.textContent='AI đã kết nối · sẵn sàng.';}
+   }catch(e){if(v===version){setConnectionState('disconnected');status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối. Hãy thử lại.':e.message;}}
    finally{if(v===version){active=null;finishWork();}}
  });
  read.addEventListener('click',async()=>{
@@ -112,10 +126,10 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    try{
      const prepared=await buildReadingRequest(body);
      if(v!==version)return;
-     status.textContent='Đang kiểm tra kết nối AI…';
+     status.textContent='Đang kiểm tra kết nối AI…';setConnectionState('checking');
      const health=await call('/api/status',null,controller.signal);assertCompatible(health);
      if(v!==version)return;
-     status.textContent='AI đang gửi lượt luận lên server…';
+     setConnectionState('connected');status.textContent='AI đang gửi lượt luận lên server…';
      activityReadingId=track('startReading');
      const started=await jobClient.start('/api/read/start',prepared.request,controller.signal);
      let data=started.legacyResult;

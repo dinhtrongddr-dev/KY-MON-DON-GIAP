@@ -6,8 +6,6 @@ import {resolveTimePlace,localInputValueAtZone} from './qimen/timePlace.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
 import {initModeControls,initNianmingInputMasks} from './qimen/ui-controls.mjs';
-import {prepareReading} from './reading-core.mjs';
-import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {createActivityLog} from './activity-log.mjs';
 import {semanticBundle,semanticDomainForTopic} from './qimen/semantic/matrix.mjs';
 import {classifyTopics} from './qimen/ai/classifier.mjs';
@@ -377,6 +375,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
 }
 
 function renderMethod(chart) {
+  if(!methodCopy)return;
   const offset = chart.input.tzOffset;
   const methodExplanation = chart.method === "chaibu"
     ? `Nhật trụ ${chart.pillars.day.han} có Phù đầu ${chart.fuHead.han} (${chart.fuHead.vi}), quy về <strong>${chart.dun.yuan}</strong>. Đây là lối Tháo bổ theo Phù đầu Can Chi.`
@@ -539,12 +538,5 @@ function captureReportVisual(prepared){
   }finally{selectedPalace=selection;for(const [node,children] of saved)node.replaceChildren(...children);}
 }
 initLocalAi({prepare:prepareAiInput,activity,captureReportVisual});
-const rulePreview=document.getElementById('rule-preview');
-const clearRules=()=>{rulePreview.replaceChildren();rulePreview.hidden=true;};
-form.addEventListener('input',clearRules);form.addEventListener('change',clearRules);document.addEventListener('qimen-chart',clearRules);
-document.getElementById('rule-analyze').addEventListener('click',()=>{
-  clearRules();try{const p=prepareReading(prepareAiInput());renderComparison(rulePreview,p);renderTechnical(rulePreview,p);rulePreview.hidden=false;}
-  catch(e){rulePreview.textContent=e.message;rulePreview.hidden=false;}
-});
 initElementDiagram();
 initSharedView({kind:'question',resultSelector:'#result'});

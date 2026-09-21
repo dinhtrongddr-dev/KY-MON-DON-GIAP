@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+const read=name=>readFileSync(new URL('../dist/'+name,import.meta.url),'utf8');
+const main=read('index.html'),menh=read('menh.html'),guide=read('guide.html'),server=read('server.html'),info=read('info.html'),infoJs=read('info.mjs'),css=read('styles.css');
+
+test('primary pages expose three secondary indexes without changing the product switch',()=>{
+  for(const html of [main,menh]){
+    assert.match(html,/class="utility-index"/);
+    for(const href of ['./guide.html','./server.html','./info.html'])assert.ok(html.includes('href="'+href+'"'));
+    assert.match(html,/Kỳ Môn Hỏi Việc/);assert.match(html,/Kỳ Môn Mệnh/);
+  }
+});
+
+test('Hỏi Việc main keeps only the primary workflow and removes secondary teaching/admin clutter',()=>{
+  for(const id of ['chart-form','ai-title','pillars','qimen-board','palace-detail','element-diagram'])assert.ok(main.includes('id="'+id+'"'));
+  for(const removed of ['id="local-setup"','class="activity-summary"','id="rule-analyze"','id="basics-title"','class="reading-strip"','class="method-details"'])assert.equal(main.includes(removed),false,removed);
+  assert.match(main,/id="ai-token-shell"[^>]*data-state="disconnected"/);
+  assert.match(main,/id="ai-connection-icon"[^>]*>×<\/span>/);
+  assert.match(main,/id="local-check"[^>]*>[\s\S]*↵[\s\S]*<\/button>/);
+});
+
+test('Mệnh main uses the same compact AI connection and removes activity/scope clutter',()=>{
+  for(const id of ['menh-form','menh-ai-title','menh-deterministic','menh-ai-token-shell','menh-ai-connection-icon'])assert.ok(menh.includes('id="'+id+'"'));
+  assert.equal(menh.includes('class="activity-summary"'),false);
+  assert.equal(menh.includes('menh-scope'),false);
+  assert.match(menh,/id="menh-ai-connection-icon"[^>]*>×<\/span>/);
+  assert.match(menh,/id="menh-local-check"[^>]*>[\s\S]*↵[\s\S]*<\/button>/);
+});
+
+test('Guide covers modes, AI wait expectation, Mệnh use and beginner board reading',()=>{
+  for(const label of ['Tự động','Dự đoán','Chiến lược','Thương chiến','Đàm phán','Chọn thời điểm','Chọn phương hướng'])assert.ok(guide.includes(label));
+  assert.match(guide,/2–4 phút/);
+  for(const layer of ['Cung','Thần','Tinh','Môn','Can'])assert.ok(guide.includes('<strong>'+layer+'</strong>'));
+  assert.match(guide,/Không nhớ giờ sinh/);
+  assert.match(guide,/Xem luận AI/);
+});
+
+test('Server page contains VPS setup while info page owns activity and system detail',()=>{
+  assert.match(server,/VPS/);assert.match(server,/systemd/i);assert.match(server,/install-vps-autostart\.sh/);assert.match(server,/QIMEN_PAIRING_TOKEN/);
+  assert.match(info,/id="activity-chart-count"/);assert.match(info,/id="activity-reading-count"/);assert.match(info,/id="activity-reading-list"/);
+  assert.match(infoJs,/createActivityLog/);assert.match(infoJs,/api\/status/);
+  assert.match(info,/TG-CB-6\.3/);assert.match(info,/KM-MENH-1\.1/);
+});
+
+test('new compact UI styles status symbols and mobile controls without textual color legends',()=>{
+  assert.match(css,/\.ai-token-shell/);assert.match(css,/data-state="connected"/);assert.match(css,/\.utility-index/);
+  for(const html of [main,menh])for(const phrase of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành'])assert.equal(html.includes(phrase),false);
+});

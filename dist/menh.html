@@ -21,6 +21,11 @@
       <a href="./index.html">Kỳ Môn Hỏi Việc</a><a href="./menh.html" aria-current="page">Kỳ Môn Mệnh</a>
     </nav>
   </header>
+  <nav class="utility-index" aria-label="Thông tin và trợ giúp">
+    <a href="./guide.html"><span class="utility-icon" aria-hidden="true">?</span><span>Hướng dẫn</span></a>
+    <a href="./server.html"><span class="utility-icon" aria-hidden="true">↯</span><span>Kết nối AI</span></a>
+    <a href="./info.html"><span class="utility-icon" aria-hidden="true">i</span><span>Thông tin</span></a>
+  </nav>
   <main>
     <section class="control-panel menh-control" aria-labelledby="menh-input-title">
       <div class="control-heading">
@@ -63,25 +68,25 @@
     </nav>
     <section id="menh-result" class="result menh-result" aria-live="polite" hidden>
       <section id="menh-deterministic" class="menh-panel" aria-label="Kết quả Kỳ Môn Mệnh"></section>
-      <section class="learning-panel ai-panel menh-ai-panel" aria-labelledby="menh-ai-title">
-        <div class="control-heading"><div><p class="eyebrow">Luận giải</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
-        <p>AI diễn giải trực tiếp từ Mệnh bàn vừa lập; Tứ Trụ và bàn chi tiết nằm phía dưới để đối chiếu. AI không tự thay đổi dữ liệu của bàn.</p>
-        <div class="local-controls">
-          <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Dùng chung mã với phần Hỏi việc.</small></label>
-          <button id="menh-local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button>
-          <button id="menh-ai-read" class="button button-primary" type="button">Luận Mệnh bằng AI</button>
-          <button id="menh-ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button>
+      <section class="learning-panel ai-panel menh-ai-panel ai-panel-compact" aria-labelledby="menh-ai-title">
+        <div class="control-heading ai-heading-compact"><div><p class="eyebrow">Luận giải</p><h2 id="menh-ai-title">Luận Kỳ Môn Mệnh bằng AI</h2></div><span class="ai-mini-mark" aria-hidden="true">✦</span></div>
+        <div class="compact-ai-actions">
+          <div id="menh-ai-token-shell" class="ai-token-shell" data-state="disconnected">
+            <span id="menh-ai-connection-icon" class="ai-connection-icon" aria-label="AI chưa kết nối" title="AI chưa kết nối">×</span>
+            <input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Mã kết nối AI" aria-label="Mã kết nối AI" />
+            <button id="menh-local-check" class="ai-connect-submit" type="button" aria-label="Kiểm tra kết nối AI" title="Kiểm tra kết nối"><span aria-hidden="true">↵</span></button>
+          </div>
+          <button id="menh-ai-read" class="button button-primary ai-read-compact" type="button">Luận Mệnh <span aria-hidden="true">→</span></button>
+          <button id="menh-ai-cancel" class="ai-icon-button" type="button" aria-label="Hủy lượt luận Mệnh" title="Hủy" hidden>×</button>
         </div>
-        <div class="local-preference"><label class="local-remember"><input id="local-remember" type="checkbox" aria-describedby="local-remember-hint" /> Ghi nhớ mã trên thiết bị này</label><p id="local-remember-hint" class="ai-note" role="status">Không ghi nhớ mã sau khi đóng hoặc tải lại trang.</p></div>
-        <div class="ai-feedback"><span id="menh-ai-progress" class="ai-spinner" aria-hidden="true" hidden></span><div><p id="menh-ai-status" role="status">Chưa kết nối AI.</p><p id="menh-ai-elapsed" class="ai-elapsed" hidden></p></div></div>
-        <div class="activity-summary" aria-label="Hoạt động hôm nay"><div><span>Lập bàn hôm nay</span><strong id="activity-chart-count">0</strong></div><div><span>Luận AI hôm nay</span><strong id="activity-reading-count">0</strong></div></div>
-        <details class="activity-history"><summary>Lịch sử lượt luận gần đây</summary><p id="activity-storage-note" class="ai-note">Đang tải thống kê chung; nội dung luận không được lưu.</p><ol id="activity-reading-list" class="activity-reading-list"></ol></details>
+        <div class="ai-compact-meta">
+          <label class="local-remember compact-remember"><input id="local-remember" type="checkbox" aria-describedby="local-remember-hint" /><span>Ghi nhớ mã</span></label>
+          <p id="local-remember-hint" class="visually-hidden" role="status">Không ghi nhớ mã sau khi đóng hoặc tải lại trang.</p>
+          <a href="./server.html" class="icon-text-link" title="Hướng dẫn kết nối AI"><span aria-hidden="true">?</span><span class="visually-hidden">Hướng dẫn kết nối AI</span></a>
+        </div>
+        <div class="ai-feedback ai-feedback-compact"><span id="menh-ai-progress" class="ai-spinner" aria-hidden="true" hidden></span><div><p id="menh-ai-status" role="status">Chưa kết nối AI.</p><p id="menh-ai-elapsed" class="ai-elapsed" hidden></p></div></div>
         <div id="menh-ai-answer" class="menh-ai-answer" aria-live="polite" aria-busy="false" hidden></div>
         <button id="menh-report-pdf" class="button button-primary report-pdf-button" type="button" hidden>Chia sẻ link kết quả</button>
-      </section>
-      <section class="learning-panel menh-scope">
-        <p class="eyebrow">Phạm vi luận Mệnh</p><h2>Đọc xu hướng, không định mệnh hóa</h2>
-        <p>Không có điểm tổng mệnh, xác suất thành công, tuổi thọ/tuổi chết, số con/giới tính con chắc chắn, số lần kết hôn chính xác, tử vong cha mẹ, bệnh nặng hay tai nạn tất định. Lưu niên và đại vận là lớp kích hoạt/nền thời kỳ, không phải bằng chứng sự kiện chắc chắn.</p>
       </section>
     </section>
   </main>
@@ -93,7 +98,6 @@
               <h2 id="elements-title">Ngũ hành tương sinh · tương khắc</h2>
             </div>
             <div class="element-panel-body">
-              <p>Đọc theo chiều mũi tên. Sơ đồ mặc định hiển thị đầy đủ; bấm vào một hành để xem riêng bốn quan hệ trực tiếp.</p>
             <div class="element-diagram" id="element-diagram">
               <svg class="element-routes" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
                 <defs>
@@ -126,11 +130,6 @@
             </div>
             <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>
             <div class="element-reading" id="element-reading" aria-live="polite" hidden></div>
-            <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
-            <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
-              <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>
-              <p>Đây là cách đọc sơ bộ trong hệ thống truyền thống. Còn phải xét mùa, vượng suy, Môn–Tinh–Thần, Không/Mã và hoàn cảnh thực tế.</p>
-            </details>
             </div>
           </section>
   </template>

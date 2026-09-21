@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#15251f" />
+  <meta name="description" content="Cách kết nối AI và thiết lập server VPS cho Kỳ Môn Bàn." />
+  <title>Kết nối AI & VPS · Kỳ Môn Bàn</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="help-page">
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="Kỳ Môn Bàn">
+      <span class="brand-seal" aria-hidden="true"><i>四</i><i>九</i><i>二</i><i>三</i><i>五</i><i>七</i><i>八</i><i>一</i><i>六</i></span>
+      <span><strong>Kỳ Môn Bàn</strong><small>Thời Gia · Chuyển Bàn</small></span>
+    </a>
+    <nav class="product-nav" aria-label="Chọn chức năng"><a href="./index.html">Kỳ Môn Hỏi Việc</a><a href="./menh.html">Kỳ Môn Mệnh</a></nav>
+    <div class="school-mark"><span>時家奇門</span><small>Âm Dương 18 cục</small></div>
+  </header>
+  <nav class="utility-index" aria-label="Thông tin và trợ giúp">
+    <a href="./guide.html"><span class="utility-icon" aria-hidden="true">?</span><span>Hướng dẫn</span></a>
+    <a href="./server.html" aria-current="page"><span class="utility-icon" aria-hidden="true">↯</span><span>Kết nối AI</span></a>
+    <a href="./info.html"><span class="utility-icon" aria-hidden="true">i</span><span>Thông tin</span></a>
+  </nav>
+  <main>
+    <section class="help-hero">
+      <p class="eyebrow">Kết nối AI</p>
+      <h1>Trang chính chỉ cần mã kết nối; toàn bộ phần cài server đặt ở đây</h1>
+      <p>Mã kết nối không phải API key. Trình duyệt dùng mã này để ghép với bridge AI trên VPS hoặc máy đang chạy bộ kết nối.</p>
+      <p><a class="button button-primary" href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI <span aria-hidden="true">↓</span></a></p>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">Dùng trên app</p><h2>Kết nối trong 20 giây</h2>
+      <ol class="help-steps">
+        <li>Mở bộ server/bridge AI và chắc chắn nó đang chạy.</li>
+        <li>Sao chép <strong>mã ghép nối</strong> của server.</li>
+        <li>Dán mã vào ô AI trên Hỏi Việc hoặc Mệnh.</li>
+        <li>Bấm biểu tượng <strong>↵</strong>. Nếu trạng thái đổi từ <b>×</b> sang <b>✓</b>, kết nối đã sẵn sàng.</li>
+        <li>Bấm <strong>Luận AI</strong>. Nếu đổi mã, dấu ✓ sẽ tự trở về × cho đến khi kiểm tra lại.</li>
+      </ol>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">VPS · cấu trúc đang dùng</p><h2>Luồng kết nối</h2>
+      <div class="help-grid">
+        <article class="help-card"><h3>Website</h3><p><strong>kymon.pp.ua</strong> chỉ chứa giao diện và logic lập/kiểm tra bàn. Không chứa API key AI.</p></article>
+        <article class="help-card"><h3>Named Tunnel</h3><p><strong>ai-origin.kymon.pp.ua</strong> chuyển request tới bridge nội bộ; không cần mở cổng 8765 trực tiếp ra Internet.</p></article>
+        <article class="help-card"><h3>Bridge</h3><p><code>local/server.mjs</code> nghe localhost, kiểm tra Host/Origin/mã ghép nối và xác minh protocol trước khi gọi AI.</p></article>
+        <article class="help-card"><h3>AI router</h3><p>Runtime hiện dùng router nội bộ và fallback chain đã cấu hình trên VPS; web không tự đổi provider/model.</p></article>
+      </div>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">Cài VPS</p><h2>Thiết lập chuẩn theo repo hiện tại</h2>
+      <ol class="help-steps">
+        <li><strong>Cài runtime.</strong> Cần Node.js 22+, Codex CLI, cloudflared, curl và 9router service.</li>
+        <li><strong>Đưa source lên VPS.</strong> Giữ nguyên cấu trúc <code>dist/</code>, <code>local/</code>, <code>START-VPS.sh</code> và <code>scripts/</code>.</li>
+        <li><strong>Tạo file môi trường riêng.</strong> Không commit mã ghép nối, API key hoặc token Cloudflare vào GitHub.</li>
+        <li><strong>Tạo Named Tunnel.</strong> Token tunnel lưu thành file riêng, permission 600. Tunnel trỏ hostname AI về bridge localhost.</li>
+        <li><strong>Cài autostart.</strong> Chạy script systemd đi kèm để 9router và Kỳ Môn bridge tự lên sau reboot.</li>
+        <li><strong>Kiểm tra.</strong> Chỉ coi là hoàn tất khi systemd active, <code>/api/status</code> trả đúng protocol và app đổi trạng thái thành ✓.</li>
+      </ol>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">Biến cấu hình chính</p><h2>Không đặt bí mật vào mã website</h2>
+      <div class="code-block">QIMEN_PAIRING_TOKEN=...            # mã ghép nối riêng
+QIMEN_AI_ROUTER=9router
+QIMEN_MODEL=qimen-smart
+QIMEN_REASONING_EFFORT=auto
+OPENAI_BASE_URL=http://127.0.0.1:20128/v1
+OPENAI_API_KEY=...                 # khóa nội bộ router, chỉ ở VPS
+QIMEN_TUNNEL_HOSTNAME=ai-origin.kymon.pp.ua
+CLOUDFLARE_TUNNEL_TOKEN_FILE=~/.config/kymon-vps/cloudflare-tunnel.token</div>
+      <p class="source-note">Tên biến là cấu hình của repo hiện tại. Giá trị thật phải nằm trong file môi trường riêng trên VPS, không dán vào giao diện công khai.</p>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">Lệnh vận hành</p><h2>Systemd</h2>
+      <div class="code-block">cd /duong-dan/KY-MON-DON-GIAP
+bash scripts/install-vps-autostart.sh
+
+sudo systemctl status 9router.service
+sudo systemctl status kymon-vps.service
+
+# Sau khi thay source/config:
+sudo systemctl restart kymon-vps.service</div>
+      <p>Nếu app báo ×: kiểm tra theo thứ tự <strong>bridge → 9router → Named Tunnel → mã ghép nối → protocol</strong>. Không khắc phục bằng cách mở trực tiếp cổng 8765 ra Internet hoặc tắt kiểm tra Host/Origin.</p>
+    </section>
+
+    <section class="help-section">
+      <p class="eyebrow">Cập nhật</p><h2>Khi app web đã đổi protocol</h2>
+      <p>Luôn cập nhật toàn bộ bộ kết nối tương ứng, không chỉ sửa số version trên server cũ. Sau cập nhật, restart bridge rồi kiểm tra lại bằng biểu tượng ↵ trên app. Bộ tải xuống hiện hành được build cùng source của website.</p>
+    </section>
+  </main>
+  <footer>
+    <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
+    <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">v17.5.0 · kiểm toán</a>.</p>
+  </footer>
+</div>
+</body></html>

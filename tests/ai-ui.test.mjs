@@ -33,7 +33,7 @@ function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClon
   globalThis.fetch=fetcher;globalThis.localStorage=storage;
   t.after(()=>Object.assign(globalThis,original));
   const mount=()=>{
-    const ids=Object.fromEntries(['local-token','local-remember','local-remember-hint','ai-progress','ai-elapsed','ai-status','ai-answer','ai-read','ai-cancel','local-check','chart-form','result-switch'].map(id=>[id,new Element()]));
+    const ids=Object.fromEntries(['local-token','local-remember','local-remember-hint','ai-progress','ai-elapsed','ai-status','ai-answer','ai-read','ai-cancel','local-check','chart-form','result-switch','ai-token-shell','ai-connection-icon'].map(id=>[id,new Element()]));
     ids['ai-answer'].hidden=true;ids['ai-cancel'].hidden=true;ids['ai-progress'].hidden=true;
     ids['ai-read'].textContent='Luận bằng AI';
     const doc=new Element();doc.getElementById=id=>ids[id];doc.createElement=tag=>new Element(tag);
@@ -278,15 +278,23 @@ test('connection check shows progress and can be cancelled without a late succes
     assert.equal(ids['ai-progress'].hidden,true);
   }finally{release(response(health));await work;}
   assert.equal(ids['local-check'].disabled,false);
+  assert.equal(ids['ai-token-shell'].dataset.state,'disconnected');
+  assert.equal(ids['ai-connection-icon'].textContent,'×');
   assert.doesNotMatch(ids['ai-status'].textContent,/sẵn sàng/);
 });
 
-test('pairing code remains unsaved until remembering is selected',async t=>{
+test('pairing code remains unsaved until remembering is selected and compact status becomes connected',async t=>{
   const {ids,storage}=setup(t,async()=>response(health));
   ids['local-token'].value='session-only';await ids['local-token'].fire('input');
+  assert.equal(ids['ai-token-shell'].dataset.state,'disconnected');
   await ids['local-check'].fire('click');
+  assert.equal(ids['ai-token-shell'].dataset.state,'connected');
+  assert.equal(ids['ai-connection-icon'].textContent,'✓');
   assert.equal(ids['local-remember'].checked,false);
   assert.equal(storage.values.size,0);
+  ids['local-token'].value='changed-code';await ids['local-token'].fire('input');
+  assert.equal(ids['ai-token-shell'].dataset.state,'disconnected');
+  assert.equal(ids['ai-connection-icon'].textContent,'×');
 });
 
 test('remembered code survives reload, tracks edits and is forgotten immediately when unchecked',async t=>{

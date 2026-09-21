@@ -8,11 +8,25 @@ export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
   const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
   const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check'),resultSwitch=$('menh-result-switch');
+  const tokenShell=$('menh-ai-token-shell'),connectionIcon=$('menh-ai-connection-icon');
   const progress=$('menh-ai-progress'),elapsed=$('menh-ai-elapsed'),readLabel=read.textContent;
   const storageKey='qimen.ai.connection-code';
   let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
   const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
   const pdf=initPdfExport({kind:'menh',buttonId:'menh-report-pdf',statusId:'menh-ai-status',tokenId:'local-token',prepare,boardSelector:'#menh-deterministic .menh-qimen-board'});
+  const setConnectionState=(state)=>{
+    if(!tokenShell||!connectionIcon)return;
+    const map={
+      connected:{glyph:'✓',label:'AI đã kết nối'},
+      checking:{glyph:'…',label:'Đang kiểm tra kết nối AI'},
+      disconnected:{glyph:'×',label:'AI chưa kết nối'},
+    },next=map[state]||map.disconnected;
+    tokenShell.dataset.state=state in map?state:'disconnected';
+    connectionIcon.textContent=next.glyph;
+    connectionIcon.setAttribute('aria-label',next.label);
+    connectionIcon.title=next.label;
+  };
+  setConnectionState('disconnected');
   let floatingAiReady=false;
   const setSwitchTarget=target=>{
     if(!resultSwitch)return;
@@ -73,8 +87,8 @@ export function initMenhAi({prepare,activity=null}){
   const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
-  token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
-  cancel.addEventListener('click',()=>{cancelWork();status.textContent='Đã hủy yêu cầu AI.';});
+  token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();setConnectionState('disconnected');status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
+  cancel.addEventListener('click',()=>{const wasChecking=tokenShell?.dataset.state==='checking';cancelWork();if(wasChecking)setConnectionState('disconnected');status.textContent='Đã hủy yêu cầu AI.';});
   async function call(path,body,signal){
     const connectionCode=token.value.trim();
     if(!connectionCode)throw new Error('Nhập mã kết nối AI.');
@@ -88,9 +102,9 @@ export function initMenhAi({prepare,activity=null}){
     return data;
   }
   check.addEventListener('click',async()=>{
-    cancelWork();const v=version,controller=start('Đang kiểm tra kết nối AI…',8000);
-    try{const data=await call('/api/status',null,controller.signal);assertMenhCompatible(data);if(v===version)status.textContent='Kết nối AI sẵn sàng.';}
-    catch(e){if(v===version)status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối.':e.message;}
+    cancelWork();setConnectionState('checking');const v=version,controller=start('Đang kiểm tra kết nối AI…',8000);
+    try{const data=await call('/api/status',null,controller.signal);assertMenhCompatible(data);if(v===version){setConnectionState('connected');status.textContent='AI đã kết nối · sẵn sàng.';}}
+    catch(e){if(v===version){setConnectionState('disconnected');status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối.':e.message;}}
     finally{if(v===version){active=null;finish();}}
   });
   read.addEventListener('click',async()=>{
@@ -99,8 +113,8 @@ export function initMenhAi({prepare,activity=null}){
     const v=version,controller=start('Đang chuẩn bị Mệnh bàn để AI phân tích…',610000);
     try{
       const prepared=await buildMenhReadingRequest(body);if(v!==version)return;
-      const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
-      status.textContent='AI đang gửi lượt luận Mệnh lên server…';
+      setConnectionState('checking');const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
+      setConnectionState('connected');status.textContent='AI đang gửi lượt luận Mệnh lên server…';
       activityReadingId=track('startReading');
       const started=await jobClient.start('/api/menh/read/start',prepared.request,controller.signal);
       let data=started.legacyResult;

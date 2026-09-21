@@ -34,6 +34,12 @@
         </div>
       </header>
 
+      <nav class="utility-index" aria-label="Thông tin và trợ giúp">
+        <a href="./guide.html"><span class="utility-icon" aria-hidden="true">?</span><span>Hướng dẫn</span></a>
+        <a href="./server.html"><span class="utility-icon" aria-hidden="true">↯</span><span>Kết nối AI</span></a>
+        <a href="./info.html"><span class="utility-icon" aria-hidden="true">i</span><span>Thông tin</span></a>
+      </nav>
+
       <main id="top">
         <section class="control-panel" aria-labelledby="input-title">
           <div class="control-heading">
@@ -52,7 +58,6 @@
             <label class="field question-field"><span>Nhóm sự việc · dùng khi luận AI</span><select id="topic"></select></label>
             <div class="mode-controls question-field">
               <label class="field"><span>Bạn muốn xem gì?</span><select id="qimen-mode" aria-describedby="mode-explanation"></select></label>
-              <div class="field reading-depth"><span>Mức độ luận</span><strong>Luận sâu · suy luận tối đa</strong></div>
               <p id="mode-explanation" class="source-note" role="status"></p>
               <details class="actor-options"><summary>Đại diện bổ sung · chỉ nhập khi đã xác định</summary>
                 <p>Nếu đã xác định Can Chi đại diện theo cách luận đang dùng, chọn tại đây. Không phải yêu cầu ngày sinh. Để trống nếu chưa rõ; AI sẽ không tự gán khách hàng hay đối thủ vào một cung.</p>
@@ -143,49 +148,29 @@
 
         <section id="result" class="result" aria-live="polite" aria-busy="false">
           <p id="question-summary" class="question-summary"></p>
-          <section class="learning-panel ai-panel" aria-labelledby="ai-title">
-            <div class="control-heading"><div><p class="eyebrow">Trợ lý luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="element-chip" data-element="metal">AI</span></div>
-            <p>Luận đúng việc đang hỏi: phối hợp các tượng, làm rõ điểm thuận–vướng và nối thành diễn biến có điều kiện. Mỗi nhận định đều có căn cứ để đối chiếu ngay trên bàn.</p>
-            <details id="local-setup"><summary>Kết nối AI · hướng dẫn lần đầu</summary>
-              <ol><li><a href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối All-in-One AI</a> và giải nén vào thư mục mới.</li><li>Cập nhật đầu kết nối đang dùng theo hướng dẫn đi kèm; giữ nguyên cấu hình chuyển tiếp hiện có.</li><li>Khởi động lại bộ kết nối, nhập mã mới vào ô bên dưới rồi bấm Kiểm tra kết nối. Đây không phải API key.</li></ol>
-              <p>Website không tự cập nhật bộ kết nối AI. Bản cũ sẽ được chặn trước khi gửi câu hỏi để tránh luận sai chế độ. Bạn vẫn có thể lập bàn và xem phân tích quy tắc khi chưa kết nối.</p>
-            </details>
-            <div class="local-controls">
-              <label class="field"><span>Mã kết nối AI</span><input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Nhập mã kết nối AI" /><small>Từ 4 đến 128 ký tự; mã chỉ dùng để ghép nối với bộ kết nối AI.</small></label>
-              <button id="local-check" class="button button-quiet" type="button">Kiểm tra kết nối</button>
-              <button id="ai-read" class="button button-primary" type="button">Luận bằng AI</button>
-              <button id="ai-cancel" class="button button-quiet" type="button" hidden>Hủy</button>
+          <section class="learning-panel ai-panel ai-panel-compact" aria-labelledby="ai-title">
+            <div class="control-heading ai-heading-compact"><div><p class="eyebrow">Luận giải</p><h2 id="ai-title">Luận sự việc bằng AI</h2></div><span class="ai-mini-mark" aria-hidden="true">✦</span></div>
+            <div class="compact-ai-actions">
+              <div id="ai-token-shell" class="ai-token-shell" data-state="disconnected">
+                <span id="ai-connection-icon" class="ai-connection-icon" aria-label="AI chưa kết nối" title="AI chưa kết nối">×</span>
+                <input id="local-token" type="text" minlength="4" maxlength="128" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Mã kết nối AI" aria-label="Mã kết nối AI" />
+                <button id="local-check" class="ai-connect-submit" type="button" aria-label="Kiểm tra kết nối AI" title="Kiểm tra kết nối"><span aria-hidden="true">↵</span></button>
+              </div>
+              <button id="ai-read" class="button button-primary ai-read-compact" type="button">Luận AI <span aria-hidden="true">→</span></button>
+              <button id="ai-cancel" class="ai-icon-button" type="button" aria-label="Hủy lượt luận AI" title="Hủy" hidden>×</button>
             </div>
-            <div class="local-preference">
-              <label class="local-remember"><input id="local-remember" type="checkbox" aria-describedby="local-remember-hint" /> Ghi nhớ mã trên thiết bị này</label>
-              <p id="local-remember-hint" class="ai-note" role="status">Không ghi nhớ mã sau khi đóng hoặc tải lại trang.</p>
+            <div class="ai-compact-meta">
+              <label class="local-remember compact-remember"><input id="local-remember" type="checkbox" aria-describedby="local-remember-hint" /><span>Ghi nhớ mã</span></label>
+              <p id="local-remember-hint" class="visually-hidden" role="status">Không ghi nhớ mã sau khi đóng hoặc tải lại trang.</p>
+              <a href="./server.html" class="icon-text-link" title="Hướng dẫn kết nối AI"><span aria-hidden="true">?</span><span class="visually-hidden">Hướng dẫn kết nối AI</span></a>
             </div>
-            <div class="ai-feedback">
+            <div class="ai-feedback ai-feedback-compact">
               <span id="ai-progress" class="ai-spinner" aria-hidden="true" hidden></span>
               <div><p id="ai-status" role="status">Chưa kết nối AI.</p><p id="ai-elapsed" class="ai-elapsed" aria-live="off" hidden></p></div>
             </div>
-            <div class="activity-summary" aria-label="Hoạt động hôm nay">
-              <div><span>Lập bàn hôm nay</span><strong id="activity-chart-count">0</strong></div>
-              <div><span>Luận AI hôm nay</span><strong id="activity-reading-count">0</strong></div>
-            </div>
-            <details class="activity-history">
-              <summary>Lịch sử lượt luận gần đây</summary>
-              <p id="activity-storage-note" class="ai-note">Đang tải thống kê chung; nội dung câu hỏi không được đưa vào lịch sử.</p>
-              <ol id="activity-reading-list" class="activity-reading-list"></ol>
-            </details>
-            <button id="rule-analyze" class="button button-quiet" type="button">Xem phân tích theo bàn · không cần kết nối AI</button>
-            <div id="rule-preview" class="rule-preview" hidden></div>
             <div id="ai-answer" aria-live="polite" aria-busy="false" hidden></div>
             <button id="report-pdf" class="button button-primary report-pdf-button" type="button" hidden>Chia sẻ link kết quả</button>
-            <details><summary>Quy tắc và phạm vi luận</summary>
-              <p>Một lõi Thời Gia · Chuyển Bàn, giữ đúng Tháo bổ hoặc Mao Sơn đã chọn. Sáu chế độ có quy tắc phân tích riêng; Tự động chọn theo ý định câu hỏi và bạn có thể đổi lại. Trước khi gọi AI, app xác định ngữ cảnh, gom cụm tượng, chọn căn cứ trọng tâm và lập diễn biến có điều kiện.</p>
-              <p>Kết luận nhanh và Diễn biến thực tế dành cho người mới. Căn cứ Kỳ Môn được thu gọn, có thể mở để đối chiếu ngay với cung trên bàn. Chiến lược đề xuất nêu bước làm tiếp; Ứng kỳ tách thời hạn câu hỏi với việc so sánh thời điểm hành động.</p>
-              <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, đủ 81 Thập Can Khắc Ứng và KM-TIMING-3.0 với Kích Hình, Nhập Mộ của 9 can hiện bàn cùng xung/hợp chi ẩn Lục Nghi trong phạm vi thời gian đã hỏi. Phản/Phục ngâm vẫn chỉ điều chỉnh nhịp; Phi Bàn/Cửu Thần và việc ép Tinh–Môn thành một ngày đơn trị chưa thuộc profile hiện tại. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>
-              <p>Lời luận phải nối các tượng thành giả thuyết có điều kiện, không tự tạo danh tính hoặc tâm ý khách hàng/đối thủ. Kiểm tra cấu trúc không chứng minh diễn giải đúng. Mọi lượt AI đều dùng Luận sâu và mức suy luận tối đa; cách trình bày vẫn thay đổi theo đúng loại câu hỏi để không ép mọi việc vào cùng một form. AI được yêu cầu viết lại tối đa một lần khi không đạt kiểm tra; nút Hủy luôn có hiệu lực.</p>
-              <p><a href="./audit.html">Kiểm toán và phạm vi</a></p>
-            </details>
           </section>
-
 
           <div class="chart-meta">
             <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
@@ -199,13 +184,13 @@
                   <p class="eyebrow">Lạc thư Cửu Cung</p>
                   <h2>Bàn chuyển Kỳ Môn</h2>
                 </div>
-                <div class="board-key" aria-label="Chú thích lớp bàn">
-                  <span class="role-key role-key-person"><b aria-hidden="true">◉</b> Người hỏi · Nhật can</span>
-                  <span class="role-key role-key-event"><b aria-hidden="true">◆</b> Sự việc · Thời can</span>
-                  <span class="nianming-key"><b aria-hidden="true">◇</b> Niên Mệnh · đối chiếu</span>
-                  <span class="attention-key attention-key-support"><b aria-hidden="true">●</b> Thuận mạnh</span>
-                  <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b> Cảnh báo mạnh</span>
-                  <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b> Xung đột</span>
+                <div class="board-key board-key-icons" aria-label="Ký hiệu trên bàn">
+                  <span class="role-key role-key-person" title="Người hỏi · Nhật can"><b aria-hidden="true">◉</b><span class="visually-hidden">Người hỏi · Nhật can</span></span>
+                  <span class="role-key role-key-event" title="Sự việc · Thời can"><b aria-hidden="true">◆</b><span class="visually-hidden">Sự việc · Thời can</span></span>
+                  <span class="nianming-key" title="Niên Mệnh · đối chiếu"><b aria-hidden="true">◇</b><span class="visually-hidden">Niên Mệnh · đối chiếu</span></span>
+                  <span class="attention-key attention-key-support" title="Thuận mạnh"><b aria-hidden="true">●</b><span class="visually-hidden">Thuận mạnh</span></span>
+                  <span class="attention-key attention-key-danger" title="Cảnh báo mạnh"><b aria-hidden="true">▲</b><span class="visually-hidden">Cảnh báo mạnh</span></span>
+                  <span class="attention-key attention-key-conflict" title="Xung đột"><b aria-hidden="true">◆</b><span class="visually-hidden">Xung đột</span></span>
                 </div>
               </div>
               <div class="board-frame">
@@ -230,7 +215,6 @@
             </div>
             <div class="element-panel-body">
               <div class="element-panel-visual">
-                <p>Đọc theo chiều mũi tên. Sơ đồ mặc định hiển thị đầy đủ; bấm vào một hành để xem riêng bốn quan hệ trực tiếp.</p>
             <div class="element-diagram" id="element-diagram">
               <svg class="element-routes" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
                 <defs>
@@ -264,54 +248,8 @@
             <div class="diagram-legend" aria-label="Chú thích sơ đồ"><span><i class="legend-generate"></i><strong>Tương sinh</strong> · nuôi dưỡng</span><span><i class="legend-control"></i><strong>Tương khắc</strong> · chế ước</span></div>
             <div class="element-reading" id="element-reading" aria-live="polite" hidden></div>
               </div>
-              <div class="element-panel-guide">
-            <p>Đọc từ hành bên trái: “Mộc sinh Hỏa” khác “Hỏa sinh Mộc”. Khi so người với việc, dùng <strong>hành của cung chứa dụng thần</strong>, không trộn với hành riêng của Can, Tinh hoặc Môn.</p>
-            <details><summary>5 quan hệ: diễn giải thế nào cho đúng chiều?</summary>
-              <ul><li>Việc sinh người: tượng được hỗ trợ, có điều kiện tiếp nhận.</li><li>Người sinh việc: tượng phải bỏ công, thời gian hoặc nguồn lực.</li><li>Người khắc việc: tượng muốn quản lý, kiểm soát; không có nghĩa chắc chắn thắng.</li><li>Việc khắc người: tượng áp lực hoặc yêu cầu vượt sức; không đồng nghĩa chắc chắn thất bại.</li><li>Cùng hành: tượng tương đồng; có thể đồng thuận hoặc cạnh tranh. Cùng hành chưa chắc cùng cung.</li></ul>
-              <p>Đây là cách đọc sơ bộ trong hệ thống truyền thống. Còn phải xét mùa, vượng suy, Môn–Tinh–Thần, Không/Mã và hoàn cảnh thực tế.</p>
-            </details>
-              </div>
             </div>
           </section>
-          <section class="learning-panel" aria-labelledby="basics-title">
-            <h2 id="basics-title">Tự đọc một bàn trong 6 bước</h2>
-            <ol class="beginner-steps">
-              <li><strong>Viết một câu hỏi rõ.</strong> Nêu mình hỏi cho ai, việc gì, trong bao lâu. Ví dụ “Tôi có ký được hợp đồng A trong tháng này không?”; tránh gộp cả công việc, hôn nhân và tiền bạc.</li>
-              <li><strong>Chốt ngày giờ và phương pháp.</strong> Dùng thời điểm hỏi; giữ nguyên khi đọc lại cùng bàn. Phút không tạo bàn mới riêng nếu chưa đổi giờ Can Chi hoặc giao tiết. Đừng bấm lại liên tục để tìm bàn thuận ý.</li>
-              <li><strong>Tìm người và việc.</strong> Chữ đầu ở trụ Ngày là Nhật can; chữ đầu ở trụ Giờ là Thời can. Tìm chúng ở Thiên bàn. Các nút hướng dẫn bên trên chỉ tới cung tương ứng, kể cả can ký cung.</li>
-              <li><strong>Chọn dụng thần phụ.</strong> Dụng thần là ký hiệu đại diện điều đang hỏi. Chọn chủ đề để biết nên xem thêm Môn, Tinh hoặc Thần nào. Đây là cách lấy tượng nhập môn, không phải một quy tắc duy nhất cho mọi phái.</li>
-              <li><strong>So cung rồi đọc các lớp.</strong> So sinh–khắc hai cung; đọc Môn (lối diễn biến), Tinh (tính chất), Thần (tượng bổ sung). Không suy chỉ từ một chữ Sinh hay Tử.</li>
-              <li><strong>Viết nhận xét có điều kiện.</strong> Ghi yếu tố thuận, yếu tố vướng và điều cần xác minh. Kết luận theo mẫu “Tượng gợi ý…, nhưng cần kiểm tra…”, không đổi thành xác suất hay lời hứa về tương lai.</li>
-            </ol>
-            <details><summary>Từ điển nhanh: Trực Phù, Trực Sử, Thiên Cầm, Không, Mã…</summary>
-              <dl><dt>Trực Phù</dt><dd>Có hai cách dùng tên: sao giữ vai trò chủ trong Cửu Tinh và Thần Trực Phù trong Bát Thần. “Trực Phù: Thiên Anh” nghĩa sao Thiên Anh đang giữ vai trò chủ.</dd>
-              <dt>Trực Sử</dt><dd>Môn chủ của giờ đang xét, giúp đọc đường diễn tiến; không phải tên một Thần.</dd>
-              <dt>Thiên Cầm</dt><dd>Một trong Cửu Tinh, gốc Trung Ngũ; app ký cùng Thiên Nhuế. Không phải lúc nào Thiên Cầm cũng là Trực Phù.</dd>
-              <dt>Tuần Không</dt><dd>Tượng thiếu thực chất, chưa thành hình hoặc chậm; không đủ để khẳng định việc không bao giờ thành.</dd>
-              <dt>Dịch Mã</dt><dd>Tượng di chuyển, thay đổi, bận rộn; không mặc định tốt hay xấu.</dd>
-              <dt>Phục ngâm / phản ngâm</dt><dd>Phục ngâm gợi lặp lại, chậm hoặc giữ nguyên; phản ngâm gợi đảo chiều, dao động. Xem lớp Tinh hay Môn đang mang dấu đó.</dd>
-              <dt>Môn bức, kích hình, nhập mộ, vượng suy</dt><dd>Là các lớp hiệu chỉnh. App tính Môn bức, Lục Nghi kích hình và KM-TIMING-3.0 xét Nhập Mộ cho đủ 9 can hiện trên thiên bàn, kể cả can ký; vượng suy Cửu Tinh theo tháng tiết khí vẫn là lớp riêng. Không áp bảng vượng suy của Tinh cho Can/Môn/cung.</dd></dl>
-            </details>
-            <p class="source-note">Tham khảo quy tắc nền: <a href="https://www.fatemaster.ai/guides/qimen-dunjia" target="_blank" rel="noreferrer">FateMaster · Thời Gia Chuyển Bàn</a>. Ví dụ và checklist bên trên là hướng dẫn biên soạn cho app, không phải trích nguyên văn cổ thư.</p>
-          </section>
-          <section class="reading-strip" aria-labelledby="reading-title">
-            <div>
-              <p class="eyebrow">Mấu chốt nhập môn</p>
-              <h2 id="reading-title">Đọc bàn theo lớp</h2>
-            </div>
-            <ol>
-              <li><strong>Cung</strong><span>Bối cảnh và phương vị</span></li>
-              <li><strong>Thần</strong><span>Khí thế vô hình</span></li>
-              <li><strong>Tinh</strong><span>Thiên thời, năng lực</span></li>
-              <li><strong>Môn</strong><span>Con đường sự việc</span></li>
-              <li><strong>Thiên–Địa can</strong><span>Quan hệ chủ–khách</span></li>
-            </ol>
-          </section>
-
-          <details class="method-details">
-            <summary>Quy tắc đang dùng và cách đối chiếu với phần mềm khác</summary>
-            <div class="method-copy" id="method-copy"></div>
-          </details>
         </section>
       </main>
 
