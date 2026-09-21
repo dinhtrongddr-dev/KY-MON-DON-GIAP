@@ -264,11 +264,21 @@ function semanticCard(palace,chart,conditions=null,prepared=null){
   const chips=semantic.keywords.map(word=>`<span>${escapeHtml(word)}</span>`).join('');
   const states=semantic.states.length?`<p class="semantic-state">${escapeHtml(semantic.states.map(x=>x.rule).join(' '))}</p>`:'';
   const domainLabel=semantic.secondaryDomainLabel?`${semantic.domainLabel} · phụ: ${semantic.secondaryDomainLabel}`:semantic.domainLabel;
+  const layerOrder={'Cung':0,'Thần':1,'Tinh':2,'Môn':3,'Thiên can':4,'Địa can':5};
+  const layerLabel={'Thiên can':'Can · Thiên','Địa can':'Can · Địa'};
+  const components=[...semantic.items].sort((a,b)=>(layerOrder[a.layer]??9)-(layerOrder[b.layer]??9)).map(item=>`
+    <div class="semantic-modern-item">
+      <strong>${escapeHtml(layerLabel[item.layer]||item.layer)} · ${escapeHtml(item.name)}</strong>
+      <p>${escapeHtml(item.meaning)}</p>
+    </div>`).join('');
   return `<section class="semantic-card semantic-modern" aria-label="Dịch tân thời theo ngữ cảnh">
     <div class="semantic-card-head"><span><p class="eyebrow">Dịch tân thời</p><small>${escapeHtml(domainLabel)}</small></span><span class="semantic-version">${escapeHtml(semantic.version)}</span></div>
     <div class="semantic-keywords">${chips}</div>
     <p class="semantic-summary">${escapeHtml(semantic.summary)}</p>
     ${states}
+    <div class="semantic-modern-list" aria-label="Cung Thần Tinh Môn Can">
+      ${components}
+    </div>
   </section>`;
 }
 

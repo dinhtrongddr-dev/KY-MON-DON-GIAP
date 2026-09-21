@@ -14,13 +14,20 @@ test('desktop workspace prioritizes board + selected-palace reading and moves Fi
   assert.match(html,/element-panel-guide/);
 });
 
-test('selected palace separates modern translation from traditional gloss without duplicate semantic dictionary',()=>{
+test('selected palace separates modern translation from traditional gloss and keeps the full modern Cung-Thần-Tinh-Môn-Can breakdown',()=>{
   assert.match(app,/Dịch tân thời/);
   assert.match(app,/Dịch cổ ngữ/);
   assert.match(app,/data-detail-tab="modern"/);
   assert.match(app,/data-detail-tab="classical"/);
   assert.match(app,/Nghĩa tượng truyền thống của Cung · Thần · Tinh · Môn · Can/);
-  assert.doesNotMatch(app,/Xem nghĩa từng thành phần/);
+  assert.match(app,/semantic-modern-list/);
+  assert.match(app,/aria-label="Cung Thần Tinh Môn Can"/);
+  assert.match(app,/['"]Cung['"]:\s*0/);
+  assert.match(app,/['"]Thần['"]:\s*1/);
+  assert.match(app,/['"]Tinh['"]:\s*2/);
+  assert.match(app,/['"]Môn['"]:\s*3/);
+  assert.match(app,/['"]Thiên can['"]:\s*4/);
+  assert.match(app,/['"]Địa can['"]:\s*5/);
   assert.match(app,/detailItem\("palace"/);
 });
 
