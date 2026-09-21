@@ -15,6 +15,8 @@ import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 import {NIANMING_VERSION} from '../dist/qimen/analysis/nianmingEngine.mjs';
 import {defaultShareDir,loadShare,pruneShares,renderSharePage,saveShare} from './share-store.mjs';
+import {createOutcomeRegistry,defaultOutcomeRegistryPath} from './outcome-registry.mjs';
+import {OUTCOME_REGISTRY_VERSION,VALIDATION_VERSION} from '../dist/qimen/validation/protocol.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
@@ -52,7 +54,7 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
  let busy=false,activeJob=null;
  const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
@@ -161,7 +163,33 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
          return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt,expiresAt:record.expiresAt});
        }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
      }
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/validation/report'&&req.method==='GET'){
+       try{return send(200,{validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,report:outcomeRegistry.report()});}
+       catch(e){return send(500,{error:e.message||'Không đọc được báo cáo validation.'});}
+     }
+     if(path==='/api/validation/register'&&req.method==='POST'){
+       if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
+       const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>24000)return send(413,{error:'Dữ liệu validation quá lớn.'});chunks.push(c);}
+       let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
+       const requestBody=body?.request;let prepared,identity;
+       try{prepared=prepareReading(requestBody);identity=await readingIdentity(prepared);}catch(e){return send(400,{error:e.message});}
+       const mismatch=requestBody?.rules!==RULE_VERSION||requestBody?.protocol!==READING_PROTOCOL||requestBody?.caseRules!==CASE_ENGINE_VERSION||requestBody?.nianmingRules!==NIANMING_VERSION||requestBody?.chartFingerprint!==identity.chartFingerprint||requestBody?.requestFingerprint!==identity.requestFingerprint;
+       if(mismatch)return send(409,{error:'Snapshot validation không khớp bàn hoặc bộ quy tắc hiện tại.'});
+       try{
+         const result=outcomeRegistry.registerPrepared({...prepared,...identity,request:requestBody},{track:body?.track||'MONITORING',evaluationUnitRef:body?.evaluationUnitRef||null});
+         return send(result.reused?200:201,{validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,reused:result.reused,record:result.record});
+       }catch(e){return send(400,{error:e.message||'Không đăng ký được snapshot validation.'});}
+     }
+     if(path==='/api/validation/outcome'&&req.method==='POST'){
+       if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
+       const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Dữ liệu outcome quá lớn.'});chunks.push(c);}
+       let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
+       try{
+         const record=outcomeRegistry.recordOutcome(body?.recordId,body?.outcome);
+         return send(200,{validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,record});
+       }catch(e){return send(400,{error:e.message||'Không ghi nhận được outcome.'});}
+     }
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
      const jobMatch=/^\/api\/jobs\/([A-Za-z0-9_-]{20,64})$/.exec(path);
      if(jobMatch&&['GET','DELETE'].includes(req.method)){
        pruneJobs();const job=jobs.get(jobMatch[1]);
@@ -274,7 +302,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/qimen/timePlace.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic|validation)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/qimen/timePlace.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));
@@ -288,10 +316,11 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const activityStore=createActivityStore({filePath:defaultActivityPath()});
- const bridge=createBridge({activityStore});
+ const outcomeRegistry=createOutcomeRegistry({filePath:defaultOutcomeRegistryPath()});
+ const bridge=createBridge({activityStore,outcomeRegistry});
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{
-   console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nNhật ký lỗi AI: ${defaultAiDiagnosticPath()}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
+   console.log(`Kỳ Môn AI • ${ROUTING_MODE} • ${MODEL}\nMở trên máy chủ: ${bridge.origin}\nMã ghép nối: ${bridge.token}\nNhật ký lỗi AI: ${defaultAiDiagnosticPath()}\nOutcome registry: ${defaultOutcomeRegistryPath()}\nBridge chỉ nghe trên loopback; dùng Cloudflare Tunnel để nối Worker.`);
    if(process.platform==='win32'&&process.env.QIMEN_OPEN_BROWSER==='1'){
      const browser=spawn('rundll32.exe',['url.dll,FileProtocolHandler',SITE_ORIGIN+'/'],{detached:true,stdio:'ignore',windowsHide:true});
      browser.unref();

@@ -8,6 +8,8 @@ import {createBridge} from '../local/server.mjs';
 import {buildReadingRequest,prepareReading,validateReadingResponse,READING_PROTOCOL,NIANMING_VERSION} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
+import {createOutcomeRegistry} from '../local/outcome-registry.mjs';
+import {OUTCOME_REGISTRY_VERSION,VALIDATION_VERSION} from '../dist/qimen/validation/protocol.mjs';
 
 const origin='https://kymon.pp.ua';
 const relay='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
@@ -47,6 +49,8 @@ test('the official website can reach the current question protocol through the e
   assert.equal(JSON.parse(result.text).protocol,READING_PROTOCOL);
   assert.equal(JSON.parse(result.text).caseRules,CASE_ENGINE_VERSION);
   assert.equal(JSON.parse(result.text).nianmingRules,NIANMING_VERSION);
+  assert.equal(JSON.parse(result.text).validationRules,VALIDATION_VERSION);
+  assert.equal(JSON.parse(result.text).outcomeRegistryRules,OUTCOME_REGISTRY_VERSION);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'same-origin'}})).status,200);
@@ -76,6 +80,42 @@ test('question bridge fails closed when KM-CASE or KM-NIANMING compatibility is 
   const missingNianming={...prepared.request};delete missingNianming.nianmingRules;
   assert.equal((await call('/api/read',{body:missingNianming})).status,409);
   assert.equal((await call('/api/read',{body:{...prepared.request,nianmingRules:'KM-NIANMING-0.9'}})).status,409);
+});
+
+
+test('Phase 12 validation registry is opt-in, sanitized and separate from normal AI reads',async t=>{
+  const body={input:{year:2026,month:9,day:16,hour:7,minute:46,tzOffset:7},question:'Trong tuần này tôi có khoản tiền vào được phát sinh không?',topic:'general',mode:'auto',method:'chaibu'};
+  const prepared=await buildReadingRequest(body),answer=readingFixture(prepareReading(body));
+  let clock=Date.parse('2026-09-16T00:50:00Z');
+  const outcomeRegistry=createOutcomeRegistry({now:()=>clock});
+  const call=await start(t,{outcomeRegistry,runner:async()=>answer});
+  const before=JSON.parse((await call('/api/validation/report')).text);
+  assert.equal(before.report.totals.records,0);
+
+  const read=await call('/api/read',{body:prepared.request});
+  assert.equal(read.status,200);
+  assert.equal(JSON.parse((await call('/api/validation/report')).text).report.totals.records,0);
+
+  const registered=await call('/api/validation/register',{body:{request:prepared.request,track:'BLIND_HOLDOUT',evaluationUnitRef:'contract-unit-001'}});
+  assert.equal(registered.status,201);
+  const data=JSON.parse(registered.text);
+  assert.equal(data.validationRules,VALIDATION_VERSION);
+  assert.equal(data.outcomeRegistryRules,OUTCOME_REGISTRY_VERSION);
+  assert.equal(data.record.snapshot.track,'BLIND_HOLDOUT');
+  assert.equal(JSON.stringify(data.record).includes(body.question),false);
+
+  const duplicate=await call('/api/validation/register',{body:{request:prepared.request,track:'MONITORING',evaluationUnitRef:'contract-unit-001'}});
+  assert.equal(duplicate.status,200);assert.equal(JSON.parse(duplicate.text).reused,true);
+
+  clock=Date.parse('2026-09-18T01:00:00Z');
+  const outcome=await call('/api/validation/outcome',{body:{recordId:data.record.id,outcome:{outcomeClass:'OBSERVED',observedAt:'2026-09-18T00:00:00Z',sourceKind:'system_record',sourceRef:'crm:test-outcome',humanReviewed:true,independentOfReading:true}}});
+  assert.equal(outcome.status,200);
+  assert.equal(JSON.parse(outcome.text).record.outcome.verificationStatus,'VERIFIED_BENCHMARK');
+  clock=Date.parse('2026-09-21T00:00:00Z');
+  const report=JSON.parse((await call('/api/validation/report')).text).report;
+  assert.equal(report.totals.records,1);assert.equal(report.totals.verifiedBenchmark,1);
+  assert.equal(report.selective.directionalScored,1);assert.equal(report.selective.matched,1);
+  assert.equal(report.reportability.predictiveValidityClaimAllowed,false);
 });
 
 test('slow tunnel readings preserve one complete validated current-protocol JSON document',async t=>{
