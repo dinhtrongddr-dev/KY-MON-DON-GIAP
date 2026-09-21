@@ -7,7 +7,7 @@ export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
   const bundles=[];
   for(const p of analysis.palaces) {
     const roles=analysis.roles.filter(r=>r.palace===p.number&&relevant.has(r.id));if(!roles.length)continue;
-    const actorIds=roles.map(r=>r.id),states=[],layers=analysis.patterns.layers,structure=analysis.structures?.byPalace?.[p.number]||null,keying=analysis.keying?.byPalace?.[p.number]||null;
+    const actorIds=roles.map(r=>r.id),states=[],layers=analysis.patterns.layers,structure=analysis.structures?.byPalace?.[p.number]||null,keying=analysis.keying?.byPalace?.[p.number]||null,formation=analysis.formations?.byPalace?.[p.number]||null;
     const add=(code,ids=actorIds,detail=null)=>states.push({code,actorIds:ids,detail});
     if(p.voided)add('void');if(p.horse)add('horse');if(p.conditions.doorPressure)add('door_pressure');
     if(structure?.doorRelation?.palaceControlsDoor)add('palace_pressure');
@@ -37,9 +37,15 @@ export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
         priority:keying.priority,
         meaning:keying.meaning
       }:null,
+      formation:formation?{
+        matches:formation.matches,
+        heavenGates:analysis.formations.directional.byPalace[p.number]?.heavenGates||[],
+        earthDoors:analysis.formations.directional.byPalace[p.number]?.earthDoors||[],
+        meaning:formation.meaning
+      }:null,
       specialPatterns:special.map(m=>({name:m.name,carried:m.carried,evidenceId:m.evidenceId})),
       structuralRelations:{starDoor:p.starDoor,doorPalace:p.doorPalace,stemPairs:p.stemPairs},
-      relationshipIds:edges.map(e=>e.id),evidenceIds:[`p${p.number}`,`c${p.number}`,`mix${p.number}`,`strength_${p.number}`,`structure_${p.number}`,`keying_${p.number}`,...roles.map(r=>r.evidenceId),...(states.some(s=>['fan_yin','fu_yin'].includes(s.code))?['patterns']:[]),...special.map(m=>m.evidenceId)]};
+      relationshipIds:edges.map(e=>e.id),evidenceIds:[`p${p.number}`,`c${p.number}`,`mix${p.number}`,`strength_${p.number}`,`structure_${p.number}`,`keying_${p.number}`,`formation_${p.number}`,...roles.map(r=>r.evidenceId),...(states.some(s=>['fan_yin','fu_yin'].includes(s.code))?['patterns']:[]),...special.map(m=>m.evidenceId)]};
     b.conflicts=resolveContradictions(b,context);bundles.push(b);
   }
   return bundles;

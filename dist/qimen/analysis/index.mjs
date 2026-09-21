@@ -8,6 +8,7 @@ import {resolveYongshenProfile} from './yongshenResolver.mjs';
 import {analyzeStructures} from './structureEngine.mjs';
 import {analyzeRoles} from './roleEngine.mjs';
 import {analyzeKeying} from './keyingEngine.mjs';
+import {analyzeFormations} from './formationEngine.mjs';
 export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.pillars.day,questionContext=null}={}) {
   validateBoard(board);
   const yongshenProfile=resolveYongshenProfile({topic,questionContext});
@@ -18,6 +19,7 @@ export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.p
       punishment:palaceConditions(p).punishment.includes(s.vi),wonderTomb:palaceConditions(p).wonderTombs.includes(s.vi)}))}));
   const structures=analyzeStructures(board,palaces,roles);
   const keying=analyzeKeying(board,palaces,roles);
+  const formations=analyzeFormations(board,palaces,roles);
   const relations=palaceRelationships(board);
   const roleProfile=analyzeRoles(board,roles,palaces,structures,relations,questionContext);
   const contradictions=[];
@@ -30,8 +32,8 @@ export function analyzeBoard(board,{topic='general',actors={},selfPillar=board.p
   }
   const self=roles.find(r=>r.id==='self'),event=roles.find(r=>r.id==='event');
   return freezeData(validateAnalysis({schemaVersion:'QimenAnalysis/1',boardVersion:board.schemaVersion,
-    roles,yongshenProfile,palaces,structures,keying,roleProfile,relations,patterns:specialPatterns(board),contradictions,
+    roles,yongshenProfile,palaces,structures,keying,formations,roleProfile,relations,patterns:specialPatterns(board),contradictions,
     hostGuest:{host:self.palace,guest:event.palace,...roleProfile.hostGuest,legacyReference:'host=self palace / guest=event palace chỉ giữ tương thích; KM-ROLE-2.0 dùng Chủ–Khách theo ngữ cảnh.'},
-    coverage:{computed:['Nhật/Thời can và Giáp ẩn','KM-YONGSHEN-2.0 theo domain và thứ bậc Dụng Thần','KM-STRUCTURE-2.0: 81 Thập Can Khắc Ứng + Tứ hại + cách cục ưu tiên','KM-STRENGTH-2.0: Tinh/Môn/Can/Cung tách mô hình + Thập Nhị Trường Sinh','KM-ROLE-2.0: Chủ–Khách theo ngữ cảnh + Nội/Ngoại + agency + nhiều vai','KM-KEYING-3.0: 64 Môn×Môn + 72 Môn×Kỳ/Nghi + 24 Tam Kỳ đáo cung + 108 chỉ mục Cửu Tinh trị thời + Hòa/Nghĩa/Bức/Chế','64 quan hệ cung có chiều','Không/Mã','hai chiều Môn–Cung','kích hình từng can','Tam kỳ nhập mộ Ất→2/Bính→6/Đinh→8','các lớp phản/phục ngâm','Ứng kỳ v2: nhịp Nội/Ngoại + Không/Mã/Mộ','mâu thuẫn'],
-      unsupported:['Nhập mộ các can ngoài Tam kỳ','Diễn giải hiện đại đầy đủ cho 108 Cửu Tinh trị thời (Phase 9 chỉ index classical_context_only)','Tam Trá/Ngũ Giả/Cửu Độn đầy đủ','Ứng kỳ bằng Hình/Can/Môn hoặc Phản/Phục ngâm định ngày','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
+    coverage:{computed:['Nhật/Thời can và Giáp ẩn','KM-YONGSHEN-2.0 theo domain và thứ bậc Dụng Thần','KM-STRUCTURE-2.0: 81 Thập Can Khắc Ứng + Tứ hại + cách cục ưu tiên','KM-STRENGTH-2.0: Tinh/Môn/Can/Cung tách mô hình + Thập Nhị Trường Sinh','KM-ROLE-2.0: Chủ–Khách theo ngữ cảnh + Nội/Ngoại + agency + nhiều vai','KM-KEYING-3.0: 64 Môn×Môn + 72 Môn×Kỳ/Nghi + 24 Tam Kỳ đáo cung + 108 chỉ mục Cửu Tinh trị thời + Hòa/Nghĩa/Bức/Chế','KM-FORMATION-3.0: Tam Trá + Ngũ Giả + Cửu Độn + Thiên Tam Môn + Địa Tứ Hộ','64 quan hệ cung có chiều','Không/Mã','hai chiều Môn–Cung','kích hình từng can','Tam kỳ nhập mộ Ất→2/Bính→6/Đinh→8','các lớp phản/phục ngâm','Ứng kỳ v2: nhịp Nội/Ngoại + Không/Mã/Mộ','mâu thuẫn'],
+      unsupported:['Nhập mộ các can ngoài Tam kỳ','Diễn giải hiện đại đầy đủ cho 108 Cửu Tinh trị thời (Phase 9 chỉ index classical_context_only)','Địa Tư Môn / Đình Đình–Bạch Gian / Tam Thắng Cung–Ngũ Bất Kích','Ứng kỳ bằng Hình/Can/Môn hoặc Phản/Phục ngâm định ngày','Phi Bàn / Cửu Thần','Tâm ý hoặc quyền quyết định thực tế khi chưa được xác nhận']}}));
 }

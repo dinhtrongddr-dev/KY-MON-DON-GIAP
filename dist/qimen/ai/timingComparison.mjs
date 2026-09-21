@@ -25,8 +25,9 @@ export function compareTimes(base,rawCandidates,{action='general',topic='general
     const blockers=[...new Set(details.flatMap(d=>d.metrics.blockers))];
     if(a.patterns.wuBuYuShi)blockers.push('Ngũ bất ngộ thời của bàn ứng viên');
     const supports=details.filter(d=>targetNumbers.includes(d.number)).flatMap(d=>d.metrics.supports);
+    const formationMarkers=targetNumbers.flatMap(n=>(a.formations.byPalace[n]?.matches||[]).filter(m=>m.qualified).map(m=>({id:m.id,name:m.name,family:m.family,palace:n,plainMeaning:m.plainMeaning,uses:m.uses}))).slice(0,8);
     return {id:`timing_${i+1}`,input:b.input,dateTime:b.dateTime,label:formatInstantAtOffset(b.utcMs,b.input.tzOffset,true),timePlace:tp.metadata,
-      blockers,supports,fit:details.filter(d=>targetNumbers.includes(d.number)).reduce((sum,d)=>sum+d.metrics.fit,0),
+      blockers,supports,formationMarkers,fit:details.filter(d=>targetNumbers.includes(d.number)).reduce((sum,d)=>sum+d.metrics.fit,0),
       note:`${b.dun==='yang'?'Dương':'Âm'} Độn ${b.ju} cục · ${b.yuan}. ${b.fanYin?'Có phản ngâm; xem khả năng điều chỉnh.':''}${b.fuYin?' Có phục ngâm; xem khâu cần giữ/chậm.':''}`,
       board:{schemaVersion:'QimenCandidateSnapshot/1',dateTime:b.dateTime,method:b.method,dun:b.dun,ju:b.ju,pillars:b.pillars,
         term:{vi:b.term.vi,utcMs:b.term.utcMs},patterns:b.patterns,

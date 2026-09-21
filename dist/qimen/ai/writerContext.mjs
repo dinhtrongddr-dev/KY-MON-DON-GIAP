@@ -25,7 +25,12 @@ export function buildWriterContext(context) {
       roles:g.roleProfile.roles.filter(r=>actors.has(r.id)||r.status==='unresolved'),
       sharedPalaceClusters:g.roleProfile.sharedPalaceClusters.filter(c=>c.roleIds.some(id=>actors.has(id))),
       influences:g.roleProfile.influences.filter(i=>actors.has(i.from)&&actors.has(i.to)),multiActor:g.roleProfile.multiActor,limitations:g.roleProfile.limitations},
-    strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,keyingProfile:g.keyingProfile,nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
+    strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,keyingProfile:g.keyingProfile,
+    formationProfile:{version:g.formationProfile.version,profile:g.formationProfile.profile,coverage:g.formationProfile.coverage,limitations:g.formationProfile.limitations.slice(1),
+      directional:{heavenThreeGates:{status:g.formationProfile.directional.heavenThreeGates.status,termId:g.formationProfile.directional.heavenThreeGates.termId,monthGeneral:g.formationProfile.directional.heavenThreeGates.monthGeneral,hourBranch:g.formationProfile.directional.heavenThreeGates.hourBranch,
+        gates:g.formationProfile.directional.heavenThreeGates.gates.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction}))},
+        earthFourDoors:{status:g.formationProfile.directional.earthFourDoors.status,hourBranch:g.formationProfile.directional.earthFourDoors.hourBranch,
+        doors:g.formationProfile.directional.earthFourDoors.doors.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction}))}}},nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
       element:n.element,door:n.door,star:n.star,deity:n.deity,strength:n.strength,specialStates:n.specialStates,selectionRule:n.selectionRule,limitations:n.limitations,
       party:n.party,zone:n.zone,hostGuest:n.hostGuest,agencyBand:n.agencyBand,agencyMeaning:n.agencyMeaning,evidenceIndependence:n.evidenceIndependence,
       yongshenTier:n.yongshenTier||null,yongshenOrder:n.yongshenOrder||null,yongshenPurpose:n.yongshenPurpose||null,yongshenDomain:n.yongshenDomain||null})),
@@ -46,11 +51,25 @@ export function buildWriterContext(context) {
         doorPalace:{code:b.keying.doorPalace.code,classicalLabel:b.keying.doorPalace.classicalLabel,plainMeaning:b.keying.doorPalace.plainMeaning},
         starHour:{starVi:b.keying.starHour.starVi,branchVi:b.keying.starHour.branchVi,scope:b.keying.starHour.scope,plainMeaning:b.keying.starHour.plainMeaning},
         meaning:b.keying.meaning
+      }:null,
+      formation:b.formation?{
+        matches:b.formation.matches.map(x=>({id:x.id,name:x.name,family:x.family,qualified:x.qualified,qualificationStatus:x.qualificationStatus,qualificationLimitations:x.qualificationLimitations,qualificationCandidates:x.qualificationCandidates||null,blockers:x.blockers,plainMeaning:x.plainMeaning,uses:x.uses,variant:x.variant,heavenStems:x.heavenStems,earthStem:x.earthStem,actorIds:x.actorIds,stemActorIds:x.stemActorIds})),
+        heavenGates:b.formation.heavenGates.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction})),
+        earthDoors:b.formation.earthDoors.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction})),
+        meaning:b.formation.meaning
       }:null,specialPatterns:b.specialPatterns})),
     claims:g.claims.map(claim=>({...claim,realWorldManifestation:{status:claim.realWorldManifestation.status,concepts:claim.realWorldManifestation.concepts}})),
     rules:g.rules,outcomeDimensions:g.outcomeDimensions,eventStages:g.eventStages,primaryJudgment:g.primaryJudgment,timing:g.timing,
     likelyScenario:g.likelyScenario,recommendations:g.recommendations,unresolved:g.unresolved,coverage:g.coverage};
+  const formationMarkersFor=row=>{
+    if(Array.isArray(row.formationMarkers))return row.formationMarkers;
+    const m=/^direction_(\d+)$/.exec(row.id||'');if(!m)return [];
+    const d=g.formationProfile.directional.byPalace?.[Number(m[1])];if(!d)return [];
+    return [...(d.heavenGates||[]).map(x=>({id:`heaven_gate_${x.id}`,name:`Thiên Môn ${x.name}`,family:'heaven_three_gates',palace:x.palace,plainMeaning:`Hướng ${x.direction} qua chi ${x.landingBranchVi} là một Thiên Môn truyền thống; chỉ là lớp phương vị bổ sung.`,uses:['directional_overlay']})),
+      ...(d.earthDoors||[]).map(x=>({id:`earth_door_${x.id}`,name:`Địa Hộ ${x.name}`,family:'earth_four_doors',palace:x.palace,plainMeaning:`Hướng ${x.direction} qua chi ${x.landingBranchVi} là một Địa Hộ truyền thống; chỉ là lớp phương vị bổ sung.`,uses:['directional_overlay']}))];
+  };
   const comparisons=(c.comparison?.ranking||c.plan.computed.ranking||[]).map(row=>({id:row.id,label:row.label,rank:row.rank,blockers:row.blockers,supports:row.supports,fit:row.fit,note:row.note,
+    formationMarkers:formationMarkersFor(row).map(x=>({id:x.id,name:x.name,family:x.family,palace:x.palace,plainMeaning:x.plainMeaning,uses:x.uses})),
     timePlace:row.timePlace?{mode:row.timePlace.mode,effectiveOffsetHours:row.timePlace.effectiveOffsetHours,timeZone:row.timePlace.iana?.timeZone||null}:null}));
   const presentation=buildPresentationProfile(context);
   const concise=presentation.layout==='focused';
