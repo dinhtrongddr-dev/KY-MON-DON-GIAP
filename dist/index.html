@@ -137,47 +137,16 @@
           <p id="form-error" class="form-error" role="alert" hidden></p>
         </section>
 
+        <nav class="floating-result-nav" aria-label="Đi nhanh đến kết quả">
+          <button id="float-board" class="floating-result-button" type="button">Xem bàn</button>
+          <button id="float-ai" class="floating-result-button" type="button" disabled aria-disabled="true">Xem luận AI</button>
+        </nav>
+
         <section id="result" class="result" aria-live="polite" aria-busy="false">
           <p id="question-summary" class="question-summary"></p>
           <div class="chart-meta">
             <div class="pillars" id="pillars" aria-label="Tứ trụ"></div>
             <div class="calculation-summary" id="calculation-summary"></div>
-          </div>
-
-          <div class="workspace">
-            <div class="board-column">
-              <div class="board-toolbar">
-                <div>
-                  <p class="eyebrow">Lạc thư Cửu Cung</p>
-                  <h2>Bàn chuyển Kỳ Môn</h2>
-                </div>
-                <div class="board-key" aria-label="Chú thích lớp bàn">
-                  <span class="role-key role-key-person"><b aria-hidden="true">◉</b> Người hỏi · Nhật can</span>
-                  <span class="role-key role-key-event"><b aria-hidden="true">◆</b> Sự việc · Thời can</span>
-                  <span class="nianming-key"><b aria-hidden="true">◇</b> Niên Mệnh · đối chiếu</span>
-                  <span class="attention-key attention-key-support"><b aria-hidden="true">●</b> Thuận mạnh</span>
-                  <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b> Cảnh báo mạnh</span>
-                  <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b> Xung đột</span>
-                  <span class="element-chip" data-element="wood">Mộc · xanh lá</span>
-                  <span class="element-chip" data-element="fire">Hỏa · đỏ</span>
-                  <span class="element-chip" data-element="earth">Thổ · nâu</span>
-                  <span class="element-chip" data-element="metal">Kim · vàng</span>
-                  <span class="element-chip" data-element="water">Thủy · xanh dương</span>
-                </div>
-              </div>
-              <div class="board-frame">
-                <div id="qimen-board" class="qimen-board" role="group" aria-label="Bàn Kỳ Môn chín cung"></div>
-              </div>
-              <div id="board-flags" class="board-flags" aria-label="Dấu hiệu toàn bàn"></div>
-            </div>
-
-            <aside class="inspector" aria-labelledby="inspector-title">
-              <div class="inspector-head">
-                <p class="eyebrow">Luận tượng từng cung</p>
-                <h2 id="inspector-title">Chọn một cung trên bàn</h2>
-              </div>
-              <div id="palace-detail" class="palace-detail"></div>
-            </aside>
           </div>
 
           <section class="learning-panel ai-panel" aria-labelledby="ai-title">
@@ -222,6 +191,43 @@
               <p><a href="./audit.html">Kiểm toán và phạm vi</a></p>
             </details>
           </section>
+
+          <div class="workspace">
+            <div class="board-column">
+              <div class="board-toolbar">
+                <div>
+                  <p class="eyebrow">Lạc thư Cửu Cung</p>
+                  <h2>Bàn chuyển Kỳ Môn</h2>
+                </div>
+                <div class="board-key" aria-label="Chú thích lớp bàn">
+                  <span class="role-key role-key-person"><b aria-hidden="true">◉</b> Người hỏi · Nhật can</span>
+                  <span class="role-key role-key-event"><b aria-hidden="true">◆</b> Sự việc · Thời can</span>
+                  <span class="nianming-key"><b aria-hidden="true">◇</b> Niên Mệnh · đối chiếu</span>
+                  <span class="attention-key attention-key-support"><b aria-hidden="true">●</b> Thuận mạnh</span>
+                  <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b> Cảnh báo mạnh</span>
+                  <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b> Xung đột</span>
+                  <span class="element-chip" data-element="wood">Mộc · xanh lá</span>
+                  <span class="element-chip" data-element="fire">Hỏa · đỏ</span>
+                  <span class="element-chip" data-element="earth">Thổ · nâu</span>
+                  <span class="element-chip" data-element="metal">Kim · vàng</span>
+                  <span class="element-chip" data-element="water">Thủy · xanh dương</span>
+                </div>
+              </div>
+              <div class="board-frame">
+                <div id="qimen-board" class="qimen-board" role="group" aria-label="Bàn Kỳ Môn chín cung"></div>
+              </div>
+              <div id="board-flags" class="board-flags" aria-label="Dấu hiệu toàn bàn"></div>
+            </div>
+
+            <aside class="inspector" aria-labelledby="inspector-title">
+              <div class="inspector-head">
+                <p class="eyebrow">Luận tượng từng cung</p>
+                <h2 id="inspector-title">Chọn một cung trên bàn</h2>
+              </div>
+              <div id="palace-detail" class="palace-detail"></div>
+            </aside>
+          </div>
+
           <section class="learning-panel element-panel" aria-labelledby="elements-title">
             <div class="element-panel-head">
               <p class="eyebrow">Sơ đồ quan hệ</p>

@@ -6,7 +6,7 @@ import {createReadingJobClient} from './reading-job-client.mjs';
 export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
- const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check');
+ const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check'),floatAi=$('float-ai');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
  let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
@@ -19,6 +19,17 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
  });
  const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
+ const setFloatingAiReady=ready=>{
+   if(!floatAi)return;
+   floatAi.disabled=!ready;
+   floatAi.setAttribute('aria-disabled',String(!ready));
+   floatAi.classList.toggle('is-ready',!!ready);
+ };
+ setFloatingAiReady(false);
+ floatAi?.addEventListener('click',()=>{
+   if(floatAi.disabled||answer.hidden||!answer.childElementCount)return;
+   answer.scrollIntoView?.({behavior:'smooth',block:'start'});
+ });
  try{
    const saved=globalThis.localStorage?.getItem(storageKey)?.trim();
    if(saved){token.value=saved;remember.checked=true;rememberHint.textContent='Đã điền mã được ghi nhớ trên trình duyệt này.';}
@@ -57,7 +68,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    return controller;
  };
  const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
- const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();pdf.clear();};
+ const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);pdf.clear();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
@@ -104,6 +115,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      if(v!==version)return;
      status.textContent='AI đang hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);
+     setFloatingAiReady(data.reading.status!=='needs_clarification'&&!answer.hidden&&answer.childElementCount>0);
      const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
      if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
