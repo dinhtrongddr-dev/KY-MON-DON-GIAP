@@ -10,10 +10,12 @@ export {validateReading,ReadingValidationError} from './qimen/ai/readingAudit.mj
 import {BASE_WRITER_INSTRUCTIONS} from './qimen/ai/prompts.mjs';
 import {synthesisInstructions} from './qimen/ai/prompts.mjs';
 import {CASE_ENGINE_VERSION} from './qimen/case/engine.mjs';
+import {NIANMING_VERSION} from './qimen/analysis/nianmingEngine.mjs';
+export {NIANMING_VERSION};
 
 // One deterministic contract is used by the browser and the AI bridge.
 export const RULE_VERSION = 'TG-CB-6.3';
-export const READING_PROTOCOL = 5;
+export const READING_PROTOCOL = 6;
 const UPGRADE_MESSAGE = `Bộ kết nối AI chưa cùng bộ quy tắc ${RULE_VERSION}. Hãy cập nhật bộ kết nối theo hướng dẫn; chưa thể nhận lời luận khác phiên bản.`;
 const named = p => `${p.vi} ${p.number} (${p.element})`;
 const yes = flag => flag ? 'có' : 'không';
@@ -78,11 +80,13 @@ export function prepareReading(body) {
       'KM-KEYING-3.0 thêm Bát Môn Khắc Ứng, Môn–Kỳ/Nghi, Tam Kỳ đáo cung và Hòa/Nghĩa/Bức/Chế như lớp điều kiện gắn đúng cung/vai. Cửu Tinh trị thời hiện chỉ lập chỉ mục cổ điển 108 tổ hợp với trọng số verdict bằng 0; không cộng các corpus này như nhiều phiếu độc lập.',
       'KM-FORMATION-3.0 dùng profile 奇門法竅 cho Tam Trá, Ngũ Giả, Cửu Độn; Thiên Tam Môn tính Thiên Nguyệt Tướng theo Trung khí rồi đặt lên chi giờ, Địa Tứ Hộ theo chu kỳ Kiến–Trừ. Formation chỉ mô tả kiểu hành động/phương vị và không đổi evidenceScore, primaryJudgment hay thứ hạng so sánh.',
       'KM-DIRECTION-4.0 bổ sung Địa Tư Môn, Đình Đình/Bạch Gian, Thiên Mã/Thiên Cương, Tam Thắng Cung và Ngũ Bất Kích. Đây là lớp annotation phương vị: không đổi rank, không tạo xác suất, không biến văn quân sự cổ thành chỉ dẫn đối đầu.',
+      'KM-NIANMING-1.0 cho phép người dùng tự nhập ngày/năm sinh để lấy can niên trụ làm lớp Niên Mệnh đối chiếu trên bàn hiện tại; chi năm sinh chỉ là tham chiếu phụ. Lớp này không thay Nhật can, không thay KM-YONGSHEN-2.0 và không tham gia evidenceScore/primaryJudgment.',
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
       'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
       'KM-KEYING-3.0 đã phủ Bát Môn Khắc Ứng và Tam Kỳ đáo cung; Cửu Tinh trị thời mới chỉ có chỉ mục classical_context_only, chưa có diễn giải hiện đại dùng chốt kết quả. KM-FORMATION-3.0 và KM-DIRECTION-4.0 đã phủ các cách cục/phương vị chiến lược đang có nguồn khóa; các hệ phương vị khác chưa tự suy nếu chưa có profile nguồn riêng.',
+      'KM-NIANMING-1.0 chỉ triển khai Niên Mệnh theo can năm sinh làm corroborator. Chưa triển khai toàn bộ phép Bản Mệnh–Hành Niên cổ điển, Nam/Nữ thuận nghịch, Ngũ Hổ độn hoặc Nạp Âm; không được gọi lớp hiện tại là full 本命行年.',
     ],
   };
   return {context, chart, facts, timePlace,board:allInOne.board, analysis:allInOne.analysis};
@@ -97,21 +101,21 @@ async function digest(value) {
 }
 export async function readingIdentity(prepared) {
   const chartFingerprint = await digest(prepared.chart);
-  const requestFingerprint = await digest({rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,chartFingerprint,context:prepared.context});
+  const requestFingerprint = await digest({rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,chartFingerprint,context:prepared.context});
   return {chartFingerprint,requestFingerprint};
 }
 export async function buildReadingRequest(body) {
   const prepared = prepareReading(body);
   const identity = await readingIdentity(prepared);
   return {...prepared, ...identity, request:{question:prepared.context.question,topic:prepared.context.selectedTopic,
-    mode:prepared.context.allInOne.classification.requested,actors:prepared.context.allInOne.actors,
+    mode:prepared.context.allInOne.classification.requested,actors:prepared.context.allInOne.actors,nianming:prepared.context.allInOne.nianmingInput,
     subject:prepared.context.allInOne.questionContext.subject.mapping,
     direction:prepared.context.allInOne.questionContext.direction?{origin:prepared.context.allInOne.questionContext.direction.origin,kind:prepared.context.allInOne.questionContext.direction.kind}:null,
     depth:prepared.context.allInOne.questionContext.depth,action:prepared.context.allInOne.action,candidates:prepared.context.allInOne.comparison?.values||[],
-    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,...identity}};
+    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity}};
 }
 export function assertCompatible(data) {
-  if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL || data?.caseRules!==CASE_ENGINE_VERSION) throw new Error(UPGRADE_MESSAGE);
+  if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL || data?.caseRules!==CASE_ENGINE_VERSION || data?.nianmingRules!==NIANMING_VERSION) throw new Error(UPGRADE_MESSAGE);
 }
 export function validateReadingResponse(data,prepared) {
   assertCompatible(data);

@@ -47,6 +47,8 @@ const questionInput = document.querySelector('#question');
 const topicInput = document.querySelector('#topic');
 topicInput.innerHTML = TOPICS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
 let currentQuestion = '';
+const nianmingInputIds=['self','subject','customer','competitor','decisionMaker'];
+function currentNianmingInput(){return Object.fromEntries(nianmingInputIds.map(id=>[id,document.querySelector('#nianming-'+id)?.value.trim()||'']).filter(([,value])=>value));}
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -137,9 +139,13 @@ function palaceAria(palace) {
   return `${palace.vi} cung ${palace.number}, ${palace.spirit.vi}, ${palace.star.vi}, ${palace.door.vi}, thiên bàn ${heaven}, địa bàn ${palace.earthStem.vi}`;
 }
 
-function palaceRoleMarkers(palace, chart) {
+function palaceRoleMarkers(palace, chart,analysisProfile=currentAnalysis) {
   const dayPalace = locateStem(chart, chart.pillars.day).palace;
   const hourPalace = locateStem(chart, chart.pillars.hour).palace;
+  const nianming=(analysisProfile?.nianming?.byPalace?.[palace.number]||[]).map(person=>{
+    const pillar=person.yearPillar?.vi||person.yearPillar?.han||'';
+    return `<span class="role-symbol role-nianming" title="Niên Mệnh · ${escapeHtml(person.label)}${pillar?` · ${escapeHtml(pillar)}`:''} · chỉ đối chiếu" aria-label="Niên Mệnh ${escapeHtml(person.label)}">◇</span>`;
+  }).join('');
   return [
     dayPalace?.number === palace.number
       ? `<span class="role-symbol role-person" title="Người hỏi · Nhật can ${chart.pillars.day.stem.vi}" aria-label="Người hỏi · Nhật can">◉</span>`
@@ -147,13 +153,14 @@ function palaceRoleMarkers(palace, chart) {
     hourPalace?.number === palace.number
       ? `<span class="role-symbol role-event" title="Sự việc · Thời can ${chart.pillars.hour.stem.vi}" aria-label="Sự việc · Thời can">◆</span>`
       : "",
+    nianming,
   ].join("");
 }
 
-function renderPalace(palace, chart,attentionProfile=currentAttention) {
+function renderPalace(palace, chart,attentionProfile=currentAttention,analysisProfile=currentAnalysis) {
   const palaceElement = elementSlug(palace.element);
   const selected = palace.number === selectedPalace ? " is-selected" : "";
-  const roleMarkers = palaceRoleMarkers(palace, chart);
+  const roleMarkers = palaceRoleMarkers(palace, chart,analysisProfile);
   const attention=attentionProfile?.byPalace?.[palace.number]||null;
   const attentionBadge=attention&&attention.kind!=='neutral'
     ? `<span class="attention-badge attention-${attention.kind}" title="${escapeHtml(attention.label)} · ${escapeHtml(attention.meaning)}">${escapeHtml(attention.shortLabel)}</span>`:'';
@@ -217,8 +224,8 @@ function renderPalace(palace, chart,attentionProfile=currentAttention) {
   `;
 }
 
-function renderBoard(chart,attentionProfile=currentAttention) {
-  board.innerHTML = chart.palaces.map((palace) => renderPalace(palace, chart,attentionProfile)).join("");
+function renderBoard(chart,attentionProfile=currentAttention,analysisProfile=currentAnalysis) {
+  board.innerHTML = chart.palaces.map((palace) => renderPalace(palace, chart,attentionProfile,analysisProfile)).join("");
   board.querySelectorAll(".palace").forEach((button) => {
     button.addEventListener("click", () => {
       selectedPalace = Number(button.dataset.palace);
@@ -272,6 +279,12 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
   inspectorTitle.textContent = `${palace.vi} ${palace.number} cung`;
   const palaceElement = elementSlug(palace.element);
   const attention=attentionProfile?.byPalace?.[palace.number]||null;
+  const nianmingRows=(prepared?.analysis?.nianming||currentAnalysis?.nianming)?.byPalace?.[palace.number]||[];
+  const nianmingHtml=nianmingRows.length?`<section class="nianming-card" aria-label="Niên Mệnh đối chiếu">
+    <div class="nianming-card-head"><span aria-hidden="true">◇</span><span><small>Niên Mệnh · đối chiếu</small><strong>${nianmingRows.length} người tại cung này</strong></span></div>
+    <ul>${nianmingRows.map(person=>`<li><strong>${escapeHtml(person.label)}</strong><span>${escapeHtml(person.yearPillar?.vi||person.yearPillar?.han||'Chưa xác định')} · can ${escapeHtml(person.yearStem||'')} ${person.hiddenJia?`→ nghi ẩn ${escapeHtml(person.effectiveStem||'')}`:`→ ${escapeHtml(person.effectiveStem||'')}`}</span><small>${person.linkedRoleRelation?.text?`So với vai chính: ${escapeHtml(person.linkedRoleRelation.text)}. `:''}${person.eventRelation?.text?`So với cung sự việc: ${escapeHtml(person.eventRelation.text)}. `:''}Chỉ dùng để kiểm chứng chéo.</small></li>`).join('')}</ul>
+    <p>Niên Mệnh không đổi Nhật can, Dụng Thần chính, màu cảnh báo hoặc kết luận của bàn.</p>
+  </section>`:'';
   const attentionHtml=attention&&palace.number!==5?`<section class="attention-card attention-card-${attention.kind}" aria-label="Mức độ đáng chú ý">
     <div class="attention-card-head"><span class="attention-icon" aria-hidden="true"></span><span><small>Mức độ đáng chú ý</small><strong>${escapeHtml(attention.label)}</strong></span></div>
     <div class="attention-columns">
@@ -289,7 +302,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
   `;
 
   if (palace.number === 5) {
-    detail.innerHTML = `${title}${attentionHtml}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
+    detail.innerHTML = `${title}${nianmingHtml}${attentionHtml}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
       ${detailItem("star", "Cửu tinh", STAR_QIN.vi, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
       ${detailItem("stem", "Địa bàn", `${palace.earthStem.han} · ${palace.earthStem.vi}`, palace.earthStem.element, "Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.")}
     </div>`;
@@ -308,7 +321,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
   ].join("");
-  detail.innerHTML = `${title}${attentionHtml}${semanticCard(palace,chart,conditions,prepared)}
+  detail.innerHTML = `${title}${nianmingHtml}${attentionHtml}${semanticCard(palace,chart,conditions,prepared)}
     <div class="detail-list">
       ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
       ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}
@@ -334,7 +347,7 @@ function renderMethod(chart) {
 
 function renderChart(chart) {
   currentChart = chart;
-  currentAnalysis=analyzeBoard(toQimenBoard(chart),{topic:topicInput.value||'general'});
+  currentAnalysis=analyzeBoard(toQimenBoard(chart),{topic:topicInput.value||'general',nianming:currentNianmingInput()});
   currentAttention=buildAttentionProfile(currentAnalysis);
   if (!chart.palaces.some((palace) => palace.number === selectedPalace)) selectedPalace = chart.duty.starPalace;
   if (selectedPalace === null) selectedPalace = chart.duty.starPalace;
@@ -392,6 +405,7 @@ timezoneInput.addEventListener("change", () => {
 for(const control of [timezoneModeInput,ianaTimezoneInput,dstDisambiguationInput,longitudeInput,latitudeInput])control.addEventListener('change',()=>{
   syncTimePlaceControls();selectedPalace=null;generateAndRender();
 });
+for(const id of nianmingInputIds)document.querySelector('#nianming-'+id)?.addEventListener('change',()=>{selectedPalace=null;generateAndRender();});
 timezoneModeInput.addEventListener('change',syncTimePlaceControls);
 
 methodInput.addEventListener("change", () => {
@@ -463,7 +477,7 @@ function captureReportVisual(prepared){
   const clone=selector=>document.querySelector(selector).cloneNode(true);
   try{
     const reportAttention=buildAttentionProfile(prepared.analysis);
-    renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart,reportAttention);renderFlags(prepared.chart,reportAttention);
+    renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart,reportAttention,prepared.analysis);renderFlags(prepared.chart,reportAttention);
     const topicRole=prepared.analysis.roles.find(item=>item.id==='topic_0');
     const subject=topicRole?.palace!=null?topicRole:prepared.analysis.roles.find(item=>item.id==='event');
     const roles=[prepared.analysis.roles.find(item=>item.id==='self'),subject].map((role,index)=>{

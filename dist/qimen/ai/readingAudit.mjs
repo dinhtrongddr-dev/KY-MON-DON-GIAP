@@ -104,7 +104,7 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   if(c.classification.mode==='timing'&&r.comparisons.length!==rows.length||c.classification.mode==='direction'&&r.comparisons.length<2||!['timing','direction'].includes(c.classification.mode)&&r.comparisons.length)reject('Chưa đối chiếu đủ ứng viên theo chế độ.');
   for(const comparison of r.comparisons)auditComparison(comparison.reason,rows.find(row=>row.id===comparison.id),context);
   const sections=[r.summary,r.situation,...r.development,r.bottleneck,r.alternative,r.timing];
-  const used=new Set(sections.flatMap(s=>s.claim_ids));if(used.size<Math.min(compact?1:3,g.claims.length))reject('Bài luận chưa phối hợp đủ các cụm tượng trọng tâm.');
+  const used=new Set(sections.flatMap(s=>s.claim_ids)),coreClaimCount=g.claims.filter(c=>c.status!=='corroboration_only').length;if(used.size<Math.min(compact?1:3,coreClaimCount))reject('Bài luận chưa phối hợp đủ các cụm tượng trọng tâm.');
   const passages=[...sections.map(s=>s.text),...r.actions.map(a=>a.text)].filter(Boolean);
   for(let i=0;i<passages.length;i++)for(let j=i+1;j<passages.length;j++)if(passages[i].trim()===passages[j].trim()||repeated(passages[i],passages[j]))reject('Các phần đang lặp ý hoặc lặp đoạn; cần viết lại cho mỗi chặng.');
   // Audit every user-visible string, even when it sits outside the prose budget.

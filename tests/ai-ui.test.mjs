@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {initLocalAi} from '../dist/ai-local.mjs';
-import {buildReadingRequest,RULE_VERSION,READING_PROTOCOL} from '../dist/reading-core.mjs';
+import {buildReadingRequest,RULE_VERSION,READING_PROTOCOL,NIANMING_VERSION} from '../dist/reading-core.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {verifiedFallback} from '../dist/qimen/ai/verifiedFallback.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
@@ -43,7 +43,7 @@ function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClon
   return {...mount(),storage,reload:mount};
 }
 const response=data=>new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json'}});
-const health={rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION};
+const health={rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION};
 
 test('old AI rules are rejected before sending the question',async t=>{
   const paths=[];const {ids}=setup(t,async(url,options)=>{paths.push(new URL(url).pathname);assert.equal(options.credentials,'omit');assert.equal(options.headers['X-Qimen-Token'],'test-token');return response({rules:'TG-CB-1.0'});});

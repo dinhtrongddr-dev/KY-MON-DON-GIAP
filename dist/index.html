@@ -64,6 +64,17 @@
                   <label class="field"><span>Người có quyền duyệt</span><select id="actor-decisionMaker"><option value="">Chưa xác định</option></select></label>
                 </div>
               </details>
+              <details class="nianming-options"><summary>Niên Mệnh · ngày/năm sinh · tùy chọn</summary>
+                <p>KM-NIANMING-1.0 dùng <strong>can của niên trụ sinh</strong> như lớp đối chiếu phụ trên bàn hiện tại. Nhập đủ ngày sinh nếu biết; cũng có thể chỉ nhập năm. Niên Mệnh <strong>không thay Nhật can hoặc Dụng Thần chính</strong>.</p>
+                <div class="nianming-fields">
+                  <label class="field"><span>Người hỏi</span><input id="nianming-self" type="text" inputmode="numeric" maxlength="10" autocomplete="bday" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                  <label class="field"><span>Người được hỏi thay</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                  <label class="field"><span>Khách hàng / phía liên quan</span><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                  <label class="field"><span>Đối thủ / bên cạnh tranh</span><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                  <label class="field"><span>Người có quyền duyệt</span><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                </div>
+                <p class="nianming-note">Nếu chỉ nhập năm, người sinh trước Lập Xuân có thể thuộc niên trụ trước. Ngày sinh thô chỉ dùng để xác định niên trụ; phần writer AI chỉ nhận niên trụ/cung đã dẫn xuất, không nhận ngày sinh thô.</p>
+              </details>
               <div id="action-options" hidden><label class="field"><span>Mục tiêu hành động để so sánh</span><select id="qimen-action"><option value="general">Mở việc nói chung</option><option value="quote">Gửi báo giá / hồ sơ</option><option value="sign">Ký / thống nhất hợp đồng</option><option value="meet">Gặp khách / gọi điện</option><option value="launch">Triển khai công việc</option></select></label></div>
               <div id="timing-options" hidden>
                 <p>Nhập từ 2 đến 12 thời điểm muốn so sánh, cùng múi giờ và pháp định cục bên dưới. Đây là chọn thời điểm hành động, không phải dự báo ngày có kết quả.</p>
@@ -143,6 +154,7 @@
                 <div class="board-key" aria-label="Chú thích lớp bàn">
                   <span class="role-key role-key-person"><b aria-hidden="true">◉</b> Người hỏi · Nhật can</span>
                   <span class="role-key role-key-event"><b aria-hidden="true">◆</b> Sự việc · Thời can</span>
+                  <span class="nianming-key"><b aria-hidden="true">◇</b> Niên Mệnh · đối chiếu</span>
                   <span class="attention-key attention-key-support"><b aria-hidden="true">●</b> Thuận mạnh</span>
                   <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b> Cảnh báo mạnh</span>
                   <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b> Xung đột</span>

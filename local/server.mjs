@@ -13,6 +13,7 @@ import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {defaultAiDiagnosticPath,recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
+import {NIANMING_VERSION} from '../dist/qimen/analysis/nianmingEngine.mjs';
 import {defaultShareDir,loadShare,pruneShares,renderSharePage,saveShare} from './share-store.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
@@ -69,7 +70,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
    const data=isMenh
      ?{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,...identity,reading:result}
-     :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,...identity,reading:result,facts:prepared.facts};
+     :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity,reading:result,facts:prepared.facts};
    return {data,modelUsed};
  };
  const startReadingJob=({isMenh,prepared,identity})=>{
@@ -160,7 +161,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
          return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt,expiresAt:record.expiresAt});
        }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
      }
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
      const jobMatch=/^\/api\/jobs\/([A-Za-z0-9_-]{20,64})$/.exec(path);
      if(jobMatch&&['GET','DELETE'].includes(req.method)){
        pruneJobs();const job=jobs.get(jobMatch[1]);
@@ -186,7 +187,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        }catch(e){return send(400,{error:e.message});}
        const identityMismatch=isMenh
          ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
-         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
+         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.nianmingRules!==NIANMING_VERSION||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
        if(identityMismatch)return send(409,{error:body.timePlace?.mode==='iana_civil'?'Dữ liệu múi giờ IANA giữa trình duyệt và server không khớp tại thời điểm này. Cập nhật trình duyệt/server hoặc tạm dùng UTC offset cố định rồi thử lại.':'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        const started=startReadingJob({isMenh,prepared,identity});
        if(!started)return send(429,{error:'Đang có một lượt luận khác. Đợi lượt đó xong rồi thử lại.'});
@@ -209,7 +210,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        }catch(e){return send(400,{error:e.message});}
        const identityMismatch=isMenhRead
          ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
-         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
+         : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.nianmingRules!==NIANMING_VERSION||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
        if(identityMismatch)return send(409,{error:body.timePlace?.mode==='iana_civil'?'Dữ liệu múi giờ IANA giữa trình duyệt và server không khớp tại thời điểm này. Cập nhật trình duyệt/server hoặc tạm dùng UTC offset cố định rồi thử lại.':'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
@@ -237,7 +238,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
           if(!res.destroyed){
             const data=isMenhRead
               ?{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,...identity,reading:result}
-              :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,...identity,reading:result,facts:prepared.facts};
+              :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
             streaming?res.end(JSON.stringify(data)):send(200,data);
           }

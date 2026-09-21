@@ -46,7 +46,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
   const timing=buildTiming(questionContext,board,selected);
   const caseProfile=retrieveCases(eventCaseTarget({analysis,questionContext,selected,primaryJudgment,timing}),{limit:3});
   const likelyScenario=buildScenario(selected,questionContext,graph,interactions,modePlan,{outcomeDimensions,eventStages,primaryJudgment,timing,roleProfile:activeRoleProfile});
-  const claims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
+  const coreClaims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
     mechanism:b.translation.mechanism,interpretation:b.translation.interaction,
     realWorldManifestation:b.translation.manifestation,implication:b.translation.implication,
     ruleIds:['rule_board','rule_elements','rule_conditions','rule_strength','rule_structure_v2','rule_keying_v3','rule_formation_v3','rule_role_v2','rule_synthesis','rule_stages','rule_timing_scope',...new Set(b.actorIds.map(id=>analysis.roles.find(r=>r.id===id).selectionRule.id))],
@@ -54,6 +54,15 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     limitations:[RULE_REGISTRY.rule_synthesis.conditions,...new Set(b.actorIds.flatMap(id=>analysis.roles.find(r=>r.id===id).limitations))],
     semanticTags:[...new Set([b.translation.mechanism,...b.actorIds.filter(id=>!id.startsWith('topic_')),...b.states.map(s=>s.code)])],
     conflicts:b.conflicts,priority:b.relevance.score,status:'conditional_interpretation'}));
+  const nianmingClaims=analysis.nianming.people.filter(p=>p.active&&p.status==='resolved').map(p=>({
+    id:`claim_nianming_${p.id}`,bundleId:null,actorIds:p.linkedRoleId?[p.linkedRoleId]:[],evidenceIds:[p.evidenceId],
+    mechanism:'nianming_corroboration',
+    interpretation:{opening:`Niên Mệnh ${p.label} đặt tại cung ${p.palace}.`,means:'Chỉ đối chiếu với vai/Dụng Thần đã được resolver chọn.',counterpartCondition:'Không dùng Niên Mệnh để tự gán danh tính, động cơ hoặc quyền quyết định.',modifiers:[]},
+    realWorldManifestation:{status:'corroboration_only',concepts:['đối chiếu vị thế biểu tượng của người đã được nhập Niên Mệnh'],vocabulary:questionContext.vocabulary.slice(0,8)},
+    implication:'Niên Mệnh chỉ có thể củng cố, làm mềm hoặc đặt thêm điều kiện cho diễn giải đã có; không được đổi primaryJudgment.',
+    ruleIds:['rule_nianming_v1'],counterEvidenceIds:[],limitations:p.limitations,
+    semanticTags:['nianming','corroborator',p.id],conflicts:[],priority:0,status:'corroboration_only'}));
+  const claims=[...coreClaims,...nianmingClaims];
   const selectedPalaces=new Set(selected.map(b=>b.palace));
   return freezeData({schemaVersion:'ReadingEvidenceGraph/2',questionContext,mode:questionContext.mode,modeRuleSet:modePlan.ruleSet,
     usefulGodProfile:analysis.yongshenProfile,
@@ -63,6 +72,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     keyingProfile:{version:analysis.keying.version,profile:analysis.keying.profile,coverage:analysis.keying.coverage,limitations:analysis.keying.limitations},
     formationProfile:{version:analysis.formations.version,profile:analysis.formations.profile,coverage:analysis.formations.coverage,limitations:analysis.formations.limitations,directional:analysis.formations.directional},
     directionProfile:{version:analysis.directions.version,profile:analysis.directions.profile,coverage:analysis.directions.coverage,limitations:analysis.directions.limitations,byPalace:analysis.directions.byPalace},
+    nianmingProfile:analysis.nianming,
     caseProfile,
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),

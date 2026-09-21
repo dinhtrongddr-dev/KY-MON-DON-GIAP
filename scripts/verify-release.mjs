@@ -39,7 +39,7 @@ export function verifyRelease(directory = root) {
   if (pkg.type !== 'commonjs' || Object.keys(pkg.dependencies || {}).length) throw new Error('Keep the vendored lunar CommonJS boundary and dependency-free app runtime');
   const versionChecks = [
     ['dist/qimen.mjs', 'TG-ROTATING-2.0'], ['dist/reading-core.mjs', 'TG-CB-6.3'],
-    ['dist/reading-core.mjs', 'READING_PROTOCOL=5'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
+    ['dist/reading-core.mjs', 'READING_PROTOCOL=6'], ['dist/qimen/analysis/nianmingEngine.mjs', 'KM-NIANMING-1.0'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
   ];
   for (const [name, expected] of versionChecks) {
     if (!readFileSync(join(directory, name), 'utf8').replace(/\s+/g, '').includes(expected)) throw new Error(`Baseline version mismatch: ${name}`);

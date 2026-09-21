@@ -5,7 +5,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createBridge} from '../local/server.mjs';
-import {buildReadingRequest,prepareReading,validateReadingResponse} from '../local/reading.mjs';
+import {buildReadingRequest,prepareReading,validateReadingResponse,READING_PROTOCOL,NIANMING_VERSION} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
@@ -39,13 +39,14 @@ test('existing manual pairing configuration works across bridge restarts',()=>{
   finally{if(previous===undefined)delete process.env.QIMEN_PAIRING_TOKEN;else process.env.QIMEN_PAIRING_TOKEN=previous;}
 });
 
-test('the official website can reach protocol 5 through the existing tunnel',async t=>{
+test('the official website can reach the current question protocol through the existing tunnel',async t=>{
   const call=await start(t);
   const result=await call('/api/status');
   assert.equal(result.status,200);
   assert.equal(JSON.parse(result.text).rules,'TG-CB-6.3');
-  assert.equal(JSON.parse(result.text).protocol,5);
+  assert.equal(JSON.parse(result.text).protocol,READING_PROTOCOL);
   assert.equal(JSON.parse(result.text).caseRules,CASE_ENGINE_VERSION);
+  assert.equal(JSON.parse(result.text).nianmingRules,NIANMING_VERSION);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'same-origin'}})).status,200);
@@ -67,14 +68,17 @@ test('a shared result gets a public unguessable web link that opens without the 
   assert.equal((await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':'wrong'}})).status,302);
 });
 
-test('question bridge fails closed when KM-CASE compatibility is missing or stale',async t=>{
+test('question bridge fails closed when KM-CASE or KM-NIANMING compatibility is missing or stale',async t=>{
   const prepared=await buildReadingRequest(payload),call=await start(t);
-  const missing={...prepared.request};delete missing.caseRules;
-  assert.equal((await call('/api/read',{body:missing})).status,409);
+  const missingCase={...prepared.request};delete missingCase.caseRules;
+  assert.equal((await call('/api/read',{body:missingCase})).status,409);
   assert.equal((await call('/api/read',{body:{...prepared.request,caseRules:'KM-CASE-0.9'}})).status,409);
+  const missingNianming={...prepared.request};delete missingNianming.nianmingRules;
+  assert.equal((await call('/api/read',{body:missingNianming})).status,409);
+  assert.equal((await call('/api/read',{body:{...prepared.request,nianmingRules:'KM-NIANMING-0.9'}})).status,409);
 });
 
-test('slow tunnel readings preserve one complete validated protocol 5 JSON document',async t=>{
+test('slow tunnel readings preserve one complete validated current-protocol JSON document',async t=>{
   const prepared=await buildReadingRequest(payload),answer=readingFixture(prepareReading(payload));
   const call=await start(t,{keepAliveAfterMs:5,keepAliveEveryMs:5,runner:async()=>{await new Promise(resolve=>setTimeout(resolve,40));return answer;}});
   const result=await call('/api/read',{body:prepared.request});

@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {TOPICS} from '../dist/guide.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
-import {prepareReading,buildReadingRequest,validateReading,validateReadingResponse,assertCompatible,RULE_VERSION,READING_PROTOCOL,INSTRUCTIONS,readingSchema} from '../local/reading.mjs';
+import {prepareReading,buildReadingRequest,validateReading,validateReadingResponse,assertCompatible,RULE_VERSION,READING_PROTOCOL,NIANMING_VERSION,INSTRUCTIONS,readingSchema} from '../local/reading.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 export const payload={question:'Trong 30 ngày tới, tôi có ký được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 const valid=readingFixture(prepareReading(payload));
 const clone=x=>structuredClone(x);
-const envelope=(prepared,reading=clone(valid))=>({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,chartFingerprint:prepared.chartFingerprint,requestFingerprint:prepared.requestFingerprint,facts:prepared.facts,reading});
+const envelope=(prepared,reading=clone(valid))=>({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,chartFingerprint:prepared.chartFingerprint,requestFingerprint:prepared.requestFingerprint,facts:prepared.facts,reading});
 
 test('16 topics × 2 methods produce deterministic, resolved evidence without trusting client facts',()=>{
   for(const topic of TOPICS) for(const method of ['chaibu','maoshan']){
@@ -36,10 +36,12 @@ test('readings bind to question, method, time, offset, topic and the exact recom
     assert.notEqual(other.requestFingerprint,p.requestFingerprint);
     assert.throws(()=>validateReadingResponse(envelope(other),p),/không khớp/);
   }
-  for(const rules of [undefined,'TG-CB-1.0']) assert.throws(()=>assertCompatible({rules,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION}),/cập nhật/i);
+  for(const rules of [undefined,'TG-CB-1.0']) assert.throws(()=>assertCompatible({rules,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION}),/cập nhật/i);
   assert.throws(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL}),/cập nhật/i);
-  assert.throws(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:'KM-CASE-0.9'}),/cập nhật/i);
-  assert.doesNotThrow(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION}));
+  assert.throws(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:'KM-CASE-0.9',nianmingRules:NIANMING_VERSION}),/cập nhật/i);
+  assert.throws(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION}),/cập nhật/i);
+  assert.throws(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:'KM-NIANMING-0.9'}),/cập nhật/i);
+  assert.doesNotThrow(()=>assertCompatible({rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION}));
   assert.throws(()=>validateReadingResponse({...envelope(p),facts:{...p.facts,day:'giả mạo'}},p),/Căn cứ/);
   assert.throws(()=>validateReadingResponse({...envelope(p),facts:{...p.facts,invented:'thêm'}},p),/Căn cứ/);
 });
