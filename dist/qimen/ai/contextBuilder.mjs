@@ -20,7 +20,7 @@ export function buildAnalysisContext(chart,body,facts) {
   const analysis=analyzeBoard(board,{topic:resolvedTopic,actors,questionContext,selfPillar});
   const action=normalizeAction(['timing','direction'].includes(classification.mode)?body.action??'general':'general');
   const plan=analyzeMode(classification.mode,analysis,{action,direction:questionContext.direction});
-  const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors,selfPillar}):null;
+  const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors,selfPillar,timePlace:body.timePlace??null}):null;
   const roleIds=relevantActorIds(questionContext,analysis.roles,plan);
   const graph=relationGraph(analysis,[...new Set(['event','self',...roleIds])]);
   for(const role of analysis.roles){

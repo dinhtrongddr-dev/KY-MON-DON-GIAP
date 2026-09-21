@@ -1,13 +1,11 @@
 # Core Rule Coverage
 
 Scope: Thoi Gia Ky Mon, rotating eight-spirit board, engine TG-ROTATING-2.0,
-rules TG-CB-5.0, protocol 5. The calendar is a fixed civil UTC offset; it does
-not implement daylight-saving rules or true solar time. Supported input years
-are 1900 through 2100. Chaibu and Mao Shan remain separate yuan methods.
+rules TG-CB-6.3, protocol 5. Fixed civil UTC offset remains the default. KM-TIMEPLACE-2.0 adds opt-in IANA civil-time history/DST resolution and solar-time metadata without silently applying solar correction to the board. Supported input years are 1900 through 2100. Chaibu and Mao Shan remain separate yuan methods.
 
 | Layer / convention | Evidence and regression coverage | Limit |
 | --- | --- | --- |
-| Input calendar | Invalid dates, leap centuries, minute precision and offsets -12 to +14 rejected/accepted explicitly | Not a historical local-time-zone database |
+| Input calendar | Invalid dates, leap centuries, minute precision and fixed offsets -12 to +14 rejected/accepted explicitly; optional KM-TIMEPLACE-2.0 resolves IANA civil offsets before entering the unchanged core | Fixed-offset core remains canonical; IANA accuracy depends on runtime tzdb and rejects unsupported sub-minute historical offsets |
 | Day/hour pillars | 675 cases compared with the continuous Julian-day/Jia-Zi rule and Five Rats hour formula, including 23:00, year ends and UTC extremes | Formula samples across 1900-2100, not every minute in that range |
 | Astronomical terms | Twelve 2024 major terms transcribed from HKO, tolerance 90 seconds; both sides tested across offsets/methods | The linked HKO PDF lists 12 major terms despite its title; it is not 24 independently measured fixtures |
 | Year/month pillars | 192 pairs around all twelve jie, eight offsets and both methods; Five Tigers month sequence, year changes only at Li Chun | Boundary instants come from the calendar library; this tests the pillar convention, not independent astronomy for the other 12 terms |
@@ -27,6 +25,7 @@ are 1900 through 2100. Chaibu and Mao Shan remain separate yuan methods.
 | KM-STRUCTURE-2.0 | 81 visible Ten-Stem responses with distinct modern meanings; actor-specific Void/Door-pressure/Punishment/Tomb; explicit Door-controls-Palace vs Palace-controls-Door; bounded major patterns including Green Dragon Returns, Flying Bird Falls Nest, Geng structures, Three Wonders Gain Use, Jade Woman Guards Door and Tian/Di/Ren Dun | Classical corpus is a symbolic interpretation system, not empirical probability; full Eight-Door responses, Nine-Star time responses, Three-Wonders-to-palace and Three Deceptions/Five Fakes/Nine Escapes remain outside scope |
 | KM-STRENGTH-2.0 | Separate seasonal models: Nine-Star Yan-Bo status; Eight-Door residual-qi 旺/相/休/囚/廢; Ten-Stem Twelve-Life-Stage with yang-forward/yin-reverse; palace seasonal environment; role-specific capacity follows the actual Useful-God type | Internal weights rank explanatory force only; Twelve-Life-Stage is a classical stem-cycle signal, not the Nine-Star/Door formula; palace environment is an explicit app synthesis rather than a universal school rule |
 | KM-ROLE-2.0 | Contextual Host/Guest frame; hour-stem first-move/later-response bias; Yang/Yin Inner-Outer zones; role-specific agency; directional support/pressure; same-palace evidence de-duplication; multiple user-mapped external actors | Host/Guest is posture, not fixed identity; Inner/Outer is a procedural tendency; agency is symbolic capacity, not verified power, intent, probability or a winner prediction |
+| KM-TIMEPLACE-2.0 | Default fixed-offset compatibility; opt-in IANA historical civil offset/DST; ambiguous local times require earlier/later selection; nonexistent local times rejected; timing candidates re-resolve zone per date; optional longitude/latitude metadata; NOAA-style apparent-solar-time comparison | Runtime tzdb freshness depends on browser/Node; IANA notes pre-1970 history has limitations; historical sub-minute offsets are rejected rather than rounded; solar comparison is metadata only and never silently changes the core board |
 | Modes/comparisons | Distinct prediction/strategy/business/negotiation plans; 2-12 timing candidates and eight directions; original self pillar preserved | Relative comparison scores are not calibrated probabilities |
 | KM-YINGQI-2.0 timing | Explicit user horizon only; pace signal from inner/outer plate plus Fu/Fan Yin; dated trigger priority Void fill/clash → Horse arrival/clash → Three-Wonder Tomb arrival/clash | Pace does not fabricate dates; punishment, stem/door timing, Fu/Fan Yin dates and non-Three-Wonder tomb dates remain unsupported |
 | Writer/validation | Frozen claims, actions, edges and candidates; words/conditions/resolution checked; one repair; fabricated references and some certainty forms rejected | Lexical/schema checks cannot guarantee every sentence is grounded or useful |
@@ -57,6 +56,8 @@ change and a new upgrade branch. Keep the original frozen tag intact.
 - Host/Guest contextual rule: https://ctext.org/wiki.pl?chapter=961040&if=gb&remap=gb
 - Hour-stem Host/Guest action bias: https://ctext.org/wiki.pl?chapter=473804&if=gb
 - Inner/Outer procedural convention: https://www.sohu.com/a/550238240_324894
+- IANA Time Zone Database overview/theory/releases: https://www.iana.org/time-zones/tz-link ; https://www.iana.org/time-zones/theory ; https://www.iana.org/time-zones/releases/2026d
+- NOAA solar-time calculation equations: https://gml.noaa.gov/grad/solcalc/solareqns.PDF
 - HKO 2024 major terms: https://www.hko.gov.hk/en/gts/astron2024/files/2024SolarTerms24.pdf
 - HKO term definitions: https://www.hko.gov.hk/en/gts/time/24solarterms.htm
 - Vendored calendar source: https://github.com/6tail/lunar-javascript

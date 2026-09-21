@@ -2,6 +2,7 @@ import {initSharedView} from './share-view.mjs';
 import {BRANCHES, STAR_QIN, elementSlug} from './qimen/core/palace.mjs';
 import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
 import {generateQimen} from './qimen/core/board.mjs';
+import {resolveTimePlace,localInputValueAtZone} from './qimen/timePlace.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
 import {initModeControls} from './qimen/ui-controls.mjs';
@@ -14,6 +15,11 @@ import {classifyTopics} from './qimen/ai/classifier.mjs';
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
 const timezoneInput = document.querySelector("#timezone");
+const timezoneModeInput=document.querySelector('#timezone-mode');
+const ianaTimezoneInput=document.querySelector('#iana-timezone');
+const dstDisambiguationInput=document.querySelector('#dst-disambiguation');
+const longitudeInput=document.querySelector('#longitude');
+const latitudeInput=document.querySelector('#latitude');
 const methodInput = document.querySelector("#method");
 const methodNote = document.querySelector("#method-note");
 const errorBox = document.querySelector("#form-error");
@@ -31,6 +37,7 @@ if (workspace && elementPanel) workspace.append(elementPanel);
 const activity=createActivityLog();
 
 let currentChart = null;
+let currentTimePlace=null;
 let selectedPalace = null;
 const questionInput = document.querySelector('#question');
 const topicInput = document.querySelector('#topic');
@@ -57,6 +64,21 @@ function parseInputValue() {
     year: Number(match[1]), month: Number(match[2]), day: Number(match[3]),
     hour: Number(match[4]), minute: Number(match[5]), tzOffset: Number(timezoneInput.value),
   };
+}
+
+function timePlacePolicy(){
+  const mode=timezoneModeInput.value;
+  const policy={mode};
+  if(mode==='iana_civil'){policy.timeZone=ianaTimezoneInput.value.trim();policy.disambiguation=dstDisambiguationInput.value;}
+  if(longitudeInput.value.trim()!=='')policy.longitude=Number(longitudeInput.value);
+  if(latitudeInput.value.trim()!=='')policy.latitude=Number(latitudeInput.value);
+  return policy;
+}
+function resolveFormTimePlace(){return resolveTimePlace(parseInputValue(),timePlacePolicy());}
+function syncTimePlaceControls(){
+  const iana=timezoneModeInput.value==='iana_civil';
+  timezoneInput.disabled=iana;ianaTimezoneInput.disabled=!iana;dstDisambiguationInput.disabled=!iana;
+  document.querySelector('#timezone-help').textContent=iana?'IANA sẽ quyết định UTC offset lịch sử/DST; ô UTC cố định tạm không dùng.':'UTC offset cố định · hành vi tương thích cũ.';
 }
 
 function renderPillars(chart) {
@@ -308,7 +330,9 @@ function renderChart(chart) {
 function generateAndRender({ scroll = false } = {}) {
   resultSection.setAttribute("aria-busy", "true");
   try {
-    const chart = generateQimen(parseInputValue(), methodInput.value);
+    const timePlace=resolveFormTimePlace();
+    const chart = generateQimen(timePlace.boardInput, methodInput.value);
+    currentTimePlace=timePlace;
     currentQuestion = questionInput.value.trim();
     errorBox.hidden = true;
     errorBox.textContent = "";
@@ -316,6 +340,7 @@ function generateAndRender({ scroll = false } = {}) {
     if (scroll && window.matchMedia("(max-width: 680px)").matches) resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
     return chart;
   } catch (error) {
+    currentTimePlace=null;
     errorBox.textContent = error instanceof Error ? error.message : "Không thể lập bàn cho thời điểm này.";
     errorBox.hidden = false;
     return null;
@@ -325,9 +350,10 @@ function generateAndRender({ scroll = false } = {}) {
 }
 
 function setNow() {
-  datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
-  selectedPalace = null;
-  generateAndRender();
+  try{
+    datetimeInput.value = timezoneModeInput.value==='iana_civil'?localInputValueAtZone(Date.now(),ianaTimezoneInput.value.trim()):inputValueAtOffset(Date.now(), Number(timezoneInput.value));
+    selectedPalace = null;generateAndRender();
+  }catch(error){errorBox.textContent=error instanceof Error?error.message:'Không xác định được thời gian hiện tại theo múi giờ đã nhập.';errorBox.hidden=false;}
 }
 
 form.addEventListener("submit", (event) => {
@@ -342,6 +368,10 @@ timezoneInput.addEventListener("change", () => {
   selectedPalace = null;
   generateAndRender();
 });
+for(const control of [timezoneModeInput,ianaTimezoneInput,dstDisambiguationInput,longitudeInput,latitudeInput])control.addEventListener('change',()=>{
+  syncTimePlaceControls();selectedPalace=null;generateAndRender();
+});
+timezoneModeInput.addEventListener('change',syncTimePlaceControls);
 
 methodInput.addEventListener("change", () => {
   methodNote.textContent = methodInput.value === "chaibu"
@@ -351,6 +381,7 @@ methodInput.addEventListener("change", () => {
   generateAndRender();
 });
 
+syncTimePlaceControls();
 datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
 generateAndRender();
 
@@ -401,7 +432,8 @@ const readingOptions=initModeControls();
 function prepareAiInput(){
   generateAndRender();
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
-  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentChart.input},...readingOptions()};
+  if(!currentTimePlace)throw new Error('Chưa có dữ liệu thời gian/địa điểm hợp lệ.');
+  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentTimePlace.originalInput},timePlace:{...currentTimePlace.request},...readingOptions()};
 }
 // Render with the same components and exact AI chart, then restore live nodes and selection.
 function captureReportVisual(prepared){

@@ -43,7 +43,8 @@ function inputFields(kind,body){
     fields.push({label:'Ngày sinh',value:displayDate(body.birthDateLocal)});fields.push({label:'Giờ sinh',value:body.birthTimeMode==='KNOWN'?(body.birthTimeLocal||'Không rõ'):'Không nhớ giờ sinh'});fields.push({label:'Múi giờ',value:selectedText('menh-timezone')});
     if(body.sexMetadata)fields.push({label:'Giới tính',value:selectedText('menh-sex')});if(body.age!=null)fields.push({label:'Tuổi đang xét',value:String(body.age)});if(body.annualYear!=null)fields.push({label:'Năm lưu niên',value:String(body.annualYear)});return fields;
   }
-  return [{label:'Sự việc cần hỏi',value:body.question},{label:'Nhóm sự việc',value:selectedText('topic')},{label:'Chế độ luận',value:selectedText('qimen-mode')},{label:'Thời điểm lập bàn',value:clean(document.getElementById('datetime')?.value)},{label:'Múi giờ',value:selectedText('timezone')},{label:'Pháp định cục',value:selectedText('method')}].filter(x=>x.value);
+  const zone=body.timePlace?.mode==='iana_civil'?body.timePlace.timeZone:selectedText('timezone');
+  return [{label:'Sự việc cần hỏi',value:body.question},{label:'Nhóm sự việc',value:selectedText('topic')},{label:'Chế độ luận',value:selectedText('qimen-mode')},{label:'Thời điểm lập bàn',value:clean(document.getElementById('datetime')?.value)},{label:'Múi giờ',value:zone},{label:'Kinh độ',value:body.timePlace?.longitude!=null?String(body.timePlace.longitude):''},{label:'Vĩ độ',value:body.timePlace?.latitude!=null?String(body.timePlace.latitude):''},{label:'Pháp định cục',value:selectedText('method')}].filter(x=>x.value);
 }
 function filenameBase(kind,body){return kind==='menh'?`ky-mon-ban-menh-${slug(body.fullName||body.birthDateLocal||'bao-cao')}-${localStamp()}`:`ky-mon-ban-hoi-viec-${localStamp()}`;}
 function captureMenhVisual(){

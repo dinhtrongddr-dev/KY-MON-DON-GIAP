@@ -50,7 +50,7 @@ export function renderTechnical(root,prepared,{includeJson=false,expanded=false}
 
   const flags=node(expanded?'section':'details','',root);
   node(expanded?'h4':'summary','Dấu hiệu toàn bàn và trạng thái đặc biệt',flags);
-  for(const id of ['day','hour','relation','duty','patterns','role_frame','special'])if(prepared.facts[id])node('p',prepared.facts[id],flags);
+  for(const id of ['day','hour','relation','duty','patterns','timeplace','role_frame','special'])if(prepared.facts[id])node('p',prepared.facts[id],flags);
   for(const [id,value] of Object.entries(prepared.facts).filter(([id])=>/^special_/.test(id)))node('p',value,flags);
 
   if(includeJson){

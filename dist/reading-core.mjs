@@ -1,5 +1,6 @@
 import {generateQimen} from './qimen/core/board.mjs';
 import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
+import {resolveTimePlace} from './qimen/timePlace.mjs';
 import {TOPICS, locateStem, locateRef, relation, palaceConditions} from './guide.mjs';
 import {buildTopicFocus, elementLink} from './reading-focus.mjs';
 import {buildAnalysisContext} from './qimen/ai/contextBuilder.mjs';
@@ -20,10 +21,15 @@ export function prepareReading(body) {
   if (!body || typeof body.question !== 'string' || !body.question.trim() || body.question.length > 1500) throw new Error('Nhập câu hỏi từ 1 đến 1500 ký tự.');
   if (!['chaibu','maoshan'].includes(body.method)) throw new Error('Pháp định cục không hợp lệ.');
   if (!TOPICS.some(t=>t.id===body.topic)) throw new Error('Nhóm sự việc không hợp lệ.');
-  const chart = generateQimen(body.input, body.method);
+  const timePlace=resolveTimePlace(body.input,body.timePlace);
+  const chart = generateQimen(timePlace.boardInput, body.method);
   const day = locateStem(chart, chart.pillars.day), hour = locateStem(chart, chart.pillars.hour);
   const facts = {};
   facts.time = `Giờ hỏi dân dụng: ${formatInstantAtOffset(chart.utcMs,chart.input.tzOffset,true)} ${formatOffset(chart.input.tzOffset)}. Tiết ${chart.term.vi}, từ ${formatInstantAtOffset(chart.term.utcMs,chart.input.tzOffset,true)} đến trước ${formatInstantAtOffset(chart.nextTerm.utcMs,chart.input.tzOffset,true)}. Các mốc hiển thị đến phút; phép tính giữ giây của thư viện lịch.`;
+  const tp=timePlace.metadata,solar=tp.solar;
+  facts.timeplace=tp.mode==='iana_civil'
+    ?`KM-TIMEPLACE-2.0: giờ dân dụng được đối chiếu bằng IANA ${tp.iana.timeZone}; offset lịch sử tại thời điểm này ${formatOffset(tp.effectiveOffsetHours)}, ${tp.iana.status==='ambiguous_resolved'?'giờ dân dụng bị lặp đã xác định rõ':'một UTC offset duy nhất'}${tp.iana.disambiguation?` · chọn ${tp.iana.disambiguation==='earlier'?'lần sớm':'lần muộn'}`:''}. ${solar?`Kinh độ ${solar.longitude}°; giờ Mặt Trời biểu kiến chỉ đối chiếu, lệch ${solar.apparentSolarCorrectionMinutes.toFixed(2)} phút so với đồng hồ dân dụng.`:'Không áp dụng hiệu chỉnh Mặt Trời.'}`
+    :`KM-TIMEPLACE-2.0: giữ UTC offset cố định ${formatOffset(tp.effectiveOffsetHours)} như hành vi cũ; không tự áp dụng DST/IANA.${solar?` Kinh độ ${solar.longitude}°; giờ Mặt Trời biểu kiến chỉ đối chiếu, lệch ${solar.apparentSolarCorrectionMinutes.toFixed(2)} phút và KHÔNG thay giờ lập bàn.`:''}`;
   facts.pillars = `Năm ${chart.pillars.year.vi}; tháng ${chart.pillars.month.vi}; ngày ${chart.pillars.day.vi}; giờ ${chart.pillars.hour.vi}. Năm đổi ở Lập Xuân, tháng đổi ở 12 tiết, nhật trụ đổi lúc 23:00 địa phương; không phải tháng âm lịch.`;
   facts.method = `${chart.methodLabel}; ${chart.dun.label} ${chart.dun.ju} cục, ${chart.dun.yuan}. ${chart.method==='chaibu' ? `Phù đầu ${chart.fuHead.vi}.` : `Qua ${chart.term.elapsedDays.toFixed(6)} ngày từ giao tiết; đổi nguyên sau đúng 120 và 240 giờ, Hạ nguyên kéo dài đến tiết tiếp theo.`}`;
   facts.day = `Nhật trụ ${chart.pillars.day.vi}; Nhật can ${chart.pillars.day.stem.vi}, tìm ${day.effective} trên thiên bàn cung ${named(day.palace)}. Chỉ quy ước Nhật can là người hỏi khi hỏi việc của chính mình; hỏi thay cần xác định lại đại diện.`;
@@ -57,10 +63,10 @@ export function prepareReading(body) {
   if (warnings.length) facts.boundary = warnings.join(' ');
   const context = {
     rules:RULE_VERSION, question:body.question.trim().normalize('NFC'), selectedTopic:body.topic,
-    facts, topics:topicAnchors, warnings, allInOne,
+    facts, topics:topicAnchors, warnings, allInOne,timePlace:{version:timePlace.version,request:timePlace.request,metadata:timePlace.metadata},
     conventions:[
       'Thời Gia Kỳ Môn, Chuyển Bàn; dùng đúng pháp đã chọn, không trộn Phi Bàn/Trí Nhuận.',
-      'Giờ dân dụng theo UTC offset cố định do người dùng nhập; chưa hiệu chỉnh chân thái dương hoặc tự áp dụng giờ mùa hè lịch sử.',
+      'KM-TIMEPLACE-2.0 mặc định giữ UTC offset cố định như trước. Chỉ khi người dùng bật IANA civil mode mới dùng offset lịch sử/DST của vùng; giờ trùng DST phải chọn lần sớm/lần muộn, giờ không tồn tại bị chặn. Tọa độ/giờ Mặt Trời chỉ là metadata đối chiếu và không tự đổi giờ lập bàn.',
       '23:00 đổi ngày. Giáp tìm nghi ẩn theo tuần của chính trụ; Nhật/Thời can ở thiên bàn, quan hệ người–việc xét hành cung.',
       'Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can ký sau đó cùng chuyển với Thiên Nhuế.',
       'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất→2, Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
@@ -75,7 +81,7 @@ export function prepareReading(body) {
       'KM-STRUCTURE-2.0 chưa bao phủ toàn bộ Bát Môn khắc ứng, Cửu Tinh trị thời, Tam Kỳ đáo cung và Tam Trá/Ngũ Giả/Cửu Độn; không tự suy các corpus này khi chưa có rule deterministic tương ứng.',
     ],
   };
-  return {context, chart, facts, board:allInOne.board, analysis:allInOne.analysis};
+  return {context, chart, facts, timePlace,board:allInOne.board, analysis:allInOne.analysis};
 }
 
 export const INSTRUCTIONS = BASE_WRITER_INSTRUCTIONS;
@@ -98,7 +104,7 @@ export async function buildReadingRequest(body) {
     subject:prepared.context.allInOne.questionContext.subject.mapping,
     direction:prepared.context.allInOne.questionContext.direction?{origin:prepared.context.allInOne.questionContext.direction.origin,kind:prepared.context.allInOne.questionContext.direction.kind}:null,
     depth:prepared.context.allInOne.questionContext.depth,action:prepared.context.allInOne.action,candidates:prepared.context.allInOne.comparison?.values||[],
-    method:prepared.chart.method,input:prepared.chart.input,protocol:READING_PROTOCOL,rules:RULE_VERSION,...identity}};
+    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,...identity}};
 }
 export function assertCompatible(data) {
   if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL) throw new Error(UPGRADE_MESSAGE);

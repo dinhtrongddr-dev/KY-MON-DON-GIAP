@@ -159,7 +159,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
          return send(201,{id:record.id,url:publicOrigin+'/s/'+record.id,createdAt:record.createdAt,expiresAt:record.expiresAt});
        }catch(e){return send(400,{error:e.message||'Không tạo được link chia sẻ.'});}
      }
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
      const jobMatch=/^\/api\/jobs\/([A-Za-z0-9_-]{20,64})$/.exec(path);
      if(jobMatch&&['GET','DELETE'].includes(req.method)){
        pruneJobs();const job=jobs.get(jobMatch[1]);
@@ -186,7 +186,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        const identityMismatch=isMenh
          ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
          : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
-       if(identityMismatch)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       if(identityMismatch)return send(409,{error:body.timePlace?.mode==='iana_civil'?'Dữ liệu múi giờ IANA giữa trình duyệt và server không khớp tại thời điểm này. Cập nhật trình duyệt/server hoặc tạm dùng UTC offset cố định rồi thử lại.':'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        const started=startReadingJob({isMenh,prepared,identity});
        if(!started)return send(429,{error:'Đang có một lượt luận khác. Đợi lượt đó xong rồi thử lại.'});
        return send(202,{jobId:started.job.id,status:started.job.status,reused:started.reused});
@@ -209,7 +209,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
        const identityMismatch=isMenhRead
          ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
          : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
-       if(identityMismatch)return send(409,{error:'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
+       if(identityMismatch)return send(409,{error:body.timePlace?.mode==='iana_civil'?'Dữ liệu múi giờ IANA giữa trình duyệt và server không khớp tại thời điểm này. Cập nhật trình duyệt/server hoặc tạm dùng UTC offset cố định rồi thử lại.':'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
        if(controller.signal.aborted)return;
        if(busy)return send(429,{error:'Đang có một lượt luận.'});busy=true;
        activityReadingId=track('startReading');
@@ -272,7 +272,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/qimen/timePlace.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));
