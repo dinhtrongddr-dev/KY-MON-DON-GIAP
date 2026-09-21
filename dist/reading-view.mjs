@@ -12,12 +12,28 @@ export function renderReading(answer,data,prepared) {
     node('summary','Căn cứ Kỳ Môn của phần này',details);
     const shown=new Set();
     for(const id of claimIds){
-      const claim=g.claims.find(c=>c.id===id),bundle=g.evidenceBundles.find(b=>b.id===claim.bundleId);
-      node('h4',bundle.roles.map(r=>r.meaning).join(' · ')+` — cung ${bundle.palace}`,details);
+      const claim=g.claims.find(c=>c.id===id);
+      if(!claim)continue;
+      const bundle=claim.bundleId?g.evidenceBundles.find(b=>b.id===claim.bundleId):null;
+      if(!bundle){
+        const person=g.nianmingProfile?.people?.find(p=>claim.evidenceIds?.includes(p.evidenceId));
+        const label=person?`Niên Mệnh · ${person.label} — cung ${person.palace}`:'Căn cứ đối chiếu bổ sung';
+        node('h4',label,details);
+        const text=claim.interpretation?.opening||claim.implication||'Lớp đối chiếu bổ sung; không thay Dụng Thần chính hoặc kết luận của bàn.';
+        node('p',text,details);
+        for(const factId of claim.evidenceIds||[])if(data.facts[factId]&&!shown.has(factId)){node('p',data.facts[factId],details);shown.add(factId);}
+        if(person?.palace){
+          const button=node('button',`Đối chiếu cung ${person.palace}`,details,'jump-cung');button.type='button';
+          button.addEventListener('click',()=>{const palace=doc.querySelector(`[data-palace="${person.palace}"]`);palace?.click();palace?.scrollIntoView({block:'center',behavior:'smooth'});});
+        }
+        continue;
+      }
+      const roleLabel=(bundle.roles||[]).map(r=>r.meaning).filter(Boolean).join(' · ')||'Cụm căn cứ';
+      node('h4',roleLabel+` — cung ${bundle.palace}`,details);
       for(const factId of [`p${bundle.palace}`,`mix${bundle.palace}`,`c${bundle.palace}`,`strength_${bundle.palace}`])if(data.facts[factId]&&!shown.has(factId)){node('p',data.facts[factId],details);shown.add(factId);}
-      const relationId=claim.evidenceIds.find(id=>id.startsWith('graph_'));
-      if(relationId&&!shown.has(relationId)){node('p',data.facts[relationId],details);shown.add(relationId);}
-      if(claim.conflicts.length)node('p','Dấu hiệu hạn chế: '+claim.conflicts.map(c=>c.resolution||c.text||c.code).join(' '),details);
+      const relationId=(claim.evidenceIds||[]).find(id=>id.startsWith('graph_'));
+      if(relationId&&data.facts[relationId]&&!shown.has(relationId)){node('p',data.facts[relationId],details);shown.add(relationId);}
+      if(claim.conflicts?.length)node('p','Dấu hiệu hạn chế: '+claim.conflicts.map(c=>c.resolution||c.text||c.code).join(' '),details);
       const button=node('button',`Đối chiếu cung ${bundle.palace}`,details,'jump-cung');button.type='button';
       button.addEventListener('click',()=>{const palace=doc.querySelector(`[data-palace="${bundle.palace}"]`);palace?.click();palace?.scrollIntoView({block:'center',behavior:'smooth'});});
     }

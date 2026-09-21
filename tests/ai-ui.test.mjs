@@ -167,6 +167,18 @@ test('five result tabs preserve full text, support keyboard navigation and show 
   assert.equal(panels.filter(n=>!n.hidden).length,1);
 });
 
+test('Niên Mệnh corroboration renders evidence without requiring an evidence bundle',async t=>{
+  const nianmingPayload={...payload,nianming:{self:'17/07/1994'}};
+  const p=await buildReadingRequest(nianmingPayload),reading=readingFixture(p);
+  assert.ok(p.context.allInOne.reasoning.claims.some(c=>c.id==='claim_nianming_self'&&c.bundleId===null));
+  const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}),{prepare:()=>structuredClone(nianmingPayload)});
+  await ids['ai-read'].fire('click');
+  assert.equal(ids['ai-answer'].hidden,false);
+  const all=[];const walk=e=>{all.push(e);e.children.forEach(walk);};walk(ids['ai-answer']);
+  assert.ok(all.some(n=>/^Niên Mệnh ·/.test(n.textContent)));
+  assert.doesNotMatch(ids['ai-status'].textContent,/undefined|bundle\.roles/i);
+});
+
 test('evidence is collapsed and every displayed basis comes from the verified planner',async t=>{
   const p=await buildReadingRequest(payload),reading=readingFixture(p);
   const {ids}=setup(t,async url=>response(url.endsWith('/api/status')?health:{...health,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading}));
