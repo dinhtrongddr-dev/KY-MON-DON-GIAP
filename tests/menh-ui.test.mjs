@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 const html=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8');
 const app=readFileSync(new URL('../dist/menh-app.mjs',import.meta.url),'utf8');
 const core=readFileSync(new URL('../dist/menh-reading-core.mjs',import.meta.url),'utf8');
+const rect=readFileSync(new URL('../dist/qimen/menh/rectification.mjs',import.meta.url),'utf8');
 const main=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
 const styles=readFileSync(new URL('../dist/styles.css',import.meta.url),'utf8');
 
@@ -91,8 +92,9 @@ test('Mệnh element diagram template is the same visual system as Hỏi Việc 
 test('Mệnh UI shows candidate boards for unknown birth time without pretending the leader is certain',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/Các Mệnh bàn có thể/);
-  assert.match(view,/Đang dẫn đầu/);
-  assert.match(view,/không thay thế giấy tờ hoặc ký ức về giờ sinh/);
+  assert.match(view,/Đang dẫn trong phép đối chiếu/);
+  assert.match(view,/NGHIÊN CỨU/);
+  assert.match(view,/không chứng minh giờ sinh thật/);
   assert.match(view,/renderNatalBoard\(c\.board/);
 });
 test('Mệnh AI long-form renderer preserves paragraph breaks',()=>{
@@ -125,21 +127,26 @@ test('Mệnh long-form reading visually emphasizes fast-scan translated takeaway
   assert.match(view,/renderMenhPalaceDetail/);
 });
 
-test('unknown birth-time rectification uses remembered window and dated event precision instead of year buckets',()=>{
+test('unknown birth-time rectification is research-only, annual-resolution and does not fake day/month precision weights',()=>{
   assert.match(html,/id="rect-time-window"/);
   assert.match(html,/id="rect-add-event"/);
   assert.match(app,/collectRectEvents/);
   assert.match(app,/precision:'DAY'/);
-  assert.match(core,/PRECISION_WEIGHT/);
-  assert.match(core,/WINDOW_FAMILIES/);
-  assert.match(core,/confidence=!minEvidence/);
+  assert.match(rect,/RECTIFICATION_VALIDATION_STATUS='RESEARCH_ONLY'/);
+  assert.match(rect,/annualResolutionOnly:true/);
+  assert.match(rect,/accuracyClaimAllowed:false/);
+  assert.match(rect,/autoSelectedBirthHour:null/);
+  assert.match(rect,/RECTIFICATION_MIN_EVENTS=5/);
+  assert.match(rect,/RECTIFICATION_MIN_DOMAINS=3/);
+  assert.doesNotMatch(core,/PRECISION_WEIGHT|confidence=!minEvidence/);
+  assert.match(html,/ngày\/tháng không làm tăng điểm/);
   assert.doesNotMatch(html,/rect-marriage-years/);
 });
 
 test('unknown candidate can be explicitly promoted to the known board used by AI',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/menh-use-candidate/);
-  assert.match(view,/Chọn bàn này để AI luận/);
+  assert.match(view,/Dùng ứng viên này để xem thử/);
   assert.match(app,/button\.dataset\.candidateTime/);
   assert.match(app,/unknown\.checked=false/);
   assert.match(app,/form\.requestSubmit\(\)/);

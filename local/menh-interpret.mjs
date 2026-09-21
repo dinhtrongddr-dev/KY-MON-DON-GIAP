@@ -29,11 +29,11 @@ function fallback(context){
       out[key].text+=` Bối cảnh ${labels} phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.`;
     }
   }
-  if(context.birthTimeMode==='UNKNOWN')out.birthTimeNote={text:'Không nhớ giờ sinh: chỉ các kết luận ổn định qua toàn bộ ứng viên giờ sinh được hiển thị; các phần còn lại phụ thuộc giờ sinh và không được bỏ phiếu đa số.',claim_ids:[]};
+  if(context.birthTimeMode==='UNKNOWN')out.birthTimeNote={text:'Không nhớ giờ sinh: chỉ các kết luận ổn định qua toàn bộ ứng viên được dùng như phần Mệnh có thể giữ. Bộ lọc giờ sinh nếu có chỉ là xếp hạng nghiên cứu theo các mốc đã nhập, không phải xác suất, không chứng minh giờ sinh đúng, không được bỏ phiếu đa số và không tự chọn một giờ thay bạn.',claim_ids:[]};
   return out;
 }
 export async function interpretMenhReading(prepared,{runner=runAI,budgetMs=READING_TIMEOUT_MS,signal,diagnostics=recordAiDiagnostic}={}){
-  const context=buildMenhWriterContext(prepared.result,{birthTimeMode:prepared.input.birthTimeMode,stability:prepared.result.stability||null});
+  const context=buildMenhWriterContext(prepared.result,{birthTimeMode:prepared.input.birthTimeMode,stability:prepared.result.stability||null,timePlace:prepared.technical?.timePlace||null,rectification:prepared.rectification||null});
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
   let revision,routeStartIndex=0;
   for(let attempt=0;attempt<2;attempt++){

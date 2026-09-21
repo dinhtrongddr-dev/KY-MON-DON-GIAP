@@ -11,6 +11,7 @@ import {createLuckOverlay} from './overlay.mjs';
 import {createAnnualOverlay} from './annual.mjs';
 import {synthesizeEvidence} from './synthesis.mjs';
 import {validateNatalView} from './schema.mjs';
+import {buildMenhAnalysisLayers} from './analysis-layers.mjs';
 
 const PALACE_CODE=Object.freeze({1:'KAN_1',2:'KUN_2',3:'ZHEN_3',4:'XUN_4',6:'QIAN_6',7:'DUI_7',8:'GEN_8',9:'LI_9'});
 const STEM_CANON=Object.freeze({'甲':'JIA','乙':'YI','丙':'BING','丁':'DING','戊':'WU','己':'JI','庚':'GENG','辛':'XIN','壬':'REN','癸':'GUI'});
@@ -24,12 +25,12 @@ const relationText=relation=>relation?.text||'không có quan hệ';
 const canonicalStem=han=>STEM_CANON[han]||null;
 const canonicalBranch=han=>BRANCH_CANON[han]||null;
 
-export function verticalAnalyzeNatalPalace(board,palace){
+export function verticalAnalyzeNatalPalace(board,palace,analysisLayers=null){
   if(!palace||palace.number===5)throw new Error('KM-MENH: vertical analysis cần cung ngoại Trung 5.');
-  const conditions=palaceConditions(palace);
+  const conditions=palaceConditions(palace),strength=seasonalStrength(board,palace),layer=analysisLayers?.byPalace?.[palace.number]||null;
   return freeze({
     palace:code(palace),palaceNumber:palace.number,palaceName:palace.vi,palaceElement:palace.element,
-    seasonStrength:seasonalStrength(board,palace),
+    seasonStrength:strength,strength:layer?.strength||strength,structure:layer?.structure||null,
     star:palace.star,door:palace.door,deity:palace.spirit,
     heavenStem:Object.freeze((palace.heavenStems||[]).map(s=>s.han)),
     earthStem:palace.earthStem?.han||null,
@@ -106,11 +107,11 @@ function claim({claimId,type='NATAL_TENDENCY',text,domain,ruleIds,evidenceIds}){
 
 export function analyzeNatalView(natalView,{age=null,annualPillar=null,sexMetadata=null}={}){
   validateNatalView(natalView);
-  const board=natalView.baseBoard;
+  const board=natalView.baseBoard,analysisLayers=buildMenhAnalysisLayers(board);
   const day=locate(board,board.pillars.day),hour=locate(board,board.pillars.hour),year=locate(board,board.pillars.year);
   const zhiFu=palaceByNumber(board,board.zhiFu.palace),zhiShi=palaceByNumber(board,board.zhiShi.palace);
-  const selfVertical=verticalAnalyzeNatalPalace(board,day);
-  const hourVertical=verticalAnalyzeNatalPalace(board,hour);
+  const selfVertical=verticalAnalyzeNatalPalace(board,day,analysisLayers);
+  const hourVertical=verticalAnalyzeNatalPalace(board,hour,analysisLayers);
   const globalHardEvidence=globalEvidence(board);
   const evidence=[...globalHardEvidence];
   const claims=[];
@@ -220,6 +221,7 @@ export function analyzeNatalView(natalView,{age=null,annualPillar=null,sexMetada
     dayStem:dayCanon,
     selfPalace:code(day),
     selfVertical,
+    analysisLayers,
     luck:luck?.period||null,
     annual:annual?.annual||null,
     domainContracts:freeze({marriage,career:careerContract,wealth:wealthContract}),

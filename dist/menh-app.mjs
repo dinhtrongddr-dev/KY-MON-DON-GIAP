@@ -6,7 +6,7 @@ import {createActivityLog} from './activity-log.mjs';
 
 const $=id=>document.getElementById(id);
 const form=$('menh-form'),name=$('birth-name'),place=$('birth-place'),date=$('birth-date'),dateNative=$('birth-date-native'),datePicker=$('birth-date-picker'),time=$('birth-time'),hour=$('birth-hour'),minute=$('birth-minute'),unknown=$('birth-time-unknown');
-const timezone=$('menh-timezone'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year'),rectification=$('birth-time-rectification');
+const timezone=$('menh-timezone'),timezoneMode=$('menh-timezone-mode'),ianaTimezone=$('menh-iana-timezone'),dstDisambiguation=$('menh-dst-disambiguation'),longitude=$('menh-longitude'),latitude=$('menh-latitude'),sex=$('menh-sex'),age=$('menh-age'),annual=$('menh-annual-year'),rectification=$('birth-time-rectification');
 const rectWindow=$('rect-time-window'),rectEventList=$('rect-event-list'),rectAdd=$('rect-add-event');
 const EVENT_OPTIONS=[['MARRIAGE','Kết hôn / chia tay lớn'],['CHILDREN','Sinh con / thay đổi lớn vì con'],['CAREER','Đổi nghề / khởi nghiệp / bước ngoặt công việc'],['WEALTH','Tài chính biến động lớn'],['FAMILY','Biến cố gia đình / cha mẹ'],['RELOCATION','Chuyển nhà / chuyển nơi sống lớn']];
 const two=n=>String(n).padStart(2,'0');
@@ -50,6 +50,18 @@ const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-d
 const activity=createActivityLog();
 let rememberedTime='',currentPrepared=null;
 
+function collectTimePlace(){
+  const policy={mode:timezoneMode.value};
+  if(policy.mode==='iana_civil'){policy.timeZone=ianaTimezone.value.trim();policy.disambiguation=dstDisambiguation.value;}
+  if(longitude.value.trim()!=='')policy.longitude=Number(longitude.value);
+  if(latitude.value.trim()!=='')policy.latitude=Number(latitude.value);
+  return policy;
+}
+function syncTimePlace(){
+  const iana=timezoneMode.value==='iana_civil';
+  timezone.disabled=iana;ianaTimezone.disabled=!iana;dstDisambiguation.disabled=!iana;
+  $('menh-timezone-help').textContent=iana?'IANA quyết định UTC offset lịch sử/DST tại ngày sinh; ô UTC cố định tạm không dùng.':'UTC offset cố định · tương thích Mệnh 1.0';
+}
 export function collectMenhForm(){
   return {
     fullName:name.value.trim()||null,
@@ -58,6 +70,7 @@ export function collectMenhForm(){
     birthTimeMode:unknown.checked?'UNKNOWN':'KNOWN',
     birthTimeLocal:unknown.checked?null:parseBirthTime(time.value),
     tzOffset:Number(timezone.value),
+    timePlace:collectTimePlace(),
     sexMetadata:sex.value||null,
     lifeEvents:unknown.checked?collectRectEvents():null,
     birthTimeWindow:unknown.checked?rectWindow.value:null,
@@ -87,6 +100,7 @@ dateNative.addEventListener('change',()=>{if(dateNative.value){date.value=format
 datePicker.addEventListener('click',()=>{try{dateNative.value=parseBirthDate(date.value);}catch{};if(typeof dateNative.showPicker==='function')dateNative.showPicker();else{dateNative.focus();dateNative.click();}});
 for(const select of [hour,minute])select.addEventListener('change',()=>{syncTimeValueFromSelectors();time.dispatchEvent(new Event('input',{bubbles:true}));});
 unknown.addEventListener('change',()=>{syncUnknownBirthTime();clearResult();});
+timezoneMode.addEventListener('change',()=>{syncTimePlace();clearResult();});
 rectAdd.addEventListener('click',()=>addRectEvent());
 if(!rectEventList.children.length){addRectEvent({kind:'MARRIAGE'});addRectEvent({kind:'CAREER'});addRectEvent({kind:'FAMILY'});}
 form.addEventListener('input',event=>{if(event.target!==unknown)clearResult();});
@@ -107,6 +121,7 @@ deterministic.addEventListener('click',event=>{
 });
 annual.value=String(new Date().getFullYear());
 populateTimeSelectors();
+syncTimePlace();
 syncUnknownBirthTime();
 initMenhAi({prepare:()=>collectMenhForm(),activity});
 initSharedView({kind:'menh',resultSelector:'#menh-result'});

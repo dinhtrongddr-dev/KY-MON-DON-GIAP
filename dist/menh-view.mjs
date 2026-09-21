@@ -157,7 +157,28 @@ function semanticCardNode(palace,board,conditions=null){
   for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));list.append(li);}
   details.append(summary,list);section.append(details);return section;
 }
-function renderMenhPalaceDetail(detail,titleNode,palace,board){
+function strengthStructureCard(layer){
+  if(!layer)return null;
+  const section=el('section','semantic-card menh-layer-card'),head=el('div','semantic-card-head');
+  head.append(el('p','eyebrow','Lực & điều kiện'),el('span','semantic-version','Mệnh 1.1'));section.append(head);
+  const strength=layer.strength;
+  section.append(el('p','semantic-summary','Cửu Tinh '+strength.star.level+' ('+strength.star.status+') · Bát Môn '+(strength.door?strength.door.level+' ('+strength.door.status+')':'không có')+' · môi trường cung '+strength.palace.level+' ('+strength.palace.status+').'));
+  const conditions=[];
+  if(layer.structure.doorRelation&&layer.structure.doorRelation!=='Môn–Cung không tương khắc')conditions.push(layer.structure.doorRelation);
+  for(const harm of layer.structure.fourHarms){
+    if(harm.code==='void')conditions.push('Tuần Không');
+    else if(harm.code==='door_pressure')conditions.push('Môn khắc Cung');
+    else if(harm.code==='punishment')conditions.push((harm.stem||'Can')+' kích hình');
+    else if(harm.code==='tomb')conditions.push((harm.stem||'Tam Kỳ')+' nhập mộ');
+  }
+  const modern=layer.structure.stemResponses.filter(x=>x.actorIds?.length).map(x=>x.plainMeaning);
+  const patterns=layer.structure.patterns.filter(x=>x.plainMeaning).map(x=>x.plainMeaning);
+  if(conditions.length)section.append(el('p','semantic-state','Điều kiện cần lưu ý: '+[...new Set(conditions)].join(' · ')+'.'));
+  for(const text of [...new Set([...modern,...patterns])].slice(0,3))section.append(el('p','',text));
+  section.append(el('p','ai-note','Mức lực và cấu trúc chỉ điều chỉnh cách phát huy của cung; không phải xác suất và không tự tạo sự kiện ngoài đời.'));
+  return section;
+}
+function renderMenhPalaceDetail(detail,titleNode,palace,board,analysisLayers=null){
   titleNode.textContent=palace.vi+' '+palace.number+' cung';
   detail.replaceChildren();
   const conditions=palaceConditions(palace),title=el('div','detail-title');title.dataset.element=elementSlug(palace.element);
@@ -166,6 +187,7 @@ function renderMenhPalaceDetail(detail,titleNode,palace,board){
   main.append(el('span','detail-gua',palace.trigram||'中'),name);title.append(main,el('span','element-chip',palace.element));
   detail.append(title,el('p','detail-image',palace.image||''));
   detail.append(semanticCardNode(palace,board,conditions));
+  const layerCard=strengthStructureCard(analysisLayers?.byPalace?.[palace.number]||null);if(layerCard)detail.append(layerCard);
   const list=el('div','detail-list');
   if(palace.number===5){
     list.append(
@@ -247,13 +269,19 @@ function renderMenhChartMeta(board){
   item('Tuần thủ · lục nghi ẩn Giáp',(board.xun?.head?.han||'—')+' · '+(board.xun?.instrument?.han||'—'),(board.xun?.head?.vi||'—')+' ẩn '+(board.xun?.instrument?.vi||'—'));
   root.append(pillars,summary);return root;
 }
-function renderMenhMethodDetails(board){
+function renderMenhMethodDetails(board,timePlace=null){
   const details=el('details','method-details menh-method-details'),copy=el('div','method-copy'),offset=board.input.tzOffset;
   details.append(el('summary','','Quy tắc đang dùng và cách đối chiếu thời điểm sinh'));
   const p1=el('p');p1.append(el('strong','','Định cục. '),document.createTextNode('Thời gia Kỳ Môn · Chuyển bàn · Tháo Bổ; '+(board.dun==='yang'?'Dương':'Âm')+' độn '+board.ju+' cục · '+(board.yuan||'')+'.'));
   const p2=el('p');p2.append(el('strong','','Giao tiết. '),document.createTextNode((board.term?.vi||'Tiết khí')+' bắt đầu '+formatInstantAtOffset(board.term.utcMs,offset,true)+(board.nextTerm?' ; tiết kế '+board.nextTerm.vi+' lúc '+formatInstantAtOffset(board.nextTerm.utcMs,offset,true):'')+'.'));
-  const p3=el('p');p3.append(el('strong','','Thời gian đầu vào. '),document.createTextNode('Dùng giờ sinh đã nhập theo '+formatOffset(offset)+'; cùng quy ước đổi ngày và giao tiết của engine Hỏi Việc.'));
-  copy.append(p1,p2,p3);details.append(copy);return details;
+  const basis=timePlace?.mode==='iana_civil'
+    ?'Dùng giờ dân dụng theo IANA '+timePlace.timeZone+'; offset lịch sử tại thời điểm sinh là '+formatOffset(timePlace.effectiveOffsetHours)+'.'
+    :'Dùng giờ sinh đã nhập theo UTC offset cố định '+formatOffset(offset)+'; tương thích Mệnh 1.0.';
+  const p3=el('p');p3.append(el('strong','','Thời gian đầu vào. '),document.createTextNode(basis));
+  const solar=timePlace?.solar;
+  const p4=solar?el('p'):null;
+  if(p4)p4.append(el('strong','','Đối chiếu Mặt Trời. '),document.createTextNode('Kinh độ được dùng để tính chênh lệch khoảng '+Number(solar.apparentSolarCorrectionMinutes).toFixed(2)+' phút; đây chỉ là metadata đối chiếu và KHÔNG thay giờ lập Mệnh bàn.'));
+  copy.append(p1,p2,p3);if(p4)copy.append(p4);details.append(copy);return details;
 }
 function appendPatternFlags(root,board){
   const p=board.patterns||{};let fu=false,fan=false;
@@ -285,7 +313,7 @@ function renderNatalBoard(board,selfPalaceNumber=null,{interactive=false}={}){
   addFlag(flags,'Mã tinh: '+(board.horseBranch?.vi||'—')+' · cung '+horsePalace);
   appendPatternFlags(flags,board);section.append(flags);return section;
 }
-function renderMenhWorkspace(board,selfPalaceNumber=null){
+function renderMenhWorkspace(board,selfPalaceNumber=null,analysisLayers=null){
   const workspace=el('div','workspace menh-workspace'),boardColumn=renderNatalBoard(board,selfPalaceNumber,{interactive:true});
   const inspector=el('aside','inspector menh-inspector'),head=el('div','inspector-head'),title=el('h2','','Chọn một cung trên bàn'),detail=el('div','palace-detail');
   head.append(el('div','menh-inspector-title-wrap'));head.firstChild.append(el('p','eyebrow','Luận tượng từng cung'),title);inspector.append(head,detail);
@@ -294,7 +322,7 @@ function renderMenhWorkspace(board,selfPalaceNumber=null){
   const select=number=>{
     const palace=board.palaces.find(item=>item.number===number)||board.palaces.find(item=>item.number===selfPalaceNumber)||board.palaces[0];
     for(const button of buttons){const active=Number(button.dataset.palace)===palace.number;button.classList.toggle('is-selected',active);button.setAttribute('aria-pressed',String(active));}
-    renderMenhPalaceDetail(detail,title,palace,board);
+    renderMenhPalaceDetail(detail,title,palace,board,analysisLayers);
   };
   for(const button of buttons)button.addEventListener('click',()=>select(Number(button.dataset.palace)));
   const fallback=board.palaces.find(p=>p.number===selfPalaceNumber)?.number??board.palaces.find(p=>p.number!==5)?.number??board.palaces[0].number;
@@ -314,24 +342,25 @@ function renderUnknownBoardNotice(prepared){
   const note=el('div','menh-unknown-board-placeholder');
   if(rect?.eventCount){
     const best=rect.ranked?.[0],second=rect.ranked?.[1];
-    const state=rect.status==='STRONG'?'Có một khung giờ nổi bật rõ hơn':rect.status==='LEADING'?'Có một khung giờ đang dẫn nhưng chưa đủ để xác nhận':rect.status==='TIED'?'Chưa phân biệt được: các khung giờ còn quá sát nhau':'Chưa đủ dữ kiện độc lập để lọc giờ sinh';
-    note.append(el('strong','',state+' · đã đối chiếu '+rect.eventCount+' mốc cuộc đời.'));
-    if(best)note.append(el('p','','Đang dẫn đầu: giờ '+(HOUR_FAMILY_VI[best.family]||best.family)+' (bàn mẫu '+best.time+') · khớp '+best.points+'/'+best.maxPoints+' điểm kích hoạt.'+(second?' Khung kế tiếp '+(HOUR_FAMILY_VI[second.family]||second.family)+' '+second.points+'/'+second.maxPoints+'.':'')));
+    const state=rect.status==='RESEARCH_LEADING'?'Một ứng viên đang dẫn trong phép đối chiếu nghiên cứu':rect.status==='RESEARCH_TIED'?'Chưa phân biệt được: các ứng viên đầu đang ngang nhau':rect.status==='RESEARCH_INSUFFICIENT'?'Chưa đủ số mốc/nhóm độc lập để lọc giờ sinh':'Chưa đủ dữ kiện để lọc giờ sinh';
+    note.append(el('strong','',state+' · '+rect.eventCount+' mốc · '+rect.distinctDomains+' nhóm sự việc.'));
+    if(best)note.append(el('p','','Đang dẫn trong phép đối chiếu: giờ '+(HOUR_FAMILY_VI[best.family]||best.family)+' (bàn mẫu '+best.time+') · '+best.supportedEvents+'/'+rect.eventCount+' mốc có kích hoạt lưu niên.'+(second?' Ứng viên kế: '+(HOUR_FAMILY_VI[second.family]||second.family)+' · '+second.supportedEvents+'/'+rect.eventCount+' mốc có kích hoạt.':'')));
   }else{
     note.append(el('strong','','Chưa có mốc cuộc đời để lọc giờ sinh.'));
     note.append(el('p','','Nhập các năm có bước ngoặt rõ ở phần trên để hệ thống so sánh các khung giờ.'));
   }
-  note.append(el('p','','Kết quả này chỉ cho biết giờ sinh phù hợp hơn với các mốc đã nhập, không thay thế giấy tờ hoặc ký ức về giờ sinh.'));
+  note.append(el('p','','Rectification 1.0 đang ở trạng thái NGHIÊN CỨU, hiện chỉ đối chiếu theo năm lưu niên. Xếp hạng không phải xác suất/độ chính xác và không chứng minh giờ sinh thật.'));
   section.append(note);
-  const ranked=(rect?.ranked?.length?rect.ranked:prepared.candidates).slice(0,rect?.eventCount?5:prepared.candidates.length);
+  const fallbackCandidates=rect?.candidateIds?.length?prepared.candidates.filter(c=>rect.candidateIds.includes(c.id)):prepared.candidates;
+  const ranked=(rect?.ranked?.length?rect.ranked:fallbackCandidates).slice(0,rect?.eventCount?5:fallbackCandidates.length);
   const chooser=el('div','menh-candidate-list');
   for(const c of ranked){
     const details=el('details','menh-candidate');
-    const label='Giờ '+(HOUR_FAMILY_VI[c.family]||c.family)+' · '+c.time+(c.points!=null?' · '+c.points+'/'+c.maxPoints+' điểm':'');
+    const label='Giờ '+(HOUR_FAMILY_VI[c.family]||c.family)+' · '+c.time+(c.supportUnits!=null?' · '+c.supportedEvents+'/'+rect.eventCount+' mốc có kích hoạt':'');
     const card=el('div','menh-candidate-card');
     details.append(el('summary','',label));
     details.append(renderNatalBoard(c.board,candidateSelfPalace(c)));
-    const use=el('button','button button-primary menh-use-candidate','Chọn bàn này để AI luận · Giờ '+(HOUR_FAMILY_VI[c.family]||c.family));
+    const use=el('button','button button-primary menh-use-candidate','Dùng ứng viên này để xem thử · Giờ '+(HOUR_FAMILY_VI[c.family]||c.family));
     use.type='button';use.dataset.candidateTime=c.time;use.dataset.candidateFamily=c.family;
     card.append(details,use);chooser.append(card);
   }
@@ -392,9 +421,9 @@ export function renderMenhDeterministic(container,prepared){
     const selfEvidence=(prepared.result.evidence||[]).find(e=>e.evidenceId==='SELF_DAY_STEM');
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderMenhChartMeta(board));
-    container.append(renderMenhWorkspace(board,selfPalaceNumber));
+    container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));
     if(aiPanel)container.append(aiPanel);
-    container.append(renderMenhMethodDetails(board));
+    container.append(renderMenhMethodDetails(board,prepared.technical?.timePlace||null));
   }else{
     container.append(renderUnknownBoardNotice(prepared));
     if(aiPanel)container.append(aiPanel);

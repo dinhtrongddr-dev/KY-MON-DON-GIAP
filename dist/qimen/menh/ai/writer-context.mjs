@@ -28,8 +28,65 @@ function luckPhaseWindows(luck){
     {ageStart:start+10,ageEnd:luck.ageEnd,layer:'TEN_STEM_KE_YING_AND_PALACE_STATE'},
   ];
 }
+function compactTimePlace(timePlace){
+  if(!timePlace)return null;
+  return {
+    version:timePlace.version||'KM-TIMEPLACE-2.0',mode:timePlace.mode||null,civilTimeBasis:timePlace.civilTimeBasis||null,
+    effectiveOffsetHours:timePlace.effectiveOffsetHours??null,timeZone:timePlace.timeZone||null,coordinates:timePlace.coordinates||null,
+    solar:timePlace.solar?{
+      application:timePlace.solar.application,
+      apparentSolarCorrectionMinutes:timePlace.solar.apparentSolarCorrectionMinutes,
+      warning:timePlace.solar.warning,
+    }:null,
+  };
+}
+function compactAnalysisLayers(result,claimSupport){
+  const layers=result.analysisLayers;if(!layers)return null;
+  const relevant=new Set(claimSupport.flatMap(x=>x.palaces).map(value=>typeof value==='number'?value:Number(String(value||'').match(/(\d+)$/)?.[1]||0)).filter(Boolean));
+  const byPalace=Object.fromEntries(Object.entries(layers.byPalace||{}).filter(([number])=>relevant.has(Number(number))).map(([number,row])=>[
+    number,{
+      strength:{
+        star:{level:row.strength.star.level,status:row.strength.star.status},
+        door:row.strength.door?{level:row.strength.door.level,status:row.strength.door.status}:null,
+        palace:{level:row.strength.palace.level,status:row.strength.palace.status},
+        stems:row.strength.stems.map(x=>({stem:x.stem,carried:x.carried,level:x.capacityWeight>=.8?'mạnh':x.capacityWeight>=.6?'khá mạnh':x.capacityWeight>=.4?'trung bình':x.capacityWeight>=.2?'yếu':'rất yếu',longevity:x.longevity?.vi||null,meaning:x.longevity?.meaning||null})),
+      },
+      structure:{
+        doorRelation:row.structure.doorRelation?.label||null,
+        fourHarms:row.structure.fourHarms.map(x=>({code:x.code,stem:x.stem||null,carried:x.carried===true,actorIds:[...(x.actorIds||[])]})),
+        stemResponses:row.structure.stemResponses.filter(x=>x.actorIds?.length).map(x=>({pair:x.pair,tone:x.tone,plainMeaning:x.plainMeaning,actorIds:[...x.actorIds],carried:x.carried===true})),
+        patterns:row.structure.patterns.map(x=>({id:x.id,tone:x.tone,qualified:x.qualified,plainMeaning:x.plainMeaning})),
+      },
+    }
+  ]));
+  return {
+    version:layers.version,
+    strengthProfile:layers.strengthProfile,
+    structureProfile:{version:layers.structureProfile.version,profile:layers.structureProfile.profile,limitations:layers.structureProfile.limitations},
+    byPalace,
+    roles:(layers.roles||[]).filter(r=>relevant.has(r.palace)).map(r=>({
+      id:r.id,label:r.label,palace:r.palace,tier:r.yongshenTier,
+      strength:{kind:r.strength.kind,level:r.strength.level,status:r.strength.status,band:r.strength.band,meaning:r.strength.meaning},
+      fourHarms:r.fourHarms.map(x=>({code:x.code,stem:x.stem||null,carried:x.carried===true})),
+      stemResponses:r.stemResponses.map(x=>({pair:x.pair,tone:x.tone,plainMeaning:x.plainMeaning,carried:x.carried===true})),
+    })),
+    meaning:layers.meaning,
+  };
+}
+function compactRectification(rectification){
+  if(!rectification)return null;
+  return {
+    version:rectification.version,status:rectification.status,validationStatus:rectification.validationStatus,
+    validationCaseCount:rectification.validationCaseCount,accuracyClaimAllowed:false,autoSelectedBirthHour:null,
+    annualResolutionOnly:rectification.annualResolutionOnly===true,majorityVoteAllowed:false,
+    eventCount:rectification.eventCount,distinctDomains:rectification.distinctDomains,candidateCount:rectification.candidateCount,minimumGate:rectification.minimumGate,
+    leadingCandidateId:rectification.leadingCandidateId,runnerUpId:rectification.runnerUpId,
+    ranked:(rectification.ranked||[]).slice(0,3).map(r=>({id:r.id,family:r.family,time:r.time,rank:r.rank,supportedEvents:r.supportedEvents,primaryHits:r.primaryHits,secondaryHits:r.secondaryHits})),
+    note:rectification.note,
+  };
+}
 
-export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=null}={}){
+export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=null,timePlace=null,rectification=null}={}){
   validateMenhResult(result);
   const claims=result.claims.map(c=>({
     claimId:c.claimId,type:c.type,domain:c.domain,text:c.text,ruleIds:[...c.ruleIds],evidenceIds:[...c.evidenceIds],
@@ -62,6 +119,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
   return freeze({
     protocol:MENH_PROTOCOL,
     ruleVersion:MENH_RULE_VERSION,
+    runtimeVersion:result.runtimeVersion||MENH_RULE_VERSION,
     specVersion:result.specVersion,
     profileId:result.profileId,
     birthTimeMode,
@@ -77,6 +135,9 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     boardFacts:boardFacts(result,birthTimeMode),
     claims,
     claimSupport,
+    analysisLayers:birthTimeMode==='KNOWN'?compactAnalysisLayers(result,claimSupport):null,
+    timePlace:compactTimePlace(timePlace),
+    rectification:birthTimeMode==='UNKNOWN'?compactRectification(rectification):null,
     semanticMatrix,
     evidence:visibleEvidence.map(e=>({
       evidenceId:e.evidenceId,ruleId:e.ruleId,domain:e.domain,palace:e.palace,mechanism:e.mechanism,effectTag:e.effectTag,
@@ -111,6 +172,9 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
       overallScore:false,
       probability:false,
       deterministicEventClaims:false,
+      solarBoardRewrite:false,
+      rectificationAccuracyClaim:false,
+      autoSelectBirthHour:false,
     }),
   });
 }

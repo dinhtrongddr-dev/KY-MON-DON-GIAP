@@ -12,10 +12,10 @@ import {wealthResolverContract} from './qimen/menh/domains/wealth.mjs';
 import {analyzeNatalView} from './qimen/menh/natal-analysis.mjs';
 import {summarizeUnknownCandidateResults} from './qimen/menh/stability.mjs';
 import {DEFAULT_MENH_PROFILE_ID} from './qimen/menh/profiles.mjs';
-import {MENH_SPEC_VERSION} from './qimen/menh/version.mjs';
+import {MENH_SPEC_VERSION,MENH_RUNTIME_VERSION} from './qimen/menh/version.mjs';
 
-export const MENH_PROTOCOL=1;
-export const MENH_RULE_VERSION=MENH_SPEC_VERSION;
+export const MENH_PROTOCOL=2;
+export const MENH_RULE_VERSION=MENH_RUNTIME_VERSION;
 
 const freeze=value=>{
   if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}
@@ -55,6 +55,7 @@ export function buildMenhDeterministicResult(natal,{
   const result=freeze({
     protocol:MENH_PROTOCOL,
     specVersion:MENH_SPEC_VERSION,
+    runtimeVersion:MENH_RUNTIME_VERSION,
     ruleVersion:MENH_RULE_VERSION,
     profileId:natal.profileId,
     birthTimeMode:'KNOWN',
@@ -77,10 +78,12 @@ export function analyzeMenhNatal(natal,{age=null,annualPillar=null,sexMetadata=n
   const result=freeze({
     protocol:MENH_PROTOCOL,
     specVersion:MENH_SPEC_VERSION,
+    runtimeVersion:MENH_RUNTIME_VERSION,
     ruleVersion:MENH_RULE_VERSION,
     profileId:natal.profileId,
     birthTimeMode:'KNOWN',
     natal,
+    analysisLayers:analysis.analysisLayers,
     luck:analysis.luck,
     annual:analysis.annual,
     domains:getMenhDomainContracts({dayStem:analysis.dayStem,sexMetadata}),
@@ -102,9 +105,11 @@ export function analyzeUnknownMenhCandidates(candidateResults,{sourceTrace=[]}={
   const result=freeze({
     protocol:MENH_PROTOCOL,
     specVersion:MENH_SPEC_VERSION,
+    runtimeVersion:MENH_RUNTIME_VERSION,
     ruleVersion:MENH_RULE_VERSION,
     profileId:sample.profileId,
     birthTimeMode:'UNKNOWN',
+    analysisLayers:null,
     natal:null,
     luck:stability.commonLuck,
     annual:null,

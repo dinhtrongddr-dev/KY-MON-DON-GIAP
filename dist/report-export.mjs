@@ -40,7 +40,7 @@ function extractAnalysisSections(kind){if(kind!=='menh')return [];return [...doc
 function inputFields(kind,body){
   if(kind==='menh'){
     const fields=[];if(body.fullName)fields.push({label:'Họ và tên',value:body.fullName});if(body.birthPlace)fields.push({label:'Nơi sinh',value:body.birthPlace});
-    fields.push({label:'Ngày sinh',value:displayDate(body.birthDateLocal)});fields.push({label:'Giờ sinh',value:body.birthTimeMode==='KNOWN'?(body.birthTimeLocal||'Không rõ'):'Không nhớ giờ sinh'});fields.push({label:'Múi giờ',value:selectedText('menh-timezone')});
+    fields.push({label:'Ngày sinh',value:displayDate(body.birthDateLocal)});fields.push({label:'Giờ sinh',value:body.birthTimeMode==='KNOWN'?(body.birthTimeLocal||'Không rõ'):'Không nhớ giờ sinh'});fields.push({label:'Múi giờ',value:body.timePlace?.mode==='iana_civil'?(body.timePlace.timeZone||'IANA'):selectedText('menh-timezone')});if(body.timePlace?.longitude!=null)fields.push({label:'Kinh độ',value:String(body.timePlace.longitude)});if(body.timePlace?.latitude!=null)fields.push({label:'Vĩ độ',value:String(body.timePlace.latitude)});
     if(body.sexMetadata)fields.push({label:'Giới tính',value:selectedText('menh-sex')});if(body.age!=null)fields.push({label:'Tuổi đang xét',value:String(body.age)});if(body.annualYear!=null)fields.push({label:'Năm lưu niên',value:String(body.annualYear)});return fields;
   }
   const zone=body.timePlace?.mode==='iana_civil'?body.timePlace.timeZone:selectedText('timezone');

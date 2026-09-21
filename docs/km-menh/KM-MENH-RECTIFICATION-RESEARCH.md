@@ -16,3 +16,11 @@ This feature is not part of frozen KM-MENH-1.0 and must not claim that it recove
 - Any rule change resets the validation report and must be rerun against the frozen blind set.
 
 The current fixture file intentionally starts small. New cases must include event provenance/precision and should span different dates, hour branches, sexes, and event histories.
+
+## KM-MENH-RECTIFICATION-1.0 implementation boundary
+
+As of 2026-09-21 the runtime has one blind research case, so the module is hard-coded `RESEARCH_ONLY`, `accuracyClaimAllowed=false` and `autoSelectedBirthHour=null`.
+
+The first deterministic rectifier is annual-resolution only: it checks whether the annual Stem/Branch activation overlaps the domain of an observed life-event year. DAY and MONTH precision are retained as research metadata but receive no scoring bonus until a separately specified sub-annual method exists. Internal support units are ranking mechanics, not probability or calibrated confidence.
+
+UNKNOWN stability remains separate and authoritative for statements that do not depend on birth hour. Rectification must never replace STABLE/TIME_SENSITIVE/UNRESOLVED with majority voting.
