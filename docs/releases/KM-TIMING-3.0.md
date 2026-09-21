@@ -1,7 +1,7 @@
 # KM-TIMING-3.0
 
 Date: 2026-09-21
-Status: develop / Phase 13
+Status: production in v17.5.0 / Phase 13
 Scope: Hỏi Việc timing/response layer. The frozen rotating-board core remains unchanged.
 
 ## Goal
