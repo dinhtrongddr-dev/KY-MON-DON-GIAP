@@ -32,7 +32,7 @@ export function resolveContradictions(bundle,context) {
   if(has('palace_pressure'))add('environment_constrains_method',d.opportunity,'Cung khắc Môn: hoàn cảnh đang hạn chế cách triển khai','environment_condition',
     `Giảm mức cam kết và kiểm tra điều kiện thực địa của ${d.vocabulary[0]} trước khi tiếp tục.`,execution,'obstruction','medium');
   for(const state of bundle.states.filter(s=>['tomb','punishment'].includes(s.code)))add(state.code,'Năng lực của vai đang xét',
-    state.code==='tomb'?'Can đại diện Tam kỳ nhập mộ: khả năng bị giữ lại':'Can đại diện kích hình: cách triển khai có ràng buộc',
+    state.code==='tomb'?'Can đại diện nhập mộ: khả năng bị giữ lại':'Can đại diện kích hình: cách triển khai có ràng buộc',
     'actor_specific_condition',state.code==='tomb'?'Giải phóng phần nguồn lực đang bị giữ ở vai này trước khi giao thêm việc.':'Sửa phạm vi hoặc cách thực hiện đang tạo sức ép cho vai này.',
     execution,'obstruction','high',state.actorIds);
   if(has('fan_yin'))add('reversal',opening?d.opportunity:'Khả năng thay đổi hiện trạng','Phản ngâm: có thể quay lại bước trước','decision_stability',

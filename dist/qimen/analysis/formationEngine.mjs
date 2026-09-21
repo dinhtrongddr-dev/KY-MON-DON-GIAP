@@ -40,7 +40,7 @@ function roleIdsForStems(roles,palace,stems){
 function blockersFor(rows,p,{punishment=false,tomb=false,pressure=false}={}){
   const out=[];
   if(pressure&&p.conditions?.doorPressure)out.push('door_pressure');
-  if(tomb&&rows.some(x=>x.pair?.wonderTomb))out.push('wonder_tomb');
+  if(tomb&&rows.some(x=>(x.pair?.tomb??x.pair?.wonderTomb)))out.push('stem_tomb');
   if(punishment&&rows.some(x=>x.pair?.punishment))out.push('punishment');
   return [...new Set(out)];
 }
@@ -70,13 +70,10 @@ function threeDeceptions(p){
 }
 
 function fiveFakeQualification(rows,p){
-  if(p.conditions?.doorPressure)return {blockers:['door_pressure'],qualificationStatus:'complete',qualificationLimitations:[],
-    candidates:rows.map(x=>({stem:x.stem,tombCoverage:WONDERS.has(x.stem)?'known':'unknown',tombBlocked:WONDERS.has(x.stem)?!!x.pair?.wonderTomb:null}))};
-  const candidates=rows.map(x=>({stem:x.stem,tombCoverage:WONDERS.has(x.stem)?'known':'unknown',tombBlocked:WONDERS.has(x.stem)?!!x.pair?.wonderTomb:null}));
-  if(candidates.some(x=>x.tombCoverage==='known'&&!x.tombBlocked))return {blockers:[],qualificationStatus:'complete',qualificationLimitations:[],candidates};
-  if(candidates.some(x=>x.tombCoverage==='unknown'))return {blockers:[],qualificationStatus:'partial_tomb_coverage',
-    qualificationLimitations:['Nguồn yêu cầu kỵ Mộ; các can Kỷ/Quý/Nhâm trong match này chưa có deterministic tomb rule trong core.'],candidates};
-  return {blockers:['wonder_tomb'],qualificationStatus:'complete',qualificationLimitations:[],candidates};
+  const candidates=rows.map(x=>({stem:x.stem,tombCoverage:'known',tombBlocked:!!(x.pair?.tomb??x.pair?.wonderTomb)}));
+  if(p.conditions?.doorPressure)return {blockers:['door_pressure'],qualificationStatus:'complete',qualificationLimitations:[],candidates};
+  if(candidates.some(x=>!x.tombBlocked))return {blockers:[],qualificationStatus:'complete',qualificationLimitations:[],candidates};
+  return {blockers:['stem_tomb'],qualificationStatus:'complete',qualificationLimitations:[],candidates};
 }
 
 function fiveFakes(p){
@@ -212,12 +209,12 @@ export function analyzeFormations(board,palaces,roles=[]){
       fiveFakeVariants:{earth_fake:['earth9','moon','harmony']},
       nineEscapes:['heaven_escape','earth_escape','human_escape','spirit_escape','ghost_escape','wind_escape','cloud_escape','dragon_escape','tiger_escape'],
       nineEscapeVariants:{tiger_escape:['qimen_faqiao_primary','qimen_faqiao_alternate'],heaven_escape:['canonical_life_door_only']},
-      qualificationCoverage:{wonderTomb:'complete_for_乙丙丁',otherStemTomb:'partial_for_己癸壬'},
+      qualificationCoverage:{wonderTomb:'complete_for_乙丙丁',otherStemTomb:'complete_for_戊己庚辛壬癸_via_KM_TIMING_3_0'},
       heavenThreeGates:3,earthFourDoors:4},
     limitations:[
       'KM-FORMATION-3.0 dùng 奇門法竅 làm profile chính; dị bản từ 遁甲演義/奇門遁甲秘笈大全 được ghi variant thay vì cộng thành cách cục mới.',
       'Tam Trá/Ngũ Giả/Cửu Độn là lớp hành động chiến lược, không phải phiếu độc lập, xác suất, dự báo thắng/thua hoặc bằng chứng ngoài đời.',
-      'Cửu Độn bị hạ điều kiện khi phạm Kỳ mộ, Hình hoặc Môn bức theo nguồn; Ngũ Giả tránh Mộ/Bức. Vì core hiện mới có deterministic tomb cho Tam Kỳ, Ngũ Giả dùng Kỷ/Quý/Nhâm chỉ đạt partial_tomb_coverage và không được xem là fully qualified.',
+      'Cửu Độn bị hạ điều kiện khi phạm Mộ, Hình hoặc Môn bức theo nguồn; Ngũ Giả tránh Mộ/Bức. KM-TIMING-3.0 đã mở deterministic tomb coverage cho cả Tam Kỳ và Lục Nghi hiện trên bàn, nên Kỷ/Quý/Nhâm không còn bị hạ chỉ vì thiếu coverage.',
       'Thiên Độn dùng công thức canonical Bính + Sinh Môn + địa Đinh; chữ “sinh khai” trong một truyền bản KM-FORMATION-3.0 chỉ ghi là dị văn, không tự mở rộng sang Khai Môn. Phong/Vân/Long/Hổ cũng lấy công thức quyển sáu làm profile chính, dị bản quyển một không cộng thành phiếu mới.',
       'Thiên Tam Môn đổi Thiên Nguyệt Tướng tại Trung khí dựa trên tiết khí của board; Địa Tứ Hộ dùng chu kỳ Kiến–Trừ theo chi giờ. Cả hai chỉ là phương vị biểu tượng.',
       'Không tự suy an toàn di chuyển, địa hình, thời tiết, pháp lý, sức khỏe hoặc khả năng thành công từ bất kỳ cách cục/phương vị nào.'

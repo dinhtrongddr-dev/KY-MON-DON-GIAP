@@ -15,7 +15,7 @@ export function buildEvidenceBundles(analysis,context,graph,modePlan={}) {
     if(layers.starFuYin||layers.doorFuYin)add('fu_yin',actorIds,{stars:layers.starFuYin,doors:layers.doorFuYin});
     for(const r of roles.filter(r=>r.stem)) {
       const own=p.stemPairs.find(s=>s.heaven.han===r.stem);
-      if(own?.punishment)add('punishment',[r.id],r.stem);if(own?.wonderTomb)add('tomb',[r.id],r.stem);
+      if(own?.punishment)add('punishment',[r.id],r.stem);if(own?.tomb)add('tomb',[r.id],r.stem);
     }
     const edges=graph.relations.filter(e=>actorIds.includes(e.from)||actorIds.includes(e.to));
     const special=analysis.patterns.matches.map((m,i)=>({...m,evidenceId:`special_${i}`})).filter(m=>m.palace===p.number);

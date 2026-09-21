@@ -15,10 +15,10 @@ const bundle=(palace,states,actorIds=['event'])=>({
   palace,states,actorIds,evidenceIds:[`p${palace}`,`c${palace}`],
 });
 
-test('KM-YINGQI-2.0: Tam kỳ nhập mộ can open a dated response window after Void/Horse are absent',()=>{
+test('KM-TIMING-3.0 preserves Tam kỳ tomb response windows from KM-YINGQI-2.0',()=>{
   const t=buildTiming(context,board,[bundle(2,[{code:'tomb',detail:'乙'}])]);
-  assert.equal(t.version,'KM-YINGQI-2.0');
-  assert.equal(t.basis,'deterministic_response_scan_v2');
+  assert.equal(t.version,'KM-TIMING-3.0');
+  assert.equal(t.basis,'deterministic_response_scan_v3');
   assert.equal(t.pace.tendency,'slow');
   assert.deepEqual(t.candidates.slice(0,2).map(x=>[x.display,x.rule,x.branch]),[
     ['21/09/2026','tomb_release','未'],
@@ -26,10 +26,10 @@ test('KM-YINGQI-2.0: Tam kỳ nhập mộ can open a dated response window after
   ]);
   assert.ok(t.candidates[0].reasons.some(x=>/Mộ/.test(x)));
   assert.equal(t.signals[0].dateRuleImplemented,true);
-  assert.ok(t.unsupportedRules.includes('Nhập mộ ngoài Tam kỳ định ngày'));
+  assert.ok(!t.unsupportedRules.some(x=>/Nhập mộ ngoài Tam kỳ/.test(x)));
 });
 
-test('KM-YINGQI-2.0: trigger precedence is Void, then Horse, then Tomb',()=>{
+test('KM-TIMING-3.0 preserves Void/Horse/Tomb behavior when no Kích Hình is active',()=>{
   const all=bundle(8,[
     {code:'void'},
     {code:'horse'},
@@ -45,7 +45,7 @@ test('KM-YINGQI-2.0: trigger precedence is Void, then Horse, then Tomb',()=>{
   assert.ok(withHorse.candidates.every(x=>x.rule==='horse_activation'));
 });
 
-test('KM-YINGQI-2.0: inner/outer plate and Fu/Fan Yin affect pace only, not fabricate a date',()=>{
+test('KM-TIMING-3.0 keeps inner/outer plate and Fu/Fan Yin as pace only, not fabricated dates',()=>{
   const fastBoard={...board,fanYin:true};
   const fast=buildTiming(context,fastBoard,[bundle(3,[],['self','event'])]);
   assert.equal(fast.pace.tendency,'fast');

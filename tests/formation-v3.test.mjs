@@ -13,7 +13,7 @@ const stem=han=>({han});
 const palace=({number=3,door='kai',spirit='chief',heaven=['乙'],earth='戊',pressure=false,tomb=false,punishment=false,direction=dirs[number]||'Đông'})=>({
   number,direction,door:{id:door},spirit:{id:spirit},earthStem:{han:earth},
   heavenStems:heaven.map(stem),conditions:{doorPressure:pressure},
-  stemPairs:heaven.map((han,i)=>({heaven:{han},earth:{han:earth},carried:i>0,wonderTomb:tomb&&i===0,punishment:punishment&&i===0}))
+  stemPairs:heaven.map((han,i)=>({heaven:{han},earth:{han:earth},carried:i>0,wonderTomb:tomb&&i===0&&['乙','丙','丁'].includes(han),tomb:tomb&&i===0,punishment:punishment&&i===0}))
 });
 const boardFor=({term='bailu',hour='辰',month='酉'}={})=>({
   term:{id:term},pillars:{hour:{branch:{han:hour}},month:{branch:{han:month}}},palaces:palacesForDirection
@@ -30,7 +30,7 @@ test('KM-FORMATION-3.0 declares bounded strategic families and portal coverage',
   assert.equal(a.coverage.heavenThreeGates,3);
   assert.equal(a.coverage.earthFourDoors,4);
   assert.deepEqual(a.coverage.fiveFakeVariants.earth_fake,['earth9','moon','harmony']);
-  assert.equal(a.coverage.qualificationCoverage.otherStemTomb,'partial_for_己癸壬');
+  assert.equal(a.coverage.qualificationCoverage.otherStemTomb,'complete_for_戊己庚辛壬癸_via_KM_TIMING_3_0');
   assert.equal(a.provenance.variantPolicy,'single_profile_variants_are_metadata_not_votes');
 });
 
@@ -90,24 +90,25 @@ test('Nine Escapes are disqualified by Wonder tomb, punishment or Door pressure;
   }
 });
 
-test('Five Fakes using Ji/Gui/Ren stay partial until non-Three-Wonder tomb rules exist',()=>{
-  const rows=[
+test('Five Fakes using Ji/Gui/Ren now have complete tomb qualification under Phase 13',()=>{
+  const clear=[
     analyzeOne(palace({door:'shang',spirit:'harmony',heaven:['己']})).find(x=>x.id==='object_fake'),
     analyzeOne(palace({door:'si',spirit:'earth9',heaven:['癸']})).find(x=>x.id==='ghost_fake'),
     analyzeOne(palace({door:'fear',spirit:'heaven9',heaven:['壬']})).find(x=>x.id==='human_fake')
   ];
-  for(const row of rows){
-    assert.ok(row);assert.equal(row.qualified,false);assert.equal(row.qualificationStatus,'partial_tomb_coverage');
-    assert.match(row.qualificationLimitations.join(' '),/Mộ.*chưa/i);
-    assert.ok(row.qualificationCandidates.some(x=>x.tombCoverage==='unknown'));
+  for(const row of clear){
+    assert.ok(row);assert.equal(row.qualified,true);assert.equal(row.qualificationStatus,'complete');
+    assert.ok(row.qualificationCandidates.every(x=>x.tombCoverage==='known'));
   }
+  const blocked=analyzeOne(palace({door:'shang',spirit:'harmony',heaven:['己'],tomb:true})).find(x=>x.id==='object_fake');
+  assert.ok(blocked);assert.equal(blocked.qualified,false);assert.ok(blocked.blockers.includes('stem_tomb'));
 });
 
 test('a fully checked Ding candidate can qualify a Five-Fake even when an unchecked instrument is carried beside it',()=>{
   const clear=analyzeOne(palace({door:'shang',spirit:'harmony',heaven:['丁','己']})).find(x=>x.id==='object_fake');
   assert.ok(clear);assert.equal(clear.qualified,true);assert.equal(clear.qualificationStatus,'complete');
-  const dingBlocked=analyzeOne(palace({door:'shang',spirit:'harmony',heaven:['丁','己'],tomb:true})).find(x=>x.id==='object_fake');
-  assert.ok(dingBlocked);assert.equal(dingBlocked.qualified,false);assert.equal(dingBlocked.qualificationStatus,'partial_tomb_coverage');
+  const dingBlockedButJiClear=analyzeOne(palace({door:'shang',spirit:'harmony',heaven:['丁','己'],tomb:true})).find(x=>x.id==='object_fake');
+  assert.ok(dingBlockedButJiClear);assert.equal(dingBlockedButJiClear.qualified,true);assert.equal(dingBlockedButJiClear.qualificationStatus,'complete');
 });
 
 test('Heaven Three Gates reproduces the classical Yushui + Wu-hour example',()=>{

@@ -40,7 +40,8 @@ export function verifyRelease(directory = root) {
   const versionChecks = [
     ['dist/qimen.mjs', 'TG-ROTATING-2.0'], ['dist/reading-core.mjs', 'TG-CB-6.3'],
     ['dist/reading-core.mjs', 'READING_PROTOCOL=6'], ['dist/qimen/analysis/nianmingEngine.mjs', 'KM-NIANMING-1.0'],
-    ['dist/qimen/validation/protocol.mjs', 'KM-VALIDATION-1.0'], ['dist/qimen/validation/protocol.mjs', 'KM-OUTCOME-REGISTRY-1.0'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
+    ['dist/qimen/validation/protocol.mjs', 'KM-VALIDATION-1.0'], ['dist/qimen/validation/protocol.mjs', 'KM-OUTCOME-REGISTRY-1.0'],
+    ['dist/qimen/ai/timingEngine.mjs', 'KM-TIMING-3.0'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
   ];
   for (const [name, expected] of versionChecks) {
     if (!readFileSync(join(directory, name), 'utf8').replace(/\s+/g, '').includes(expected)) throw new Error(`Baseline version mismatch: ${name}`);

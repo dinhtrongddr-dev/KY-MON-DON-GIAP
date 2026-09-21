@@ -103,7 +103,7 @@ It must never be used to accuse a person of wrongdoing.
 
 Five Fakes are lowered when the relevant supported stem is in Tomb or the Door is pressed.
 
-The classical text says Five Fakes avoid `迫墓`, but the current app only has deterministic Tomb rules for Yi/Bing/Ding. Therefore a Five-Fake match carried by Ji/Gui/Ren is emitted as `qualificationStatus=partial_tomb_coverage`, `qualified=false`: the formula matches, but the Tomb prerequisite is not fully checked. This preserves the existing explicit non-goal of not inventing non-Three-Wonder Tomb rules.
+The classical text says Five Fakes avoid `迫墓`. Phase 13 / KM-TIMING-3.0 now supplies declared Tomb rules for all nine visible stems, so Ji/Gui/Ren rows have complete Tomb qualification instead of `partial_tomb_coverage`. A row is still disqualified when its actual active stem is in Tomb or when another declared blocker such as Door pressure applies.
 
 ## 5. Nine Escapes
 

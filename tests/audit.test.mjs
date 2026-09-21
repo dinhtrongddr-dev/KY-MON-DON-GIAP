@@ -143,16 +143,18 @@ test('civil-day/hour formulas independent of lunar library across 1900–2100, l
   assert.equal(count,675);
 });
 
-test('all six punishments, three wonder tombs and direction of door pressure, including carried stems',()=>{
+test('all six punishments, visible-stem tombs and direction of door pressure, including carried stems',()=>{
   const punish={'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4},tombs={'乙':2,'丙':6,'丁':8};
+  const allTombs={'乙':2,'丙':6,'丁':8,'戊':6,'己':8,'庚':8,'辛':4,'壬':4,'癸':2};
   for(const number of ring) for(const stem of STEMS.slice(1)) {
     const p={...PALACES[number],heavenStems:[stem],door:{element:'Mộc'}};
     const c=palaceConditions(p);
     assert.deepEqual(c.punishment,punish[stem.han]===number?[stem.vi]:[]);
     assert.deepEqual(c.wonderTombs,tombs[stem.han]===number?[stem.vi]:[]);
+    assert.deepEqual(c.stemTombs,allTombs[stem.han]===number?[stem.vi]:[]);
     assert.equal(c.doorPressure,CONTROLS.Mộc===p.element);
   }
   const carried={...PALACES[6],heavenStems:[STEMS[4],STEMS[2]],door:{element:'Thổ'}};
   assert.deepEqual(palaceConditions(carried).wonderTombs,['Bính']);
-  assert.deepEqual(palaceConditions({...carried,number:5}),{doorPressure:false,punishment:[],wonderTombs:[]});
+  assert.deepEqual(palaceConditions({...carried,number:5}),{doorPressure:false,punishment:[],wonderTombs:[],stemTombs:[]});
 });

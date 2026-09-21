@@ -119,7 +119,8 @@ function fourHarmsForPalace(p,roles){
   for(const pair of p.stemPairs){
     const ids=roleIdsForStem(roles,pair.heaven.han);
     if(pair.punishment)out.push({code:'punishment',kind:'stem',severity:'high',stem:pair.heaven.han,carried:!!pair.carried,actorIds:ids,source:'六儀擊刑'});
-    if(pair.wonderTomb)out.push({code:'tomb',kind:'stem',severity:'high',stem:pair.heaven.han,carried:!!pair.carried,actorIds:ids,source:'三奇入墓'});
+    if(pair.tomb??pair.wonderTomb)out.push({code:'tomb',kind:'stem',severity:'high',stem:pair.heaven.han,carried:!!pair.carried,actorIds:ids,
+      tombScope:pair.wonderTomb?'three_wonder':'six_register',source:pair.wonderTomb?'三奇入墓':'奇門法竅·天地六儀入墓與三奇同斷'});
   }
   return out;
 }

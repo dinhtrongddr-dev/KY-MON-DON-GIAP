@@ -90,7 +90,7 @@ function modernSnapshot(palace,effectiveStem){
     star:{id:palace.star.id,vi:palace.star.vi,element:palace.star.element},
     spirit:{id:palace.spirit.id,vi:palace.spirit.vi},
     states:{void:!!palace.voided,horse:!!palace.horse,doorPressure:!!palace.conditions?.doorPressure,
-      punishment:!!pair?.punishment,wonderTomb:!!pair?.wonderTomb},
+      punishment:!!pair?.punishment,wonderTomb:!!pair?.wonderTomb,tomb:!!(pair?.tomb??pair?.wonderTomb)},
     stemStrength:stemStrength?{weight:stemStrength.capacityWeight,band:stemStrength.longevity?.band||null,meaning:stemStrength.longevity?.meaning||null,
       longevity:stemStrength.longevity?{id:stemStrength.longevity.id,vi:stemStrength.longevity.vi,meaning:stemStrength.longevity.meaning}:null}:null
   };

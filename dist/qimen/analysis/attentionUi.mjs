@@ -10,6 +10,8 @@ function warningSignals(analysis,palaceNumber){
   const add=(band,code,label,detail)=>out.push({band,code,label,detail});
   if(p.conditions.punishment.length)add(2,'punishment','Kích Hình',p.conditions.punishment.join(', '));
   if(p.conditions.wonderTombs.length)add(2,'wonder_tomb','Tam Kỳ Nhập Mộ',p.conditions.wonderTombs.join(', '));
+  const otherTombs=(p.conditions.stemTombs||[]).filter(x=>!p.conditions.wonderTombs.includes(x));
+  if(otherTombs.length)add(2,'stem_tomb','Lục Nghi Nhập Mộ',otherTombs.join(', '));
   if(p.conditions.doorPressure)add(1,'door_pressure','Môn Bức','Môn khắc Cung; điều kiện hành động bị ép.');
   if(p.voided)add(1,'void','Tuần Không','Tín hiệu dễ bị giảm thực chất hoặc chậm hình thành.');
   for(const row of structure.patterns||[])if(row.tone==='severe_adverse')add(2,row.id,row.name,row.plainMeaning);

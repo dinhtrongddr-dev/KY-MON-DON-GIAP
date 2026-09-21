@@ -52,11 +52,16 @@ export function locateRef(chart, [kind,id]) {
 export const PUNISHMENT_PALACES = Object.freeze({'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4});
 // 遁甲演義卷2 / 奇門法竅: 乙奇墓坤2、丙奇墓乾6、丁奇墓艮8。
 export const THREE_WONDERS_TOMBS = Object.freeze({'乙':2,'丙':6,'丁':8});
+// KM-TIMING-3.0 profile: visible stem tomb palaces derived from the same
+// yin/yang Twelve-Life-Stage convention already used by KM-STRENGTH-2.0.
+// Qimen Fa Qiao explicitly extends tomb reading from the Three Wonders to the Six Registers.
+export const VISIBLE_STEM_TOMBS = Object.freeze({'乙':2,'丙':6,'丁':8,'戊':6,'己':8,'庚':8,'辛':4,'壬':4,'癸':2});
 export function palaceConditions(palace) {
-  if (palace.number === 5) return {doorPressure:false, punishment:[], wonderTombs:[]};
+  if (palace.number === 5) return {doorPressure:false, punishment:[], wonderTombs:[], stemTombs:[]};
   return {
     doorPressure: CONTROLS[palace.door.element] === palace.element,
     punishment: palace.heavenStems.filter(s=>PUNISHMENT_PALACES[s.han]===palace.number).map(s=>s.vi),
     wonderTombs: palace.heavenStems.filter(s=>THREE_WONDERS_TOMBS[s.han]===palace.number).map(s=>s.vi),
+    stemTombs: palace.heavenStems.filter(s=>VISIBLE_STEM_TOMBS[s.han]===palace.number).map(s=>s.vi),
   };
 }
