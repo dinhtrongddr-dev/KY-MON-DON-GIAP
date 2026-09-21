@@ -73,12 +73,14 @@ if redirect not in text:
 text = text.replace(redirect, preview_redirect, 1)
 
 startup = """ const activityStore=createActivityStore({filePath:defaultActivityPath()});
- const bridge=createBridge({activityStore});
+ const outcomeRegistry=createOutcomeRegistry({filePath:defaultOutcomeRegistryPath()});
+ const bridge=createBridge({activityStore,outcomeRegistry});
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?'Cổng 8765 đang được dùng. Đóng server cũ rồi chạy lại.':'Không khởi động được server local.'));
  bridge.server.listen(8765,'127.0.0.1',()=>{"""
 preview_startup = """ const listenPort=Number(process.env.QIMEN_PREVIEW_PORT||8765);
  const activityStore=createActivityStore({filePath:defaultActivityPath()});
- const bridge=createBridge({activityStore,port:listenPort});
+ const outcomeRegistry=createOutcomeRegistry({filePath:defaultOutcomeRegistryPath()});
+ const bridge=createBridge({activityStore,outcomeRegistry,port:listenPort});
  bridge.server.on('error',e=>console.error(e.code==='EADDRINUSE'?('Cổng '+listenPort+' đang được dùng. Đóng server cũ rồi chạy lại.'):'Không khởi động được server local.'));
  bridge.server.listen(listenPort,'127.0.0.1',()=>{"""
 if startup not in text:
@@ -107,8 +109,9 @@ set +a
 
 export QIMEN_PREVIEW_PORT="$PREVIEW_PORT"
 export QIMEN_TUNNEL_HOSTNAME=
-export QIMEN_ACTIVITY_LOG="${QIMEN_ACTIVITY_LOG:-$PREVIEW_DIR/activity-dev.json}"
-export QIMEN_AI_ERROR_LOG="${QIMEN_AI_ERROR_LOG:-$PREVIEW_DIR/ai-errors-dev.jsonl}"
+export QIMEN_ACTIVITY_LOG="$PREVIEW_DIR/activity-dev.json"
+export QIMEN_AI_ERROR_LOG="$PREVIEW_DIR/ai-errors-dev.jsonl"
+export QIMEN_OUTCOME_REGISTRY="$PREVIEW_DIR/outcome-registry-dev.json"
 
 nohup node "$PREVIEW_DIR/local/server.mjs" >"$PREVIEW_DIR/bridge.log" 2>&1 </dev/null &
 BRIDGE_PID=$!
