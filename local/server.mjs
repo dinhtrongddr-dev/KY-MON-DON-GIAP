@@ -302,7 +302,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
      return res.end();
    }
    const file=path==='/'?'/index.html':path;
-   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic|validation)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/qimen/timePlace.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
+   const qimenModule=/^\/qimen\/(core|analysis|modes|ai|schemas|semantic|validation|case)\/[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||/^\/qimen\/menh\/(?:[A-Za-z0-9-]+\/)*[A-Za-z][A-Za-z0-9-]*\.mjs$/.test(file)||['/qimen/ui-controls.mjs','/qimen/ui-results.mjs','/qimen/timePlace.mjs','/site-config.mjs','/reading-format.mjs'].includes(file);
    if(!['GET','HEAD'].includes(req.method)||(!files.has(file)&&!qimenModule&&file!=='/downloads/ky-mon-ai.zip'))return send(404,{error:'Không tìm thấy.'});
    try{
      const data=await readFile(resolve(root,'.'+file));

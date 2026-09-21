@@ -150,6 +150,16 @@ test('a provider error after tunnel keepalive completes as JSON and releases the
   assert.equal(calls,2);
 });
 
+test('local preview serves every browser-imported Case Engine module as JavaScript',async t=>{
+  const call=await start(t);
+  for(const path of ['/qimen/case/engine.mjs','/qimen/case/library.mjs']){
+    const result=await call(path,{headers:{Host:'127.0.0.1:8765',Origin:''}});
+    assert.equal(result.status,200,path);
+    assert.match(result.headers['content-type'],/^text\/javascript/);
+    assert.doesNotMatch(result.text,/"error"\s*:/);
+  }
+});
+
 test('local UI can contact the relay while pairing remains manually entered',async t=>{
   const call=await start(t);
   const page=await call('/',{headers:{Host:'127.0.0.1:8765',Origin:''}});
