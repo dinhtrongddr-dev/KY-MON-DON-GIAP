@@ -262,16 +262,45 @@ function detailItem(type, layer, title, subtitle, copy) {
 function semanticCard(palace,chart,conditions=null,prepared=null){
   const domainId=semanticDomainForTopic(prepared?.context.allInOne.resolvedTopic||topicInput.value),secondaryDomainId=classifyTopics(prepared?.context.question||currentQuestion).map(semanticDomainForTopic).find(id=>id!==domainId)||null,semantic=semanticBundle(palace,{mode:'event',domainId,secondaryDomainId,board:chart,conditions});
   const chips=semantic.keywords.map(word=>`<span>${escapeHtml(word)}</span>`).join('');
-  const items=semantic.items.map(item=>`<li><strong>${escapeHtml(item.layer)} · ${escapeHtml(item.name)}</strong><span>${escapeHtml(item.meaning)}</span></li>`).join('');
   const states=semantic.states.length?`<p class="semantic-state">${escapeHtml(semantic.states.map(x=>x.rule).join(' '))}</p>`:'';
   const domainLabel=semantic.secondaryDomainLabel?`${semantic.domainLabel} · phụ: ${semantic.secondaryDomainLabel}`:semantic.domainLabel;
-  return `<section class="semantic-card" aria-label="Dịch nghĩa nhanh theo ngữ cảnh">
-    <div class="semantic-card-head"><p class="eyebrow">Dịch nghĩa nhanh · ${escapeHtml(domainLabel)}</p><span class="semantic-version">${escapeHtml(semantic.version)}</span></div>
+  return `<section class="semantic-card semantic-modern" aria-label="Dịch tân thời theo ngữ cảnh">
+    <div class="semantic-card-head"><span><p class="eyebrow">Dịch tân thời</p><small>${escapeHtml(domainLabel)}</small></span><span class="semantic-version">${escapeHtml(semantic.version)}</span></div>
     <div class="semantic-keywords">${chips}</div>
     <p class="semantic-summary">${escapeHtml(semantic.summary)}</p>
     ${states}
-    <details class="semantic-components"><summary>Xem nghĩa từng thành phần</summary><ul>${items}</ul></details>
   </section>`;
+}
+
+function detailTabs(palaceNumber,modernHtml,classicalHtml){
+  const modernId=`palace-modern-${palaceNumber}`,classicalId=`palace-classical-${palaceNumber}`;
+  return `<div class="detail-tabs" role="tablist" aria-label="Cách diễn giải cung">
+    <button class="detail-tab" type="button" role="tab" aria-selected="true" aria-controls="${modernId}" data-detail-tab="modern"><strong>Dịch tân thời</strong><span>Dễ liên hệ việc đang hỏi</span></button>
+    <button class="detail-tab" type="button" role="tab" aria-selected="false" aria-controls="${classicalId}" data-detail-tab="classical"><strong>Dịch cổ ngữ</strong><span>Nghĩa tượng truyền thống</span></button>
+  </div>
+  <section id="${modernId}" class="detail-panel" role="tabpanel" data-detail-panel="modern">${modernHtml}</section>
+  <section id="${classicalId}" class="detail-panel detail-panel-classical" role="tabpanel" data-detail-panel="classical" hidden>${classicalHtml}</section>`;
+}
+function bindDetailTabs(root=detail){
+  const tabs=[...root.querySelectorAll('[data-detail-tab]')];
+  if(!tabs.length)return;
+  const panels=[...root.querySelectorAll('[data-detail-panel]')];
+  const activate=(key,focus=false)=>{
+    tabs.forEach(tab=>{const active=tab.dataset.detailTab===key;tab.setAttribute('aria-selected',String(active));if(active&&focus)tab.focus();});
+    panels.forEach(panel=>{panel.hidden=panel.dataset.detailPanel!==key;});
+  };
+  tabs.forEach((tab,index)=>{
+    tab.addEventListener('click',()=>activate(tab.dataset.detailTab));
+    tab.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+      event.preventDefault();
+      const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;
+      activate(tabs[next].dataset.detailTab,true);
+    });
+  });
+}
+function classicalIntro(){
+  return `<div class="classical-heading"><p class="eyebrow">Dịch cổ ngữ</p><p>Nghĩa tượng truyền thống của Cung · Thần · Tinh · Môn · Can. Phần này giữ cách gọi cổ để đối chiếu, không tự đổi thành kết luận cho sự việc hiện tại.</p></div>`;
 }
 
 function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
@@ -293,20 +322,20 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     </div>
     <p class="attention-note">Màu chỉ giúp ưu tiên đọc; không phải xác suất hay phán quyết tốt/xấu tuyệt đối.</p>
   </section>`:'';
-  const title = `
-    <div class="detail-title" data-element="${palaceElement}">
-      <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.vi} · ${palace.han}</strong><small>${palace.direction} · cung ${palace.number}</small></span></div>
-      <span class="element-chip">${palace.element}</span>
-    </div>
-    <p class="detail-image">${palace.image}</p>
-  `;
+  const title = `<div class="detail-title" data-element="${palaceElement}">
+    <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.vi} · ${palace.han}</strong><small>${palace.direction} · cung ${palace.number}</small></span></div>
+    <span class="element-chip">${palace.element}</span>
+  </div>`;
 
   if (palace.number === 5) {
-    detail.innerHTML = `${title}${nianmingHtml}${attentionHtml}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
-      ${detailItem("star", "Cửu tinh", STAR_QIN.vi, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
+    const modern=`${semanticCard(palace,chart,null,prepared)}${nianmingHtml}`;
+    const classical=`${classicalIntro()}<div class="detail-list">
+      ${detailItem("palace", "Cung", `${palace.han} · ${palace.vi}`, palace.element, palace.image)}
+      ${detailItem("star", "Cửu tinh", `${STAR_QIN.han} · ${STAR_QIN.vi}`, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
       ${detailItem("stem", "Địa bàn", `${palace.earthStem.han} · ${palace.earthStem.vi}`, palace.earthStem.element, "Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.")}
     </div>`;
-    return;
+    detail.innerHTML = `${title}${detailTabs(palace.number,modern,classical)}`;
+    bindDetailTabs(detail);return;
   }
 
   const heavenText = palace.heavenStems.map((stem) => `${stem.han} ${stem.vi}`).join(" + ");
@@ -322,16 +351,18 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
     (conditions.stemTombs||[]).some(x=>!conditions.wonderTombs.includes(x)) ? `<span class="detail-marker">Lục nghi nhập mộ: ${(conditions.stemTombs||[]).filter(x=>!conditions.wonderTombs.includes(x)).join(', ')}</span>` : '',
   ].join("");
-  detail.innerHTML = `${title}${nianmingHtml}${attentionHtml}${semanticCard(palace,chart,conditions,prepared)}
-    <div class="detail-list">
-      ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
-      ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}
-      ${detailItem("door", "Bát môn", `${palace.door.han} · ${palace.door.vi}`, palace.door.quality, palace.door.meaning)}
-      ${detailItem("stem", "Thiên–Địa bàn", `${heavenText} / ${palace.earthStem.han} ${palace.earthStem.vi}`, "chủ–khách", `Thiên bàn mang ${heavenText}; địa bàn là ${palace.earthStem.han} ${palace.earthStem.vi}. Cần xét sinh–khắc, nhập mộ và hoàn cảnh hỏi quẻ trước khi kết luận.`)}
-    </div>
-    <div class="detail-markers">${markerHtml || '<span class="detail-marker">Không có dấu bổ sung trong phạm vi đã tính</span>'}</div>
-    <p class="detail-image">Kích hình và Nhập Mộ xét riêng can được nêu, kể cả can ký; KM-TIMING-3.0 đã phủ cả Tam Kỳ và Lục Nghi hiện trên bàn. Không có dấu không đồng nghĩa chắc thuận.</p>
-  `;
+  const modern=`${semanticCard(palace,chart,conditions,prepared)}${attentionHtml}${nianmingHtml}`;
+  const classical=`${classicalIntro()}<div class="detail-list">
+    ${detailItem("palace", "Cung", `${palace.trigram} ${palace.han} · ${palace.vi}`, palace.element, palace.image)}
+    ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
+    ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}
+    ${detailItem("door", "Bát môn", `${palace.door.han} · ${palace.door.vi}`, palace.door.quality, palace.door.meaning)}
+    ${detailItem("stem", "Thiên–Địa bàn", `${heavenText} / ${palace.earthStem.han} ${palace.earthStem.vi}`, "chủ–khách", `Thiên bàn mang ${heavenText}; địa bàn là ${palace.earthStem.han} ${palace.earthStem.vi}. Cần xét sinh–khắc, nhập mộ và hoàn cảnh hỏi quẻ trước khi kết luận.`)}
+  </div>
+  <div class="detail-markers">${markerHtml || '<span class="detail-marker">Không có dấu bổ sung trong phạm vi đã tính</span>'}</div>
+  <p class="classical-note">Kích hình và Nhập Mộ xét riêng can được nêu, kể cả can ký; KM-TIMING-3.0 đã phủ cả Tam Kỳ và Lục Nghi hiện trên bàn. Không có dấu không đồng nghĩa chắc thuận.</p>`;
+  detail.innerHTML = `${title}${detailTabs(palace.number,modern,classical)}`;
+  bindDetailTabs(detail);
 }
 
 function renderMethod(chart) {
