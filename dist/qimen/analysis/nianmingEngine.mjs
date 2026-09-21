@@ -29,8 +29,9 @@ function parseBirthValue(value){
     if(year<1900||year>2100)throw new Error('Năm sinh Niên Mệnh phải nằm trong 1900–2100.');
     return {canonical:String(year),precision:'year_only',year,month:null,day:null};
   }
-  m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/)||s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if(!m)throw new Error('Ngày sinh Niên Mệnh phải là DD/MM/YYYY, YYYY-MM-DD hoặc chỉ YYYY.');
+  const compact=s.match(/^(\d{2})(\d{2})(\d{4})$/);
+  m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/)||s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)||compact;
+  if(!m)throw new Error('Ngày sinh Niên Mệnh phải là DD/MM/YYYY, DDMMYYYY, YYYY-MM-DD hoặc chỉ YYYY.');
   const iso=s.includes('-');
   const year=Number(iso?m[1]:m[3]),month=Number(m[2]),day=Number(iso?m[3]:m[1]);
   if(year<1900||year>2100||!validDate(year,month,day))throw new Error('Ngày sinh Niên Mệnh không hợp lệ.');

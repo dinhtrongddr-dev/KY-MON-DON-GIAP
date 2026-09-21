@@ -320,6 +320,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     conditions.doorPressure ? '<span class="detail-marker">Môn bức cung</span>' : '',
     conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
+    (conditions.stemTombs||[]).some(x=>!conditions.wonderTombs.includes(x)) ? `<span class="detail-marker">Lục nghi nhập mộ: ${(conditions.stemTombs||[]).filter(x=>!conditions.wonderTombs.includes(x)).join(', ')}</span>` : '',
   ].join("");
   detail.innerHTML = `${title}${nianmingHtml}${attentionHtml}${semanticCard(palace,chart,conditions,prepared)}
     <div class="detail-list">
@@ -329,7 +330,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
       ${detailItem("stem", "Thiên–Địa bàn", `${heavenText} / ${palace.earthStem.han} ${palace.earthStem.vi}`, "chủ–khách", `Thiên bàn mang ${heavenText}; địa bàn là ${palace.earthStem.han} ${palace.earthStem.vi}. Cần xét sinh–khắc, nhập mộ và hoàn cảnh hỏi quẻ trước khi kết luận.`)}
     </div>
     <div class="detail-markers">${markerHtml || '<span class="detail-marker">Không có dấu bổ sung trong phạm vi đã tính</span>'}</div>
-    <p class="detail-image">Kích hình/nhập mộ chỉ xét can được nêu, kể cả can ký. Chưa bao quát mọi cách cục; không có dấu không đồng nghĩa chắc thuận.</p>
+    <p class="detail-image">Kích hình và Nhập Mộ xét riêng can được nêu, kể cả can ký; KM-TIMING-3.0 đã phủ cả Tam Kỳ và Lục Nghi hiện trên bàn. Không có dấu không đồng nghĩa chắc thuận.</p>
   `;
 }
 

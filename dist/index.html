@@ -67,11 +67,11 @@
               <details class="nianming-options"><summary>Niên Mệnh · ngày/năm sinh · tùy chọn</summary>
                 <p>KM-NIANMING-1.0 dùng <strong>can của niên trụ sinh</strong> như lớp đối chiếu phụ trên bàn hiện tại. Nhập đủ ngày sinh nếu biết; cũng có thể chỉ nhập năm. Niên Mệnh <strong>không thay Nhật can hoặc Dụng Thần chính</strong>.</p>
                 <div class="nianming-fields">
-                  <label class="field"><span>Người hỏi</span><input id="nianming-self" type="text" inputmode="numeric" maxlength="10" autocomplete="bday" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
-                  <label class="field"><span>Người được hỏi thay</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
-                  <label class="field"><span>Khách hàng / phía liên quan</span><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
-                  <label class="field"><span>Đối thủ / bên cạnh tranh</span><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
-                  <label class="field"><span>Người có quyền duyệt</span><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY hoặc YYYY" /></label>
+                  <label class="field"><span>Người hỏi</span><input id="nianming-self" type="text" inputmode="numeric" maxlength="10" autocomplete="bday" placeholder="DD/MM/YYYY · DDMMYYYY · YYYY" /></label>
+                  <label class="field"><span>Người được hỏi thay</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · DDMMYYYY · YYYY" /></label>
+                  <label class="field"><span>Khách hàng / phía liên quan</span><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · DDMMYYYY · YYYY" /></label>
+                  <label class="field"><span>Đối thủ / bên cạnh tranh</span><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · DDMMYYYY · YYYY" /></label>
+                  <label class="field"><span>Người có quyền duyệt</span><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · DDMMYYYY · YYYY" /></label>
                 </div>
                 <p class="nianming-note">Nếu chỉ nhập năm, người sinh trước Lập Xuân có thể thuộc niên trụ trước. Ngày sinh thô chỉ dùng để xác định niên trụ; phần writer AI chỉ nhận niên trụ/cung đã dẫn xuất, không nhận ngày sinh thô.</p>
               </details>
@@ -217,7 +217,7 @@
             <details><summary>Quy tắc và phạm vi luận</summary>
               <p>Một lõi Thời Gia · Chuyển Bàn, giữ đúng Tháo bổ hoặc Mao Sơn đã chọn. Sáu chế độ có quy tắc phân tích riêng; Tự động chọn theo ý định câu hỏi và bạn có thể đổi lại. Trước khi gọi AI, app xác định ngữ cảnh, gom cụm tượng, chọn căn cứ trọng tâm và lập diễn biến có điều kiện.</p>
               <p>Kết luận nhanh và Diễn biến thực tế dành cho người mới. Căn cứ Kỳ Môn được thu gọn, có thể mở để đối chiếu ngay với cung trên bàn. Chiến lược đề xuất nêu bước làm tiếp; Ứng kỳ tách thời hạn câu hỏi với việc so sánh thời điểm hành động.</p>
-              <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, Ngũ bất ngộ thời và một số tổ hợp can được khai báo. Chưa hỗ trợ nhập mộ ngoài Tam kỳ, toàn bộ thập can khắc ứng, Phi Bàn/Cửu Thần hoặc dự báo ngày ứng nghiệm chắc chắn. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>
+              <p>Đã bổ sung vượng suy Cửu Tinh theo <a href="https://zh.wikisource.org/wiki/煙波釣叟歌" target="_blank" rel="noreferrer">Yên Ba Điếu Tẩu Ca</a>, đủ 81 Thập Can Khắc Ứng và KM-TIMING-3.0 với Kích Hình, Nhập Mộ của 9 can hiện bàn cùng xung/hợp chi ẩn Lục Nghi trong phạm vi thời gian đã hỏi. Phản/Phục ngâm vẫn chỉ điều chỉnh nhịp; Phi Bàn/Cửu Thần và việc ép Tinh–Môn thành một ngày đơn trị chưa thuộc profile hiện tại. Các quy ước và tiêu chí so sánh của app không phải chuẩn duy nhất mọi phái.</p>
               <p>Lời luận phải nối các tượng thành giả thuyết có điều kiện, không tự tạo danh tính hoặc tâm ý khách hàng/đối thủ. Kiểm tra cấu trúc không chứng minh diễn giải đúng. Mọi lượt AI đều dùng Luận sâu và mức suy luận tối đa; cách trình bày vẫn thay đổi theo đúng loại câu hỏi để không ép mọi việc vào cùng một form. AI được yêu cầu viết lại tối đa một lần khi không đạt kiểm tra; nút Hủy luôn có hiệu lực.</p>
               <p><a href="./audit.html">Kiểm toán và phạm vi</a></p>
             </details>

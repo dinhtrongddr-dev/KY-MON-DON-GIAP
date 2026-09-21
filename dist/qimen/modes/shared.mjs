@@ -10,7 +10,7 @@ export function roleState(analysis,id) {
   // Only a located stem inherits its own punishment/tomb, never its neighbour's.
   const stem=p.stemPairs.find(s=>s.heaven.han===role.stem);
   if(stem?.punishment)friction.push('Can đại diện gặp kích hình');
-  if(stem?.wonderTomb)friction.push('Can đại diện Tam kỳ nhập mộ');
+  if(stem?.tomb??stem?.wonderTomb)friction.push(`Can đại diện ${stem.wonderTomb?'Tam kỳ':'Lục nghi'} nhập mộ`);
   if(['si','du'].includes(p.door.id))friction.push('Cửa giữ / đóng: cần xét việc có đòi hỏi mở mới không');
   if(p.horse)movement.push('Dịch Mã');
   if(analysis.patterns.layers.starFanYin||analysis.patterns.layers.doorFanYin)movement.push('Phản ngâm: theo dõi khả năng đổi hướng');

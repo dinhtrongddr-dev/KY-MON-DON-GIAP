@@ -44,8 +44,8 @@ export function prepareReading(body) {
   facts.p5 = `Trung Ngũ: địa can ${chart.earth[5].vi}; không có Môn/Thần độc lập. Thiên Cầm và can ký đang theo Thiên Nhuế tại cung ${named(qinPalace)}, không cố định ở Khôn sau khi chuyển.`;
   for (const p of chart.palaces.filter(p=>p.number!==5)) {
     facts['p'+p.number] = `${named(p)}: ${p.door.vi} (${p.door.element}); ${p.star.vi} (${p.star.element}); thần ${p.spirit.vi}; thiên can ${p.heavenStems.map(s=>s.vi).join(' + ')}, địa can ${p.earthStem.vi}; Tuần Không theo tuần giờ ${yes(p.voided)}; Dịch Mã theo chi giờ ${yes(p.horse)}; ${p.carriesQin?'mang Thiên Cầm và can ký từ Trung Ngũ':'không mang Thiên Cầm'}.`;
-    const c = palaceConditions(p);
-    facts['c'+p.number] = `Điều kiện tại ${named(p)}: Môn bức cung ${yes(c.doorPressure)} (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: ${c.punishment.join(', ')||'không'}; Tam kỳ nhập mộ: ${c.wonderTombs.join(', ')||'không'}. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung. Không bao hàm nhập mộ các can ngoài Tam kỳ.`;
+    const c = palaceConditions(p),otherTombs=(c.stemTombs||[]).filter(x=>!c.wonderTombs.includes(x));
+    facts['c'+p.number] = `Điều kiện tại ${named(p)}: Môn bức cung ${yes(c.doorPressure)} (Môn khắc cung, không đảo chiều); Lục nghi kích hình trên thiên bàn: ${c.punishment.join(', ')||'không'}; Nhập mộ trên thiên bàn: ${(c.stemTombs||[]).join(', ')||'không'}${otherTombs.length?` (Lục Nghi: ${otherTombs.join(', ')})`:c.wonderTombs.length?' (Tam Kỳ)':''}. Tính cả can ký, nhưng chỉ can được nêu mang điều kiện đó; không gán cho mọi đại diện cùng cung.`;
     facts['mix'+p.number] = `Phối hợp tại ${named(p)}: ${p.spirit.vi} + ${p.star.vi} + ${p.door.vi}. Hành Tinh → Môn: ${elementLink(p.star.element,p.door.element).text}; Môn → cung: ${elementLink(p.door.element,p.element).text}. Đây là các quan hệ ngũ hành, chưa phải phép tính vượng suy hoặc phán tốt/xấu của tổ hợp.`;
   }
   const allInOne=buildAnalysisContext(chart,body,facts);
@@ -72,7 +72,7 @@ export function prepareReading(body) {
       'KM-TIMEPLACE-2.0 mặc định giữ UTC offset cố định như trước. Chỉ khi người dùng bật IANA civil mode mới dùng offset lịch sử/DST của vùng; giờ trùng DST phải chọn lần sớm/lần muộn, giờ không tồn tại bị chặn. Tọa độ/giờ Mặt Trời chỉ là metadata đối chiếu và không tự đổi giờ lập bàn.',
       '23:00 đổi ngày. Giáp tìm nghi ẩn theo tuần của chính trụ; Nhật/Thời can ở thiên bàn, quan hệ người–việc xét hành cung.',
       'Trung Ngũ ký Khôn 2 khi xác định đích; Thiên Cầm và can ký sau đó cùng chuyển với Thiên Nhuế.',
-      'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. Tam kỳ nhập mộ: Ất→2, Bính→6, Đinh→8. Xét riêng từng can thiên bàn, kể cả can ký.',
+      'Lục nghi kích hình: Mậu→3, Kỷ→2, Canh→8, Tân→9, Nhâm/Quý→4. KM-TIMING-3.0 xét Nhập Mộ cho 9 can hiện bàn: Ất→2, Bính→6, Đinh→8, Mậu→6, Kỷ→8, Canh→8, Tân→4, Nhâm→4, Quý→2. Xét riêng từng can thiên bàn, kể cả can ký.',
       'KM-STRUCTURE-2.0 lưu riêng chiều Môn khắc Cung và Cung khắc Môn; tên “Môn bức/Cung bức” có dị bản nên không dùng tên gọi để thay logic ngũ hành. Khai–Hưu–Sinh là ba cát môn theo quy ước; Cảnh dùng tùy việc, không tự động là thuận.',
       'Thập Can Khắc Ứng bao phủ 81 tổ hợp Tam Kỳ/Lục Nghi nhìn thấy trên thiên–địa bàn; chỉ tổ hợp gắn đúng Dụng Thần/vai mới được nâng trọng số. Cách cục thuận/nghịch là điều kiện cấu trúc, không phải xác suất hay kết quả đã xảy ra.',
       'KM-STRENGTH-2.0 tách Cửu Tinh, Bát Môn, Thập Can–Thập Nhị Trường Sinh và môi trường Cung. Không lấy sức của Tinh thay cho Môn/Can; Dụng Thần yếu chỉ làm hạ mức phát huy, không tự biến thành kết quả xấu chắc chắn.',
@@ -83,7 +83,7 @@ export function prepareReading(body) {
       'KM-NIANMING-1.0 cho phép người dùng tự nhập ngày/năm sinh để lấy can niên trụ làm lớp Niên Mệnh đối chiếu trên bàn hiện tại; chi năm sinh chỉ là tham chiếu phụ. Lớp này không thay Nhật can, không thay KM-YONGSHEN-2.0 và không tham gia evidenceScore/primaryJudgment.',
     ],
     unsupported:[
-      'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
+      'Ứng kỳ chưa tự định ngày chỉ từ Phản/Phục ngâm hoặc từ quan hệ Tinh–Môn khi chưa có can-chi đơn trị; app cũng không tự suy cấp giờ nếu câu hỏi chỉ nêu phạm vi ngày/tháng. Các mốc KM-TIMING-3.0 còn lại chỉ là cửa sổ cần kiểm chứng, không phải ngày bảo đảm sự việc xảy ra.',
       'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
       'KM-KEYING-3.0 đã phủ Bát Môn Khắc Ứng và Tam Kỳ đáo cung; Cửu Tinh trị thời mới chỉ có chỉ mục classical_context_only, chưa có diễn giải hiện đại dùng chốt kết quả. KM-FORMATION-3.0 và KM-DIRECTION-4.0 đã phủ các cách cục/phương vị chiến lược đang có nguồn khóa; các hệ phương vị khác chưa tự suy nếu chưa có profile nguồn riêng.',
       'KM-NIANMING-1.0 chỉ triển khai Niên Mệnh theo can năm sinh làm corroborator. Chưa triển khai toàn bộ phép Bản Mệnh–Hành Niên cổ điển, Nam/Nữ thuận nghịch, Ngũ Hổ độn hoặc Nạp Âm; không được gọi lớp hiện tại là full 本命行年.',

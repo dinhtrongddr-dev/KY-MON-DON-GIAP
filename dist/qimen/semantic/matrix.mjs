@@ -19,7 +19,7 @@ const entry=(group,value)=>value?BY_NAME[group].get(value.vi||value.name||value)
 const stateNotes=(palace,board,conditions)=>{
   const ids=[];
   if(palace?.voided)ids.push('void');if(palace?.horse)ids.push('horse');
-  if((conditions?.wonderTombs||[]).length)ids.push('tomb');if((conditions?.punishment||[]).length)ids.push('punishment');
+  if((conditions?.stemTombs||[]).length||(conditions?.wonderTombs||[]).length)ids.push('tomb');if((conditions?.punishment||[]).length)ids.push('punishment');
   const p=board?.patterns||{};if(board?.fuYin||p.starFuYin||p.doorFuYin)ids.push('fu_yin');if(board?.fanYin||p.starFanYin||p.doorFanYin)ids.push('fan_yin');
   return [...new Set(ids)].map(id=>({id,...SEMANTIC_MATRIX.state_modifiers[id]})).filter(x=>x.rule);
 };

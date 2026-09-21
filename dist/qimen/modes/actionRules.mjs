@@ -11,7 +11,7 @@ export function actionMetrics(p,action) {
   if(index>=0)supports.push(`${p.door.vi} phù hợp biểu tượng ${rules.label.toLowerCase()}`);
   if(p.voided)blockers.push(`Cung ${p.number}: Tuần Không`);
   if(p.conditions.doorPressure)blockers.push(`Cung ${p.number}: Môn bức`);
-  for(const stem of p.stemPairs){if(stem.punishment)blockers.push(`${stem.heaven.vi}${stem.carried?' (can ký)':''}: kích hình`);if(stem.wonderTomb)blockers.push(`${stem.heaven.vi}${stem.carried?' (can ký)':''}: Tam kỳ nhập mộ`);}
+  for(const stem of p.stemPairs){if(stem.punishment)blockers.push(`${stem.heaven.vi}${stem.carried?' (can ký)':''}: kích hình`);if(stem.tomb??stem.wonderTomb)blockers.push(`${stem.heaven.vi}${stem.carried?' (can ký)':''}: ${stem.wonderTomb?'Tam kỳ':'Lục nghi'} nhập mộ`);}
   const harmony=['meet','sign'].includes(action)&&p.spirit.id==='harmony';
   if(harmony)supports.push('Lục Hợp hợp mục tiêu phối hợp / thỏa thuận');
   return {fit:fit+(harmony?1:0),blockers,supports,

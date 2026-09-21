@@ -11,7 +11,7 @@ const body={
 };
 
 test('KM-NIANMING-1.0 normalizes full date and year-only input but rejects malformed values',()=>{
-  assert.deepEqual(normalizeNianmingInput({self:'17/07/1994',customer:'1990'}),{self:'1994-07-17',customer:'1990'});
+  assert.deepEqual(normalizeNianmingInput({self:'17/07/1994',subject:'17071994',customer:'1990'}),{self:'1994-07-17',subject:'1994-07-17',customer:'1990'});
   assert.throws(()=>normalizeNianmingInput({self:'31/02/1994'}),/không hợp lệ/i);
   assert.throws(()=>normalizeNianmingInput({unknown:'1994'}),/không hợp lệ/i);
   assert.throws(()=>normalizeNianmingInput({self:'1899'}),/1900/);
