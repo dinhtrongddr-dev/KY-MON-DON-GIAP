@@ -77,11 +77,12 @@ export function prepareReading(body) {
       'KM-ROLE-2.0 coi Chủ–Khách là tư thế theo sự việc: động/đi trước thiên Khách, tĩnh/hậu ứng thiên Chủ; can giờ chỉ cho thiên hướng hành động. Nội/Ngoại là xu hướng gần–xa/nhanh–chậm. Agency không phải quyền lực thực tế và không dùng để tuyên bố bên thắng/thua.',
       'KM-KEYING-3.0 thêm Bát Môn Khắc Ứng, Môn–Kỳ/Nghi, Tam Kỳ đáo cung và Hòa/Nghĩa/Bức/Chế như lớp điều kiện gắn đúng cung/vai. Cửu Tinh trị thời hiện chỉ lập chỉ mục cổ điển 108 tổ hợp với trọng số verdict bằng 0; không cộng các corpus này như nhiều phiếu độc lập.',
       'KM-FORMATION-3.0 dùng profile 奇門法竅 cho Tam Trá, Ngũ Giả, Cửu Độn; Thiên Tam Môn tính Thiên Nguyệt Tướng theo Trung khí rồi đặt lên chi giờ, Địa Tứ Hộ theo chu kỳ Kiến–Trừ. Formation chỉ mô tả kiểu hành động/phương vị và không đổi evidenceScore, primaryJudgment hay thứ hạng so sánh.',
+      'KM-DIRECTION-4.0 bổ sung Địa Tư Môn, Đình Đình/Bạch Gian, Thiên Mã/Thiên Cương, Tam Thắng Cung và Ngũ Bất Kích. Đây là lớp annotation phương vị: không đổi rank, không tạo xác suất, không biến văn quân sự cổ thành chỉ dẫn đối đầu.',
     ],
     unsupported:[
       'Ứng kỳ v2 mới định mốc theo Không → Mã → Tam kỳ nhập mộ trong phạm vi thời gian người dùng nêu; chưa định ngày bằng Hình, Can/Môn, Phản/Phục ngâm hoặc nhập mộ ngoài Tam kỳ. Không tự tính hoặc tuyên bố đã loại trừ các mục này.',
       'Dụng Thần dùng KM-YONGSHEN-2.0 theo nhóm câu hỏi và thứ bậc chính/phụ/đối ứng/đối chiếu; đây là quy ước có nguồn đối chiếu, không phải chuẩn duy nhất của mọi phái. Bàn không xác minh tâm ý người khác, bệnh tật, giá tài sản hay tương lai.',
-      'KM-KEYING-3.0 đã phủ Bát Môn Khắc Ứng và Tam Kỳ đáo cung; Cửu Tinh trị thời mới chỉ có chỉ mục classical_context_only, chưa có diễn giải hiện đại dùng chốt kết quả. KM-FORMATION-3.0 đã phủ Tam Trá/Ngũ Giả/Cửu Độn và Thiên Tam Môn/Địa Tứ Hộ; Địa Tư Môn, Đình Đình–Bạch Gian và Tam Thắng Cung–Ngũ Bất Kích vẫn chưa triển khai.',
+      'KM-KEYING-3.0 đã phủ Bát Môn Khắc Ứng và Tam Kỳ đáo cung; Cửu Tinh trị thời mới chỉ có chỉ mục classical_context_only, chưa có diễn giải hiện đại dùng chốt kết quả. KM-FORMATION-3.0 và KM-DIRECTION-4.0 đã phủ các cách cục/phương vị chiến lược đang có nguồn khóa; các hệ phương vị khác chưa tự suy nếu chưa có profile nguồn riêng.',
     ],
   };
   return {context, chart, facts, timePlace,board:allInOne.board, analysis:allInOne.analysis};

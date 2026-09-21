@@ -30,7 +30,9 @@ export function buildWriterContext(context) {
       directional:{heavenThreeGates:{status:g.formationProfile.directional.heavenThreeGates.status,termId:g.formationProfile.directional.heavenThreeGates.termId,monthGeneral:g.formationProfile.directional.heavenThreeGates.monthGeneral,hourBranch:g.formationProfile.directional.heavenThreeGates.hourBranch,
         gates:g.formationProfile.directional.heavenThreeGates.gates.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction}))},
         earthFourDoors:{status:g.formationProfile.directional.earthFourDoors.status,hourBranch:g.formationProfile.directional.earthFourDoors.hourBranch,
-        doors:g.formationProfile.directional.earthFourDoors.doors.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction}))}}},nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
+        doors:g.formationProfile.directional.earthFourDoors.doors.map(x=>({id:x.id,name:x.name,landingBranch:x.landingBranch,landingBranchVi:x.landingBranchVi,palace:x.palace,direction:x.direction}))}}},
+    directionProfile:{version:g.directionProfile.version,profile:g.directionProfile.profile,coverage:g.directionProfile.coverage,
+      limitations:[g.directionProfile.limitations[0],g.directionProfile.limitations[3],g.directionProfile.limitations[4]]},nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
       element:n.element,door:n.door,star:n.star,deity:n.deity,strength:n.strength,specialStates:n.specialStates,selectionRule:n.selectionRule,limitations:n.limitations,
       party:n.party,zone:n.zone,hostGuest:n.hostGuest,agencyBand:n.agencyBand,agencyMeaning:n.agencyMeaning,evidenceIndependence:n.evidenceIndependence,
       yongshenTier:n.yongshenTier||null,yongshenOrder:n.yongshenOrder||null,yongshenPurpose:n.yongshenPurpose||null,yongshenDomain:n.yongshenDomain||null})),
@@ -70,6 +72,7 @@ export function buildWriterContext(context) {
   };
   const comparisons=(c.comparison?.ranking||c.plan.computed.ranking||[]).map(row=>({id:row.id,label:row.label,rank:row.rank,blockers:row.blockers,supports:row.supports,fit:row.fit,note:row.note,
     formationMarkers:formationMarkersFor(row).map(x=>({id:x.id,name:x.name,family:x.family,palace:x.palace,plainMeaning:x.plainMeaning,uses:x.uses})),
+    directionMarkers:(row.directionMarkers||[]).map(x=>({id:x.id,name:x.name,family:x.family,palace:x.palace,plainMeaning:x.plainMeaning,uses:x.uses})),
     timePlace:row.timePlace?{mode:row.timePlace.mode,effectiveOffsetHours:row.timePlace.effectiveOffsetHours,timeZone:row.timePlace.iana?.timeZone||null}:null}));
   const presentation=buildPresentationProfile(context);
   const concise=presentation.layout==='focused';

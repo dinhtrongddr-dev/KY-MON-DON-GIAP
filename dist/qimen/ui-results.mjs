@@ -72,6 +72,7 @@ export function renderComparison(root,prepared) {
     node('p',`Điều kiện cần kiểm tra: ${item.blockers.length}; điểm phù hợp mục tiêu: ${item.fit}.`,section);
     if(item.blockers.length)node('p',item.blockers.join(' · '),section);
     if(item.supports.length)node('p',item.supports.join(' · '),section);
+    if(item.directionMarkers?.length)node('p',`Phương vị cổ điển: ${item.directionMarkers.map(x=>x.name).join(' · ')}. Chỉ là lớp đối chiếu, không đổi thứ hạng.`,section,'ai-note');
     if(item.note)node('p',item.note,section,'ai-note');
     const candidate=comparison?.candidates.find(c=>c.id===item.id);
     if(candidate){const detail=node('details','',section);node('summary','Đối chiếu bàn của thời điểm này',detail);node('pre',JSON.stringify({board:candidate.board,roles:candidate.rolePalaces,conditions:candidate.details},null,2),detail,'qimen-json');}

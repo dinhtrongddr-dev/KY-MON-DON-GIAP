@@ -62,6 +62,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     structureProfile:{version:analysis.structures.version,profile:analysis.structures.profile,coverage:analysis.structures.coverage,limitations:analysis.structures.limitations},
     keyingProfile:{version:analysis.keying.version,profile:analysis.keying.profile,coverage:analysis.keying.coverage,limitations:analysis.keying.limitations},
     formationProfile:{version:analysis.formations.version,profile:analysis.formations.profile,coverage:analysis.formations.coverage,limitations:analysis.formations.limitations,directional:analysis.formations.directional},
+    directionProfile:{version:analysis.directions.version,profile:analysis.directions.profile,coverage:analysis.directions.coverage,limitations:analysis.directions.limitations,byPalace:analysis.directions.byPalace},
     caseProfile,
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),
