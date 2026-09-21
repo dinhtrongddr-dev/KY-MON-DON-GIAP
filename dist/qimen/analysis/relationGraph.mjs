@@ -1,8 +1,10 @@
 export function relationGraph(analysis,roleIds) {
   const nodes=roleIds.map(id=>analysis.roles.find(r=>r.id===id)).filter(Boolean).map(r=>{
-    const p=analysis.palaces.find(p=>p.number===r.palace),own=p?.stemPairs.find(s=>s.heaven.han===r.stem);
+    const p=analysis.palaces.find(p=>p.number===r.palace),own=p?.stemPairs.find(s=>s.heaven.han===r.stem),dynamic=analysis.roleProfile?.roles?.find(x=>x.id===r.id);
     return {...r,element:p?.element??null,door:p?.door.id??null,star:p?.star.id??null,deity:p?.spirit.id??null,
-      strength:p?.strength.star??null,specialStates:p?{void:p.voided,horse:p.horse,doorPressure:p.conditions.doorPressure,punishment:own?.punishment||false,tomb:own?.wonderTomb||false}:null};
+      strength:p?.strength.star??null,party:dynamic?.party||null,zone:dynamic?.zone||'unknown',hostGuest:dynamic?.hostGuest||'undetermined',
+      agencyBand:dynamic?.agencyBand||'unresolved',agencyMeaning:dynamic?.agencyMeaning||null,evidenceIndependence:dynamic?.evidenceIndependence||null,
+      specialStates:p?{void:p.voided,horse:p.horse,doorPressure:p.conditions.doorPressure,punishment:own?.punishment||false,tomb:own?.wonderTomb||false}:null};
   });
   const relations=[];
   const types={generates:'generate',generated_by:'generated_by',controls:'control',controlled_by:'controlled_by',same:'same'};

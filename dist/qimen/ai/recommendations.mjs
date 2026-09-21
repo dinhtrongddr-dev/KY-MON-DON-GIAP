@@ -13,6 +13,7 @@ export function buildRecommendations(scenario,selected,context) {
     expectedEffect:relation?.effect==='pressure'?'Giảm phần yêu cầu chưa đáp ứng ở người hỏi.':conflict?.effect==='not_yet_realized'?'Tách khả năng đang có khỏi kết quả đã sử dụng được.':'Tạo dấu hiệu cụ thể cho bước tiếp theo.',
     operation:i===0?scenario.modeDecision.operation:isStrategy?b.translation.action.verb:'observe_before_conclude',
     objective:b.translation.action.object,focus:b.translation.action.focus,
+    postureGuidance:scenario.roleDynamics?.hostGuest?.actionBias||null,selfAgency:scenario.roleDynamics?.self?.agencyBand||null,
     counterpartCheck:b.translation.action.counterpartCheck,relationshipChecks:(scenario.agency||[]).filter(r=>b.actorIds.includes(r.from)||b.actorIds.includes(r.to)).map(r=>r.check),doneWhen:b.translation.action.completionEvidence,
     requires:b===decisive?scenario.mainConflict.resolution:b.conflicts[0]?.resolution||scenario.turningPoint,
     avoid:b.states.some(s=>s.code==='fan_yin')?'Không coi phản hồi đầu tiên là quyết định cuối.':

@@ -36,6 +36,8 @@ export function buildAnalysisContext(chart,body,facts) {
     const patterns=s.patterns.map(x=>x.plainMeaning);
     facts[`structure_${p.number}`]=`Cung ${p.number}: ${s.doorRelation.label}. Tứ hại: ${harms.length?harms.join(', '):'không có trên vai đang xét'}. Thập Can Khắc Ứng liên quan: ${roleResponses.length?roleResponses.join(' | '):'không có can đại diện cần ưu tiên'}. Cách cục: ${patterns.length?patterns.join(' | '):'không có cách cục ưu tiên'}. Đây là điều kiện cấu trúc, không phải xác suất hoặc sự kiện đã xảy ra.`;
   }
+  const rf=analysis.roleProfile.hostGuest;
+  facts.role_frame=`KM-ROLE-2.0: tư thế câu hỏi ${rf.questionPosture}; thiên hướng theo can giờ ${rf.timeBias}; vai người hỏi ${rf.selfRole}; phía đối ứng ${rf.counterpartRole}. ${rf.actionBias} Chủ–Khách là tư thế theo việc, không phải bên thắng/thua.`;
   facts.special=`Ngũ bất ngộ thời: ${analysis.patterns.wuBuYuShi?'có':'không'} (Thời can khắc Nhật can cùng âm/dương). ${analysis.patterns.coverage} KM-STRUCTURE-2.0: ${analysis.structures.coverage.tenStemResponses}/81 Thập Can Khắc Ứng.`;
   for(const [i,p] of analysis.patterns.matches.entries())facts[`special_${i}`]=`${p.name} tại cung ${p.palace}: ${p.heavenStem} trên ${p.earthStem}${p.carried?', xét can ký':''}. Chỉ là tổ hợp, không kết luận thành/bại.`;
   for(const c of analysis.contradictions)facts[c.id]=`Cung ${c.palace}: ${c.text}`;

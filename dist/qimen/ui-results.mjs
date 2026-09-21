@@ -26,10 +26,12 @@ export function renderTechnical(root,prepared,{includeJson=false,expanded=false}
 
   const roles=node('div','',root,'rule-actors');
   const tierLabel={primary:'Dụng thần chính',secondary:'Dụng thần phụ',counterpart:'Phía đối ứng',corroborator:'Đối chiếu bổ sung',operational:'Khâu thực hiện'};
+  const zoneLabel={inner:'Nội bàn',outer:'Ngoại bàn',unknown:'Chưa rõ nội/ngoại'},agencyLabel={strong:'chủ động tốt',usable:'có thể tác động',constrained:'đang bị hạn chế',unresolved:'chưa xác định'},hostLabel={host:'thế Chủ',guest:'thế Khách',object:'đối tượng sự việc',contextual:'vai hỗ trợ',undetermined:'chưa chốt Chủ/Khách',unresolved:'chưa chốt Chủ/Khách'};
   for(const r of c.graph.nodes){
     const item=node('div','',roles);node('strong',r.label,item);
     const where=r.palace?`Cung ${r.palace}`:'Chưa xác định đại diện trên bàn';
-    node('span',`${where}${r.yongshenTier?` · ${tierLabel[r.yongshenTier]||r.yongshenTier}`:''}`,item);
+    const dynamics=r.palace?` · ${zoneLabel[r.zone]||r.zone} · ${agencyLabel[r.agencyBand]||r.agencyBand}${r.hostGuest?` · ${hostLabel[r.hostGuest]||r.hostGuest}`:''}`:'';
+    node('span',`${where}${r.yongshenTier?` · ${tierLabel[r.yongshenTier]||r.yongshenTier}`:''}${dynamics}`,item);
   }
 
   const palaceNumbers=[...new Set(c.relevantPalaces||[])].filter(n=>n!==5);
@@ -48,7 +50,7 @@ export function renderTechnical(root,prepared,{includeJson=false,expanded=false}
 
   const flags=node(expanded?'section':'details','',root);
   node(expanded?'h4':'summary','Dấu hiệu toàn bàn và trạng thái đặc biệt',flags);
-  for(const id of ['day','hour','relation','duty','patterns','special'])if(prepared.facts[id])node('p',prepared.facts[id],flags);
+  for(const id of ['day','hour','relation','duty','patterns','role_frame','special'])if(prepared.facts[id])node('p',prepared.facts[id],flags);
   for(const [id,value] of Object.entries(prepared.facts).filter(([id])=>/^special_/.test(id)))node('p',value,flags);
 
   if(includeJson){

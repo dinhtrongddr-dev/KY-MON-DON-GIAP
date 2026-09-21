@@ -6,7 +6,7 @@ export function buildWriterContext(context) {
   const c=context.allInOne,g=c.reasoning,q=c.questionContext;
   const wantedEdges=new Set([...g.likelyScenario.stages.flatMap(s=>s.relationshipIds),...g.likelyScenario.agency.map(i=>i.edgeId)]);
   const ids=new Set(g.claims.flatMap(x=>x.evidenceIds));
-  for(const id of ['patterns','duty','day','hour','relation','time','method','boundary'])if(context.facts[id])ids.add(id);
+  for(const id of ['patterns','duty','day','hour','relation','time','method','boundary','role_frame'])if(context.facts[id])ids.add(id);
   const evidence=Object.fromEntries([...ids].filter(id=>context.facts[id]).map(id=>[id,context.facts[id]]));
   const relationships=g.relationships.filter(e=>wantedEdges.has(e.id));
   const actors=new Set([...g.evidenceBundles.flatMap(b=>b.actorIds),...relationships.flatMap(e=>[e.from,e.to])]);
@@ -15,8 +15,14 @@ export function buildWriterContext(context) {
       subject:{kind:q.subject.kind,text:q.subject.text,status:q.subject.status},stage:q.stage,timeHorizon:q.timeHorizon,
       constraints:q.constraints,userStatements:q.userStatements,options:q.options,stakeholders:q.stakeholders,direction:q.direction,
       clarificationQuestions:q.clarificationQuestions,vocabulary:q.vocabulary,needsClarification:q.needsClarification},
-    mode:g.mode,usefulGodProfile:g.usefulGodProfile,strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
+    mode:g.mode,usefulGodProfile:g.usefulGodProfile,
+    roleProfile:{version:g.roleProfile.version,profile:g.roleProfile.profile,hostGuest:g.roleProfile.hostGuest,innerOuter:g.roleProfile.innerOuter,
+      roles:g.roleProfile.roles.filter(r=>actors.has(r.id)||r.status==='unresolved'),
+      sharedPalaceClusters:g.roleProfile.sharedPalaceClusters.filter(c=>c.roleIds.some(id=>actors.has(id))),
+      influences:g.roleProfile.influences.filter(i=>actors.has(i.from)&&actors.has(i.to)),multiActor:g.roleProfile.multiActor,limitations:g.roleProfile.limitations},
+    strengthProfile:g.strengthProfile,structureProfile:g.structureProfile,nodes:g.nodes.filter(n=>actors.has(n.id)||n.status==='unresolved').map(n=>({id:n.id,actorId:n.actorId,role:n.semanticRole,source:n.source,evidenceIds:n.evidenceIds,relevance:n.relevance,confidenceLevel:n.confidenceLevel,palace:n.palace,stem:n.stem||null,status:n.status,
       element:n.element,door:n.door,star:n.star,deity:n.deity,strength:n.strength,specialStates:n.specialStates,selectionRule:n.selectionRule,limitations:n.limitations,
+      party:n.party,zone:n.zone,hostGuest:n.hostGuest,agencyBand:n.agencyBand,agencyMeaning:n.agencyMeaning,evidenceIndependence:n.evidenceIndependence,
       yongshenTier:n.yongshenTier||null,yongshenOrder:n.yongshenOrder||null,yongshenPurpose:n.yongshenPurpose||null,yongshenDomain:n.yongshenDomain||null})),
     relationships,interactions:g.interactions.filter(i=>wantedEdges.has(i.edgeId)),
     evidenceBundles:g.evidenceBundles.map(b=>({id:b.id,palace:b.palace,actorIds:b.actorIds,roles:b.roles,symbols:b.symbols,

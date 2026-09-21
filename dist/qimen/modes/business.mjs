@@ -21,7 +21,7 @@ export function business(a) {
     ['contract','Hợp đồng',['contract','quote'],'Từ đồng ý miệng sang điều khoản được xác nhận.'],
     ['result','Khả năng chốt và bước tiếp',['opportunity','contract','customer'],'Phản hồi → làm rõ → duyệt → ký là các mốc khác nhau, không tự coi đã đạt.'],
   ]);
-  return finish('business',a,chain,{pipeline,bottlenecks,initiative:relationOf(a,'self','customer'),
+  return finish('business',a,chain,{pipeline,bottlenecks,initiative:relationOf(a,'self','customer'),roleFrame:a.roleProfile?.hostGuest,selfAgency:a.roleProfile?.roles?.find(r=>r.id==='self')?.agencyBand,
     priceIssueConfirmed:false,competitorComparison:roleState(a,'competitor').status==='unresolved'?'unresolved':'compare_symbolic_positions',
     closing:{status:'requires_real_world_confirmation',gates:['Phạm vi','Người duyệt','Điều khoản','Xác nhận ký']}});
 }

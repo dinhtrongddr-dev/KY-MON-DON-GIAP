@@ -1,10 +1,7 @@
 import {BRANCHES,PALACES} from '../../qimen.mjs';
+import {INNER_PALACES} from '../analysis/roleEngine.mjs';
 
 const DAY_MS=86400000;
-const INNER_PALACES={
-  yang:new Set([1,8,3,4]),
-  yin:new Set([9,2,7,6]),
-};
 const TOMB_BRANCH_BY_STEM=Object.freeze({'乙':'未','丙':'戌','丁':'丑'});
 const TRIGGER_PRIORITY=Object.freeze(['void_release','horse_activation','tomb_release']);
 const iso=date=>date.toISOString().slice(0,10);
