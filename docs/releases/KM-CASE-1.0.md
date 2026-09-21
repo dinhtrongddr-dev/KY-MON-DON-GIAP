@@ -1,6 +1,7 @@
 # KM-CASE-1.0 — Case Engine
 
 Date: 2026-09-21
+Production release: v17.4.0
 Status: bounded methodological case-based reasoning layer
 Runtime: Hỏi Việc TG-CB-6.3 / protocol 5; Mệnh KM-MENH-1.1 / protocol 2
 Compatibility marker: caseRules = KM-CASE-1.0
