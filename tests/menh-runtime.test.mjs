@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildMenhReadingRequest,prepareMenhReading} from '../local/menh-reading.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 const known={birthDateLocal:'1990-01-01',birthTimeMode:'KNOWN',birthTimeLocal:'09:30',tzOffset:7,age:37,annualYear:2026,sexMetadata:'MALE'};
 const unknown={birthDateLocal:'1990-01-01',birthTimeMode:'UNKNOWN',birthTimeLocal:null,tzOffset:7,age:37,annualYear:2026};
@@ -46,6 +47,7 @@ test('KM-MENH request fingerprints change when birth data changes',async()=>{
   assert.notEqual(a.requestFingerprint,b.requestFingerprint);
   assert.equal(a.request.rules,'KM-MENH-1.1');
   assert.equal(a.request.protocol,2);
+  assert.equal(a.request.caseRules,CASE_ENGINE_VERSION);
   assert.equal(a.result.specVersion,'KM-MENH-1.0');
   assert.equal(a.result.runtimeVersion,'KM-MENH-1.1');
 });

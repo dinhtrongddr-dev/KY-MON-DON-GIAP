@@ -6,6 +6,7 @@ import {initLocalAi} from '../dist/ai-local.mjs';
 import {buildReadingRequest,RULE_VERSION,READING_PROTOCOL} from '../dist/reading-core.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {verifiedFallback} from '../dist/qimen/ai/verifiedFallback.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 globalThis.Solar=createRequire(import.meta.url)('../dist/vendor/lunar.js').Solar;
 const payload={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 class Element {
@@ -42,7 +43,7 @@ function setup(t,fetcher,{storage=new MemoryStorage(),prepare=()=>structuredClon
   return {...mount(),storage,reload:mount};
 }
 const response=data=>new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json'}});
-const health={rules:RULE_VERSION,protocol:READING_PROTOCOL};
+const health={rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION};
 
 test('old AI rules are rejected before sending the question',async t=>{
   const paths=[];const {ids}=setup(t,async(url,options)=>{paths.push(new URL(url).pathname);assert.equal(options.credentials,'omit');assert.equal(options.headers['X-Qimen-Token'],'test-token');return response({rules:'TG-CB-1.0'});});

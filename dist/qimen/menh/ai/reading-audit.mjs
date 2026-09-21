@@ -59,6 +59,8 @@ function auditLongForm(reading,context){
 
 function auditDangerousClaims(prose){
   const n=normalize(prose);
+  if(/\b(?:km-case|caseguidance|deterministic_golden|derived_regression|source_golden|regression_locked|test_locked|source_locked|sourcecase|sourceref)\b/i.test(n))
+    reject('KM-MENH writer không được làm lộ metadata Case Engine nội bộ.');
   if(/\b(xac suat|ty le thanh cong|diem tong menh|diem so van menh)\b[^.!?]{0,60}\d/.test(n)||/\d+(?:[.,]\d+)?\s*%/.test(n))
     reject('KM-MENH writer không được tạo xác suất hoặc điểm tổng mệnh.');
   if(/\b(chet|tu vong|song den|tho den)\b[^.!?]{0,60}\b\d{1,3}\s*tuoi\b/.test(n))

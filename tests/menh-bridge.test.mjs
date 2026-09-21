@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {request as httpRequest} from 'node:http';
 import {createBridge} from '../local/server.mjs';
 import {buildMenhReadingRequest,validateMenhReadingResponse,MENH_RULE_VERSION,MENH_PROTOCOL} from '../local/menh-reading.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 const payload={birthDateLocal:'1990-01-01',birthTimeMode:'KNOWN',birthTimeLocal:'09:30',tzOffset:7,age:37,annualYear:2026,sexMetadata:'MALE'};
 const empty=()=>({text:'',claim_ids:[]});
@@ -31,7 +32,7 @@ test('bridge recomputes KM-MENH, checks fingerprints and preserves existing serv
   const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'menh-test-token',Origin:'https://kymon.pp.ua','Content-Type':'application/json'};
   const status=await(await fetchLocal(url+'/api/status',{headers})).json();
   assert.equal(status.menhRules,MENH_RULE_VERSION);assert.equal(status.menhProtocol,MENH_PROTOCOL);
-  assert.equal(status.rules,'TG-CB-6.3');assert.equal(status.protocol,5);
+  assert.equal(status.rules,'TG-CB-6.3');assert.equal(status.protocol,5);assert.equal(status.caseRules,CASE_ENGINE_VERSION);
 
   const prepared=await buildMenhReadingRequest(payload);
   const legacy=await fetchLocal(url+'/api/menh/read',{method:'POST',headers,body:JSON.stringify(payload)});
@@ -41,9 +42,9 @@ test('bridge recomputes KM-MENH, checks fingerprints and preserves existing serv
   assert.equal(ok.status,200);
   const data=await ok.json();
   assert.equal(validateMenhReadingResponse(data,prepared),data);
-  assert.equal(data.menhRules,MENH_RULE_VERSION);assert.equal(data.menhProtocol,MENH_PROTOCOL);assert.equal(calls,1);
+  assert.equal(data.menhRules,MENH_RULE_VERSION);assert.equal(data.menhProtocol,MENH_PROTOCOL);assert.equal(data.caseRules,CASE_ENGINE_VERSION);assert.equal(calls,1);
 
-  for(const bad of [{deterministicFingerprint:'wrong'},{requestFingerprint:'wrong'},{birthTimeLocal:'11:30'},{rules:'KM-MENH-9.9'},{protocol:9}]){
+  for(const bad of [{deterministicFingerprint:'wrong'},{requestFingerprint:'wrong'},{birthTimeLocal:'11:30'},{rules:'KM-MENH-9.9'},{protocol:9},{caseRules:'KM-CASE-0.9'}]){
     const response=await fetchLocal(url+'/api/menh/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})});
     assert.equal(response.status,409);
   }

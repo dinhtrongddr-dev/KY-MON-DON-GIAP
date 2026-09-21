@@ -5,6 +5,7 @@ import {prepareMenhReading,buildMenhReadingRequest,writerContextForPrepared} fro
 import {MENH_PROTOCOL,MENH_RULE_VERSION} from '../dist/menh-core.mjs';
 import {MENH_SPEC_VERSION,MENH_RUNTIME_VERSION,MENH_RECTIFICATION_VERSION} from '../dist/qimen/menh/version.mjs';
 import {RECTIFICATION_VALIDATION_CASES,RECTIFICATION_VALIDATION_STATUS,RECTIFICATION_WINDOWS} from '../dist/qimen/menh/rectification.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 const known={birthDateLocal:'1990-01-01',birthTimeMode:'KNOWN',birthTimeLocal:'09:30',tzOffset:7,age:37,annualYear:2026,sexMetadata:'MALE'};
 const events=[
@@ -25,6 +26,7 @@ test('KM-MENH-1.1 upgrades runtime/protocol while preserving frozen 1.0 spec ide
   assert.equal(p.result.runtimeVersion,'KM-MENH-1.1');
   assert.equal(p.request.rules,'KM-MENH-1.1');
   assert.equal(p.request.protocol,2);
+  assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);
 });
 
 test('known Mệnh exposes separated Strength/Structure layers without replacing the frozen natal resolver',()=>{

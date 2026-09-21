@@ -8,6 +8,7 @@ import {attachAiRoute,aiRouteOf} from '../local/ai-client.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {parseStructuredText} from '../local/codex-client.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
 
 test('all 25 element directions remain neutral between two business roles',()=>{
@@ -97,7 +98,7 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
 });
 
 test('v5 request fingerprint binds the planner, mode and depth plus shared semantic matrix',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.3');
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,5);assert.equal(READING_PROTOCOL,5);assert.equal(RULE_VERSION,'TG-CB-6.3');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
   const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.0');assert.equal(writer.semanticMatrix.domain.id,'business');assert.ok(writer.semanticMatrix.palaces.length>0);
 });

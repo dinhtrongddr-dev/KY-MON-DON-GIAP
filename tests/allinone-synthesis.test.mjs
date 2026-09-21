@@ -2,6 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {classifyQuestion} from '../dist/qimen/ai/classifier.mjs';
 import {prepareReading,buildReadingRequest,readingIdentity,validateReading,assertCompatible,instructionsFor} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 const body={question:'Báo giá dự án cần chuẩn bị gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 test('auto classifies the requested examples and preserves explicit choices',()=>{
   for(const [q,m] of [['Tuần sau tôi có nhận được dự án không?','prediction'],['Tôi phải làm gì để lấy được dự án?','strategy'],
@@ -28,7 +29,8 @@ test('four modes bind different plans/prompts to the same board and produce vali
   for(const p of readings){const r=readingFixture(p);assert.equal(validateReading(r,p.facts,'contract',p.context),r);}
   const changed=structuredClone(readings[0]);changed.context.allInOne.graph.relations[0].type='forged';
   assert.notEqual((await readingIdentity(changed)).requestFingerprint,readings[0].requestFingerprint);
-  assert.throws(()=>assertCompatible({rules:'TG-CB-3.0',protocol:3}));
+  assert.throws(()=>assertCompatible({rules:'TG-CB-3.0',protocol:3,caseRules:CASE_ENGINE_VERSION}));
+  assert.throws(()=>assertCompatible({rules:'TG-CB-6.3',protocol:5}));
 });
 test('wrong mode, reordered steps, unrelated evidence and invented graph links fail closed',()=>{
   const p=prepareReading({...body,mode:'business'});

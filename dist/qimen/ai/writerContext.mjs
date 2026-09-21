@@ -1,6 +1,7 @@
 import {buildPresentationProfile} from './presentation.mjs';
 import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForTopic,semanticDomainVocabulary,semanticGuideForBoard} from '../semantic/matrix.mjs';
 import {classifyTopics} from './classifier.mjs';
+import {writerCaseGuidance} from '../case/engine.mjs';
 
 export function buildWriterContext(context) {
   const c=context.allInOne,g=c.reasoning,q=c.questionContext;
@@ -68,7 +69,7 @@ export function buildWriterContext(context) {
   };
   return {rules:context.rules,question:context.question,topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:q.questionType,
     readingGraph,evidence,comparisons,comparisonConvention:c.comparison?.convention||c.plan.computed.convention||null,
-    semanticMatrix,warnings:context.warnings,unsupported:context.unsupported,presentation,
+    semanticMatrix,caseGuidance:writerCaseGuidance(g.caseProfile),warnings:context.warnings,unsupported:context.unsupported,presentation,
     layout:concise?'concise':'full',
     coverage:{required:[...(coverageByMode[c.classification.mode]||[]),...(deep?['role_specific_modifiers','directed_relationships','counterfactual_check','action_provenance']:[])]},
     length:{depth:q.depth,target:deep?deepTarget[c.classification.mode]||'600–1100':targetByMode[c.classification.mode]||'350–750',

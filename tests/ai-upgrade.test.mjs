@@ -5,6 +5,7 @@ import {buildQuestionContext} from '../dist/qimen/ai/questionContext.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 import {auditTechnicalText} from '../dist/qimen/ai/technicalAudit.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 const body={question:'Tôi cần chuẩn bị gì cho hợp đồng A trong tháng này?',topic:'contract',mode:'auto',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 
 test('contract noun does not override response, profit, or negotiation intent',()=>{
@@ -134,7 +135,7 @@ test('after one unsuccessful repair return only independently recomputable verif
   const p=await buildReadingRequest(body);let count=0;
   const reading=await interpretReading(p,{runner:async()=>{count++;return {invented:'Khách hàng chắc chắn ký.'};}});
   assert.equal(count,2);assert.equal(reading.status,'verified_fallback');
-  const data={rules:p.context.rules,protocol:p.request.protocol,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading};
+  const data={rules:p.context.rules,protocol:p.request.protocol,caseRules:CASE_ENGINE_VERSION,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading};
   assert.doesNotThrow(()=>validateReadingResponse(data,p));
   assert.ok(!JSON.stringify(reading).includes('Khách hàng chắc chắn ký'));
   reading.summary.text+=' Bịa thêm nội dung.';

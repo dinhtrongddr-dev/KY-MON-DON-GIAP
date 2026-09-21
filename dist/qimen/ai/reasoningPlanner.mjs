@@ -11,6 +11,7 @@ import {buildEventStages} from './eventStages.mjs';
 import {buildPrimaryJudgment} from './primaryJudgment.mjs';
 import {buildTiming} from './timingEngine.mjs';
 import {relevantActorIds} from '../analysis/actorRelevance.mjs';
+import {eventCaseTarget,retrieveCases} from '../case/engine.mjs';
 export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,graph,board=null) {
   const active=new Set(relevantActorIds(questionContext,analysis.roles,modePlan));
   graph={...graph,nodes:graph.nodes.filter(n=>active.has(n.id)),relations:graph.relations.filter(e=>active.has(e.from)&&active.has(e.to))};
@@ -43,6 +44,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
   const eventStages=buildEventStages(outcomeDimensions,questionContext,interactions);
   const primaryJudgment=buildPrimaryJudgment(outcomeDimensions,eventStages,selected,questionContext);
   const timing=buildTiming(questionContext,board,selected);
+  const caseProfile=retrieveCases(eventCaseTarget({analysis,questionContext,selected,primaryJudgment,timing}),{limit:3});
   const likelyScenario=buildScenario(selected,questionContext,graph,interactions,modePlan,{outcomeDimensions,eventStages,primaryJudgment,timing,roleProfile:activeRoleProfile});
   const claims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
     mechanism:b.translation.mechanism,interpretation:b.translation.interaction,
@@ -58,6 +60,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     roleProfile:activeRoleProfile,
     strengthProfile:{version:analysis.palaces[0]?.strength?.version||'legacy',profile:analysis.palaces[0]?.strength?.profile||'legacy',meaning:'Tinh/Môn/Can/Cung dùng mô hình sức riêng; trọng số chỉ xếp ưu tiên, không phải xác suất.'},
     structureProfile:{version:analysis.structures.version,profile:analysis.structures.profile,coverage:analysis.structures.coverage,limitations:analysis.structures.limitations},
+    caseProfile,
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),
     rules:RULE_REGISTRY,evidenceBundles:selected,claims,interactions,conflicts:selected.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`}))),

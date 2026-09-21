@@ -9,6 +9,7 @@ import {validateReading} from './qimen/ai/readingAudit.mjs';
 export {validateReading,ReadingValidationError} from './qimen/ai/readingAudit.mjs';
 import {BASE_WRITER_INSTRUCTIONS} from './qimen/ai/prompts.mjs';
 import {synthesisInstructions} from './qimen/ai/prompts.mjs';
+import {CASE_ENGINE_VERSION} from './qimen/case/engine.mjs';
 
 // One deterministic contract is used by the browser and the AI bridge.
 export const RULE_VERSION = 'TG-CB-6.3';
@@ -93,7 +94,7 @@ async function digest(value) {
 }
 export async function readingIdentity(prepared) {
   const chartFingerprint = await digest(prepared.chart);
-  const requestFingerprint = await digest({rules:RULE_VERSION,chartFingerprint,context:prepared.context});
+  const requestFingerprint = await digest({rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,chartFingerprint,context:prepared.context});
   return {chartFingerprint,requestFingerprint};
 }
 export async function buildReadingRequest(body) {
@@ -104,10 +105,10 @@ export async function buildReadingRequest(body) {
     subject:prepared.context.allInOne.questionContext.subject.mapping,
     direction:prepared.context.allInOne.questionContext.direction?{origin:prepared.context.allInOne.questionContext.direction.origin,kind:prepared.context.allInOne.questionContext.direction.kind}:null,
     depth:prepared.context.allInOne.questionContext.depth,action:prepared.context.allInOne.action,candidates:prepared.context.allInOne.comparison?.values||[],
-    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,...identity}};
+    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,...identity}};
 }
 export function assertCompatible(data) {
-  if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL) throw new Error(UPGRADE_MESSAGE);
+  if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL || data?.caseRules!==CASE_ENGINE_VERSION) throw new Error(UPGRADE_MESSAGE);
 }
 export function validateReadingResponse(data,prepared) {
   assertCompatible(data);

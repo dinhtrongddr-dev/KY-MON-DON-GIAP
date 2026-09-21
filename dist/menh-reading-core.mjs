@@ -4,6 +4,7 @@ import {buildMenhWriterContext} from './qimen/menh/ai/writer-context.mjs';
 import {validateMenhReading} from './qimen/menh/ai/reading-audit.mjs';
 import {resolveTimePlace} from './qimen/timePlace.mjs';
 import {rectifyMenhCandidates,RECTIFICATION_EVENT_DOMAIN,RECTIFICATION_WINDOWS} from './qimen/menh/rectification.mjs';
+import {CASE_ENGINE_VERSION} from './qimen/case/engine.mjs';
 
 const STEM=Object.freeze({'甲':'JIA','乙':'YI','丙':'BING','丁':'DING','戊':'WU','己':'JI','庚':'GENG','辛':'XIN','壬':'REN','癸':'GUI'});
 const BRANCH=Object.freeze({'子':'ZI','丑':'CHOU','寅':'YIN','卯':'MAO','辰':'CHEN','巳':'SI','午':'WU','未':'WEI','申':'SHEN','酉':'YOU','戌':'XU','亥':'HAI'});
@@ -178,7 +179,8 @@ async function digest(value){
 }
 export async function menhReadingIdentity(prepared){
   const deterministicFingerprint=await digest({result:prepared.result,technical:prepared.technical,candidateCount:prepared.candidateCount});
-  const requestFingerprint=await digest({protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,input:prepared.input,deterministicFingerprint});
+  const caseGuidance=writerContextForPrepared(prepared).caseGuidance;
+  const requestFingerprint=await digest({protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,input:prepared.input,deterministicFingerprint,caseGuidance});
   return {deterministicFingerprint,requestFingerprint};
 }
 export async function buildMenhReadingRequest(body){
@@ -186,11 +188,11 @@ export async function buildMenhReadingRequest(body){
   return {...prepared,...identity,request:{
     fullName:prepared.input.fullName,birthPlace:prepared.input.birthPlace,birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
     tzOffset:prepared.input.tzOffset,timePlace:prepared.input.timePlace,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,lifeEvents:prepared.input.lifeEvents,birthTimeWindow:prepared.input.birthTimeWindow,
-    protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,...identity,
+    protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,...identity,
   }};
 }
 export function assertMenhCompatible(data){
-  if(data?.menhRules!==MENH_RULE_VERSION||data?.menhProtocol!==MENH_PROTOCOL)throw new Error(UPGRADE_MESSAGE);
+  if(data?.menhRules!==MENH_RULE_VERSION||data?.menhProtocol!==MENH_PROTOCOL||data?.caseRules!==CASE_ENGINE_VERSION)throw new Error(UPGRADE_MESSAGE);
 }
 export function writerContextForPrepared(prepared){
   return buildMenhWriterContext(prepared.result,{birthTimeMode:prepared.input.birthTimeMode,stability:prepared.result.stability||null,timePlace:prepared.technical?.timePlace||null,rectification:prepared.rectification||null});

@@ -7,6 +7,7 @@ import {join} from 'node:path';
 import {createBridge} from '../local/server.mjs';
 import {buildReadingRequest,prepareReading,validateReadingResponse} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
+import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 const origin='https://kymon.pp.ua';
 const relay='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
@@ -44,6 +45,7 @@ test('the official website can reach protocol 5 through the existing tunnel',asy
   assert.equal(result.status,200);
   assert.equal(JSON.parse(result.text).rules,'TG-CB-6.3');
   assert.equal(JSON.parse(result.text).protocol,5);
+  assert.equal(JSON.parse(result.text).caseRules,CASE_ENGINE_VERSION);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);
   assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'same-origin'}})).status,200);
@@ -63,6 +65,13 @@ test('a shared result gets a public unguessable web link that opens without the 
   const shared=await call('/api/share/'+data.id,{headers:{Origin:origin,'X-Qimen-Token':''}});
   assert.equal(shared.status,200);const sharedData=JSON.parse(shared.text);assert.equal(sharedData.kind,'question');assert.equal(sharedData.snapshot.html,payload.snapshot.html);assert.equal(sharedData.report,undefined);
   assert.equal((await call('/s/'+data.id,{headers:{Origin:'','X-Qimen-Token':'wrong'}})).status,302);
+});
+
+test('question bridge fails closed when KM-CASE compatibility is missing or stale',async t=>{
+  const prepared=await buildReadingRequest(payload),call=await start(t);
+  const missing={...prepared.request};delete missing.caseRules;
+  assert.equal((await call('/api/read',{body:missing})).status,409);
+  assert.equal((await call('/api/read',{body:{...prepared.request,caseRules:'KM-CASE-0.9'}})).status,409);
 });
 
 test('slow tunnel readings preserve one complete validated protocol 5 JSON document',async t=>{

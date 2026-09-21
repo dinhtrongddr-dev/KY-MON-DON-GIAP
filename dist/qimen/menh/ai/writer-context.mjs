@@ -1,6 +1,7 @@
 import {validateMenhResult} from '../audit.mjs';
 import {MENH_RULE_VERSION,MENH_PROTOCOL} from '../../../menh-core.mjs';
 import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForMenh,semanticDomainVocabulary,semanticGuideForBoard} from '../../semantic/matrix.mjs';
+import {natalCaseTarget,retrieveCases,writerCaseGuidance} from '../../case/engine.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const PALACE_CODE=Object.freeze({1:'KAN_1',2:'KUN_2',3:'ZHEN_3',4:'XUN_4',5:'CENTER_5',6:'QIAN_6',7:'DUI_7',8:'GEN_8',9:'LI_9'});
@@ -116,6 +117,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
   });
   const domainIds=[...new Set(semanticClaims.map(x=>x.domainId))],semanticDomains=Object.fromEntries(domainIds.map(id=>[id,semanticDomainVocabulary(id)]));
   const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'destiny',assemblyRules:semanticAssemblyRules(),domains:semanticDomains,claims:semanticClaims};
+  const caseProfile=retrieveCases(natalCaseTarget(result),{limit:4});
   return freeze({
     protocol:MENH_PROTOCOL,
     ruleVersion:MENH_RULE_VERSION,
@@ -139,6 +141,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     timePlace:compactTimePlace(timePlace),
     rectification:birthTimeMode==='UNKNOWN'?compactRectification(rectification):null,
     semanticMatrix,
+    caseGuidance:writerCaseGuidance(caseProfile),
     evidence:visibleEvidence.map(e=>({
       evidenceId:e.evidenceId,ruleId:e.ruleId,domain:e.domain,palace:e.palace,mechanism:e.mechanism,effectTag:e.effectTag,
       severity:e.severity,priorityClass:e.priorityClass,affectedDomains:[...(e.affectedDomains||[])],summary:e.metadata?.summary||null,relation:e.relation||null,

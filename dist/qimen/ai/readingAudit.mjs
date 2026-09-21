@@ -29,6 +29,7 @@ function negatesCertainty(prefix) {
 }
 function auditClaims(passages,context,rows=[]) {
   const prose=passages.join(' '),normalized=normalizeQuestion(prose),source=normalizeQuestion(context.question);
+  if(/\b(?:km-case|caseguidance|deterministic_golden|derived_regression|source_golden|regression_locked|test_locked|source_locked|sourcecase|sourceref)\b/i.test(normalized))reject('Bài luận làm lộ metadata Case Engine nội bộ.');
   const certainty=[...normalized.matchAll(/\b(chac chan (se|thang|trung|ky duoc|thanh cong|that bai|co loi|nhan duoc)|dam bao (thang|loi nhuan|thanh cong)|nhat dinh (thang|thanh cong))\b/g)];
   if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)/.test(normalized)||certainty.some(m=>!negatesCertainty(normalized.slice(0,m.index))))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
   for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g)){
