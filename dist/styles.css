@@ -886,9 +886,9 @@ textarea:focus { outline:3px solid #bce8ce; }
 @media(max-width:560px){.ai-scope{grid-template-columns:1fr}.ai-stages{padding-left:18px;margin-left:4px}.ai-stages>li::before{left:-26px}.ai-opening{padding-inline:12px}}
 #ai-status { font-weight:600; }
 @media(max-width:760px) {
-  .local-controls { grid-template-columns:1fr 1fr; }
-  .local-controls .field { grid-column:1 / -1; }
-  .local-controls .button { justify-content:center; }
+  .local-controls { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  .local-controls .field { grid-column:1 / -1; width:100%; }
+  .local-controls .button { min-width:0; justify-content:center; white-space:normal; }
 }
 @media(max-width:430px) {
   .control-heading { flex-wrap:wrap; }
