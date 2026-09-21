@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {initModeControls} from '../dist/qimen/ui-controls.mjs';
+import {initModeControls,maskNianmingDate} from '../dist/qimen/ui-controls.mjs';
 class Element {
   constructor(tag='div'){this.tag=tag;this.value='';this.children=[];this.listeners={};this.hidden=false;}
   append(...elements){for(const el of elements){el.parent=this;this.children.push(el);if(this.tag==='select'&&this.children.length===1)this.value=el.value;}}
@@ -18,6 +18,18 @@ ids['qimen-mode'].tag='select';ids['qimen-action'].value='general';
   const doc={getElementById:id=>ids[id],createElement:tag=>new Element(tag),querySelectorAll:()=>inputs()};
   return {ids,inputs,options:initModeControls(doc)};
 }
+test('mobile Niên Mệnh mask inserts day/month separators and preserves year-only input on commit',()=>{
+  assert.equal(maskNianmingDate('1'),'1');
+  assert.equal(maskNianmingDate('17'),'17/');
+  assert.equal(maskNianmingDate('170'),'17/0');
+  assert.equal(maskNianmingDate('1707'),'17/07/');
+  assert.equal(maskNianmingDate('17071994'),'17/07/1994');
+  assert.equal(maskNianmingDate('17/07/1994'),'17/07/1994');
+  assert.equal(maskNianmingDate('1707',{deleting:true}),'17/07');
+  assert.equal(maskNianmingDate('1994',{final:true}),'1994');
+  assert.equal(maskNianmingDate('19/94/',{final:true}),'1994');
+});
+
 test('mode controls start on Auto and show timing inputs only for timing intent',()=>{
   const {ids,inputs,options}=setup();
   assert.equal(options().mode,'auto');assert.equal(ids['qimen-mode'].children.length,7);assert.deepEqual(options().actors,{});

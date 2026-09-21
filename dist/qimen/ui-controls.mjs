@@ -2,6 +2,52 @@ import {MODES,MODE_LABELS} from './modes/shared.mjs';
 import {classifyQuestion} from './ai/classifier.mjs';
 import {buildQuestionContext} from './ai/questionContext.mjs';
 import {sexagenaryName,pillarFromGanzhi} from './core/calendar.mjs';
+
+const NIANMING_INPUT_IDS=['self','subject','customer','competitor','decisionMaker'];
+export function maskNianmingDate(value,{deleting=false,final=false}={}){
+  const digits=String(value??'').replace(/\D/g,'').slice(0,8);
+  if(!digits)return '';
+  if(final&&digits.length===4){
+    const year=Number(digits);
+    if(year>=1900&&year<=2100)return digits;
+  }
+  if(digits.length===1)return digits;
+  if(digits.length===2)return deleting?digits:digits+'/';
+  if(digits.length===3)return digits.slice(0,2)+'/'+digits.slice(2);
+  if(digits.length===4)return deleting?digits.slice(0,2)+'/'+digits.slice(2):digits.slice(0,2)+'/'+digits.slice(2)+'/';
+  return digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+}
+const caretEnd=input=>{try{const p=input.value.length;input.setSelectionRange?.(p,p);}catch{}};
+export function initNianmingInputMasks(doc=document){
+  for(const id of NIANMING_INPUT_IDS){
+    const input=doc.getElementById('nianming-'+id);
+    if(!input)continue;
+    input.addEventListener('input',event=>{
+      input.value=maskNianmingDate(input.value,{deleting:String(event?.inputType||'').startsWith('delete')});
+      caretEnd(input);
+    });
+    const finalize=()=>{input.value=maskNianmingDate(input.value,{final:true});caretEnd(input);};
+    input.addEventListener('change',finalize);
+    input.addEventListener('blur',finalize);
+    input.addEventListener('keydown',event=>{
+      if(event?.key!=='Backspace'||input.selectionStart!==input.selectionEnd||!input.selectionStart)return;
+      const pos=input.selectionStart;
+      if(input.value[pos-1]!=='/')return;
+      event.preventDefault();
+      input.value=input.value.slice(0,pos-1)+input.value.slice(pos);
+      try{input.setSelectionRange(pos-1,pos-1);}catch{}
+    });
+    input.addEventListener('paste',event=>{
+      const pasted=String(event?.clipboardData?.getData?.('text')||'').trim();
+      if(!/^\d{4}$/.test(pasted))return;
+      const year=Number(pasted);
+      if(year<1900||year>2100)return;
+      event.preventDefault();
+      input.value=pasted;caretEnd(input);
+    });
+  }
+}
+
 export function initModeControls(doc=document) {
   const $=id=>doc.getElementById(id),mode=$('qimen-mode'),question=$('question');
   for(const id of MODES){const option=doc.createElement('option');option.value=id;option.textContent=MODE_LABELS[id];mode.append(option);}

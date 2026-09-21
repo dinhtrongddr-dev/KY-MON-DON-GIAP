@@ -5,7 +5,7 @@ import {generateQimen,toQimenBoard} from './qimen/core/board.mjs';
 import {resolveTimePlace,localInputValueAtZone} from './qimen/timePlace.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
-import {initModeControls} from './qimen/ui-controls.mjs';
+import {initModeControls,initNianmingInputMasks} from './qimen/ui-controls.mjs';
 import {prepareReading} from './reading-core.mjs';
 import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {createActivityLog} from './activity-log.mjs';
@@ -48,6 +48,7 @@ const topicInput = document.querySelector('#topic');
 topicInput.innerHTML = TOPICS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
 let currentQuestion = '';
 const nianmingInputIds=['self','subject','customer','competitor','decisionMaker'];
+initNianmingInputMasks(document);
 function currentNianmingInput(){return Object.fromEntries(nianmingInputIds.map(id=>[id,document.querySelector('#nianming-'+id)?.value.trim()||'']).filter(([,value])=>value));}
 
 const escapeHtml = (value) => String(value)
