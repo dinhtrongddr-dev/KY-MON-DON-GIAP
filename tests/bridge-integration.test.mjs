@@ -52,8 +52,12 @@ test('the official website can reach the current question protocol through the e
   assert.equal(JSON.parse(result.text).validationRules,VALIDATION_VERSION);
   assert.equal(JSON.parse(result.text).outcomeRegistryRules,OUTCOME_REGISTRY_VERSION);
   assert.equal((await call('/api/status',{headers:{Origin:'https://foreign.example'}})).status,403);
-  assert.equal((await call('/api/status',{headers:{Origin:''}})).status,403);
+  assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'cross-site'}})).status,403);
+  assert.equal((await call('/api/status',{headers:{Origin:''}})).status,200);
   assert.equal((await call('/api/status',{headers:{Origin:'','Sec-Fetch-Site':'same-origin'}})).status,200);
+  assert.equal((await call('/api/status',{headers:{Origin:'','User-Agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148'}})).status,200);
+  assert.equal((await call('/api/validation/report',{headers:{Origin:''}})).status,200);
+  assert.equal((await call('/api/validation/report',{headers:{Origin:'','X-Qimen-Token':'wrong'}})).status,401);
   assert.equal((await call('/api/status',{headers:{Host:'foreign.example'}})).status,403);
 });
 

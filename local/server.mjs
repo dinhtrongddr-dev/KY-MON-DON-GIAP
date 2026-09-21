@@ -118,8 +118,9 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    const requestUrl=new URL(req.url,origin),path=requestUrl.pathname;
    const requestOrigin=req.headers.origin;
    const publicShareMatch=/^\/api\/share\/([A-Za-z0-9_-]{20,64})$/.exec(path);
-   const sameOriginPublic=host.type==='tunnel'&&!requestOrigin&&String(req.headers['sec-fetch-site']||'').toLowerCase()==='same-origin'&&((path==='/api/status'&&req.method==='GET')||(path==='/api/activity'&&req.method==='GET')||(path==='/api/activity/chart'&&req.method==='POST')||(publicShareMatch&&req.method==='GET'));
-   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!sameOriginPublic)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
+   const fetchSite=String(req.headers['sec-fetch-site']||'').toLowerCase();
+   const noOriginTunnelRequest=host.type==='tunnel'&&!requestOrigin&&(!fetchSite||fetchSite==='same-origin'||fetchSite==='same-site'||fetchSite==='none');
+   if(path.startsWith('/api/')&&((host.type==='tunnel'&&!requestOrigin&&!noOriginTunnelRequest)||(requestOrigin&&!isAllowedOrigin(requestOrigin,port,host))))return send(403,{error:'Nguồn truy cập không được phép.'});
    if(requestOrigin){res.setHeader('Access-Control-Allow-Origin',requestOrigin);res.setHeader('Vary','Origin');}
    if(req.method==='OPTIONS'){
      res.setHeader('Access-Control-Allow-Methods','POST, GET, DELETE, OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Qimen-Token');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);return res.end();
