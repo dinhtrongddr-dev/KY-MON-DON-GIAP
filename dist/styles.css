@@ -447,6 +447,49 @@ input:focus, select:focus {
 .marker { padding: 1px 4px; border: 1px solid currentColor; background: rgba(255,255,255,0.93); font-size: clamp(0.5rem, 0.6vw, 0.58rem); font-weight: 900; line-height: 1.35; }
 .marker-void { color: #8b312e; }
 .marker-horse { color: #1b6082; }
+.attention-key{font-weight:800}
+.attention-key b{font-size:.82rem}
+.attention-key-support{color:#17613f}
+.attention-key-danger{color:#a12f2b}
+.attention-key-conflict{color:#75511d}
+.attention-badge{display:inline-flex;align-items:center;min-height:18px;padding:1px 5px;border:1px solid currentColor;border-radius:999px;background:#fff;font-size:clamp(.48rem,.58vw,.56rem);font-weight:900;line-height:1.2;box-shadow:0 1px 3px rgba(23,33,29,.1)}
+.attention-strong_support,.attention-support{color:#17613f;background:#edf8f1}
+.attention-warning{color:#8a5b11;background:#fff6d8}
+.attention-danger{color:#982e2a;background:#fff0ee}
+.attention-conflict,.attention-mixed{color:#79521d;background:#fff3cf}
+.palace.attention-palace-strong_support{box-shadow:inset 0 0 0 2px rgba(26,101,72,.42)}
+.palace.attention-palace-support{box-shadow:inset 0 0 0 1px rgba(26,101,72,.32)}
+.palace.attention-palace-warning{box-shadow:inset 0 0 0 2px rgba(185,133,45,.42)}
+.palace.attention-palace-danger{box-shadow:inset 0 0 0 2px rgba(167,53,47,.52)}
+.palace.attention-palace-conflict,.palace.attention-palace-mixed{box-shadow:inset 0 0 0 2px rgba(185,133,45,.58),inset 0 -4px 0 rgba(167,53,47,.32)}
+.attention-card{margin:12px 0 14px;border:1px solid var(--line);border-left:4px solid var(--line-strong);background:#fbfcfa;padding:12px}
+.attention-card-strong_support,.attention-card-support{border-left-color:var(--jade);background:#f3faf6}
+.attention-card-warning{border-left-color:var(--gold);background:#fffaf0}
+.attention-card-danger{border-left-color:var(--cinnabar);background:#fff5f4}
+.attention-card-conflict,.attention-card-mixed{border-left-color:var(--gold);background:linear-gradient(135deg,#fff9e9,#fff5f4)}
+.attention-card-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.attention-card-head small,.attention-card-head strong{display:block}
+.attention-card-head small{color:var(--muted);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.attention-card-head strong{font-size:1rem}
+.attention-icon{width:11px;height:11px;border-radius:50%;background:var(--line-strong);box-shadow:0 0 0 4px rgba(174,183,174,.18)}
+.attention-card-strong_support .attention-icon,.attention-card-support .attention-icon{background:var(--jade);box-shadow:0 0 0 4px rgba(26,101,72,.13)}
+.attention-card-warning .attention-icon{background:var(--gold);box-shadow:0 0 0 4px rgba(185,133,45,.14)}
+.attention-card-danger .attention-icon{background:var(--cinnabar);box-shadow:0 0 0 4px rgba(167,53,47,.14)}
+.attention-card-conflict .attention-icon,.attention-card-mixed .attention-icon{background:linear-gradient(90deg,var(--jade) 0 48%,var(--cinnabar) 52% 100%);box-shadow:0 0 0 4px rgba(185,133,45,.14)}
+.attention-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.attention-columns>div{min-width:0;border:1px solid rgba(174,183,174,.55);background:rgba(255,255,255,.72);padding:9px}
+.attention-columns b{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
+.attention-columns ul{margin:7px 0 0;padding:0;list-style:none}
+.attention-columns li+li{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+.attention-columns li strong,.attention-columns li span{display:block}
+.attention-columns li strong{font-size:.78rem}
+.attention-columns li span,.attention-columns p{margin:2px 0 0;color:#56625c;font-size:.72rem;line-height:1.45}
+.attention-note{margin:9px 0 0;color:var(--muted);font-size:.69rem;line-height:1.45}
+.flag-attention{font-weight:850}
+.flag-warning{border-color:rgba(185,133,45,.55);background:#fff6d8;color:#7b5313}
+.flag-hold{border-color:rgba(108,79,137,.35);background:#f4eef8;color:#614678}
+.flag-attention-note{margin-left:auto;border-style:dashed;background:#f8faf8;color:var(--muted);font-weight:700}
+@media(max-width:680px){.attention-columns{grid-template-columns:1fr}.attention-badge{font-size:.5rem}.board-key .attention-key{font-size:.68rem}}
 
 .palace-center {
   background:

@@ -1,7 +1,7 @@
 import {initSharedView} from './share-view.mjs';
 import {BRANCHES, STAR_QIN, elementSlug} from './qimen/core/palace.mjs';
 import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
-import {generateQimen} from './qimen/core/board.mjs';
+import {generateQimen,toQimenBoard} from './qimen/core/board.mjs';
 import {resolveTimePlace,localInputValueAtZone} from './qimen/timePlace.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
 import {initLocalAi} from './ai-local.mjs';
@@ -11,6 +11,8 @@ import {renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {createActivityLog} from './activity-log.mjs';
 import {semanticBundle,semanticDomainForTopic} from './qimen/semantic/matrix.mjs';
 import {classifyTopics} from './qimen/ai/classifier.mjs';
+import {analyzeBoard} from './qimen/analysis/index.mjs';
+import {buildAttentionProfile} from './qimen/analysis/attentionUi.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -37,6 +39,8 @@ if (workspace && elementPanel) workspace.append(elementPanel);
 const activity=createActivityLog();
 
 let currentChart = null;
+let currentAnalysis=null;
+let currentAttention=null;
 let currentTimePlace=null;
 let selectedPalace = null;
 const questionInput = document.querySelector('#question');
@@ -146,10 +150,15 @@ function palaceRoleMarkers(palace, chart) {
   ].join("");
 }
 
-function renderPalace(palace, chart) {
+function renderPalace(palace, chart,attentionProfile=currentAttention) {
   const palaceElement = elementSlug(palace.element);
   const selected = palace.number === selectedPalace ? " is-selected" : "";
   const roleMarkers = palaceRoleMarkers(palace, chart);
+  const attention=attentionProfile?.byPalace?.[palace.number]||null;
+  const attentionBadge=attention&&attention.kind!=='neutral'
+    ? `<span class="attention-badge attention-${attention.kind}" title="${escapeHtml(attention.label)} · ${escapeHtml(attention.meaning)}">${escapeHtml(attention.shortLabel)}</span>`:'';
+  const attentionClass=attention&&attention.kind!=='neutral'?` attention-palace-${attention.kind}`:'';
+  const attentionAria=attention&&attention.kind!=='neutral'?`, mức độ đáng chú ý: ${attention.label}`:'';
   const markers = [
     palace.voided ? '<span class="marker marker-void" title="Tuần không">Không</span>' : "",
     palace.horse ? '<span class="marker marker-horse" title="Dịch mã">Mã</span>' : "",
@@ -180,12 +189,12 @@ function renderPalace(palace, chart) {
   const dutyDoorBadge = palace.isDutyDoor ? '<span class="duty-badge">Trực Sử</span>' : "";
 
   return `
-    <button class="palace${selected}" type="button" data-palace="${palace.number}" data-element="${palaceElement}" aria-label="${palaceAria(palace)}" aria-pressed="${palace.number === selectedPalace}">
+    <button class="palace${selected}${attentionClass}" type="button" data-palace="${palace.number}" data-element="${palaceElement}" aria-label="${palaceAria(palace)}${attentionAria}" aria-pressed="${palace.number === selectedPalace}">
       <span class="palace-head">
         <strong><span class="trigram">${palace.trigram}</span>${palace.vi} · ${palace.han}</strong>
         <span>${palace.direction} · ${palace.element}</span>
       </span>
-      <span class="markers">${markers}</span>
+      <span class="markers">${attentionBadge}${markers}</span>
       <span class="palace-body">
         <span class="entity spirit">
           <span class="entity-label">Bát thần</span><span class="han">${palace.spirit.han}</span><span class="vi">${palace.spirit.vi}</span>
@@ -208,29 +217,30 @@ function renderPalace(palace, chart) {
   `;
 }
 
-function renderBoard(chart) {
-  board.innerHTML = chart.palaces.map((palace) => renderPalace(palace, chart)).join("");
+function renderBoard(chart,attentionProfile=currentAttention) {
+  board.innerHTML = chart.palaces.map((palace) => renderPalace(palace, chart,attentionProfile)).join("");
   board.querySelectorAll(".palace").forEach((button) => {
     button.addEventListener("click", () => {
       selectedPalace = Number(button.dataset.palace);
-      renderBoard(currentChart);
-      renderDetail(currentChart);
+      renderBoard(currentChart,currentAttention);
+      renderDetail(currentChart,null,currentAttention);
     });
   });
 }
 
-function renderFlags(chart) {
+function renderFlags(chart,attentionProfile=currentAttention) {
   const patternFlags = [];
-  if (chart.patterns.starFuYin) patternFlags.push('<span class="flag flag-primary">Cửu Tinh phục ngâm</span>');
-  if (chart.patterns.starFanYin) patternFlags.push('<span class="flag flag-primary">Cửu Tinh phản ngâm</span>');
-  if (chart.patterns.doorFuYin) patternFlags.push('<span class="flag">Bát Môn phục ngâm</span>');
-  if (chart.patterns.doorFanYin) patternFlags.push('<span class="flag">Bát Môn phản ngâm</span>');
+  if (chart.patterns.starFuYin) patternFlags.push('<span class="flag flag-hold">Cửu Tinh phục ngâm</span>');
+  if (chart.patterns.starFanYin) patternFlags.push('<span class="flag flag-warning">Cửu Tinh phản ngâm</span>');
+  if (chart.patterns.doorFuYin) patternFlags.push('<span class="flag flag-hold">Bát Môn phục ngâm</span>');
+  if (chart.patterns.doorFanYin) patternFlags.push('<span class="flag flag-warning">Bát Môn phản ngâm</span>');
   flags.innerHTML = `
     <span class="flag flag-primary">Trực Phù: ${chart.duty.star.vi} · cung ${chart.duty.starPalace}</span>
     <span class="flag">Trực Sử: ${chart.duty.door.vi} · cung ${chart.duty.doorPalace}</span>
     <span class="flag">Tuần không: ${chart.voidBranchData.map((branch) => branch.vi).join("–")}</span>
     <span class="flag">Dịch mã: ${chart.horseBranchData.vi} · cung ${chart.horsePalace}</span>
     ${patternFlags.join("")}
+    <span class="flag flag-attention-note">Màu = ưu tiên đọc · không phải xác suất</span>
   `;
 }
 
@@ -257,10 +267,19 @@ function semanticCard(palace,chart,conditions=null,prepared=null){
   </section>`;
 }
 
-function renderDetail(chart,prepared=null) {
+function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
   const palace = chart.palaces.find((item) => item.number === selectedPalace) || chart.palaces[0];
   inspectorTitle.textContent = `${palace.vi} ${palace.number} cung`;
   const palaceElement = elementSlug(palace.element);
+  const attention=attentionProfile?.byPalace?.[palace.number]||null;
+  const attentionHtml=attention&&palace.number!==5?`<section class="attention-card attention-card-${attention.kind}" aria-label="Mức độ đáng chú ý">
+    <div class="attention-card-head"><span class="attention-icon" aria-hidden="true"></span><span><small>Mức độ đáng chú ý</small><strong>${escapeHtml(attention.label)}</strong></span></div>
+    <div class="attention-columns">
+      <div><b>Hỗ trợ</b>${attention.supports.length?`<ul>${attention.supports.slice(0,4).map(x=>`<li><strong>${escapeHtml(x.label)}</strong><span>${escapeHtml(x.detail)}</span></li>`).join('')}</ul>`:'<p>Không có cát cách mạnh cần tô nổi.</p>'}</div>
+      <div><b>Cảnh báo</b>${attention.warnings.length?`<ul>${attention.warnings.slice(0,4).map(x=>`<li><strong>${escapeHtml(x.label)}</strong><span>${escapeHtml(x.detail)}</span></li>`).join('')}</ul>`:'<p>Không có cảnh báo mạnh trong phạm vi đã tính.</p>'}</div>
+    </div>
+    <p class="attention-note">Màu chỉ giúp ưu tiên đọc; không phải xác suất hay phán quyết tốt/xấu tuyệt đối.</p>
+  </section>`:'';
   const title = `
     <div class="detail-title" data-element="${palaceElement}">
       <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.vi} · ${palace.han}</strong><small>${palace.direction} · cung ${palace.number}</small></span></div>
@@ -270,7 +289,7 @@ function renderDetail(chart,prepared=null) {
   `;
 
   if (palace.number === 5) {
-    detail.innerHTML = `${title}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
+    detail.innerHTML = `${title}${attentionHtml}${semanticCard(palace,chart,null,prepared)}<div class="detail-list">
       ${detailItem("star", "Cửu tinh", STAR_QIN.vi, STAR_QIN.element, `${STAR_QIN.meaning} Trung Ngũ không tham gia vòng chuyển; Thiên Cầm ký cùng Thiên Nhuế tại cung đang mang nó.`)}
       ${detailItem("stem", "Địa bàn", `${palace.earthStem.han} · ${palace.earthStem.vi}`, palace.earthStem.element, "Can của Trung Ngũ được mang theo Thiên Cầm và ký sang cung có Thiên Nhuế khi chuyển bàn.")}
     </div>`;
@@ -289,7 +308,7 @@ function renderDetail(chart,prepared=null) {
     conditions.punishment.length ? `<span class="detail-marker">Kích hình: ${conditions.punishment.join(', ')}</span>` : '',
     conditions.wonderTombs.length ? `<span class="detail-marker">Tam kỳ nhập mộ: ${conditions.wonderTombs.join(', ')}</span>` : '',
   ].join("");
-  detail.innerHTML = `${title}${semanticCard(palace,chart,conditions,prepared)}
+  detail.innerHTML = `${title}${attentionHtml}${semanticCard(palace,chart,conditions,prepared)}
     <div class="detail-list">
       ${detailItem("spirit", "Bát thần", `${palace.spirit.han} · ${palace.spirit.vi}`, "thần", palace.spirit.meaning)}
       ${detailItem("star", "Cửu tinh", `${palace.star.han} · ${palace.star.vi}`, palace.star.element, `${palace.star.meaning}${carries}`)}
@@ -315,13 +334,15 @@ function renderMethod(chart) {
 
 function renderChart(chart) {
   currentChart = chart;
+  currentAnalysis=analyzeBoard(toQimenBoard(chart),{topic:topicInput.value||'general'});
+  currentAttention=buildAttentionProfile(currentAnalysis);
   if (!chart.palaces.some((palace) => palace.number === selectedPalace)) selectedPalace = chart.duty.starPalace;
   if (selectedPalace === null) selectedPalace = chart.duty.starPalace;
   renderPillars(chart);
   renderSummary(chart);
-  renderBoard(chart);
-  renderFlags(chart);
-  renderDetail(chart);
+  renderBoard(chart,currentAttention);
+  renderFlags(chart,currentAttention);
+  renderDetail(chart,null,currentAttention);
   renderMethod(chart);
   document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi.';
   document.dispatchEvent(new Event('qimen-chart'));
@@ -441,7 +462,8 @@ function captureReportVisual(prepared){
   const saved=targets.map(node=>[node,[...node.childNodes]]),selection=selectedPalace;
   const clone=selector=>document.querySelector(selector).cloneNode(true);
   try{
-    renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart);renderFlags(prepared.chart);
+    const reportAttention=buildAttentionProfile(prepared.analysis);
+    renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart,reportAttention);renderFlags(prepared.chart,reportAttention);
     const topicRole=prepared.analysis.roles.find(item=>item.id==='topic_0');
     const subject=topicRole?.palace!=null?topicRole:prepared.analysis.roles.find(item=>item.id==='event');
     const roles=[prepared.analysis.roles.find(item=>item.id==='self'),subject].map((role,index)=>{
@@ -451,7 +473,7 @@ function captureReportVisual(prepared){
       const heading=document.createElement('h2');heading.textContent=index===0?'NGƯỜI HỎI · NHẬT CAN':id==='topic_0'?'SỰ VIỆC · DỤNG THẦN':'SỰ VIỆC · THỜI CAN';card.append(heading);
       const basis=document.createElement('p');basis.textContent=`${role.label} · ${role.basis} · ${role.status}`;card.append(basis);
       if(role.palace==null){const note=document.createElement('p');note.textContent='Chưa xác định cung đại diện.';card.append(note);}
-      else{selectedPalace=role.palace;renderDetail(prepared.chart,prepared);card.append(detail.cloneNode(true));}
+      else{selectedPalace=role.palace;renderDetail(prepared.chart,prepared,reportAttention);card.append(detail.cloneNode(true));}
       card.querySelectorAll('details').forEach(node=>node.open=true);
       return card;
     });

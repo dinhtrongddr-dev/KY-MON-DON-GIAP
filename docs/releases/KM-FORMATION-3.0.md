@@ -425,7 +425,49 @@ Frozen 480-board SHA-256:
 
 `d384c9f4d42a94bd80d709eac2c865943ac5ac4f7e86489d84b003edd2b465ea`
 
-## 18. Epistemic status
+## 19. Attention UI extension
+
+Phase 10 also includes a presentation-only attention layer:
+
+`KM-UI-ATTENTION-1.0`
+
+It does not participate in evidence scoring or deterministic judgment.
+
+The board exposes five presentation states:
+
+- `Thuận mạnh`: a strong favorable classical structure is present and no strong blocker is simultaneously present;
+- `Có hỗ trợ`: a bounded support signal is present;
+- `Cần chú ý`: a structural caution such as Door pressure or Void is present;
+- `Cảnh báo mạnh`: Six-Instrument Punishment, Three-Wonder Tomb or another severe classical structure is present;
+- `Xung đột mạnh`: strong favorable and strong adverse structures coexist.
+
+Support and warning are kept on separate axes. They never cancel into one numeric score.
+
+Example regression cases:
+
+- Green Dragon Returns without a strong blocker → `Thuận mạnh`;
+- Three-Wonder Tomb → `Cảnh báo mạnh`;
+- Green Dragon Returns + Six-Instrument Punishment → `Xung đột mạnh`.
+
+The UI intentionally avoids:
+
+- percentage;
+- 1–10 destiny score;
+- absolute `đại cát/đại hung` verdict;
+- changing color by topic/domain;
+- changing the planner judgment.
+
+The attention colors are structural properties of the chart. Domain relevance remains the responsibility of Useful-God/role resolution and the reading engine.
+
+### Why Seven Stars Path is not used as severity
+
+Some modern/proprietary Qimen systems use a Seven Stars Path layer to represent intensity, deity strength or specialized spiritual/manifestation practice. That layer is not part of the current `Thời Gia · Chuyển Bàn · Tháo Bổ` profile.
+
+Therefore Phase 10 does not use Seven Stars Path to manufacture a severity score.
+
+If Seven Stars Path is ever added, it must be a separately named profile/module with its own sources, formulas, fixtures and compatibility policy; it must not silently alter the current severity display.
+
+## 20. Epistemic status
 
 These formations are traditional symbolic rules and strategic conventions.
 
