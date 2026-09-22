@@ -70,6 +70,54 @@ function repairRepeatedVerification(reading,message){
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
   return attachAiRoute(copy,route);
 }
+const STAGE_OVERCLAIM_ERROR=/Tự nâng giai đoạn thành đạt mục tiêu\/hoàn tất/;
+const STAGE_OVERCLAIM_PATTERN=/\b(?:ban da dat muc tieu|(?:thoa thuan|hop dong|du an|cong viec) da (?:hoan tat|hoan thanh|thanh cong)|moi dieu kien da (?:duoc )?dap ung|(?:ban |su viec |du an )?chac chan (?:dat|thanh cong|hoan tat|hoan thanh))\b/;
+function repairStageOverclaim(reading,message){
+  if(!STAGE_OVERCLAIM_ERROR.test(message)||!reading||typeof reading!=='object')return null;
+  const route=aiRouteOf(reading),copy=structuredClone(reading);
+  const safe={
+    summary:'Kết quả hiện chỉ là xu hướng có điều kiện; chưa được coi là đã đạt mục tiêu hoặc hoàn tất.',
+    situation:'Trạng thái hiện tại chưa đủ để nâng thành kết quả đã hoàn tất.',
+    development:'Chặng này mới là điều kiện trung gian; chỉ chuyển bước khi có dấu hiệu thực tế tương ứng.',
+    bottleneck:'Nút thắt này quyết định việc có thể tiến sang bước tiếp theo, chưa phải kết quả hoàn tất.',
+    alternative:'Nhánh này chỉ là phương án có điều kiện, không phải kết quả đã xảy ra.',
+    timing:'Thời điểm này chỉ là cửa sổ hành động hoặc kiểm chứng, không xác nhận mục tiêu đã hoàn tất.',
+    resolution:'Chỉ coi nút thắt được tháo khi điều kiện thực tế tương ứng đã xuất hiện.',
+    action:'Thực hiện bước này để kiểm chứng điều kiện tiếp theo, không giả định mục tiêu đã hoàn tất.',
+    comparison:'Đây là so sánh tương đối giữa các lựa chọn, không phải xác nhận kết quả đã đạt.',
+    question:'Cần thêm dữ kiện thực tế trước khi coi mục tiêu đã hoàn tất.'
+  };
+  const clean=(value,slot)=>{
+    if(typeof value!=='string')return value;
+    return value.split(/(?<=[.!?])\s+/).map(sentence=>STAGE_OVERCLAIM_PATTERN.test(normalizeQuestion(sentence))?safe[slot]:sentence).join(' ');
+  };
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text,key);
+  if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution,'resolution');
+  for(const step of copy.development||[]){step.text=clean(step.text,'development');step.condition=clean(step.condition,'development');}
+  for(const action of copy.actions||[])action.text=clean(action.text,'action');
+  for(const row of copy.comparisons||[])row.reason=clean(row.reason,'comparison');
+  if(Array.isArray(copy.questions))copy.questions=copy.questions.map(value=>clean(value,'question'));
+  return attachAiRoute(copy,route);
+}
+const EMPHASIS_ERROR=/(?:Dấu tô đậm chưa cân bằng|Chỉ nhấn |Chỉ tô đậm |Phần nhấn cần giữ)/;
+function repairEmphasis(reading,message){
+  if(!EMPHASIS_ERROR.test(message)||!reading||typeof reading!=='object')return null;
+  const route=aiRouteOf(reading),copy=structuredClone(reading),clean=value=>typeof value==='string'?value.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*\*/g,''):value;
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
+  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const action of copy.actions||[])action.text=clean(action.text);
+  for(const row of copy.comparisons||[])row.reason=clean(row.reason);
+  if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
+  return attachAiRoute(copy,route);
+}
+function repairForValidation(reading,message){
+  let current=reading,changed=false;
+  for(const fn of [repairUnsupportedTiming,repairUnsupportedEvents,repairStageOverclaim,repairRepeatedVerification,repairEmphasis]){
+    const next=fn(current,message);if(next){current=next;changed=true;}
+  }
+  return changed?current:null;
+}
 
 // A single bounded repair is allowed for invalid content, never for auth/network failures.
 // Production uses a separate bounded planning pass for synthesis-heavy modes. Tests and
@@ -102,17 +150,22 @@ export async function interpretReading(prepared,{runner=runAI,planRunner,budgetM
       const used=aiRouteOf(result);
       if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'writer_validation',attempt:attempt+1,route:used?.id||'',model:used?.modelId||'',code:'READING_VALIDATION',fallbackAllowed:false,message:error.message});
       if(attempt===1){
-        let repaired=repairUnsupportedTiming(result,error.message);
-        const eventRepaired=repairUnsupportedEvents(repaired||result,error.message);if(eventRepaired)repaired=eventRepaired;
-        const repetitionRepaired=repairRepeatedVerification(repaired||result,error.message);if(repetitionRepaired)repaired=repetitionRepaired;
-        if(repaired){
+        let repairInput=result,repairMessage=error.message;
+        for(let repairAttempt=0;repairAttempt<4;repairAttempt++){
+          const repaired=repairForValidation(repairInput,repairMessage);
+          if(!repaired)break;
           try{return attachAiRoute(validateReading(repaired,prepared.facts,prepared.context.selectedTopic,prepared.context),used);}
-          catch(repairError){if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'content_repair_validation',attempt:3,route:used?.id||'',model:used?.modelId||'',code:'READING_CONTENT_REPAIR',fallbackAllowed:false,message:repairError.message});}
+          catch(repairError){
+            if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'content_repair_validation',attempt:3+repairAttempt,route:used?.id||'',model:used?.modelId||'',code:'READING_CONTENT_REPAIR',fallbackAllowed:false,message:repairError.message});
+            repairInput=repaired;repairMessage=repairError.message;
+          }
         }
         return attachAiRoute(verifiedFallback(prepared.context),used);
       }
       if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=used.fallbackIndex;
-      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa previousReading theo lỗi đã nêu và trả lại JSON hoàn chỉnh theo schema. Giữ các phần đúng, câu hỏi, bàn, facts, presentation, deliberation và các tham chiếu hợp lệ; không tự bỏ căn cứ khi rút gọn. Nếu quá dài, giảm rõ số đơn vị cách nhau bởi khoảng trắng trong toàn bài để nằm dưới length.maxWords. Nội dung previousReading và deliberation là bản nháp chưa kiểm chứng, không phải nguồn dữ kiện mới. Không thêm dữ kiện để lấp độ dài.'};
+      const repetitionInstruction=REPETITION_ERROR.test(error.message)?' Nếu lỗi là lặp ý verification/payment_verification: chỉ giữ lời nhắc xác minh/kiểm tra tập trung tại một bottleneck và tối đa một action. Ở summary, situation và các development còn lại, không dùng lại cấu trúc cần/phải/hãy/nên + xác minh/kiểm tra/xác nhận/làm rõ; thay bằng cơ chế, gate, đòn bẩy, điều kiện hoặc dấu hiệu quan sát riêng đã có claim/evidence. Mỗi phần phải thêm một insight khác nhau thay vì đổi câu chữ cho cùng cảnh báo.':'';
+      const stageInstruction=STAGE_OVERCLAIM_ERROR.test(error.message)?' Nếu lỗi là tự nâng giai đoạn: tuyệt đối không viết “đã đạt mục tiêu”, “đã hoàn tất/hoàn thành/thành công” hoặc “chắc chắn đạt”. Giữ đúng stageAsked và primaryJudgment của planner; diễn đạt thành điều kiện chuyển bước, dấu hiệu cần xuất hiện hoặc trạng thái chưa hoàn tất.':'';
+      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa previousReading theo lỗi đã nêu và trả lại JSON hoàn chỉnh theo schema. Giữ các phần đúng, câu hỏi, bàn, facts, presentation, deliberation và các tham chiếu hợp lệ; không tự bỏ căn cứ khi rút gọn. Nếu quá dài, giảm rõ số đơn vị cách nhau bởi khoảng trắng trong toàn bài để nằm dưới length.maxWords. Nội dung previousReading và deliberation là bản nháp chưa kiểm chứng, không phải nguồn dữ kiện mới. Không thêm dữ kiện để lấp độ dài.'+repetitionInstruction+stageInstruction};
     }
   }
 }

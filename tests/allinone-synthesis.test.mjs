@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {classifyQuestion} from '../dist/qimen/ai/classifier.mjs';
+import {classifyQuestion,classifyTopics} from '../dist/qimen/ai/classifier.mjs';
 import {prepareReading,buildReadingRequest,readingIdentity,validateReading,assertCompatible,instructionsFor} from '../local/reading.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
@@ -12,6 +12,13 @@ test('auto classifies the requested examples and preserves explicit choices',()=
     assert.equal(classifyQuestion(q,'strategy').mode,'strategy');
   }
   assert.equal(classifyQuestion('Khi nào có kết quả?').mode,'prediction');assert.throws(()=>classifyQuestion('x','not-mode'));
+});
+test('domain classifier does not confuse tiến/tiên with tiền after accent normalization',()=>{
+  for(const q of ['Việc này có tiến triển không?','Tôi sẽ tiến hành ký hồ sơ.','Tiến độ hiện tại thế nào?','Tôi nên ưu tiên phương án nào?','Tôi muốn thăng tiến trong công việc.']){
+    const topics=classifyTopics(q);assert.equal(topics.includes('money'),false,q);
+  }
+  assert.ok(classifyTopics('Tôi có đủ tiền và thu nhập để nghỉ việc không?').includes('money'));
+  assert.ok(classifyTopics('Dong tien kinh doanh co du duy tri khong?').includes('money'));
 });
 test('graph edges have correct endpoints and unresolved actors never acquire invented edges',()=>{
   const p=prepareReading({...body,mode:'business'}),c=p.context.allInOne;

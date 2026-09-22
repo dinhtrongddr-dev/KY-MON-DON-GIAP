@@ -2,6 +2,7 @@ import {GENERATES, CONTROLS} from './guide.mjs';
 
 // Reading lenses describe business/life questions, not new placement rules or predictions.
 export const TOPIC_LENSES = {
+  general: {roles:[], distinguish:'Bắt đầu từ người hỏi và bối cảnh sự việc; chỉ thêm Dụng Thần chuyên đề khi câu hỏi hoặc nhóm sự việc đã đủ rõ.'},
   work: {roles:['Cơ hội công việc','Đầu mối quyết định'], distinguish:'Phân biệt được liên hệ, qua vòng đánh giá và có quyết định chính thức.'},
   study: {roles:['Việc học và nền tảng','Bài làm và hồ sơ','Văn thư và chứng chỉ'], distinguish:'Nối năng lực hiện tại, khâu ôn còn thiếu và điều kiện đánh giá; không suy điểm thi từ tượng.'},
   money: {roles:['Lợi ích và tăng trưởng','Vốn bỏ ra'], distinguish:'Phân biệt doanh thu, lợi nhuận và tiền thực thu; xem nguồn lực bỏ ra có được thu hồi hay không.'},

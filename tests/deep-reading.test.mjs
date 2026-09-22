@@ -159,3 +159,18 @@ test('repeated verification language is deduplicated after the bounded rewrite i
   const prose=JSON.stringify(result);
   assert.ok((prose.match(/(?:xác minh|kiểm tra|xác nhận|làm rõ) quyền phê duyệt/giu)||[]).length<=2);
 });
+
+test('negotiation-style stage overclaim, repeated verification and excess emphasis are repaired without verified fallback',async()=>{
+  const p=prepareReading({...body,mode:'negotiation',question:'Tôi nên đàm phán điều khoản nào trước để tiến tới thỏa thuận?'});let count=0;
+  const result=await interpretReading(p,{runner:async()=>{
+    count++;const r=readingFixture(p);
+    r.summary.text+=' Hợp đồng đã hoàn tất. Bạn cần xác minh quyền phê duyệt.';
+    r.situation.text+=' **Một điểm.** **Hai điểm.** **Ba điểm.** Bạn cần kiểm tra quyền phê duyệt.';
+    r.bottleneck.text+=' Bạn nên xác nhận quyền phê duyệt.';
+    r.actions[0].text+=' Hãy làm rõ quyền phê duyệt.';
+    return r;
+  }});
+  assert.equal(count,2);assert.equal(result.status,'reading');
+  assert.doesNotMatch(JSON.stringify(result),/Hợp đồng đã hoàn tất/);
+  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
+});
