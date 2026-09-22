@@ -46,7 +46,7 @@ function parseEventDate(raw){
 }
 function parseEventDates(raw){return String(raw||'').split(/[,;\n]+/).map(parseEventDate).filter(Boolean);}
 function collectRectEvents(){return [...rectEventList.querySelectorAll('.rect-event-row')].flatMap(row=>parseEventDates(row.querySelector('.rect-date').value).map(d=>({kind:row.querySelector('.rect-kind').value,...d})));}
-const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic'),floatingNav=$('menh-floating-nav'),resultSwitch=$('menh-result-switch'),spiritSwitch=$('menh-spirit-switch');
+const error=$('menh-form-error'),result=$('menh-result'),deterministic=$('menh-deterministic'),aiPanel=document.querySelector('.menh-ai-panel'),floatingNav=$('menh-floating-nav'),resultSwitch=$('menh-result-switch'),spiritSwitch=$('menh-spirit-switch');
 const activity=createActivityLog();
 let rememberedTime='',currentPrepared=null;
 
@@ -92,7 +92,9 @@ export function syncUnknownBirthTime(){
   }
 }
 function clearResult(){
-  currentPrepared=null;result.hidden=true;deterministic.replaceChildren();error.hidden=true;error.textContent='';
+  currentPrepared=null;result.hidden=true;
+  if(aiPanel&&deterministic.contains(aiPanel))result.append(aiPanel);
+  deterministic.replaceChildren();error.hidden=true;error.textContent='';
   if(floatingNav)floatingNav.hidden=true;
   if(resultSwitch){resultSwitch.disabled=true;resultSwitch.setAttribute('aria-disabled','true');resultSwitch.dataset.target='board';resultSwitch.textContent='Xem Bàn';resultSwitch.setAttribute('aria-label','Xem bàn Kỳ Môn');}
   if(spiritSwitch){spiritSwitch.disabled=true;spiritSwitch.setAttribute('aria-disabled','true');}

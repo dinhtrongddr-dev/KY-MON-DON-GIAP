@@ -101,15 +101,16 @@ test('Mệnh palace inspector merges palace identity into one detail heading',()
   assert.doesNotMatch(view,/el\('div','inspector-head'\)/);
 });
 
-test('Mệnh puts AI before Tứ Trụ, exposes Xem Bàn and Kích Thần quick bubbles, and removes textual color legends',()=>{
+test('Mệnh puts AI immediately after the board, exposes Xem Bàn and Kích Thần quick bubbles, and removes textual color legends',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   const ai=readFileSync(new URL('../dist/menh-ai.mjs',import.meta.url),'utf8');
   assert.match(html,/id="menh-floating-nav"[^>]*class="floating-result-nav"/);
   assert.match(html,/id="menh-result-switch"[^>]*data-target="board"[^>]*>Xem Bàn<\/button>/);
   assert.match(html,/id="menh-spirit-switch"[^>]*>Kích Thần<\/button>/);
-  const aiAppend=view.indexOf('if(aiPanel)container.append(aiPanel);');
-  const metaAppend=view.indexOf('container.append(renderMenhChartMeta(board));');
-  assert.ok(aiAppend>0&&metaAppend>aiAppend,'Mệnh AI panel must appear before Tứ Trụ');
+  const workspaceAppend=view.indexOf('container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));');
+  const aiAppend=view.indexOf('if(aiPanel)container.append(aiPanel);',workspaceAppend);
+  const spiritAppend=view.indexOf("const spiritPanel=el('section'",aiAppend);
+  assert.ok(workspaceAppend>0&&aiAppend>workspaceAppend&&spiritAppend>aiAppend,'Mệnh AI panel must sit immediately after the board and before deeper panels');
   assert.match(ai,/resultSwitch\.dataset\.target=aiTarget\?'ai':'board'/);
   assert.match(ai,/answer\.childElementCount>0/);
   assert.match(app,/floatingNav\.hidden=false/);
@@ -197,4 +198,16 @@ test('Mệnh user-facing cards hide internal versions and stringify structure co
   assert.match(view,/Hoàn cảnh đang cản cách triển khai/);
   assert.doesNotMatch(html,/Mệnh 1\.1/);
   assert.doesNotMatch(app,/Mệnh 1\.0/);
+});
+test('Mệnh AI panel survives result clearing and is placed immediately after the board',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(app,/aiPanel=document\.querySelector\('\.menh-ai-panel'\)/);
+  assert.match(app,/if\(aiPanel&&deterministic\.contains\(aiPanel\)\)result\.append\(aiPanel\);/);
+  const render=view.slice(view.indexOf('export function renderMenhDeterministic'),view.indexOf('function focusParagraph'));
+  const boardAt=render.indexOf('container.append(renderMenhWorkspace');
+  const aiAt=render.indexOf('if(aiPanel)container.append(aiPanel);',boardAt);
+  const spiritAt=render.indexOf("const spiritPanel=el('section'",aiAt);
+  assert.ok(boardAt>=0&&aiAt>boardAt&&spiritAt>aiAt,'AI must sit after the Mệnh board and before deeper panels');
+  const unknownAt=render.indexOf('container.append(renderUnknownBoardNotice(prepared));');
+  assert.ok(render.indexOf('if(aiPanel)container.append(aiPanel);',unknownAt)>unknownAt,'unknown-hour flow must also keep the AI panel');
 });

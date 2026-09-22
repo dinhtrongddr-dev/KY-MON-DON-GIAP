@@ -423,7 +423,6 @@ export function renderMenhDeterministic(container,prepared){
   const sexLabel=prepared.input.sexMetadata==='MALE'?'Nam':prepared.input.sexMetadata==='FEMALE'?'Nữ':'Không khai báo';
   profile.append(identity,el('span','menh-result-sex',sexLabel));
   container.append(profile);
-  if(aiPanel)container.append(aiPanel);
   if(prepared.input.birthTimeMode==='KNOWN'){
     const board=prepared.result?.natal?.baseBoard;
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
@@ -431,12 +430,14 @@ export function renderMenhDeterministic(container,prepared){
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderMenhChartMeta(board));
     container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));
+    if(aiPanel)container.append(aiPanel);
     const spiritPanel=el('section','learning-panel spirit-activation-panel menh-spirit-activation');spiritPanel.setAttribute('aria-label','Thần bản mệnh và hướng thực hành');
     renderNatalSpiritActivation(spiritPanel,{board,selfPalaceNumber,analysisLayers:prepared.result.analysisLayers});
     container.append(spiritPanel);
     container.append(renderMenhMethodDetails(board,prepared.technical?.timePlace||null));
   }else{
     container.append(renderUnknownBoardNotice(prepared));
+    if(aiPanel)container.append(aiPanel);
   }
   const body=el('div','menh-deterministic-body');
   prepared.input.birthTimeMode==='KNOWN'?renderKnown(body,prepared):renderUnknown(body,prepared);
