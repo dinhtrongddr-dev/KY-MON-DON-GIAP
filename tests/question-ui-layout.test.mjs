@@ -63,3 +63,12 @@ test('palace translation tabs are keyboard navigable and Five Elements guidance 
   assert.match(html,/id="element-diagram"/);
   assert.match(html,/id="element-reading"/);
 });
+test('Hỏi Việc shows a successful chart timestamp directly under the Lập bàn button',()=>{
+  const submit=html.indexOf('<button class="button button-primary" type="submit"><span>Lập bàn</span>');
+  const status=html.indexOf('id="chart-created-status"',submit);
+  const result=html.indexOf('id="result"',status);
+  assert.ok(submit>=0&&status>submit&&result>status,'created timestamp must sit under the submit button, before result content');
+  assert.match(app,/chartCreatedStatus\.textContent='✓ Đã lập bàn lúc '\+formatCreatedClock\(\)/);
+  assert.match(app,/form\.addEventListener\('input',\(\)=>\{if\(chartCreatedStatus\)chartCreatedStatus\.hidden=true;\}\)/);
+  assert.match(css,/CHART-CREATED-STATUS-1\.0/);
+});

@@ -24,6 +24,7 @@ const latitudeInput=document.querySelector('#latitude');
 const QIMEN_METHOD = 'chaibu';
 const errorBox = document.querySelector("#form-error");
 const resultSection = document.querySelector("#result");
+const chartCreatedStatus=document.querySelector('#chart-created-status');
 const board = document.querySelector("#qimen-board");
 const pillars = document.querySelector("#pillars");
 const summary = document.querySelector("#calculation-summary");
@@ -47,6 +48,7 @@ const questionInput = document.querySelector('#question');
 const topicInput = document.querySelector('#topic');
 topicInput.innerHTML = TOPICS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
 let currentQuestion = '';
+const formatCreatedClock=()=>{const now=new Date();return String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');};
 const nianmingInputIds=['self','subject','customer','competitor','decisionMaker'];
 initNianmingInputMasks(document);
 function currentNianmingInput(){return Object.fromEntries(nianmingInputIds.map(id=>[id,document.querySelector('#nianming-'+id)?.value.trim()||'']).filter(([,value])=>value));}
@@ -446,8 +448,12 @@ function setNow() {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   selectedPalace = null;
-  if(generateAndRender({ scroll: true }))activity.recordChart();
+  if(generateAndRender({ scroll: true })){
+    activity.recordChart();
+    if(chartCreatedStatus){chartCreatedStatus.textContent='✓ Đã lập bàn lúc '+formatCreatedClock();chartCreatedStatus.hidden=false;}
+  }
 });
+form.addEventListener('input',()=>{if(chartCreatedStatus)chartCreatedStatus.hidden=true;});
 
 document.querySelector("#now-button").addEventListener("click", setNow);
 

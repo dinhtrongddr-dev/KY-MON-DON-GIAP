@@ -211,3 +211,11 @@ test('Mệnh AI panel survives result clearing and is placed immediately after t
   const unknownAt=render.indexOf('container.append(renderUnknownBoardNotice(prepared));');
   assert.ok(render.indexOf('if(aiPanel)container.append(aiPanel);',unknownAt)>unknownAt,'unknown-hour flow must also keep the AI panel');
 });
+test('Mệnh shows a successful chart timestamp directly under the Lập Mệnh bàn button',()=>{
+  const submit=html.indexOf('<button class="button button-primary" type="submit"><span>Lập Mệnh bàn</span>');
+  const status=html.indexOf('id="menh-chart-created-status"',submit);
+  const result=html.indexOf('id="menh-result"',status);
+  assert.ok(submit>=0&&status>submit&&result>status,'Mệnh created timestamp must sit under the submit button');
+  assert.match(app,/createdStatus\.textContent='✓ Đã lập bàn lúc '\+formatCreatedClock\(\)/);
+  assert.match(app,/if\(createdStatus\)createdStatus\.hidden=true/);
+});
