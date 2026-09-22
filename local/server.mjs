@@ -106,7 +106,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    })();
    return {job,reused:false};
  };
- const files=new Set(['/index.html','/menh.html','/guide.html','/server.html','/info.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/info.mjs','/qimen.mjs','/ai-local.mjs','/ai-progress-estimate.mjs','/report-export.mjs','/question-report.mjs','/share-view.mjs','/reading-core.mjs','/reading-job-client.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/spirit-activation-ui.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/assets/meditating-side.png','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
+ const files=new Set(['/index.html','/menh.html','/guide.html','/server.html','/info.html','/audit.html','/styles.css','/app.mjs','/menh-app.mjs','/menh-ai.mjs','/menh-view.mjs','/activity-log.mjs','/guide.mjs','/info.mjs','/qimen.mjs','/ai-local.mjs','/ai-progress-estimate.mjs','/report-export.mjs','/question-report.mjs','/share-view.mjs','/reading-core.mjs','/reading-job-client.mjs','/menh-reading-core.mjs','/menh-core.mjs','/reading-focus.mjs','/reading-view.mjs','/spirit-activation-ui.mjs','/favicon.svg','/favicon-32.png','/apple-touch-icon.png','/assets/taiji-ink.png','/assets/meditating-side-user.jpg','/vendor/lunar.js','/vendor/LICENSE.lunar-javascript']);
  const server=http.createServer(async(req,res)=>{
    const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(data));};
    res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');

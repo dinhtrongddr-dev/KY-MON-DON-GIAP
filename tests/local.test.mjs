@@ -56,7 +56,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/ai-progress-estimate.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/spirit-activation-ui.mjs',{headers})).status,200);
- assert.equal((await fetch(url+'/assets/meditating-side.png',{headers})).status,200);
+ assert.equal((await fetch(url+'/assets/meditating-side-user.jpg',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/analysis/spiritActivation.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ai/contextBuilder.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ui-controls.mjs',{headers})).status,200);

@@ -174,7 +174,7 @@ test('mobile activation orientation keeps all dynamic direction data inside one 
   const [ui,css,asset]=await Promise.all([
     readFile(new URL('../dist/spirit-activation-ui.mjs',import.meta.url),'utf8'),
     readFile(new URL('../dist/styles.css',import.meta.url),'utf8'),
-    stat(new URL('../dist/assets/meditating-side.png',import.meta.url))
+    stat(new URL('../dist/assets/meditating-side-user.jpg',import.meta.url))
   ]);
   const hourlyRender=ui.slice(ui.indexOf('export function renderHourlySpiritActivation'),ui.indexOf('export function renderNatalSpiritActivation'));
   const natalRender=ui.slice(ui.indexOf('export function renderNatalSpiritActivation'));
@@ -187,7 +187,7 @@ test('mobile activation orientation keeps all dynamic direction data inside one 
   assert.match(direction,/directionSide\('back','LƯNG',data\.backDirection,data\.spirit\.name\)/);
   assert.match(direction,/directionSide\('face','MẶT',data\.faceDirection,data\.spirit\.name\)/);
   assert.match(direction,/displaySpiritName\(spiritName\)/);
-  assert.match(direction,/\.\/assets\/meditating-side\.png/);
+  assert.match(direction,/\.\/assets\/meditating-side-user\.jpg/);
   assert.doesNotMatch(direction,/<svg|innerHTML|BẠN/);
   assert.ok(asset.size>10000&&asset.size<250000);
   assert.match(css,/KICH-THAN-ORIENTATION-2\.0/);

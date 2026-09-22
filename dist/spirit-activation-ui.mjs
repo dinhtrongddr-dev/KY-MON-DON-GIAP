@@ -39,9 +39,9 @@ function chips(items,max=5,className=''){
 }
 function meditatingFigure(data){
   const img=el('img','meditation-figure-pro');
-  img.src='./assets/meditating-side.png';
+  img.src='./assets/meditating-side-user.jpg';
   img.alt='Người ngồi thiền nhìn nghiêng theo trục '+data.backDirection+' – '+data.faceDirection;
-  img.loading='eager';img.decoding='async';img.width=512;img.height=360;
+  img.loading='eager';img.decoding='async';img.width=510;img.height=620;
   return img;
 }
 function directionSide(kind,label,direction,spiritName){

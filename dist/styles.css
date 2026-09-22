@@ -1797,7 +1797,7 @@ body.share-view-mode main{padding-top:18px}
   width:calc(100% - 14px);
   max-width:180px;
   height:auto;
-  aspect-ratio:512/360;
+  aspect-ratio:510/620;
   object-fit:contain;
   justify-self:center;
   border-radius:11px;
