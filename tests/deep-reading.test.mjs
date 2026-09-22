@@ -175,15 +175,20 @@ test('negotiation-style stage overclaim, repeated verification and excess emphas
   assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
 });
 
-test('certainty or probability wording is neutralized without discarding an otherwise valid negotiation reading',async()=>{
+test('certainty repair lowers confidence in place while preserving subject, mechanism, condition and action',async()=>{
   const p=prepareReading({...body,mode:'negotiation',question:'Tôi nên đàm phán điều khoản nào trước để tiến tới thỏa thuận?'});let count=0;
   const result=await interpretReading(p,{runner:async()=>{
     count++;const r=readingFixture(p);
-    r.summary.text+=' Kết quả chắc chắn sẽ thành công.';
-    r.actions[0].text+=' Xác suất thành công 80%.';
+    r.summary.text+=' Nếu người duyệt xác nhận điều khoản cuối, hợp đồng chắc chắn sẽ thành công.';
+    r.actions[0].text+=' Sau khi chốt phạm vi, xác suất thành công 80% nếu phản hồi thực tế phù hợp.';
     return r;
   }});
   assert.equal(count,2);assert.equal(result.status,'reading');
-  assert.doesNotMatch(JSON.stringify(result),/chắc chắn sẽ thành công|80%/i);
+  const prose=JSON.stringify(result);
+  assert.doesNotMatch(prose,/chắc chắn sẽ thành công|80%|xác suất thành công/i);
+  assert.match(result.summary.text,/Nếu người duyệt xác nhận điều khoản cuối, hợp đồng có khả năng thành công/i);
+  assert.match(result.actions[0].text,/Sau khi chốt phạm vi/i);
+  assert.match(result.actions[0].text,/nếu phản hồi thực tế phù hợp/i);
+  assert.doesNotMatch(prose,/Kết luận chỉ mô tả xu hướng có điều kiện; không quy đổi thành xác suất hoặc kết quả chắc chắn/i);
   assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
 });
