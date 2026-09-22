@@ -187,3 +187,14 @@ test('rectification accepts comma-separated dates and ignores whitespace',()=>{
   assert.match(app,/replace\(\/\\s\+\/g,''\)/);
   assert.match(html,/Khoảng trắng không ảnh hưởng/);
 });
+test('Mệnh user-facing cards hide internal versions and stringify structure conditions as natural Vietnamese',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.doesNotMatch(view,/semantic-version',semantic\.version/);
+  assert.doesNotMatch(view,/semantic-version','Mệnh 1\.1/);
+  assert.doesNotMatch(view,/conditions\.push\(layer\.structure\.doorRelation\)/);
+  assert.match(view,/plainStructureCondition/);
+  assert.match(view,/Cách hành động đang tạo áp lực lên hoàn cảnh/);
+  assert.match(view,/Hoàn cảnh đang cản cách triển khai/);
+  assert.doesNotMatch(html,/Mệnh 1\.1/);
+  assert.doesNotMatch(app,/Mệnh 1\.0/);
+});

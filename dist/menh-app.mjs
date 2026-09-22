@@ -60,7 +60,7 @@ function collectTimePlace(){
 function syncTimePlace(){
   const iana=timezoneMode.value==='iana_civil';
   timezone.disabled=iana;ianaTimezone.disabled=!iana;dstDisambiguation.disabled=!iana;
-  const timezoneHelp=$('menh-timezone-help');if(timezoneHelp)timezoneHelp.textContent=iana?'IANA quyết định UTC offset lịch sử/DST tại ngày sinh; ô UTC cố định tạm không dùng.':'UTC offset cố định · tương thích Mệnh 1.0';
+  const timezoneHelp=$('menh-timezone-help');if(timezoneHelp)timezoneHelp.textContent=iana?'Múi giờ theo địa điểm sinh tự áp dụng chênh lệch lịch sử tại ngày sinh; ô UTC cố định tạm không dùng.':'Dùng UTC offset cố định theo giờ sinh đã nhập';
 }
 export function collectMenhForm(){
   return {

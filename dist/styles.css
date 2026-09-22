@@ -1864,3 +1864,55 @@ body.share-view-mode main{padding-top:18px}
   .spirit-card-identity .spirit-name,
   .spirit-card-identity .spirit-location{overflow-wrap:anywhere}
 }
+/* MOBILE-OVERFLOW-GUARD-1.0 */
+.spirit-card,.spirit-card-summary,.spirit-card-details,.spirit-card-top,.spirit-card-footer,.spirit-card-meta,.spirit-card-identity{
+  box-sizing:border-box;
+  max-width:100%;
+}
+.spirit-card{width:100%;overflow:hidden}
+.spirit-card-summary,.spirit-card-details{width:100%;min-width:0}
+.spirit-card-top,.spirit-card-footer{min-width:0}
+.spirit-card-identity,.spirit-modern-meaning,.spirit-meta-pill{
+  min-width:0;
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+.spirit-alternatives,.spirit-card-grid{box-sizing:border-box;width:100%;max-width:100%;min-width:0}
+@media(max-width:560px){
+  .spirit-card{
+    width:calc(100% - 8px);
+    max-width:calc(100% - 8px);
+    margin-inline:4px;
+  }
+  .spirit-card-summary{padding:14px 15px 13px}
+  .spirit-card-details{padding:11px 15px 14px}
+  .spirit-card-top{
+    grid-template-columns:minmax(0,1fr) minmax(86px,108px);
+    gap:10px;
+  }
+  .spirit-card-badges{width:100%;max-width:108px}
+  .spirit-card-badges .spirit-level-badge,
+  .spirit-card-badges .spirit-priority-badge{
+    width:auto;
+    max-width:108px;
+    white-space:normal;
+    overflow-wrap:break-word;
+  }
+  .spirit-modern-meaning{
+    width:100%;
+    max-width:100%;
+    padding-right:2px;
+  }
+  .spirit-card-footer{
+    width:100%;
+    max-width:100%;
+  }
+  .spirit-card-meta{
+    flex:1 1 auto;
+    max-width:calc(100% - 35px);
+  }
+  .spirit-meta-pill{
+    max-width:100%;
+    white-space:normal;
+  }
+}

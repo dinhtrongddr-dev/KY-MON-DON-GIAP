@@ -150,32 +150,40 @@ function semanticCardNode(palace,board,conditions=null,analysisLayer=null){
   const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board,conditions,strength:analysisLayer?.strength||null});
   const section=el('section','semantic-card');section.setAttribute('aria-label','Dịch nghĩa nhanh theo Mệnh bàn');
   const head=el('div','semantic-card-head'),eyebrow=el('p','eyebrow','Dịch nghĩa nhanh · '+semantic.domainLabel);
-  head.append(eyebrow,el('span','semantic-version',semantic.version));section.append(head);
+  head.append(eyebrow);section.append(head);
   const chips=el('div','semantic-keywords');for(const word of semantic.keywords.slice(0,3))chips.append(el('span','',word));section.append(chips);
   section.append(el('p','semantic-summary',semantic.summary));
   const details=el('details','semantic-components'),summary=el('summary','','Xem nghĩa từng thành phần'),list=el('ul');
   for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));list.append(li);}
   details.append(summary,list);section.append(details);return section;
 }
+function plainStructureCondition(relation){
+  const code=relation?.code||relation;
+  if(code==='door_controls_palace')return 'Cách hành động đang tạo áp lực lên hoàn cảnh';
+  if(code==='palace_controls_door')return 'Hoàn cảnh đang cản cách triển khai';
+  return null;
+}
+function plainFourHarm(harm){
+  if(harm?.code==='void')return 'Vai trò liên quan đang thiếu điểm tựa rõ ràng';
+  if(harm?.code==='door_pressure')return 'Cách hành động đang tạo áp lực lên hoàn cảnh';
+  if(harm?.code==='punishment')return 'Có cấu trúc dễ tự gây cản trở khi hành động';
+  if(harm?.code==='tomb')return 'Nguồn lực liên quan đang bị bó hẹp, khó phát huy hết';
+  return null;
+}
 function strengthStructureCard(layer){
   if(!layer)return null;
   const section=el('section','semantic-card menh-layer-card'),head=el('div','semantic-card-head');
-  head.append(el('p','eyebrow','Lực & điều kiện'),el('span','semantic-version','Mệnh 1.1'));section.append(head);
+  head.append(el('p','eyebrow','Lực & điều kiện'));section.append(head);
   const strength=layer.strength;
-  section.append(el('p','semantic-summary','Cửu Tinh '+strength.star.level+' ('+strength.star.status+') · Bát Môn '+(strength.door?strength.door.level+' ('+strength.door.status+')':'không có')+' · môi trường cung '+strength.palace.level+' ('+strength.palace.status+').'));
+  section.append(el('p','semantic-summary','Cửu Tinh đang '+strength.star.level+' · Bát Môn '+(strength.door?'đang '+strength.door.level:'không có')+' · môi trường cung đang '+strength.palace.level+'.'));
   const conditions=[];
-  if(layer.structure.doorRelation&&layer.structure.doorRelation!=='Môn–Cung không tương khắc')conditions.push(layer.structure.doorRelation);
-  for(const harm of layer.structure.fourHarms){
-    if(harm.code==='void')conditions.push('Tuần Không');
-    else if(harm.code==='door_pressure')conditions.push('Môn khắc Cung');
-    else if(harm.code==='punishment')conditions.push((harm.stem||'Can')+' kích hình');
-    else if(harm.code==='tomb')conditions.push((harm.stem||'Tam Kỳ')+' nhập mộ');
-  }
-  const modern=layer.structure.stemResponses.filter(x=>x.actorIds?.length).map(x=>x.plainMeaning);
-  const patterns=layer.structure.patterns.filter(x=>x.plainMeaning).map(x=>x.plainMeaning);
-  if(conditions.length)section.append(el('p','semantic-state','Điều kiện cần lưu ý: '+[...new Set(conditions)].join(' · ')+'.'));
+  const doorCondition=plainStructureCondition(layer.structure.doorRelation);if(doorCondition)conditions.push(doorCondition);
+  for(const harm of layer.structure.fourHarms){const text=plainFourHarm(harm);if(text)conditions.push(text);}
+  const modern=layer.structure.stemResponses.filter(x=>x.actorIds?.length).map(x=>x.plainMeaning).filter(Boolean);
+  const patterns=layer.structure.patterns.filter(x=>x.plainMeaning).map(x=>x.plainMeaning).filter(Boolean);
+  if(conditions.length)section.append(el('p','semantic-state','Điều cần lưu ý: '+[...new Set(conditions)].join(' · ')+'.'));
   for(const text of [...new Set([...modern,...patterns])].slice(0,3))section.append(el('p','',text));
-  section.append(el('p','ai-note','Mức lực và cấu trúc chỉ điều chỉnh cách phát huy của cung; không phải xác suất và không tự tạo sự kiện ngoài đời.'));
+  section.append(el('p','ai-note','Mức mạnh yếu và các điều kiện chỉ cho biết cung này dễ hay khó phát huy; không phải xác suất và không tự quyết định kết quả ngoài đời.'));
   return section;
 }
 function renderMenhPalaceDetail(detail,titleNode,palace,board,analysisLayers=null){
@@ -277,7 +285,7 @@ function renderMenhMethodDetails(board,timePlace=null){
   const p2=el('p');p2.append(el('strong','','Giao tiết. '),document.createTextNode((board.term?.vi||'Tiết khí')+' bắt đầu '+formatInstantAtOffset(board.term.utcMs,offset,true)+(board.nextTerm?' ; tiết kế '+board.nextTerm.vi+' lúc '+formatInstantAtOffset(board.nextTerm.utcMs,offset,true):'')+'.'));
   const basis=timePlace?.mode==='iana_civil'
     ?'Dùng giờ dân dụng theo IANA '+timePlace.timeZone+'; offset lịch sử tại thời điểm sinh là '+formatOffset(timePlace.effectiveOffsetHours)+'.'
-    :'Dùng giờ sinh đã nhập theo UTC offset cố định '+formatOffset(offset)+'; tương thích Mệnh 1.0.';
+    :'Dùng giờ sinh đã nhập theo UTC offset cố định '+formatOffset(offset)+'.';
   const p3=el('p');p3.append(el('strong','','Thời gian đầu vào. '),document.createTextNode(basis));
   const solar=timePlace?.solar;
   const p4=solar?el('p'):null;
