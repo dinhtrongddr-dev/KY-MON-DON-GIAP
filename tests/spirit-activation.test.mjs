@@ -169,3 +169,23 @@ test('hourly spirit cards are one expandable frame with priority merged into the
   assert.doesNotMatch(hourly,/Xem ý nghĩa & lưu ý/);
   assert.doesNotMatch(render,/const recommendation=el\('section','spirit-recommendation'/);
 });
+test('mobile activation UI hides technical version labels, prefixes deity names, and uses a seated visual for orientation',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const [ui,css]=await Promise.all([
+    readFile(new URL('../dist/spirit-activation-ui.mjs',import.meta.url),'utf8'),
+    readFile(new URL('../dist/styles.css',import.meta.url),'utf8')
+  ]);
+  const hourlyRender=ui.slice(ui.indexOf('export function renderHourlySpiritActivation'),ui.indexOf('export function renderNatalSpiritActivation'));
+  const natalRender=ui.slice(ui.indexOf('export function renderNatalSpiritActivation'));
+  const direction=ui.slice(ui.indexOf('function directionDiagram'),ui.indexOf('function detailList'));
+  assert.doesNotMatch(hourlyRender,/semantic-version/);
+  assert.doesNotMatch(natalRender,/semantic-version/);
+  assert.match(ui,/displaySpiritName/);
+  assert.match(direction,/PHÍA SAU LƯNG/);
+  assert.match(direction,/displaySpiritName\(data\.spirit\.name\)/);
+  assert.match(direction,/meditation-figure/);
+  assert.doesNotMatch(direction,/BẠN/);
+  assert.match(css,/KM-SPIRIT-MOBILE-1\.3/);
+  assert.match(css,/\.meditation-figure/);
+  assert.match(css,/@media\(max-width:560px\)/);
+});

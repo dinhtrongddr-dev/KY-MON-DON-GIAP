@@ -1492,3 +1492,62 @@ body.share-view-mode main{padding-top:18px}
   .floating-result-nav{right:10px;gap:7px}
   .floating-result-button{width:auto;height:46px;min-width:88px;min-height:46px;padding:0 12px;font-size:.7rem}
 }
+/* KM-SPIRIT-MOBILE-1.3 · natural labels + compact mobile + 3D seated figure */
+.spirit-direction-value{display:block;margin-top:3px;color:#4e5d55;font-size:.78rem;font-weight:850}
+.spirit-direction-person{display:grid;grid-template-columns:18px 76px 18px;align-items:center;justify-content:center;gap:2px;color:#9b741e}
+.spirit-direction-flow{font-size:1.2rem;font-weight:950;line-height:1}
+.meditation-figure{position:relative;display:inline-block;width:72px;height:72px;filter:drop-shadow(0 6px 7px rgba(23,63,49,.18))}
+.meditation-figure i{position:absolute;display:block}
+.meditation-head{left:27px;top:4px;width:22px;height:24px;border-radius:48% 52% 46% 54%;background:radial-gradient(circle at 38% 30%,#f7d7b2 0 26%,#d39b70 58%,#9a674c 100%);box-shadow:inset -3px -3px 5px rgba(82,42,24,.16)}
+.meditation-head:before{content:'';position:absolute;left:2px;top:-2px;width:18px;height:8px;border-radius:80% 80% 20% 20%;background:linear-gradient(135deg,#26352f,#0f1e19)}
+.meditation-head:after{content:'';position:absolute;right:-4px;top:9px;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:6px solid #c88863}
+.meditation-body{left:22px;top:27px;width:32px;height:29px;border-radius:48% 54% 36% 40%;background:linear-gradient(145deg,#2b7b59,#144c39 58%,#0c372a);box-shadow:inset 5px 4px 8px rgba(255,255,255,.12),inset -5px -6px 8px rgba(0,0,0,.14)}
+.meditation-arm{top:34px;width:29px;height:9px;border-radius:999px;background:linear-gradient(90deg,#2c7758,#153f31)}
+.meditation-arm-a{left:8px;transform:rotate(25deg)}
+.meditation-arm-b{right:6px;transform:rotate(155deg)}
+.meditation-leg{bottom:4px;width:38px;height:15px;border-radius:60% 70% 54% 70%;background:linear-gradient(145deg,#cba33f,#8f6c1c);box-shadow:inset 3px 3px 5px rgba(255,255,255,.15),inset -4px -3px 6px rgba(70,45,4,.12)}
+.meditation-leg-a{left:4px;transform:rotate(-8deg)}
+.meditation-leg-b{right:2px;transform:rotate(9deg)}
+@media(max-width:560px){
+  .spirit-activation-panel{margin-top:12px}
+  .spirit-panel-head{display:block}
+  .spirit-panel-head .eyebrow{font-size:.76rem;letter-spacing:.08em;line-height:1.3}
+  .spirit-panel-head h2{max-width:none;margin-top:4px;font-size:1.48rem;line-height:1.14;letter-spacing:-.02em}
+  .spirit-intro-callout{margin:10px 0 12px;padding:12px 13px;gap:8px;border-left-width:4px}
+  .spirit-intro-callout strong{font-size:.92rem}
+  .spirit-intro-callout p{font-size:.88rem;line-height:1.44}
+  .spirit-purpose-chips{gap:4px;margin-top:2px}
+  .spirit-purpose-chips .spirit-chip{padding:4px 7px;font-size:.65rem}
+  .spirit-intro-note{padding-top:8px!important;font-size:.75rem!important;line-height:1.42!important}
+  .spirit-toolbar{margin:10px 0}
+  .spirit-goal-field>span{font-size:.8rem}
+  .spirit-goal-field select{min-height:46px;font-size:.92rem}
+  .spirit-card-summary{padding:10px 11px}
+  .spirit-name{font-size:1rem}
+  .spirit-card.is-recommended .spirit-name{font-size:1.08rem}
+  .spirit-modern-meaning{font-size:.82rem;line-height:1.42}
+  .spirit-practice-card{margin-top:12px;padding:13px 11px;border-width:1px}
+  .spirit-practice-head{gap:8px}
+  .spirit-practice-head h3{font-size:1.28rem;line-height:1.18}
+  .spirit-practice-close{width:34px;height:34px;flex:0 0 34px}
+}@media(max-width:560px){
+  .spirit-practice-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px;margin:10px 0 12px;padding:9px 10px}
+  .spirit-practice-goal{grid-column:1/-1;justify-self:start}
+  .spirit-practice-summary strong{font-size:.84rem;line-height:1.25}
+  .spirit-practice-summary>span:last-child{margin-left:0;justify-self:end;font-size:.8rem}
+  .spirit-practice-block{grid-template-columns:28px minmax(0,1fr);gap:8px;padding:10px 0}
+  .spirit-step-number{width:26px;height:26px;font-size:.82rem}
+  .spirit-practice-block-body h4{font-size:.92rem;line-height:1.25}
+  .spirit-practice-block-body p{font-size:.85rem;line-height:1.46}
+  .spirit-direction-diagram{grid-template-columns:minmax(0,1fr) 88px minmax(0,1fr);gap:3px;padding:10px 6px}
+  .spirit-direction-side small{font-size:.54rem;letter-spacing:.06em}
+  .spirit-direction-side strong{font-size:.78rem;line-height:1.18;overflow-wrap:anywhere}
+  .spirit-direction-value{font-size:.68rem}
+  .spirit-direction-person{grid-template-columns:12px 62px 12px;gap:1px}
+  .meditation-figure{width:60px;height:62px;transform:scale(.88)}
+  .spirit-direction-flow{font-size:1rem}
+  .spirit-intention-block{margin:6px -3px 0;padding:11px 4px}
+  .spirit-intention-script{margin:7px 0;padding:10px 11px;font-size:.88rem;line-height:1.5}
+  .spirit-observation-chips .spirit-chip{font-size:.64rem}
+  .spirit-timer{font-size:1.8rem}
+}

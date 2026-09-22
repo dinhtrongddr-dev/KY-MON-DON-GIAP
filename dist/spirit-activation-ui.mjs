@@ -6,6 +6,7 @@ const el=(tag,className,text)=>{const node=document.createElement(tag);if(classN
 const safe=(value,max=1200)=>String(value??'').trim().slice(0,max);
 const two=value=>String(value).padStart(2,'0');
 const formatTimer=seconds=>`${two(Math.floor(seconds/60))}:${two(seconds%60)}`;
+const displaySpiritName=name=>/^Thần\s+/i.test(String(name||''))?String(name):`Thần ${name}`;
 const goalById=id=>ACTIVATION_GOALS.find(x=>x.id===id)||ACTIVATION_GOALS.find(x=>x.id==='decision');
 
 export function createActivationSessionStore({storage,now=()=>Date.now()}={}){
@@ -38,10 +39,12 @@ function chips(items,max=5,className=''){
 }
 function directionDiagram(data){
   const box=el('div','spirit-direction-diagram');
-  const back=el('div','spirit-direction-side'),person=el('div','spirit-direction-person'),face=el('div','spirit-direction-side');
-  back.append(el('small','','PHÍA SAU LƯNG'),el('strong','',data.backDirection));
-  person.append(el('span','','↑'),el('b','','BẠN'),el('span','','↑'));
-  face.append(el('small','','MẶT NHÌN'),el('strong','',data.faceDirection));
+  const back=el('div','spirit-direction-side spirit-direction-back'),person=el('div','spirit-direction-person'),face=el('div','spirit-direction-side spirit-direction-face');
+  back.append(el('small','','PHÍA SAU LƯNG'),el('strong','',displaySpiritName(data.spirit.name)),el('span','spirit-direction-value',data.backDirection));
+  const figure=el('span','meditation-figure');figure.setAttribute('role','img');figure.setAttribute('aria-label','Người ngồi thiền, quay mặt về '+data.faceDirection);
+  figure.append(el('i','meditation-head'),el('i','meditation-body'),el('i','meditation-arm meditation-arm-a'),el('i','meditation-arm meditation-arm-b'),el('i','meditation-leg meditation-leg-a'),el('i','meditation-leg meditation-leg-b'));
+  person.append(el('span','spirit-direction-flow spirit-direction-flow-back','←'),figure,el('span','spirit-direction-flow spirit-direction-flow-face','→'));
+  face.append(el('small','','MẶT NHÌN'),el('strong','',data.faceDirection),el('span','spirit-direction-value','Hướng thực hành'));
   box.append(back,person,face);return box;
 }
 function detailList(title,items,className=''){
@@ -85,7 +88,7 @@ function observationPrompts(goalId){
 function practicePanel(data,{chartType='hourly',goalCategory='decision'}={}){
   const goal=goalById(goalCategory),panel=el('section','spirit-practice-card');panel.dataset.state='ready';
   const head=el('div','spirit-practice-head'),title=el('div');
-  title.append(el('p','eyebrow','THỰC HÀNH'),el('h3','','Thực hành với '+data.spirit.name));
+  title.append(el('p','eyebrow','THỰC HÀNH'),el('h3','','Thực hành với '+displaySpiritName(data.spirit.name)));
   const close=el('button','spirit-practice-close','×');close.type='button';close.setAttribute('aria-label','Đóng hướng dẫn thực hành');
   head.append(title,close);panel.append(head);
 
@@ -107,8 +110,8 @@ function practicePanel(data,{chartType='hourly',goalCategory='decision'}={}){
   intention.append(el('span','spirit-step-number','3'),el('div','spirit-practice-block-body'));
   const body=intention.lastChild;body.append(el('h4','','Đặt ý niệm — làm đúng như sau'),el('p','spirit-intention-instruction','Đọc thầm câu dưới đây đúng 1 lần, sau đó thôi nhắc lại:'));
   const script=el('blockquote','spirit-intention-script','“'+(goalCategory==='natal'
-    ?`Trong phiên này, tôi quan sát phẩm chất của ${data.spirit.name} trong cách mình suy nghĩ và hành động. Tôi muốn nhận ra một thế mạnh đang dùng tốt, một điểm cần tiết chế, và một việc thực tế có thể điều chỉnh.`
-    :goalIntention(goalCategory,data.spirit.name))+'”');
+    ?`Trong phiên này, tôi quan sát phẩm chất của ${displaySpiritName(data.spirit.name)} trong cách mình suy nghĩ và hành động. Tôi muốn nhận ra một thế mạnh đang dùng tốt, một điểm cần tiết chế, và một việc thực tế có thể điều chỉnh.`
+    :goalIntention(goalCategory,displaySpiritName(data.spirit.name)))+'”');
   body.append(script,el('p','spirit-intention-instruction','Trong lúc tĩnh, nếu có ý nghĩ xuất hiện thì chỉ ghi nhận 3 nhóm sau:'));
   body.append(chips(observationPrompts(goalCategory),3,'spirit-observation-chips'));panel.append(intention);
 
@@ -160,7 +163,7 @@ function openPractice(root,data,options){
 function researchDetails(data){
   const details=el('details','spirit-research-details'),summary=el('summary','','Xem cấu trúc đang xét');details.append(summary);
   const grid=el('div','spirit-structure-grid');
-  const rows=[['Cung',data.palaceName+' · '+data.direction],['Thần',data.spirit.name],['Tinh',data.star.name],['Môn',data.door.name],['Thiên can',data.stem||'—']];
+  const rows=[['Cung',data.palaceName+' · '+data.direction],['Bát Thần',displaySpiritName(data.spirit.name)],['Tinh',data.star.name],['Môn',data.door.name],['Thiên can',data.stem||'—']];
   for(const [label,value] of rows){const box=el('div');box.append(el('small','',label),el('strong','',value));grid.append(box);}
   details.append(grid);
   const reasons=detailList('Vì sao được xếp mức này',data.reasons);if(reasons)details.append(reasons);
@@ -171,7 +174,7 @@ function hourlyCard(root,data,recommended,goalId){
   const card=el('details','spirit-card'+(recommended?' is-recommended':'')+' '+levelClass(data.activationLevel));
   const summary=el('summary','spirit-card-summary');
   const main=el('div','spirit-card-main'),head=el('div','spirit-card-head'),title=el('div');
-  title.append(el('strong','spirit-name',data.spirit.name),el('span','spirit-location',data.palaceName+' · '+data.direction));
+  title.append(el('strong','spirit-name',displaySpiritName(data.spirit.name)),el('span','spirit-location',data.palaceName+' · '+data.direction));
   const badges=el('div','spirit-card-badges');
   if(recommended)badges.append(el('span','spirit-priority-badge','ƯU TIÊN HIỆN TẠI'));
   badges.append(el('span','spirit-level-badge',data.activationLevel));head.append(title,badges);main.append(head);
@@ -184,7 +187,7 @@ function hourlyCard(root,data,recommended,goalId){
   if(data.semantic.bestFor?.length){body.append(el('h4','','Phù hợp cho'),chips(data.semantic.bestFor,4,'spirit-bestfor-chips'));}
   const risks=detailList('Mặt cần thận trọng',data.semantic.risks?.slice(0,3),'spirit-warning-block');if(risks)body.append(risks);
   body.append(researchDetails(data));
-  const practice=el('button',recommended?'button button-primary spirit-practice-open':'button spirit-practice-open','Thực hành với '+data.spirit.name);
+  const practice=el('button',recommended?'button button-primary spirit-practice-open':'button spirit-practice-open','Thực hành với '+displaySpiritName(data.spirit.name));
   practice.type='button';practice.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openPractice(root,data,{chartType:'hourly',goalCategory:goalId});});body.append(practice);
   card.append(body);return card;
 }
@@ -192,7 +195,7 @@ function introCallout(){
   const intro=el('div','spirit-intro-callout'),copy=el('div');
   copy.append(el('strong','','Dùng phần này khi nào?'),el('p','','Khi bạn đã có một việc cụ thể và muốn chọn phương vị + trạng thái phù hợp để chuẩn bị trước khi hành động — như đàm phán, làm việc, đầu tư, học tập, quan hệ hoặc tĩnh tâm.'));
   intro.append(copy,chips(['Chọn trạng thái','Chọn phương vị','Chuẩn bị trước hành động'],3,'spirit-purpose-chips'));
-  const note=el('p','spirit-intro-note','Không dùng để thay thế quyết định thực tế: engine chỉ gợi ý cách “đặt mình” trước khi làm việc, còn kết quả vẫn cần kiểm chứng bằng phản hồi và dữ kiện.');
+  const note=el('p','spirit-intro-note','Không dùng để thay thế quyết định thực tế: hệ thống chỉ gợi ý cách “đặt mình” trước khi làm việc, còn kết quả vẫn cần kiểm chứng bằng phản hồi và dữ kiện.');
   intro.append(note);return intro;
 }
 
@@ -205,7 +208,7 @@ export function renderHourlySpiritActivation(container,{board,analysis=null,goal
 
   const head=el('div','spirit-panel-head'),title=el('div');
   title.append(el('p','eyebrow','BÁT THẦN & PHƯƠNG VỊ'),el('h2','','Chọn trạng thái và phương vị hỗ trợ trước khi hành động'));
-  head.append(title,el('span','semantic-version',result.version));container.append(head,introCallout());
+  head.append(title);container.append(head,introCallout());
 
   const toolbar=el('div','spirit-toolbar'),label=el('label','field spirit-goal-field');
   label.append(el('span','','Mục tiêu hiện tại'));
@@ -233,18 +236,18 @@ export function renderHourlySpiritActivation(container,{board,analysis=null,goal
 export function renderNatalSpiritActivation(container,{board,selfPalaceNumber,analysisLayers=null}={}){
   if(!container||!board||!selfPalaceNumber)return null;
   const data=natalSpiritProfile(board,selfPalaceNumber,{analysisLayers});container.replaceChildren();container.dataset.version=data.version;
-  const head=el('div','spirit-panel-head'),title=el('div');title.append(el('p','eyebrow','THẦN BẢN MỆNH'),el('h2','','Phẩm chất Bát Thần nổi bật trong Mệnh bàn của bạn'));head.append(title,el('span','semantic-version',data.version));container.append(head);
+  const head=el('div','spirit-panel-head'),title=el('div');title.append(el('p','eyebrow','THẦN BẢN MỆNH'),el('h2','','Phẩm chất Bát Thần nổi bật trong Mệnh bàn của bạn'));head.append(title);container.append(head);
   const intro=el('div','spirit-intro-callout spirit-natal-intro');
   intro.append(el('strong','','Dùng phần này để làm gì?'),el('p','','Để hiểu kiểu trạng thái bạn dễ phát huy tự nhiên, điểm mạnh nên tận dụng và mặt cần tiết chế khi tự quan sát hoặc chuẩn bị cho một việc quan trọng.'));
   container.append(intro);
 
-  const hero=el('article','spirit-natal-hero'),top=el('div','spirit-card-head'),name=el('div');name.append(el('strong','spirit-name',data.spirit.name),el('span','spirit-location',data.palaceName+' · '+data.direction));top.append(name);hero.append(top);
+  const hero=el('article','spirit-natal-hero'),top=el('div','spirit-card-head'),name=el('div');name.append(el('strong','spirit-name',displaySpiritName(data.spirit.name)),el('span','spirit-location',data.palaceName+' · '+data.direction));top.append(name);hero.append(top);
   hero.append(el('p','spirit-modern-meaning',data.semantic.modernMeaning||data.semantic.coreMeaning),chips(data.semantic.keywords,4,'spirit-keyword-row'));
   const twoCol=el('div','spirit-natal-traits');
   const strengths=detailList('Thế mạnh',data.semantic.strengths?.slice(0,4));if(strengths)twoCol.append(strengths);
   const risks=detailList('Cần tiết chế',data.semantic.risks?.slice(0,4),'spirit-warning-block');if(risks)twoCol.append(risks);
   hero.append(twoCol,researchDetails({...data,reasons:[],activationLevel:'',warnings:data.warnings||[]}));
-  const practice=el('button','button button-primary spirit-practice-open','Thực hành với '+data.spirit.name);practice.type='button';practice.addEventListener('click',()=>openPractice(container,data,{chartType:'destiny',goalCategory:'natal'}));hero.append(practice);container.append(hero);
+  const practice=el('button','button button-primary spirit-practice-open','Thực hành với '+displaySpiritName(data.spirit.name));practice.type='button';practice.addEventListener('click',()=>openPractice(container,data,{chartType:'destiny',goalCategory:'natal'}));hero.append(practice);container.append(hero);
   const compare=el('div','spirit-natal-vs-hourly');compare.append(el('strong','','Phân biệt nhanh'),el('span','','Bản mệnh = phẩm chất cá nhân tương đối ổn định · Thời bàn = phương vị/trạng thái thay đổi theo từng thời điểm.'));
   container.append(compare);return data;
 }
