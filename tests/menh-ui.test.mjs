@@ -109,8 +109,9 @@ test('Mệnh puts AI immediately after the board, exposes Xem Bàn and Kích Th�
   assert.match(html,/id="menh-spirit-switch"[^>]*>Kích Thần<\/button>/);
   const workspaceAppend=view.indexOf('container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));');
   const aiAppend=view.indexOf('if(aiPanel)container.append(aiPanel);',workspaceAppend);
-  const spiritAppend=view.indexOf("const spiritPanel=el('section'",aiAppend);
-  assert.ok(workspaceAppend>0&&aiAppend>workspaceAppend&&spiritAppend>aiAppend,'Mệnh AI panel must sit immediately after the board and before deeper panels');
+  const pillarsAppend=view.indexOf('container.append(renderMenhChartMeta(board));',aiAppend);
+  const spiritAppend=view.indexOf("const spiritPanel=el('section'",pillarsAppend);
+  assert.ok(workspaceAppend>0&&aiAppend>workspaceAppend&&pillarsAppend>aiAppend&&spiritAppend>pillarsAppend,'Mệnh must render Bàn → AI → Tứ Trụ → deeper panels');
   assert.match(ai,/resultSwitch\.dataset\.target=aiTarget\?'ai':'board'/);
   assert.match(ai,/answer\.childElementCount>0/);
   assert.match(app,/floatingNav\.hidden=false/);
@@ -206,8 +207,9 @@ test('Mệnh AI panel survives result clearing and is placed immediately after t
   const render=view.slice(view.indexOf('export function renderMenhDeterministic'),view.indexOf('function focusParagraph'));
   const boardAt=render.indexOf('container.append(renderMenhWorkspace');
   const aiAt=render.indexOf('if(aiPanel)container.append(aiPanel);',boardAt);
-  const spiritAt=render.indexOf("const spiritPanel=el('section'",aiAt);
-  assert.ok(boardAt>=0&&aiAt>boardAt&&spiritAt>aiAt,'AI must sit after the Mệnh board and before deeper panels');
+  const pillarsAt=render.indexOf('container.append(renderMenhChartMeta(board));',aiAt);
+  const spiritAt=render.indexOf("const spiritPanel=el('section'",pillarsAt);
+  assert.ok(boardAt>=0&&aiAt>boardAt&&pillarsAt>aiAt&&spiritAt>pillarsAt,'AI must sit after the Mệnh board and before Tứ Trụ/deeper panels');
   const unknownAt=render.indexOf('container.append(renderUnknownBoardNotice(prepared));');
   assert.ok(render.indexOf('if(aiPanel)container.append(aiPanel);',unknownAt)>unknownAt,'unknown-hour flow must also keep the AI panel');
 });

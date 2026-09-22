@@ -428,9 +428,9 @@ export function renderMenhDeterministic(container,prepared){
     if(!board)throw new Error('Thiếu Mệnh bàn đã dùng để luận.');
     const selfEvidence=(prepared.result.evidence||[]).find(e=>e.evidenceId==='SELF_DAY_STEM');
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
-    container.append(renderMenhChartMeta(board));
     container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));
     if(aiPanel)container.append(aiPanel);
+    container.append(renderMenhChartMeta(board));
     const spiritPanel=el('section','learning-panel spirit-activation-panel menh-spirit-activation');spiritPanel.setAttribute('aria-label','Thần bản mệnh và hướng thực hành');
     renderNatalSpiritActivation(spiritPanel,{board,selfPalaceNumber,analysisLayers:prepared.result.analysisLayers});
     container.append(spiritPanel);
