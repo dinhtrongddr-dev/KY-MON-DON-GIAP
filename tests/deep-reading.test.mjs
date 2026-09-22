@@ -143,3 +143,19 @@ test('a repeated invented event assertion is neutralized without discarding the 
   assert.match(result.situation.text,/không xác nhận một sự kiện ngoài đời/i);
   assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
 });
+
+test('repeated verification language is deduplicated after the bounded rewrite instead of forcing verified fallback',async()=>{
+  const p=prepareReading(body);let count=0;
+  const result=await interpretReading(p,{runner:async()=>{
+    count++;const r=readingFixture(p);
+    r.summary.text+=' Bạn cần xác minh quyền phê duyệt.';
+    r.situation.text+=' Bạn cần kiểm tra quyền phê duyệt.';
+    r.bottleneck.text+=' Bạn nên xác nhận quyền phê duyệt.';
+    r.actions[0].text+=' Hãy làm rõ quyền phê duyệt.';
+    return r;
+  }});
+  assert.equal(count,2);assert.equal(result.status,'reading');
+  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
+  const prose=JSON.stringify(result);
+  assert.ok((prose.match(/(?:xác minh|kiểm tra|xác nhận|làm rõ) quyền phê duyệt/giu)||[]).length<=2);
+});

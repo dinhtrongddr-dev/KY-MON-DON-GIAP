@@ -47,6 +47,30 @@ function repairUnsupportedEvents(reading,message){
   return attachAiRoute(copy,route);
 }
 
+const REPETITION_ERROR=/Các phần lặp ý (?:payment_)?verification từ ba lần/;
+const VERIFY_IMPERATIVE=/(?:cần|phải|hãy|nên)[^.!?]{0,50}?(?:xác minh|kiểm tra|xác nhận|làm rõ)/iu;
+const PAYMENT_CONTEXT=/\b(?:thanh toán|cam kết|phản hồi|quyền|phê duyệt)\b/iu;
+function repairRepeatedVerification(reading,message){
+  if(!REPETITION_ERROR.test(message)||!reading||typeof reading!=='object')return null;
+  const route=aiRouteOf(reading),copy=structuredClone(reading),seen={verification:0,payment_verification:0};
+  const clean=value=>{
+    if(typeof value!=='string')return value;
+    return value.split(/(?<=[.!?])\s+/).map(sentence=>{
+      if(!VERIFY_IMPERATIVE.test(sentence))return sentence;
+      const tag=PAYMENT_CONTEXT.test(sentence)?'payment_verification':'verification';
+      seen[tag]++;if(seen[tag]<=2)return sentence;
+      return sentence.replace(VERIFY_IMPERATIVE,'đối chiếu');
+    }).join(' ');
+  };
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
+  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const action of copy.actions||[])action.text=clean(action.text);
+  for(const row of copy.comparisons||[])row.reason=clean(row.reason);
+  if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
+  return attachAiRoute(copy,route);
+}
+
 // A single bounded repair is allowed for invalid content, never for auth/network failures.
 // Production uses a separate bounded planning pass for synthesis-heavy modes. Tests and
 // embedders that inject a custom runner keep the historical one-pass behavior unless
@@ -80,9 +104,10 @@ export async function interpretReading(prepared,{runner=runAI,planRunner,budgetM
       if(attempt===1){
         let repaired=repairUnsupportedTiming(result,error.message);
         const eventRepaired=repairUnsupportedEvents(repaired||result,error.message);if(eventRepaired)repaired=eventRepaired;
+        const repetitionRepaired=repairRepeatedVerification(repaired||result,error.message);if(repetitionRepaired)repaired=repetitionRepaired;
         if(repaired){
           try{return attachAiRoute(validateReading(repaired,prepared.facts,prepared.context.selectedTopic,prepared.context),used);}
-          catch(repairError){if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'timing_repair_validation',attempt:3,route:used?.id||'',model:used?.modelId||'',code:'READING_TIMING_REPAIR',fallbackAllowed:false,message:repairError.message});}
+          catch(repairError){if(runner===runAI)diagnostics?.({type:'validation_failure',flow:'question',stage:'content_repair_validation',attempt:3,route:used?.id||'',model:used?.modelId||'',code:'READING_CONTENT_REPAIR',fallbackAllowed:false,message:repairError.message});}
         }
         return attachAiRoute(verifiedFallback(prepared.context),used);
       }
