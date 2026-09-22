@@ -1250,3 +1250,9 @@ body.share-view-mode main{padding-top:18px}
   .related-person-self .related-person-head{margin-bottom:9px}
   .related-person-main{grid-template-columns:1fr}
 }
+
+/* v17.6.0 release hotfix · keep long VPS instructions inside the mobile viewport */
+.help-page main,.help-page .help-hero,.help-page .help-section{min-width:0;width:100%;max-width:100%}
+.help-page .help-card,.help-page .help-steps,.help-page .code-block{min-width:0;max-width:100%}
+.help-page .code-block{box-sizing:border-box}
+.help-page code,.help-page p,.help-page li{overflow-wrap:anywhere}
