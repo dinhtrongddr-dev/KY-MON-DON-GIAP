@@ -33,7 +33,7 @@ export function initMenhAi({prepare,activity=null}){
     if(!resultSwitch)return;
     const aiTarget=target==='ai'&&floatingAiReady;
     resultSwitch.dataset.target=aiTarget?'ai':'board';
-    resultSwitch.textContent=aiTarget?'AI':'Bàn';
+    resultSwitch.textContent=aiTarget?'Xem AI':'Xem Bàn';
     resultSwitch.setAttribute('aria-label',aiTarget?'Xem phần luận AI':'Xem bàn Kỳ Môn');
     resultSwitch.classList.toggle('is-ready',floatingAiReady);
   };

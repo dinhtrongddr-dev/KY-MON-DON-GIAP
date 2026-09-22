@@ -32,6 +32,7 @@ const detail = document.querySelector("#palace-detail");
 const inspectorTitle = document.querySelector("#inspector-title");
 const methodCopy = document.querySelector("#method-copy");
 const spiritActivationPanel=document.querySelector('#spirit-activation');
+const spiritSwitch=document.querySelector('#spirit-switch');
 const workspace = document.querySelector(".workspace");
 const elementPanel = document.querySelector(".element-panel");
 if (workspace && elementPanel) workspace.append(elementPanel);
@@ -404,6 +405,14 @@ function renderChart(chart) {
   document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi.';
   document.dispatchEvent(new Event('qimen-chart'));
 }
+
+spiritSwitch?.addEventListener('click',()=>{
+  if(!currentChart||!spiritActivationPanel)return;
+  spiritActivationPanel.scrollIntoView?.({behavior:'smooth',block:'start'});
+  spiritActivationPanel.classList.remove('is-quick-highlight');
+  requestAnimationFrame(()=>spiritActivationPanel.classList.add('is-quick-highlight'));
+  setTimeout(()=>spiritActivationPanel.classList.remove('is-quick-highlight'),900);
+});
 
 function generateAndRender({ scroll = false } = {}) {
   resultSection.setAttribute("aria-busy", "true");

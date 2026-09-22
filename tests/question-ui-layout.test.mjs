@@ -17,12 +17,15 @@ test('desktop result order puts compact AI before the board and keeps Five Eleme
   assert.doesNotMatch(html,/element-panel-guide/);
 });
 
-test('floating result navigation is a compact circular bubble and AI sits before Tứ Trụ',()=>{
+test('floating result navigation exposes lively Xem Bàn and Kích Thần bubbles while AI sits before Tứ Trụ',()=>{
   assert.match(html,/class="floating-result-nav"/);
-  assert.match(html,/id="result-switch"[^>]*data-target="board"[^>]*>Bàn<\/button>/);
+  assert.match(html,/id="result-switch"[^>]*data-target="board"[^>]*>Xem Bàn<\/button>/);
+  assert.match(html,/id="spirit-switch"[^>]*>Kích Thần<\/button>/);
   assert.doesNotMatch(html,/id="float-board"|id="float-ai"/);
   assert.match(css,/\.floating-result-nav\s*\{[\s\S]*position:fixed/);
-  assert.match(css,/\.floating-result-button\s*\{[\s\S]*width:62px;[\s\S]*height:62px;[\s\S]*border-radius:50%/);
+  assert.match(css,/QUICK-NAV-BUBBLES-1\.0/);
+  assert.match(css,/\.floating-result-button\{[\s\S]*min-width:96px;[\s\S]*height:50px;[\s\S]*border-radius:24px 24px 24px 14px/);
+  assert.match(app,/spiritSwitch\?\.addEventListener\('click'/);
   const ai=html.indexOf('class="learning-panel ai-panel'),meta=html.indexOf('class="chart-meta"');
   assert.ok(ai>0&&meta>ai,'AI panel must appear before Tứ Trụ/chart meta');
   for(const label of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành'])assert.equal(html.includes(label),false);

@@ -97,7 +97,7 @@ test('valid clarification renders text safely; no model HTML is interpreted',asy
   assert.equal(ids['ai-answer'].hidden,false);
   assert.equal(ids['ai-progress'].hidden,true);
   assert.equal(ids['result-switch'].dataset.target,'board');
-  assert.equal(ids['result-switch'].textContent,'Bàn');
+  assert.equal(ids['result-switch'].textContent,'Xem Bàn');
   assert.equal(ids['ai-answer'].children[1].children[0].textContent,'<script>alert(1)</script>');
 });
 
@@ -112,18 +112,18 @@ test('successful AI reading is recorded without passing the question to activity
   assert.equal(calls[1][0],'finish');assert.equal(calls[1][1][0],'r1');assert.equal(calls[1][1][1].status,'completed');assert.equal(calls[1][1][1].modelUsed.label,'GPT-5.6 Sol');
   assert.equal(JSON.stringify(calls).includes(payload.question),false);
   assert.equal(ids['result-switch'].dataset.target,'board');
-  assert.equal(ids['result-switch'].textContent,'Bàn');
+  assert.equal(ids['result-switch'].textContent,'Xem Bàn');
   assert.deepEqual(ids['ai-answer'].scrolled,{behavior:'smooth',block:'start'});
   await ids['result-switch'].fire('click');
   assert.deepEqual(boardTarget.scrolled,{behavior:'smooth',block:'start'});
   assert.equal(ids['result-switch'].dataset.target,'ai');
-  assert.equal(ids['result-switch'].textContent,'AI');
+  assert.equal(ids['result-switch'].textContent,'Xem AI');
   ids['ai-answer'].scrolled=null;await ids['result-switch'].fire('click');
   assert.deepEqual(ids['ai-answer'].scrolled,{behavior:'smooth',block:'start'});
   assert.equal(ids['result-switch'].dataset.target,'board');
   await ids['chart-form'].fire('input');
   assert.equal(ids['result-switch'].dataset.target,'board');
-  assert.equal(ids['result-switch'].textContent,'Bàn');
+  assert.equal(ids['result-switch'].textContent,'Xem Bàn');
 });
 
 test('deep reading renders all three linked stages, alternatives and the actual model used',async t=>{

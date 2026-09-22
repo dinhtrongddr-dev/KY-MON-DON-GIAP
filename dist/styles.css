@@ -1387,3 +1387,108 @@ body.share-view-mode main{padding-top:18px}
   .spirit-notes-head,.spirit-natal-vs-hourly{align-items:flex-start;flex-direction:column}
   .spirit-practice-notes>.button,.spirit-save-status{grid-column:auto}
 }
+
+/* KM-SPIRIT-ACTIVATION-1.2 · one card per deity, card itself expands */
+.spirit-card{padding:0;overflow:hidden}
+.spirit-card>summary{list-style:none}
+.spirit-card>summary::-webkit-details-marker{display:none}
+.spirit-card-summary{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 24px;gap:10px;align-items:center;padding:13px 14px;cursor:pointer;user-select:none}
+.spirit-card-summary:hover{background:#f6f9f7}
+.spirit-card-summary:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+.spirit-card-main{min-width:0}
+.spirit-card-badges{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px}
+.spirit-priority-badge{display:inline-flex;align-items:center;min-height:26px;padding:4px 8px;border-radius:999px;background:#f0d37b;color:#4b3708;font-size:.64rem;font-weight:950;letter-spacing:.06em;white-space:nowrap}
+.spirit-card-toggle{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#edf2ee;color:var(--jade-dark)}
+.spirit-card-toggle:before{content:'＋';font-size:1rem;font-weight:900;line-height:1}
+.spirit-card[open] .spirit-card-toggle:before{content:'−'}
+.spirit-card[open]>.spirit-card-summary{background:#f4f8f5;border-bottom:1px solid var(--line)}
+.spirit-card-details{padding:11px 14px 14px;background:#fff}
+.spirit-card-details>h4{margin:0 0 5px;color:var(--jade-dark)}
+.spirit-card-details .spirit-practice-open{margin:11px 0 0}
+.spirit-card.is-recommended{padding:0;border:2px solid var(--gold);background:#fff;box-shadow:0 8px 22px rgba(80,59,17,.08)}
+.spirit-card.is-recommended>.spirit-card-summary{background:linear-gradient(135deg,#fff9e8,#fff)}
+.spirit-card.is-recommended[open]>.spirit-card-summary{background:linear-gradient(135deg,#fff3cf,#fffaf0)}
+.spirit-card.is-recommended .spirit-name{font-size:1.25rem}
+.spirit-card.is-recommended .spirit-level-badge{background:#173f31;color:#fff}
+.spirit-no-recommendation{margin:12px 0;padding:12px 14px;border:1px solid #d2b26a;background:#fff8e9}
+.spirit-no-recommendation strong{color:#6b4d10}
+.spirit-no-recommendation p{margin:4px 0 0;color:#655d4c}
+.spirit-alternative-grid .spirit-card{padding:0}
+.spirit-alternative-grid .spirit-card-summary{padding:11px 12px}
+.spirit-alternative-grid .spirit-card-details{padding:9px 12px 12px}
+.spirit-recommendation{display:none!important}
+@media(max-width:760px){
+  .spirit-card-summary{grid-template-columns:minmax(0,1fr) 22px;padding:12px}
+  .spirit-card-badges{justify-content:flex-start;margin-top:5px}
+  .spirit-card-head{flex-direction:column;gap:5px}
+  .spirit-priority-badge,.spirit-level-badge{font-size:.62rem}
+}
+
+/* QUICK-NAV-BUBBLES-1.0 · Xem Bàn + Kích Thần */
+.floating-result-nav{display:flex;align-items:center;gap:9px}
+.floating-result-button{
+  position:relative;
+  width:auto;
+  min-width:96px;
+  height:50px;
+  min-height:50px;
+  padding:0 15px;
+  border-radius:24px 24px 24px 14px;
+  font-size:.76rem;
+  line-height:1.05;
+  white-space:nowrap;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  overflow:hidden;
+  animation:quickBubbleIn .32s ease both;
+}
+.floating-result-button::after{
+  content:'';
+  position:absolute;
+  top:8px;
+  right:11px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:rgba(255,255,255,.52);
+  pointer-events:none;
+}
+.floating-board-button{
+  background:linear-gradient(145deg,#174a38,#0f382a);
+  border-color:#0f382a;
+  color:#fff;
+  box-shadow:0 10px 22px rgba(17,55,42,.24);
+}
+.floating-spirit-button{
+  border-radius:24px 24px 14px 24px;
+  background:linear-gradient(145deg,#f2d982,#c99a32);
+  border-color:#b78524;
+  color:#3f2e09;
+  box-shadow:0 10px 22px rgba(144,101,21,.22);
+}
+.floating-spirit-button::after{background:rgba(255,255,255,.72)}
+.floating-result-button:hover,.floating-result-button:focus-visible{
+  transform:translateY(-3px) scale(1.035);
+  filter:saturate(1.08);
+  outline:3px solid rgba(181,138,36,.22);
+  outline-offset:2px;
+}
+.floating-board-button:hover,.floating-board-button:focus-visible{background:linear-gradient(145deg,#1b5b42,#113d2e)}
+.floating-spirit-button:hover,.floating-spirit-button:focus-visible{background:linear-gradient(145deg,#f6df91,#d0a23b)}
+.floating-result-button:active{transform:translateY(-1px) scale(.985)}
+.floating-result-button.is-ready{box-shadow:0 10px 24px rgba(18,42,31,.24),0 0 0 2px rgba(241,211,121,.26) inset}
+.floating-result-button:disabled{transform:none;filter:none}
+.spirit-activation-panel.is-quick-highlight,.menh-spirit-activation.is-quick-highlight{
+  animation:spiritQuickHighlight .9s ease;
+}
+@keyframes quickBubbleIn{
+  from{opacity:0;transform:translateY(8px) scale(.92)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes spiritQuickHighlight{
+  0%,100%{box-shadow:none}
+  35%{box-shadow:0 0 0 5px rgba(201,154,50,.2),0 12px 28px rgba(18,62,46,.12)}
+}
+@media(max-width:560px){
+  .floating-result-nav{right:10px;gap:7px}
+  .floating-result-button{width:auto;height:46px;min-width:88px;min-height:46px;padding:0 12px;font-size:.7rem}
+}

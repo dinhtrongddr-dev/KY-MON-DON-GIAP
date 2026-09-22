@@ -168,21 +168,25 @@ function researchDetails(data){
   return details;
 }
 function hourlyCard(root,data,recommended,goalId){
-  const card=el('article','spirit-card'+(recommended?' is-recommended':'')+' '+levelClass(data.activationLevel));
-  const head=el('div','spirit-card-head'),title=el('div');
+  const card=el('details','spirit-card'+(recommended?' is-recommended':'')+' '+levelClass(data.activationLevel));
+  const summary=el('summary','spirit-card-summary');
+  const main=el('div','spirit-card-main'),head=el('div','spirit-card-head'),title=el('div');
   title.append(el('strong','spirit-name',data.spirit.name),el('span','spirit-location',data.palaceName+' · '+data.direction));
-  head.append(title,el('span','spirit-level-badge',data.activationLevel));card.append(head);
-  card.append(el('p','spirit-modern-meaning',data.semantic.modernMeaning||data.semantic.coreMeaning));
-  const meta=el('div','spirit-card-meta');meta.append(el('span','','Môn · '+data.door.name),el('span','','Tinh · '+data.star.name));card.append(meta);
-  if(recommended)card.append(chips(data.semantic.keywords,3,'spirit-keyword-row'));
+  const badges=el('div','spirit-card-badges');
+  if(recommended)badges.append(el('span','spirit-priority-badge','ƯU TIÊN HIỆN TẠI'));
+  badges.append(el('span','spirit-level-badge',data.activationLevel));head.append(title,badges);main.append(head);
+  main.append(el('p','spirit-modern-meaning',data.semantic.modernMeaning||data.semantic.coreMeaning));
+  const meta=el('div','spirit-card-meta');meta.append(el('span','','Môn · '+data.door.name),el('span','','Tinh · '+data.star.name));main.append(meta);
+  if(recommended)main.append(chips(data.semantic.keywords,3,'spirit-keyword-row'));
+  summary.append(main,el('span','spirit-card-toggle',''));card.append(summary);
 
-  const details=el('details','spirit-use-details'),summary=el('summary','','Xem ý nghĩa & lưu ý');details.append(summary);
-  if(data.semantic.bestFor?.length){details.append(el('h4','','Phù hợp cho'),chips(data.semantic.bestFor,4,'spirit-bestfor-chips'));}
-  const risks=detailList('Mặt cần thận trọng',data.semantic.risks?.slice(0,3),'spirit-warning-block');if(risks)details.append(risks);
-  details.append(researchDetails(data));card.append(details);
+  const body=el('div','spirit-card-details');
+  if(data.semantic.bestFor?.length){body.append(el('h4','','Phù hợp cho'),chips(data.semantic.bestFor,4,'spirit-bestfor-chips'));}
+  const risks=detailList('Mặt cần thận trọng',data.semantic.risks?.slice(0,3),'spirit-warning-block');if(risks)body.append(risks);
+  body.append(researchDetails(data));
   const practice=el('button',recommended?'button button-primary spirit-practice-open':'button spirit-practice-open','Thực hành với '+data.spirit.name);
-  practice.type='button';practice.addEventListener('click',()=>openPractice(root,data,{chartType:'hourly',goalCategory:goalId}));card.append(practice);
-  return card;
+  practice.type='button';practice.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openPractice(root,data,{chartType:'hourly',goalCategory:goalId});});body.append(practice);
+  card.append(body);return card;
 }
 function introCallout(){
   const intro=el('div','spirit-intro-callout'),copy=el('div');
@@ -207,16 +211,12 @@ export function renderHourlySpiritActivation(container,{board,analysis=null,goal
   label.append(el('span','','Mục tiêu hiện tại'));
   const select=el('select');for(const option of ACTIVATION_GOALS){const o=el('option','',option.label);o.value=option.id;if(option.id===result.goal.id)o.selected=true;select.append(o);}label.append(select);toolbar.append(label);container.append(toolbar);
 
-  const recommendation=el('section','spirit-recommendation');
-  if(result.recommended){
-    const left=el('div','spirit-recommend-main'),kicker=el('span','spirit-recommend-kicker','ƯU TIÊN HIỆN TẠI');
-    left.append(kicker,el('strong','spirit-recommend-title',result.recommended.spirit.name),el('span','spirit-recommend-place',result.recommended.palaceName+' · '+result.recommended.direction));
-    const right=el('div','spirit-recommend-right');right.append(el('span','spirit-level-badge',result.recommended.activationLevel),el('p','',result.recommended.semantic.activationTheme||result.recommended.semantic.modernMeaning));
-    recommendation.append(left,right);
-  }else recommendation.append(el('strong','','Chưa có phương vị đủ mạnh để ưu tiên'),el('p','','Hãy xem phần này như một lớp quan sát; không cần cố chọn một phương vị để thực hành.'));
-  container.append(recommendation);
-
   if(result.recommended)container.append(hourlyCard(container,result.recommended,true,result.goal.id));
+  else{
+    const none=el('div','spirit-no-recommendation');
+    none.append(el('strong','','Chưa có phương vị đủ mạnh để ưu tiên'),el('p','','Hãy xem phần này như một lớp quan sát; không cần cố chọn một phương vị để thực hành.'));
+    container.append(none);
+  }
   const alternatives=result.candidates.filter(row=>row.palace!==result.recommendedPalace);
   if(alternatives.length){
     const alt=el('details','spirit-alternatives'),sum=el('summary','','Xem '+alternatives.length+' lựa chọn còn lại');

@@ -101,11 +101,12 @@ test('Mệnh palace inspector merges palace identity into one detail heading',()
   assert.doesNotMatch(view,/el\('div','inspector-head'\)/);
 });
 
-test('Mệnh puts AI before Tứ Trụ, uses the same single floating switch, and removes textual color legends',()=>{
+test('Mệnh puts AI before Tứ Trụ, exposes Xem Bàn and Kích Thần quick bubbles, and removes textual color legends',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   const ai=readFileSync(new URL('../dist/menh-ai.mjs',import.meta.url),'utf8');
   assert.match(html,/id="menh-floating-nav"[^>]*class="floating-result-nav"/);
-  assert.match(html,/id="menh-result-switch"[^>]*data-target="board"[^>]*>Bàn<\/button>/);
+  assert.match(html,/id="menh-result-switch"[^>]*data-target="board"[^>]*>Xem Bàn<\/button>/);
+  assert.match(html,/id="menh-spirit-switch"[^>]*>Kích Thần<\/button>/);
   const aiAppend=view.indexOf('if(aiPanel)container.append(aiPanel);');
   const metaAppend=view.indexOf('container.append(renderMenhChartMeta(board));');
   assert.ok(aiAppend>0&&metaAppend>aiAppend,'Mệnh AI panel must appear before Tứ Trụ');
