@@ -232,7 +232,7 @@ test('reading shows elapsed progress, then clears it when a validated answer arr
     assert.equal(ids['local-check'].disabled,true);
     assert.equal(ids['ai-cancel'].hidden,false);
     assert.match(ids['ai-read'].textContent,/Đang/);
-    assert.match(ids['ai-elapsed'].textContent,/0 giây/);
+    assert.match(ids['ai-elapsed'].textContent,/0 giây/);assert.match(ids['ai-elapsed'].textContent,/Dự kiến xong khoảng/);
     t.mock.timers.tick(3000);
     assert.match(ids['ai-elapsed'].textContent,/3 giây/);
   }finally{

@@ -48,7 +48,7 @@ function remoteSnapshotOf(value){
     chartCount:value.chartCount,readingCount:value.readingCount,
     recentReadings:value.recentReadings.slice(0,50).flatMap(item=>{
       if(!item||!Number.isFinite(item.at))return [];
-      return [{at:item.at,status:READING_STATUSES.has(item.status)?item.status:'interrupted',
+      return [{at:item.at,finishedAt:Number.isFinite(item.finishedAt)?item.finishedAt:null,status:READING_STATUSES.has(item.status)?item.status:'interrupted',
         model:safeText(item.model),route:safeText(item.route),effort:safeText(item.effort,24)}];
     })
   };

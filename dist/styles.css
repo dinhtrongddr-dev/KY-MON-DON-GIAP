@@ -1242,6 +1242,10 @@ body.share-view-mode main{padding-top:18px}
 .related-person-card .field{margin:0}
 .related-person-card .field>span{font-size:.78rem}
 .related-person-card input{min-height:44px}
+.nianming-mode-links{min-height:22px;display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:.72rem;color:var(--muted)}
+.nianming-mode-link{appearance:none;border:0;background:transparent;padding:0;color:var(--muted);font:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
+.nianming-mode-link:hover,.nianming-mode-link:focus-visible{color:var(--jade-dark)}
+.nianming-mode-link.is-active{color:var(--jade-dark);font-weight:800;text-decoration:none;cursor:default}
 .related-people-options>.nianming-note{margin:10px 0 0}
 @media(max-width:760px){
   .related-people-list{grid-template-columns:1fr}

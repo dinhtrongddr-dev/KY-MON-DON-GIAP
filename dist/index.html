@@ -65,27 +65,27 @@
                 <div class="related-people-list">
                   <section class="related-person-card related-person-self" aria-labelledby="related-self-title">
                     <div class="related-person-head"><strong id="related-self-title">Người hỏi</strong><small>Đối chiếu thêm</small></div>
-                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-self" type="text" inputmode="numeric" maxlength="10" autocomplete="bday" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
+                    <div class="field related-date"><div class="nianming-mode-links" role="group" aria-label="Cách nhập ngày sinh người hỏi"><button id="nianming-mode-self-date" class="nianming-mode-link is-active" type="button" aria-pressed="true">Chọn ngày sinh</button><span aria-hidden="true">·</span><button id="nianming-mode-self-year" class="nianming-mode-link" type="button" aria-pressed="false">Chọn năm sinh</button></div><input id="nianming-self" type="text" inputmode="numeric" maxlength="10" autocomplete="bday" data-nianming-mode="date" aria-label="Ngày sinh người hỏi" placeholder="DD/MM/YYYY" /></div>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-subject-title">
                     <div class="related-person-head"><strong id="related-subject-title">Người được hỏi thay</strong><small>Nêu rõ người này trong câu hỏi chính</small></div>
-                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
+                    <div class="field related-date"><div class="nianming-mode-links" role="group" aria-label="Cách nhập ngày sinh người được hỏi thay"><button id="nianming-mode-subject-date" class="nianming-mode-link is-active" type="button" aria-pressed="true">Chọn ngày sinh</button><span aria-hidden="true">·</span><button id="nianming-mode-subject-year" class="nianming-mode-link" type="button" aria-pressed="false">Chọn năm sinh</button></div><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" data-nianming-mode="date" aria-label="Ngày sinh người được hỏi thay" placeholder="DD/MM/YYYY" /></div>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-customer-title">
                     <div class="related-person-head"><strong id="related-customer-title">Khách hàng / đối phương</strong><small>Tùy câu hỏi</small></div>
-                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
+                    <div class="field related-date"><div class="nianming-mode-links" role="group" aria-label="Cách nhập ngày sinh khách hàng hoặc đối phương"><button id="nianming-mode-customer-date" class="nianming-mode-link is-active" type="button" aria-pressed="true">Chọn ngày sinh</button><span aria-hidden="true">·</span><button id="nianming-mode-customer-year" class="nianming-mode-link" type="button" aria-pressed="false">Chọn năm sinh</button></div><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" data-nianming-mode="date" aria-label="Ngày sinh khách hàng hoặc đối phương" placeholder="DD/MM/YYYY" /></div>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-competitor-title">
                     <div class="related-person-head"><strong id="related-competitor-title">Đối thủ / bên cạnh tranh</strong><small>Tùy câu hỏi</small></div>
-                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
+                    <div class="field related-date"><div class="nianming-mode-links" role="group" aria-label="Cách nhập ngày sinh đối thủ hoặc bên cạnh tranh"><button id="nianming-mode-competitor-date" class="nianming-mode-link is-active" type="button" aria-pressed="true">Chọn ngày sinh</button><span aria-hidden="true">·</span><button id="nianming-mode-competitor-year" class="nianming-mode-link" type="button" aria-pressed="false">Chọn năm sinh</button></div><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" data-nianming-mode="date" aria-label="Ngày sinh đối thủ hoặc bên cạnh tranh" placeholder="DD/MM/YYYY" /></div>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-decision-title">
                     <div class="related-person-head"><strong id="related-decision-title">Người có quyền duyệt</strong><small>Tùy câu hỏi</small></div>
-                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
+                    <div class="field related-date"><div class="nianming-mode-links" role="group" aria-label="Cách nhập ngày sinh người có quyền duyệt"><button id="nianming-mode-decisionMaker-date" class="nianming-mode-link is-active" type="button" aria-pressed="true">Chọn ngày sinh</button><span aria-hidden="true">·</span><button id="nianming-mode-decisionMaker-year" class="nianming-mode-link" type="button" aria-pressed="false">Chọn năm sinh</button></div><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" data-nianming-mode="date" aria-label="Ngày sinh người có quyền duyệt" placeholder="DD/MM/YYYY" /></div>
                   </section>
                 </div>
                 <p class="nianming-note">App tự suy niên trụ từ ngày/năm sinh để đối chiếu. Niên Mệnh không thay Nhật can hoặc Dụng Thần chính. Nếu chỉ nhập năm, người sinh trước Lập Xuân có thể thuộc niên trụ trước.</p>

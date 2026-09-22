@@ -48,7 +48,10 @@ test('supplemental information derives Niên Can Chi from birth data without man
   assert.doesNotMatch(main,/class="actor-options"|class="nianming-options"|Can Chi đại diện|id="actor-/);
   for(const id of ['nianming-self','nianming-subject','nianming-customer','nianming-competitor','nianming-decisionMaker']){
     assert.equal((main.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
+    assert.equal((main.match(new RegExp('id="nianming-mode-'+id.replace('nianming-','')+'-date"','g'))||[]).length,1,id+' date mode');
+    assert.equal((main.match(new RegExp('id="nianming-mode-'+id.replace('nianming-','')+'-year"','g'))||[]).length,1,id+' year mode');
   }
+  assert.match(main,/Chọn ngày sinh/);assert.match(main,/Chọn năm sinh/);assert.match(css,/\.nianming-mode-link/);
   for(const role of ['Người hỏi','Người được hỏi thay','Khách hàng / đối phương','Đối thủ / bên cạnh tranh','Người có quyền duyệt'])assert.ok(main.includes(role));
   assert.match(main,/app tự tính <strong>Niên Can Chi<\/strong>/);
   assert.match(css,/\.related-people-list/);

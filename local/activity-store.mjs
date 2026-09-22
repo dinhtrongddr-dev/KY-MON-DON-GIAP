@@ -63,7 +63,7 @@ export function createActivityStore({filePath=null,now=()=>Date.now()}={}){
       chartCount:todays.filter(event=>event.type==='chart').length,
       readingCount:todays.filter(event=>event.type==='reading').length,
       recentReadings:events.filter(event=>event.type==='reading').slice(-50).reverse().map(event=>({
-        at:event.at,status:event.status,model:event.model,route:event.route,effort:event.effort
+        at:event.at,finishedAt:event.finishedAt,status:event.status,model:event.model,route:event.route,effort:event.effort
       }))
     };
   };

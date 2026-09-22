@@ -3,6 +3,7 @@ import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
 import {initPdfExport} from './report-export.mjs';
 import {createReadingJobClient} from './reading-job-client.mjs';
+import {estimateReadingMs,readingProgressText} from './ai-progress-estimate.mjs';
 export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
@@ -87,8 +88,8 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    read.disabled=false;read.textContent=readLabel;check.disabled=false;cancel.hidden=true;
  };
  const startWork=(message,isReading,timeoutMs)=>{
-   active=new AbortController();const controller=active,started=Date.now();
-   const tick=()=>{elapsed.textContent=`Đã chờ ${Math.max(0,Math.floor((Date.now()-started)/1000))} giây`;};
+   active=new AbortController();const controller=active,started=Date.now(),estimateMs=isReading?estimateReadingMs(activity,{fallbackMs:180000}):null;
+   const tick=()=>{elapsed.textContent=isReading?readingProgressText({startedAt:started,now:Date.now(),estimateMs}):`Đã chờ ${Math.max(0,Math.floor((Date.now()-started)/1000))} giây`;};
    tick();progressTimer=setInterval(tick,1000);requestTimeout=setTimeout(()=>controller.abort(),timeoutMs);
    progress.hidden=false;elapsed.hidden=false;answer.setAttribute('aria-busy',String(isReading));
    read.disabled=true;check.disabled=true;cancel.hidden=false;

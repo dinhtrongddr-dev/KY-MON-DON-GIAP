@@ -3,6 +3,7 @@ import {renderMenhAi} from './menh-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
 import {initPdfExport} from './report-export.mjs';
 import {createReadingJobClient} from './reading-job-client.mjs';
+import {estimateReadingMs,readingProgressText} from './ai-progress-estimate.mjs';
 
 export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
@@ -74,9 +75,9 @@ export function initMenhAi({prepare,activity=null}){
     progress.hidden=true;elapsed.hidden=true;answer.setAttribute('aria-busy','false');
     read.disabled=false;read.textContent=readLabel;check.disabled=false;cancel.hidden=true;
   };
-  const start=(message,timeoutMs)=>{
-    active=new AbortController();const controller=active,started=Date.now();
-    const tick=()=>{elapsed.textContent='Đã chờ '+Math.max(0,Math.floor((Date.now()-started)/1000))+' giây';};
+  const start=(message,timeoutMs,{showEstimate=true}={})=>{
+    active=new AbortController();const controller=active,started=Date.now(),estimateMs=showEstimate?estimateReadingMs(activity,{fallbackMs:240000}):null;
+    const tick=()=>{elapsed.textContent=showEstimate?readingProgressText({startedAt:started,now:Date.now(),estimateMs}):'Đã chờ '+Math.max(0,Math.floor((Date.now()-started)/1000))+' giây';};
     tick();progressTimer=setInterval(tick,1000);requestTimeout=setTimeout(()=>controller.abort(),timeoutMs);
     progress.hidden=false;elapsed.hidden=false;answer.setAttribute('aria-busy','true');
     read.disabled=true;check.disabled=true;cancel.hidden=false;read.textContent='Đang luận Mệnh…';status.textContent=message;
@@ -102,7 +103,7 @@ export function initMenhAi({prepare,activity=null}){
     return data;
   }
   check.addEventListener('click',async()=>{
-    cancelWork();setConnectionState('checking');const v=version,controller=start('Đang kiểm tra kết nối AI…',8000);
+    cancelWork();setConnectionState('checking');const v=version,controller=start('Đang kiểm tra kết nối AI…',8000,{showEstimate:false});
     try{const data=await call('/api/status',null,controller.signal);assertMenhCompatible(data);if(v===version){setConnectionState('connected');status.textContent='AI đã kết nối · sẵn sàng.';}}
     catch(e){if(v===version){setConnectionState('disconnected');status.textContent=controller.signal.aborted?'Hết thời gian kiểm tra kết nối.':e.message;}}
     finally{if(v===version){active=null;finish();}}
