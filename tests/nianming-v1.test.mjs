@@ -111,7 +111,7 @@ test('UI contract exposes optional birth/year fields and marks Nian Ming as corr
     readFile(new URL('../dist/styles.css',import.meta.url),'utf8')
   ]);
   for(const id of ['nianming-self','nianming-subject','nianming-customer','nianming-competitor','nianming-decisionMaker'])assert.match(html,new RegExp(`id="${id}"`));
-  assert.match(html,/Niên Mệnh · đối chiếu/);
+  assert.match(html,/Niên Can Chi/);
   assert.match(app,/role-nianming/);assert.match(app,/Niên Mệnh không đổi Nhật can, Dụng Thần chính, màu cảnh báo hoặc kết luận/);
   assert.match(css,/\.nianming-card/);assert.match(css,/\.role-nianming/);
 });

@@ -1146,8 +1146,12 @@ body.share-view-mode main{padding-top:18px}
 .ai-feedback-compact{min-height:28px;margin:2px 0 8px;align-items:center}
 .ai-feedback-compact #ai-status,.ai-feedback-compact #menh-ai-status{margin:0;color:var(--muted);font-size:.76rem;font-weight:650;line-height:1.4}
 .ai-feedback-compact .ai-elapsed{margin:2px 0 0;font-size:.72rem}
-.board-key-icons{gap:5px}
-.board-key-icons>span{min-width:30px;min-height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 7px}
+.board-key-icons{gap:6px 8px}
+.board-key-icons>span{min-height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 7px}
+.board-key-explained .board-key-label{padding-left:0;color:#4e5a54;font-weight:850}
+.board-key-explained span:not(.board-key-label){border:1px solid var(--line);background:#fbfcfa;border-radius:999px}
+.board-key-explained em{font-style:normal;font-size:.7rem;font-weight:760;color:currentColor}
+.board-key-explained b{font-size:.82rem}
 .workspace>.element-panel .element-panel-body{display:block}
 .workspace>.element-panel .element-panel-visual{max-width:760px;margin-inline:auto}
 
@@ -1235,20 +1239,14 @@ body.share-view-mode main{padding-top:18px}
 .related-person-head small{color:var(--muted);font-size:.69rem;line-height:1.25;text-align:right}
 .related-person-self .related-person-head{display:grid;align-content:center;margin:0}
 .related-person-self .related-person-head small{text-align:left}
-.related-person-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 .related-person-card .field{margin:0}
 .related-person-card .field>span{font-size:.78rem}
-.related-person-card input,.related-person-card select{min-height:44px}
-.related-person-advanced{margin-top:9px;border-top:1px dashed var(--line);padding-top:2px}
-.related-person-advanced>summary{min-height:38px;display:flex;align-items:center;color:#66726c;font-size:.73rem;font-weight:760;cursor:pointer}
-.related-person-advanced[open]>summary{color:var(--jade-dark)}
-.related-person-advanced .field{margin-top:5px}
+.related-person-card input{min-height:44px}
 .related-people-options>.nianming-note{margin:10px 0 0}
 @media(max-width:760px){
   .related-people-list{grid-template-columns:1fr}
   .related-person-self{grid-column:auto;grid-template-columns:1fr}
   .related-person-self .related-person-head{margin-bottom:9px}
-  .related-person-main{grid-template-columns:1fr}
 }
 
 /* v17.6.0 release hotfix · keep long VPS instructions inside the mobile viewport */

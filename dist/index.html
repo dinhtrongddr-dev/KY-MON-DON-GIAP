@@ -26,7 +26,7 @@
           </span>
           <span>
             <strong>Kỳ Môn Bàn</strong>
-            <small>Thời Gia · Chuyển Bàn</small>
+            <small>Thời Gia · Chuyển Bàn · Tháo Bổ</small>
           </span>
         </a>
         <nav class="product-nav" aria-label="Chọn chức năng">
@@ -60,8 +60,8 @@
               <label class="field"><span>Bạn muốn xem gì?</span><select id="qimen-mode"></select></label>
               <p id="mode-explanation" role="status" hidden></p>
               <details class="related-people-options">
-                <summary>Người liên quan · tùy chọn</summary>
-                <p class="related-people-intro">Nhập ngày/năm sinh nếu muốn đối chiếu Niên Mệnh. <strong>Can Chi đại diện</strong> chỉ chọn trong mục Nâng cao khi bạn đã biết cách quy chiếu; để trống nếu chưa rõ.</p>
+                <summary>+ Bổ sung thông tin · Thêm căn cứ luận bàn</summary>
+                <p class="related-people-intro">Nhập ngày/năm sinh nếu muốn app tự tính <strong>Niên Can Chi</strong> và thêm lớp đối chiếu. Không cần nhập thêm Can Chi thủ công.</p>
                 <div class="related-people-list">
                   <section class="related-person-card related-person-self" aria-labelledby="related-self-title">
                     <div class="related-person-head"><strong id="related-self-title">Người hỏi</strong><small>Đối chiếu thêm</small></div>
@@ -69,37 +69,30 @@
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-subject-title">
-                    <div class="related-person-head"><strong id="related-subject-title">Người được hỏi thay</strong><small>Chỉ dùng khi hỏi thay người khác</small></div>
-                    <div class="related-person-main">
-                      <label class="field"><span>Tên / vai trò</span><input id="subject-label" type="text" maxlength="120" placeholder="Ví dụ: vợ, em trai, đối tác" /></label>
-                      <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
-                    </div>
-                    <details class="related-person-advanced"><summary>Nâng cao · Can Chi đại diện</summary><label class="field"><span>Can Chi đại diện</span><select id="actor-subject"><option value="">Chưa xác định</option></select></label></details>
+                    <div class="related-person-head"><strong id="related-subject-title">Người được hỏi thay</strong><small>Nêu rõ người này trong câu hỏi chính</small></div>
+                    <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-subject" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-customer-title">
                     <div class="related-person-head"><strong id="related-customer-title">Khách hàng / đối phương</strong><small>Tùy câu hỏi</small></div>
                     <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-customer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
-                    <details class="related-person-advanced"><summary>Nâng cao · Can Chi đại diện</summary><label class="field"><span>Can Chi đại diện</span><select id="actor-customer"><option value="">Chưa xác định</option></select></label></details>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-competitor-title">
                     <div class="related-person-head"><strong id="related-competitor-title">Đối thủ / bên cạnh tranh</strong><small>Tùy câu hỏi</small></div>
                     <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-competitor" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
-                    <details class="related-person-advanced"><summary>Nâng cao · Can Chi đại diện</summary><label class="field"><span>Can Chi đại diện</span><select id="actor-competitor"><option value="">Chưa xác định</option></select></label></details>
                   </section>
 
                   <section class="related-person-card" aria-labelledby="related-decision-title">
                     <div class="related-person-head"><strong id="related-decision-title">Người có quyền duyệt</strong><small>Tùy câu hỏi</small></div>
                     <label class="field related-date"><span>Ngày / năm sinh</span><input id="nianming-decisionMaker" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY · hoặc YYYY" /></label>
-                    <details class="related-person-advanced"><summary>Nâng cao · Can Chi đại diện</summary><label class="field"><span>Can Chi đại diện</span><select id="actor-decisionMaker"><option value="">Chưa xác định</option></select></label></details>
                   </section>
                 </div>
-                <p class="nianming-note">Ngày sinh chỉ dùng để xác định niên trụ đối chiếu; không thay Nhật can hoặc Dụng Thần chính. Nếu chỉ nhập năm, người sinh trước Lập Xuân có thể thuộc niên trụ trước.</p>
+                <p class="nianming-note">App tự suy niên trụ từ ngày/năm sinh để đối chiếu. Niên Mệnh không thay Nhật can hoặc Dụng Thần chính. Nếu chỉ nhập năm, người sinh trước Lập Xuân có thể thuộc niên trụ trước.</p>
               </details>
               <div id="action-options" hidden><label class="field"><span>Mục tiêu hành động để so sánh</span><select id="qimen-action"><option value="general">Mở việc nói chung</option><option value="quote">Gửi báo giá / hồ sơ</option><option value="sign">Ký / thống nhất hợp đồng</option><option value="meet">Gặp khách / gọi điện</option><option value="launch">Triển khai công việc</option></select></label></div>
               <div id="timing-options" hidden>
-                <p>Nhập từ 2 đến 12 thời điểm muốn so sánh, cùng múi giờ và pháp định cục bên dưới. Đây là chọn thời điểm hành động, không phải dự báo ngày có kết quả.</p>
+                <p>Nhập từ 2 đến 12 thời điểm muốn so sánh, cùng múi giờ. App dùng cố định Tháo Bổ. Đây là chọn thời điểm hành động, không phải dự báo ngày có kết quả.</p>
                 <div id="timing-candidates" class="candidate-fields">
                   <label class="field"><span>Thời điểm 1</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
                   <label class="field"><span>Thời điểm 2</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
@@ -142,14 +135,6 @@
               </div>
               <p class="timeplace-note">KM-TIMEPLACE-2.0 không tự đổi sang giờ chân/Mặt Trời. Tọa độ chỉ tạo bản đối chiếu; bàn vẫn dùng giờ dân dụng.</p>
             </details>
-            <label class="field field-method">
-              <span>Pháp định cục</span>
-              <select id="method" name="method">
-                <option value="chaibu" selected>Tháo bổ · theo Phù đầu</option>
-                <option value="maoshan">Mao Sơn · 5 ngày/nguyên</option>
-              </select>
-              <small id="method-note">Lấy nguyên theo Phù đầu của nhật Can Chi</small>
-            </label>
             <div class="field submit-field">
               <span aria-hidden="true">Thao tác</span>
               <button class="button button-primary" type="submit"><span>Lập bàn</span><span aria-hidden="true">→</span></button>
@@ -201,13 +186,14 @@
                   <p class="eyebrow">Lạc thư Cửu Cung</p>
                   <h2>Bàn chuyển Kỳ Môn</h2>
                 </div>
-                <div class="board-key board-key-icons" aria-label="Ký hiệu trên bàn">
-                  <span class="role-key role-key-person" title="Người hỏi · Nhật can"><b aria-hidden="true">◉</b><span class="visually-hidden">Người hỏi · Nhật can</span></span>
-                  <span class="role-key role-key-event" title="Sự việc · Thời can"><b aria-hidden="true">◆</b><span class="visually-hidden">Sự việc · Thời can</span></span>
-                  <span class="nianming-key" title="Niên Mệnh · đối chiếu"><b aria-hidden="true">◇</b><span class="visually-hidden">Niên Mệnh · đối chiếu</span></span>
-                  <span class="attention-key attention-key-support" title="Thuận mạnh"><b aria-hidden="true">●</b><span class="visually-hidden">Thuận mạnh</span></span>
-                  <span class="attention-key attention-key-danger" title="Cảnh báo mạnh"><b aria-hidden="true">▲</b><span class="visually-hidden">Cảnh báo mạnh</span></span>
-                  <span class="attention-key attention-key-conflict" title="Xung đột"><b aria-hidden="true">◆</b><span class="visually-hidden">Xung đột</span></span>
+                <div class="board-key board-key-icons board-key-explained" aria-label="Giải thích ký hiệu trên bàn">
+                  <span class="board-key-label">Ký hiệu</span>
+                  <span class="role-key role-key-person"><b aria-hidden="true">◉</b><em>Người hỏi</em></span>
+                  <span class="role-key role-key-event"><b aria-hidden="true">◆</b><em>Sự việc</em></span>
+                  <span class="nianming-key"><b aria-hidden="true">◇</b><em>Niên Mệnh</em></span>
+                  <span class="attention-key attention-key-support"><b aria-hidden="true">●</b><em>Thuận mạnh</em></span>
+                  <span class="attention-key attention-key-danger"><b aria-hidden="true">▲</b><em>Cảnh báo mạnh</em></span>
+                  <span class="attention-key attention-key-conflict"><b aria-hidden="true">◆</b><em>Xung đột</em></span>
                 </div>
               </div>
               <div class="board-frame">

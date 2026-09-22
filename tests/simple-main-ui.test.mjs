@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 const read=name=>readFileSync(new URL('../dist/'+name,import.meta.url),'utf8');
-const main=read('index.html'),menh=read('menh.html'),guide=read('guide.html'),server=read('server.html'),info=read('info.html'),infoJs=read('info.mjs'),css=read('styles.css');
+const main=read('index.html'),menh=read('menh.html'),guide=read('guide.html'),server=read('server.html'),info=read('info.html'),infoJs=read('info.mjs'),app=read('app.mjs'),css=read('styles.css');
 
 test('primary pages place three text utilities in the top-left header without changing the product switch',()=>{
   for(const html of [main,menh]){
@@ -42,17 +42,31 @@ test('primary inputs hide advanced time/place controls and verbose mode explanat
   assert.match(css,/\.timeplace-details\[hidden\]\{display:none!important\}/);
 });
 
-test('related people UI merges Niên Mệnh and manual representatives into one entry per role',()=>{
+test('supplemental information derives Niên Can Chi from birth data without manual representative selectors',()=>{
   assert.match(main,/class="related-people-options"/);
-  assert.match(main,/Người liên quan · tùy chọn/);
-  assert.doesNotMatch(main,/class="actor-options"|class="nianming-options"/);
-  for(const id of ['nianming-self','nianming-subject','nianming-customer','nianming-competitor','nianming-decisionMaker','actor-subject','actor-customer','actor-competitor','actor-decisionMaker']){
+  assert.match(main,/\+ Bổ sung thông tin · Thêm căn cứ luận bàn/);
+  assert.doesNotMatch(main,/class="actor-options"|class="nianming-options"|Can Chi đại diện|id="actor-/);
+  for(const id of ['nianming-self','nianming-subject','nianming-customer','nianming-competitor','nianming-decisionMaker']){
     assert.equal((main.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
   }
   for(const role of ['Người hỏi','Người được hỏi thay','Khách hàng / đối phương','Đối thủ / bên cạnh tranh','Người có quyền duyệt'])assert.ok(main.includes(role));
-  assert.match(main,/Nâng cao · Can Chi đại diện/);
+  assert.match(main,/app tự tính <strong>Niên Can Chi<\/strong>/);
   assert.match(css,/\.related-people-list/);
-  assert.match(css,/\.related-person-advanced/);
+});
+
+test('product profile is fixed to Tháo Bổ and the method selector is removed',()=>{
+  for(const html of [main,menh])assert.match(html,/Thời Gia · Chuyển Bàn · Tháo Bổ/);
+  assert.doesNotMatch(main,/id="method"|Mao Sơn · 5 ngày\/nguyên/);
+  assert.match(app,/const QIMEN_METHOD = 'chaibu'/);
+  assert.match(app,/generateQimen\(timePlace\.boardInput, QIMEN_METHOD\)/);
+  assert.match(app,/method:QIMEN_METHOD/);
+  assert.match(info,/chốt dùng Tháo Bổ theo Phù đầu/);
+});
+
+test('board legend visibly explains dot, triangle and role symbols',()=>{
+  for(const label of ['◉','◆','◇','●','▲','Người hỏi','Sự việc','Niên Mệnh','Thuận mạnh','Cảnh báo mạnh','Xung đột'])assert.ok(main.includes(label),label);
+  assert.match(main,/class="board-key[^"]*board-key-explained"/);
+  assert.match(css,/\.board-key-explained em/);
 });
 
 test('Guide covers modes, AI wait expectation, Mệnh use and beginner board reading',()=>{

@@ -76,7 +76,7 @@ export function initModeControls(doc=document) {
     const actual=classifyQuestion(question.value,mode.value).mode;
     const nianming=Object.fromEntries(['self','subject','customer','competitor','decisionMaker']
       .map(k=>[k,$('nianming-'+k)?.value.trim()||'']).filter(([,v])=>v));
-    return {mode:mode.value,depth:'deep',actors:Object.fromEntries(['customer','competitor','decisionMaker'].map(k=>[k,$('actor-'+k).value]).filter(([,v])=>v)),nianming,
+    return {mode:mode.value,depth:'deep',actors:Object.fromEntries(['customer','competitor','decisionMaker'].map(k=>[k,$('actor-'+k)?.value||'']).filter(([,v])=>v)),nianming,
       subject:$('subject-label')?.value.trim()&&$('actor-subject')?.value?{label:$('subject-label').value.trim(),pillar:$('actor-subject').value}:null,
       direction:actual==='direction'?{origin:$('direction-origin')?.value||'',kind:$('direction-kind')?.value||''}:null,
       action:['timing','direction'].includes(actual)?$('qimen-action').value:'general',

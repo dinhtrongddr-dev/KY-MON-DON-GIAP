@@ -20,7 +20,7 @@ Gói này phải được cài vào bộ kết nối trên máy người dùng; 
 
 - Tứ trụ đổi theo tiết khí; nhật trụ đổi lúc 23:00.
 - Đông Chí đến trước Hạ Chí dùng Dương Độn; Hạ Chí đến trước Đông Chí dùng Âm Độn.
-- Hai pháp định nguyên: Tháo bổ theo Phù đầu và Mao Sơn 5 ngày/nguyên.
+- Profile sản phẩm hiện chốt Tháo Bổ theo Phù đầu; engine vẫn giữ fixture Mao Sơn cho kiểm thử/tương thích lịch sử nhưng UI và request mới của app luôn dùng `chaibu`.
 - Tam Kỳ Lục Nghi đi theo `Mậu–Kỷ–Canh–Tân–Nhâm–Quý–Đinh–Bính–Ất`.
 - Giáp Tý ẩn Mậu, Giáp Tuất ẩn Kỷ, Giáp Thân ẩn Canh, Giáp Ngọ ẩn Tân, Giáp Thìn ẩn Nhâm, Giáp Dần ẩn Quý.
 - Trực Phù theo thời can; Trực Sử theo thời cung; Trung Ngũ ký Khôn 2 khi định đích; Thiên Cầm và can ký cùng chuyển với Thiên Nhuế.

@@ -20,8 +20,7 @@ const ianaTimezoneInput=document.querySelector('#iana-timezone');
 const dstDisambiguationInput=document.querySelector('#dst-disambiguation');
 const longitudeInput=document.querySelector('#longitude');
 const latitudeInput=document.querySelector('#latitude');
-const methodInput = document.querySelector("#method");
-const methodNote = document.querySelector("#method-note");
+const QIMEN_METHOD = 'chaibu';
 const errorBox = document.querySelector("#form-error");
 const resultSection = document.querySelector("#result");
 const board = document.querySelector("#qimen-board");
@@ -407,7 +406,7 @@ function generateAndRender({ scroll = false } = {}) {
   resultSection.setAttribute("aria-busy", "true");
   try {
     const timePlace=resolveFormTimePlace();
-    const chart = generateQimen(timePlace.boardInput, methodInput.value);
+    const chart = generateQimen(timePlace.boardInput, QIMEN_METHOD);
     currentTimePlace=timePlace;
     currentQuestion = questionInput.value.trim();
     errorBox.hidden = true;
@@ -449,14 +448,6 @@ for(const control of [timezoneModeInput,ianaTimezoneInput,dstDisambiguationInput
 });
 for(const id of nianmingInputIds)document.querySelector('#nianming-'+id)?.addEventListener('change',()=>{selectedPalace=null;generateAndRender();});
 timezoneModeInput.addEventListener('change',syncTimePlaceControls);
-
-methodInput.addEventListener("change", () => {
-  methodNote.textContent = methodInput.value === "chaibu"
-    ? "Lấy nguyên theo Phù đầu của nhật Can Chi"
-    : "Tính mỗi nguyên đúng 5 ngày từ giờ giao tiết";
-  selectedPalace = null;
-  generateAndRender();
-});
 
 syncTimePlaceControls();
 datetimeInput.value = inputValueAtOffset(Date.now(), Number(timezoneInput.value));
@@ -510,7 +501,7 @@ function prepareAiInput(){
   generateAndRender();
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
   if(!currentTimePlace)throw new Error('Chưa có dữ liệu thời gian/địa điểm hợp lệ.');
-  return {question:questionInput.value.trim(),topic:topicInput.value,method:methodInput.value,input:{...currentTimePlace.originalInput},timePlace:{...currentTimePlace.request},...readingOptions()};
+  return {question:questionInput.value.trim(),topic:topicInput.value,method:QIMEN_METHOD,input:{...currentTimePlace.originalInput},timePlace:{...currentTimePlace.request},...readingOptions()};
 }
 // Render with the same components and exact AI chart, then restore live nodes and selection.
 function captureReportVisual(prepared){
