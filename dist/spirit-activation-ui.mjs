@@ -38,14 +38,27 @@ function chips(items,max=5,className=''){
   return wrap;
 }
 function meditatingFigure(data){
-  const wrap=el('span','meditation-figure-pro');wrap.setAttribute('role','img');wrap.setAttribute('aria-label','Người ngồi thiền, mặt hướng '+data.faceDirection);
-  wrap.innerHTML='<svg viewBox="0 0 180 120" aria-hidden="true" focusable="false"><defs><linearGradient id="robe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#28694f"/><stop offset="1" stop-color="#0f3d2f"/></linearGradient><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0cfac"/><stop offset="1" stop-color="#bb7c58"/></linearGradient><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#173f31" flood-opacity=".2"/></filter></defs><ellipse cx="90" cy="108" rx="55" ry="7" fill="#173f31" opacity=".1"/><g filter="url(#shadow)"><path d="M83 18c0-10 8-16 17-16 8 0 16 5 18 14l-2 15c-2 9-8 15-16 15-9 0-16-6-18-15z" fill="url(#skin)"/><path d="M82 17c3-12 11-18 22-17 8 1 14 6 16 14-7-4-22-3-38 3z" fill="#173129"/><path d="M111 23l12 5-11 5z" fill="#b87554"/><path d="M69 48c8-6 18-9 30-9 14 0 24 4 33 13l-8 39H61l-7-32c4-4 9-8 15-11z" fill="url(#robe)"/><path d="M62 57c-12 7-21 17-27 29l13 6c8-13 17-21 29-25z" fill="#1b5b43"/><path d="M127 57c13 7 22 17 28 29l-13 6c-9-13-18-21-30-25z" fill="#174a38"/><path d="M46 88c11 6 25 9 42 10l-7 15H28c2-11 8-19 18-25z" fill="#c69b38"/><path d="M140 88c-11 6-25 9-42 10l7 15h53c-2-11-8-19-18-25z" fill="#d7b24d"/><circle cx="90" cy="78" r="5" fill="#e3bd94"/><circle cx="99" cy="78" r="5" fill="#e3bd94"/></g></svg>';
-  return wrap;
+  const img=el('img','meditation-figure-pro');
+  img.src='./assets/meditating-side.png';
+  img.alt='Người ngồi thiền nhìn nghiêng theo trục '+data.backDirection+' – '+data.faceDirection;
+  img.loading='lazy';img.decoding='async';img.width=512;img.height=360;
+  return img;
+}
+function directionSide(kind,label,direction,spiritName){
+  const side=el('div','spirit-orientation-side spirit-orientation-side-'+kind);
+  side.append(el('span','spirit-orientation-axis',label),el('strong','spirit-orientation-direction',direction));
+  if(kind==='back')side.append(el('span','spirit-orientation-spirit',displaySpiritName(spiritName)));
+  return side;
 }
 function directionDiagram(data){
-  const box=el('div','spirit-orientation');
-  const visual=el('div','spirit-orientation-visual'),rear=el('span','spirit-orientation-axis spirit-orientation-axis-back','LƯNG'),front=el('span','spirit-orientation-axis spirit-orientation-axis-face','MẶT');
-  visual.append(rear,el('span','spirit-orientation-arrow spirit-orientation-arrow-back','←'),meditatingFigure(data),el('span','spirit-orientation-arrow spirit-orientation-arrow-face','→'),front);
+  const box=el('div','spirit-orientation'),visual=el('div','spirit-orientation-visual');
+  const figure=el('div','spirit-orientation-figure');
+  figure.append(el('span','spirit-orientation-arrow spirit-orientation-arrow-back','←'),meditatingFigure(data),el('span','spirit-orientation-arrow spirit-orientation-arrow-face','→'));
+  visual.append(
+    directionSide('back','LƯNG',data.backDirection,data.spirit.name),
+    figure,
+    directionSide('face','MẶT',data.faceDirection,data.spirit.name)
+  );
   box.append(visual);return box;
 }
 function detailList(title,items,className=''){
@@ -100,14 +113,11 @@ function practicePanel(data,{chartType='hourly',goalCategory='decision'}={}){
   const orientation=el('section','spirit-practice-block spirit-practice-orientation');
   orientation.append(el('span','spirit-step-number','1'),el('div','spirit-practice-block-body'));
   const orientationBody=orientation.lastChild;
-  const quick=el('div','spirit-orientation-quick');
-  quick.append(
-    el('span','','Mặt hướng '),el('strong','',data.faceDirection),
-    el('span','spirit-orientation-dot','·'),
-    el('span','','Lưng hướng '),el('strong','',data.backDirection),
-    el('span','spirit-orientation-deity-inline','· '+displaySpiritName(data.spirit.name))
+  orientationBody.append(
+    el('h4','','Đặt đúng phương vị'),
+    el('p','spirit-orientation-note','Ngồi thoải mái, xoay người đúng trục hướng. Không cần căn chính xác từng độ.'),
+    directionDiagram(data)
   );
-  orientationBody.append(el('h4','','Đặt đúng phương vị'),quick,el('p','spirit-orientation-note','Ngồi thoải mái, xoay người đúng trục hướng. Không cần căn chính xác từng độ.'),directionDiagram(data));
   panel.append(orientation);
 
   const settle=el('section','spirit-practice-block');

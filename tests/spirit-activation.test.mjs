@@ -169,26 +169,29 @@ test('hourly spirit cards are one expandable frame with priority merged into the
   assert.doesNotMatch(hourly,/Xem ý nghĩa & lưu ý/);
   assert.doesNotMatch(render,/const recommendation=el\('section','spirit-recommendation'/);
 });
-test('mobile activation UI hides technical version labels, prefixes deity names, and uses a seated visual for orientation',async()=>{
-  const {readFile}=await import('node:fs/promises');
-  const [ui,css]=await Promise.all([
+test('mobile activation orientation keeps all dynamic direction data inside one responsive illustration',async()=>{
+  const {readFile,stat}=await import('node:fs/promises');
+  const [ui,css,asset]=await Promise.all([
     readFile(new URL('../dist/spirit-activation-ui.mjs',import.meta.url),'utf8'),
-    readFile(new URL('../dist/styles.css',import.meta.url),'utf8')
+    readFile(new URL('../dist/styles.css',import.meta.url),'utf8'),
+    stat(new URL('../dist/assets/meditating-side.png',import.meta.url))
   ]);
   const hourlyRender=ui.slice(ui.indexOf('export function renderHourlySpiritActivation'),ui.indexOf('export function renderNatalSpiritActivation'));
   const natalRender=ui.slice(ui.indexOf('export function renderNatalSpiritActivation'));
   const direction=ui.slice(ui.indexOf('function meditatingFigure'),ui.indexOf('function detailList'));
   const practice=ui.slice(ui.indexOf('function practicePanel'),ui.indexOf('function openPractice'));
-  assert.doesNotMatch(hourlyRender,/semantic-version/);
-  assert.doesNotMatch(natalRender,/semantic-version/);
+  assert.doesNotMatch(hourlyRender,/semantic-version|KM-SPIRIT-ACTIVATION/);
+  assert.doesNotMatch(natalRender,/semantic-version|KM-SPIRIT-ACTIVATION/);
   assert.match(ui,/displaySpiritName/);
-  assert.match(practice,/Mặt hướng /);
-  assert.match(practice,/Lưng hướng /);
-  assert.match(practice,/displaySpiritName\(data\.spirit\.name\)/);
-  assert.match(direction,/meditation-figure-pro/);
-  assert.doesNotMatch(direction,/BẠN/);
-  assert.match(css,/KM-SPIRIT-MOBILE-1\.3/);
-  assert.match(css,/KM-SPIRIT-POLISH-1\.4/);
-  assert.match(css,/\.meditation-figure-pro/);
+  assert.doesNotMatch(practice,/Mặt hướng |Lưng hướng |spirit-orientation-quick/);
+  assert.match(direction,/directionSide\('back','LƯNG',data\.backDirection,data\.spirit\.name\)/);
+  assert.match(direction,/directionSide\('face','MẶT',data\.faceDirection,data\.spirit\.name\)/);
+  assert.match(direction,/displaySpiritName\(spiritName\)/);
+  assert.match(direction,/\.\/assets\/meditating-side\.png/);
+  assert.doesNotMatch(direction,/<svg|innerHTML|BẠN/);
+  assert.ok(asset.size>10000&&asset.size<250000);
+  assert.match(css,/KICH-THAN-ORIENTATION-2\.0/);
+  assert.match(css,/\.spirit-orientation\{[\s\S]*max-width:100%;[\s\S]*overflow:hidden;/);
+  assert.match(css,/\.spirit-orientation-visual\{[\s\S]*grid-template-columns:minmax\(64px,.8fr\) minmax\(104px,1.25fr\) minmax\(64px,.8fr\)/);
   assert.match(css,/@media\(max-width:560px\)/);
 });
