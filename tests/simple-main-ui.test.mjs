@@ -42,6 +42,19 @@ test('primary inputs hide advanced time/place controls and verbose mode explanat
   assert.match(css,/\.timeplace-details\[hidden\]\{display:none!important\}/);
 });
 
+test('related people UI merges Niên Mệnh and manual representatives into one entry per role',()=>{
+  assert.match(main,/class="related-people-options"/);
+  assert.match(main,/Người liên quan · tùy chọn/);
+  assert.doesNotMatch(main,/class="actor-options"|class="nianming-options"/);
+  for(const id of ['nianming-self','nianming-subject','nianming-customer','nianming-competitor','nianming-decisionMaker','actor-subject','actor-customer','actor-competitor','actor-decisionMaker']){
+    assert.equal((main.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
+  }
+  for(const role of ['Người hỏi','Người được hỏi thay','Khách hàng / đối phương','Đối thủ / bên cạnh tranh','Người có quyền duyệt'])assert.ok(main.includes(role));
+  assert.match(main,/Nâng cao · Can Chi đại diện/);
+  assert.match(css,/\.related-people-list/);
+  assert.match(css,/\.related-person-advanced/);
+});
+
 test('Guide covers modes, AI wait expectation, Mệnh use and beginner board reading',()=>{
   for(const label of ['Tự động','Dự đoán','Chiến lược','Thương chiến','Đàm phán','Chọn thời điểm','Chọn phương hướng'])assert.ok(guide.includes(label));
   assert.match(guide,/2–4 phút/);

@@ -1222,3 +1222,31 @@ body.share-view-mode main{padding-top:18px}
   .floating-result-nav{right:14px;left:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:auto;max-width:none;transform:none}
   .floating-result-button{width:60px;height:60px;min-width:60px;min-height:60px;padding:0;font-size:.74rem}
 }
+
+/* RELATED-PEOPLE-1.0 · one UI entry per role, Niên Mệnh + advanced representative together */
+.related-people-options{margin-top:10px;border-top:1px solid var(--line)}
+.related-people-options>summary{min-height:44px;display:flex;align-items:center;color:var(--jade-dark);font-weight:850;cursor:pointer}
+.related-people-intro{margin:4px 0 12px;color:var(--muted);font-size:.8rem;line-height:1.55}
+.related-people-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.related-person-card{min-width:0;padding:12px;border:1px solid var(--line);background:#fbfcfa}
+.related-person-self{grid-column:1/-1;display:grid;grid-template-columns:minmax(160px,.7fr) minmax(220px,1.3fr);align-items:end;gap:12px}
+.related-person-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.related-person-head strong{color:var(--jade-dark);font-size:.9rem}
+.related-person-head small{color:var(--muted);font-size:.69rem;line-height:1.25;text-align:right}
+.related-person-self .related-person-head{display:grid;align-content:center;margin:0}
+.related-person-self .related-person-head small{text-align:left}
+.related-person-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.related-person-card .field{margin:0}
+.related-person-card .field>span{font-size:.78rem}
+.related-person-card input,.related-person-card select{min-height:44px}
+.related-person-advanced{margin-top:9px;border-top:1px dashed var(--line);padding-top:2px}
+.related-person-advanced>summary{min-height:38px;display:flex;align-items:center;color:#66726c;font-size:.73rem;font-weight:760;cursor:pointer}
+.related-person-advanced[open]>summary{color:var(--jade-dark)}
+.related-person-advanced .field{margin-top:5px}
+.related-people-options>.nianming-note{margin:10px 0 0}
+@media(max-width:760px){
+  .related-people-list{grid-template-columns:1fr}
+  .related-person-self{grid-column:auto;grid-template-columns:1fr}
+  .related-person-self .related-person-head{margin-bottom:9px}
+  .related-person-main{grid-template-columns:1fr}
+}
