@@ -1277,65 +1277,113 @@ body.share-view-mode main{padding-top:18px}
   #chart-form .submit-field{padding-top:27px}
 }
 
-/* KM-SPIRIT-ACTIVATION-1.0 */
+/* KM-SPIRIT-ACTIVATION-1.1 · denser hierarchy, stronger highlights */
 .spirit-activation-panel{margin-top:18px}
 .spirit-panel-head,.spirit-card-head,.spirit-practice-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 .spirit-panel-head h2,.spirit-practice-head h3{margin:2px 0 0}
-.spirit-panel-copy{max-width:860px;margin:8px 0 14px;color:var(--muted);line-height:1.6}
-.spirit-goal-controls{display:grid;grid-template-columns:minmax(240px,420px);gap:10px;margin:12px 0}
-.spirit-goal-controls .field{margin:0}
-.spirit-recommendation{padding:13px 14px;border:1px solid var(--line);background:#fbfcfa;margin:12px 0 14px}
-.spirit-recommendation strong{color:var(--jade-dark)}
-.spirit-recommendation p{margin:6px 0 0;color:var(--muted)}
-.spirit-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.spirit-card{min-width:0;padding:14px;border:1px solid var(--line);background:#fff}
-.spirit-card.is-recommended{box-shadow:0 0 0 2px rgba(181,138,36,.18) inset}
-.spirit-card-head>div{display:grid;gap:2px}
-.spirit-name{font-size:1.02rem;color:var(--jade-dark)}
-.spirit-card-head span{font-size:.76rem;color:var(--muted)}
-.spirit-recommend-badge{padding:4px 8px;border-radius:999px;background:rgba(181,138,36,.12);color:#8c6817!important;font-weight:850}
-.spirit-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.spirit-chip{display:inline-flex;padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:#fafbf9;font-size:.72rem;color:var(--muted)}
-.spirit-modern-meaning{margin:8px 0 10px;line-height:1.55}
-.spirit-activation-level{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:9px;border-top:1px solid var(--line)}
-.spirit-activation-level small{color:var(--muted)}
-.spirit-activation-level strong{font-size:.82rem}
-.activation-level-great .spirit-activation-level strong,.activation-level-usable .spirit-activation-level strong{color:var(--jade-dark)}
-.activation-level-low .spirit-activation-level strong,.activation-level-avoid .spirit-activation-level strong{color:#8a4e35}
-.spirit-use-details,.spirit-research-details,.spirit-method-note{margin-top:10px;border-top:1px solid var(--line)}
-.spirit-use-details>summary,.spirit-research-details>summary,.spirit-method-note>summary{min-height:42px;display:flex;align-items:center;font-weight:820;color:var(--jade-dark);cursor:pointer}
-.spirit-detail-block{margin:8px 0 12px}
-.spirit-detail-block h4,.spirit-sitting h4{margin:0 0 6px}
-.spirit-detail-block ul{margin:6px 0 0;padding-left:20px}
-.spirit-detail-block li{margin:4px 0;line-height:1.45}
-.spirit-warning-block{padding:9px 11px;background:#fffaf5;border-left:3px solid rgba(139,80,43,.35)}
-.spirit-sitting{padding:10px 0}
-.spirit-sitting p{margin:4px 0}
-.spirit-direction-diagram{display:grid;justify-items:center;gap:4px;margin:10px 0;padding:12px;border:1px dashed var(--line);background:#fbfcfa;text-align:center}
-.spirit-direction-diagram strong{color:var(--jade-dark)}
-.spirit-arrow{font-size:1.15rem;color:var(--muted)}
-.spirit-person{font-size:.8rem;font-weight:800;letter-spacing:.02em}
-.spirit-structure-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
-.spirit-structure-grid>div{display:grid;gap:2px;padding:8px 9px;background:#fbfcfa;border:1px solid var(--line)}
-.spirit-structure-grid small{color:var(--muted);font-size:.68rem}
-.spirit-structure-grid strong{font-size:.8rem}
-.spirit-practice-card{margin-top:16px;padding:16px;border:1px solid var(--line);background:#fcfdfb;box-shadow:0 10px 28px rgba(18,42,31,.08)}
-.spirit-practice-close{width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:50%;font-size:1.3rem;cursor:pointer}
-.spirit-practice-intro{max-width:820px;color:var(--muted);line-height:1.55}
-.spirit-practice-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
-.spirit-practice-step{padding:10px;border:1px solid var(--line);background:#fff}
-.spirit-practice-step strong{color:var(--jade-dark)}
-.spirit-practice-step p{margin:5px 0 0;line-height:1.5}
-.spirit-timer{font-variant-numeric:tabular-nums;font-size:2rem;font-weight:900;text-align:center;letter-spacing:.06em;color:var(--jade-dark);padding:12px 0}
-.spirit-practice-actions{display:flex;justify-content:center;gap:8px;margin-bottom:14px}
-.spirit-practice-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--line)}
-.spirit-note-field textarea{resize:vertical;min-height:88px}
+.spirit-panel-head h2{max-width:780px}
+.spirit-intro-callout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.9fr);gap:12px 18px;margin:14px 0;padding:16px 18px;border:1px solid #9fb5aa;border-left:5px solid var(--jade);background:linear-gradient(135deg,#f2f8f4,#fff)}
+.spirit-intro-callout strong{display:block;color:var(--jade-dark);font-size:1rem}
+.spirit-intro-callout p{margin:5px 0 0;line-height:1.55}
+.spirit-intro-note{grid-column:1/-1!important;margin:0!important;padding-top:10px;border-top:1px solid #d8e2dc;color:#4f5c55;font-size:.79rem}
+.spirit-purpose-chips{align-self:start;margin:0}
+.spirit-purpose-chips .spirit-chip{background:#e4f1e9;border-color:#b8d1c2;color:#174d39;font-weight:800}
+.spirit-toolbar{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:12px 0}
+.spirit-goal-field{width:min(420px,100%);margin:0}
+.spirit-goal-field>span{font-weight:850;color:var(--jade-dark)}
+.spirit-recommendation{display:grid;grid-template-columns:minmax(230px,.8fr) minmax(0,1.5fr);gap:18px;align-items:center;margin:12px 0 10px;padding:17px 18px;border:1px solid #0f4e39;background:linear-gradient(135deg,#153e31,#1d5b43);color:#fff;box-shadow:0 8px 24px rgba(18,62,46,.16)}
+.spirit-recommend-main{display:grid;gap:3px}
+.spirit-recommend-kicker{font-size:.68rem;font-weight:900;letter-spacing:.12em;color:#e6c26a}
+.spirit-recommend-title{font-family:var(--display);font-size:1.55rem;line-height:1.1}
+.spirit-recommend-place{font-size:.8rem;color:#dce8e2}
+.spirit-recommend-right{display:grid;gap:8px;justify-items:start}
+.spirit-recommend-right p{margin:0;color:#f2f7f4;line-height:1.5}
+.spirit-level-badge{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;background:#e7efe9;color:#173f31;font-size:.72rem;font-weight:900;white-space:nowrap}
+.spirit-recommendation .spirit-level-badge{background:#f1d689;color:#4a390d}
+.spirit-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.spirit-card{min-width:0;padding:13px 14px;border:1px solid var(--line);background:#fff}
+.spirit-card.is-recommended{padding:15px 16px;border:2px solid var(--gold);background:linear-gradient(180deg,#fffdf7,#fff);box-shadow:0 8px 22px rgba(80,59,17,.08)}
+.spirit-card-head>div{display:grid;gap:1px}
+.spirit-name{font-size:1.15rem;color:var(--jade-dark)}
+.spirit-location{font-size:.75rem;color:#5c6862}
+.spirit-chips{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.spirit-chip{display:inline-flex;padding:4px 8px;border:1px solid #c8d4cc;border-radius:999px;background:#f7faf8;font-size:.7rem;color:#41534a}
+.spirit-keyword-row .spirit-chip{background:#f5edda;border-color:#ddca96;color:#664d13;font-weight:800}
+.spirit-modern-meaning{margin:7px 0 8px;line-height:1.48;color:#26372f}
+.spirit-card-meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin:7px 0 4px;color:#5b6861;font-size:.72rem;font-weight:700}
+.spirit-card-meta span{position:relative}
+.spirit-card-meta span+span:before{content:'•';position:absolute;left:-8px;color:#a0aaa4}
+.spirit-use-details,.spirit-research-details,.spirit-method-note,.spirit-alternatives{margin-top:9px;border-top:1px solid var(--line)}
+.spirit-use-details>summary,.spirit-research-details>summary,.spirit-method-note>summary,.spirit-alternatives>summary{min-height:40px;display:flex;align-items:center;font-weight:850;color:var(--jade-dark);cursor:pointer}
+.spirit-use-details h4{margin:8px 0 4px}
+.spirit-alternatives{margin-top:12px}
+.spirit-alternatives>summary{justify-content:center;border:1px solid var(--line);background:#f7f8f5}
+.spirit-alternatives[open]>summary{margin-bottom:10px;background:#eef3ef}
+.spirit-alternative-grid .spirit-card{padding:11px 12px}
+.spirit-alternative-grid .spirit-modern-meaning{font-size:.82rem}
+.spirit-detail-block{margin:7px 0 10px}
+.spirit-detail-block h4{margin:0 0 5px}
+.spirit-detail-block ul{margin:5px 0 0;padding-left:18px}
+.spirit-detail-block li{margin:3px 0;line-height:1.42}
+.spirit-warning-block{padding:8px 10px;background:#fff7ef;border-left:4px solid #9b5a32}
+.spirit-warning-block h4{color:#774125}
+.spirit-structure-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:7px 0}
+.spirit-structure-grid>div{display:grid;gap:1px;padding:7px 8px;background:#f5f7f4;border:1px solid var(--line)}
+.spirit-structure-grid small{color:#6b756f;font-size:.64rem}
+.spirit-structure-grid strong{font-size:.76rem}
+.spirit-practice-open{margin-top:10px;width:100%;justify-content:center}
+.spirit-method-note{margin-top:14px;padding:0 2px}
+.spirit-method-note p{margin:7px 0;color:#58645e;line-height:1.5}
+.spirit-practice-card{margin-top:16px;padding:18px;border:2px solid var(--jade-dark);background:#fff;box-shadow:0 14px 34px rgba(18,42,31,.14)}
+.spirit-practice-head h3{font-size:1.35rem}
+.spirit-practice-close{width:38px;height:38px;border:1px solid var(--line-strong);background:#fff;border-radius:50%;font-size:1.3rem;cursor:pointer}
+.spirit-practice-summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:12px 0 14px;padding:10px 12px;background:#173f31;color:#fff}
+.spirit-practice-summary strong{font-size:.9rem}
+.spirit-practice-summary>span:last-child{margin-left:auto;color:#f1d689;font-weight:900}
+.spirit-practice-goal{padding:4px 8px;border-radius:999px;background:#f1d689;color:#4a390d;font-size:.7rem;font-weight:900}
+.spirit-practice-block{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:12px 0;border-top:1px solid #d8ded9}
+.spirit-practice-block:first-of-type{border-top:0}
+.spirit-step-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--jade-dark);color:#fff;font-weight:900}
+.spirit-practice-block-body h4{margin:3px 0 5px;color:var(--jade-dark);font-size:1rem}
+.spirit-practice-block-body p{margin:0;line-height:1.52}
+.spirit-practice-orientation{padding-top:2px}
+.spirit-direction-diagram{display:grid;grid-template-columns:1fr 120px 1fr;gap:8px;align-items:center;margin:10px 0 0;padding:12px;border:1px solid #b8c7be;background:#f1f6f3;text-align:center}
+.spirit-direction-side{display:grid;gap:2px}
+.spirit-direction-side small{font-size:.62rem;font-weight:900;letter-spacing:.09em;color:#66736c}
+.spirit-direction-side strong{font-size:1rem;color:var(--jade-dark)}
+.spirit-direction-person{display:grid;gap:0;justify-items:center;color:#8a6719}
+.spirit-direction-person b{padding:5px 10px;border-radius:999px;background:#f1d689;color:#4a390d;font-size:.74rem}
+.spirit-intention-block{margin:8px -6px 0;padding:15px 6px;border:1px solid #d3b45b;background:linear-gradient(135deg,#fff8e6,#fffdf7)}
+.spirit-intention-block .spirit-step-number{background:#9a701b}
+.spirit-intention-instruction{font-size:.8rem;color:#655b43}
+.spirit-intention-script{margin:9px 0;padding:12px 14px;border-left:5px solid var(--gold);background:#fff;color:#2b312e;font-size:.98rem;font-weight:800;line-height:1.58}
+.spirit-observation-chips{margin:8px 0 0}
+.spirit-observation-chips .spirit-chip{background:#fff;border-color:#d8bd71;color:#5d4713;font-weight:800}
+.spirit-timer-wrap{display:grid;justify-items:center;margin:10px 0 4px;padding:10px;background:#eef3ef}
+.spirit-timer-wrap small{font-size:.64rem;font-weight:900;letter-spacing:.12em;color:#617068}
+.spirit-timer{font-variant-numeric:tabular-nums;font-size:2.2rem;font-weight:950;letter-spacing:.06em;color:var(--jade-dark)}
+.spirit-practice-actions{display:flex;justify-content:center;gap:8px;margin-bottom:15px}
+.spirit-notes-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.spirit-notes-head strong{color:var(--jade-dark)}
+.spirit-notes-head span{font-size:.74rem;color:#69756f}
+.spirit-practice-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:9px}
+.spirit-note-field textarea{resize:vertical;min-height:90px}
 .spirit-practice-notes>.button,.spirit-save-status{grid-column:1/-1}
-.spirit-save-status{margin:0;color:var(--muted);font-size:.76rem}
-.spirit-natal-hero{padding:14px;border:1px solid var(--line);background:#fff}
-.spirit-natal-vs-hourly{margin-top:12px;padding:11px 13px;background:#fbfcfa;border:1px solid var(--line)}
-.spirit-natal-vs-hourly p{margin:5px 0;color:var(--muted)}
+.spirit-save-status{margin:0;color:var(--muted);font-size:.74rem}
+.spirit-natal-intro{grid-template-columns:1fr}
+.spirit-natal-hero{padding:15px 16px;border:2px solid #b7c8bd;background:#fff}
+.spirit-natal-traits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0}
+.spirit-natal-traits .spirit-detail-block{margin:0;padding:10px 12px;background:#f5f8f6;border-left:4px solid var(--jade)}
+.spirit-natal-traits .spirit-warning-block{background:#fff7ef;border-left-color:#9b5a32}
+.spirit-natal-vs-hourly{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;background:#eef3ef;border:1px solid var(--line)}
+.spirit-natal-vs-hourly strong{color:var(--jade-dark);white-space:nowrap}
+.spirit-natal-vs-hourly span{color:#58645e;font-size:.8rem}
 @media(max-width:760px){
-  .spirit-card-grid,.spirit-practice-steps,.spirit-practice-notes{grid-template-columns:1fr}
+  .spirit-intro-callout,.spirit-recommendation,.spirit-card-grid,.spirit-practice-notes,.spirit-natal-traits{grid-template-columns:1fr}
+  .spirit-intro-note{grid-column:auto!important}
+  .spirit-structure-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .spirit-direction-diagram{grid-template-columns:1fr 90px 1fr}
+  .spirit-practice-summary>span:last-child{margin-left:0}
+  .spirit-notes-head,.spirit-natal-vs-hourly{align-items:flex-start;flex-direction:column}
   .spirit-practice-notes>.button,.spirit-save-status{grid-column:auto}
 }

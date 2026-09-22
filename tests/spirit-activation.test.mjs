@@ -138,6 +138,20 @@ test('Hỏi Việc and Mệnh pages are wired to the shared activation renderer'
   assert.match(html,/id="spirit-activation"/);
   assert.match(app,/renderHourlySpiritActivation\(spiritActivationPanel/);
   assert.match(menh,/renderNatalSpiritActivation\(spiritPanel/);
-  assert.match(css,/KM-SPIRIT-ACTIVATION-1\.0/);
+  assert.match(css,/KM-SPIRIT-ACTIVATION-1\.1/);
   assert.doesNotMatch(css,/QMDJ_SPIRIT_ACTIVATION_SCORE|BACK_DIRECTION/);
+});
+test('spirit activation UI explains purpose, keeps sitting instructions inside practice, and makes intention concrete',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const ui=await readFile(new URL('../dist/spirit-activation-ui.mjs',import.meta.url),'utf8');
+  assert.match(ui,/Dùng phần này khi nào\?/);
+  assert.match(ui,/Chọn trạng thái và phương vị hỗ trợ trước khi hành động/);
+  assert.match(ui,/Đặt ý niệm — làm đúng như sau/);
+  assert.match(ui,/Đọc thầm câu dưới đây đúng 1 lần/);
+  assert.match(ui,/Điểm hai bên có thể cùng chấp nhận/);
+  assert.match(ui,/Xem .* lựa chọn còn lại/);
+  const hourly=ui.slice(ui.indexOf('function hourlyCard'),ui.indexOf('function introCallout'));
+  assert.doesNotMatch(hourly,/directionDiagram|phía sau lưng|Mặt hướng/);
+  const practice=ui.slice(ui.indexOf('function practicePanel'),ui.indexOf('function openPractice'));
+  assert.match(practice,/directionDiagram\(data\)/);
 });
