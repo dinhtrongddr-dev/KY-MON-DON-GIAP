@@ -93,7 +93,14 @@ export function buildWriterContext(context) {
   };
   const deepTarget={prediction:'600–1100',strategy:'700–1250',business:'750–1350',negotiation:'650–1200',timing:'450–850',direction:'450–850'};
   const semanticDomainId=semanticDomainForTopic(c.resolvedTopic),secondaryDomainId=classifyTopics(context.question).map(semanticDomainForTopic).find(id=>id!==semanticDomainId)||null;
-  const semanticPalaces=semanticGuideForBoard(c.board,{mode:'event',domainId:semanticDomainId,secondaryDomainId,palaceNumbers:[...new Set(g.evidenceBundles.map(b=>b.palace))]}).map(p=>({palace:p.palace,keywords:p.keywords,summary:p.summary,items:p.items.map(i=>({layer:i.layer,name:i.name,tags:i.tags,meaning:i.meaning})),states:p.states.map(s=>({id:s.id,rule:s.rule}))}));
+  const compactSemanticRole=x=>x?{name:x.name,meaning:x.meaning,light:x.light,shadow:x.shadow,strength:x.strength}:null;
+  const semanticPalaces=semanticGuideForBoard(c.board,{mode:'event',domainId:semanticDomainId,secondaryDomainId,palaceNumbers:[...new Set(g.evidenceBundles.map(b=>b.palace))],analysisPalaces:c.analysis?.palaces||[]}).map(p=>({
+    palace:p.palace,keywords:p.keywords,summary:p.summary,states:p.states.map(s=>({id:s.id,rule:s.rule})),strengthExpression:p.strength_expression,
+    palaceContext:compactSemanticRole(p.palace_context),actionChannel:compactSemanticRole(p.action_channel),operatingStyle:compactSemanticRole(p.operating_style),hiddenFactor:compactSemanticRole(p.hidden_factor),
+    heavenStemExpression:{primary:compactSemanticRole(p.heaven_stem_expression.primary),secondary:p.heaven_stem_expression.secondary.map(compactSemanticRole)},
+    earthStemFoundation:compactSemanticRole(p.earth_stem_foundation),domainTranslation:p.domain_translation,associations:p.associations,
+    items:p.items.map(i=>({layer:i.layer,role:i.role,name:i.name,meaning:i.meaning,primary:i.primary}))
+  }));
   const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'event',domain:semanticDomainVocabulary(semanticDomainId),secondaryDomain:secondaryDomainId?semanticDomainVocabulary(secondaryDomainId):null,assemblyRules:semanticAssemblyRules(),palaces:semanticPalaces};
   const coverageByMode={
     prediction:['answer_stage','decisive_evidence','counterevidence','outcome_condition'],

@@ -37,7 +37,7 @@ test('P9 writer context contains only prepared deterministic claims and locks mu
   assert.equal(ctx.restrictions.rebuildChart,false);
   assert.equal(ctx.restrictions.alterProfile,false);
   assert.equal(ctx.restrictions.probability,false);
-  assert.equal(ctx.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.0');
+  assert.equal(ctx.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.1');
   assert.ok(ctx.semanticMatrix.claims.some(x=>x.claimId==='CAREER_1'&&x.domainId==='career'));
   assert.equal(ctx.semanticMatrix.domains.career.id,'career');
   assert.ok(Object.isFrozen(ctx));

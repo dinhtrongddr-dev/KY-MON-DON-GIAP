@@ -43,7 +43,7 @@ BỐ CỤC NỘI DUNG:
 
 VĂN PHONG:
 - Giải thích như một người đọc Mệnh bàn có hệ thống: rõ, cụ thể, có quan hệ nguyên nhân–cấu trúc–biểu hiện.
-- semanticMatrix là lớp DỊCH NGHĨA dùng chung sau khi các resolver Mệnh đã xác định trục/chủ thể. Không dùng matrix để đổi resolver hay tự quyết định cung nào đại diện cha mẹ, con cái, hôn nhân, sự nghiệp hoặc tài vận. Domain của claim quyết định từ vựng chính. Khi nhiều thành phần cùng tag thì nhấn ý một lần; nếu tag đối nghịch thì diễn đạt “có X nhưng Y”; trạng thái chỉ điều chỉnh cách biểu hiện, không thay nghĩa gốc.
+- semanticMatrix 1.1 là lớp DỊCH NGHĨA dùng chung sau khi các resolver Mệnh đã xác định trục/chủ thể. Không dùng matrix để đổi resolver hay tự quyết định cung nào đại diện cha mẹ, con cái, hôn nhân, sự nghiệp hoặc tài vận. Đọc đúng palaceContext, actionChannel, operatingStyle, hiddenFactor, heavenStemExpression và earthStemFoundation theo vai trò riêng của chúng. Ưu tiên meaning/domainMeaning của chính ký hiệu; tags chỉ để hội tụ, tương phản hoặc fallback. Không tự phát minh nghĩa trái semantic source. strengthExpression và states chỉ điều chỉnh mức phát huy/light-shadow, không biến thành tốt/xấu tuyệt đối hay xác suất.
 - Ưu tiên câu văn tự nhiên, tránh danh sách từ khóa dài. Có thể dùng dấu “→” rất hạn chế khi thực sự làm rõ cơ chế.
 - Không gọi người dùng là “mệnh xấu/tốt”. Mô tả “bàn”, “cấu trúc”, “xu hướng”, “trục nổi bật”.
 - Khi một diễn giải vượt khỏi deterministic claim sang ví dụ đời sống, tự hạ mức chắc chắn bằng từ ngữ có điều kiện.

@@ -44,12 +44,12 @@ test('selected palace separates modern translation from traditional gloss and ke
   assert.match(app,/Nghĩa tượng truyền thống của Cung · Thần · Tinh · Môn · Can/);
   assert.match(app,/semantic-modern-list/);
   assert.match(app,/aria-label="Cung Thần Tinh Môn Can"/);
-  assert.match(app,/['"]Cung['"]:\s*0/);
-  assert.match(app,/['"]Thần['"]:\s*1/);
-  assert.match(app,/['"]Tinh['"]:\s*2/);
-  assert.match(app,/['"]Môn['"]:\s*3/);
-  assert.match(app,/['"]Thiên can['"]:\s*4/);
-  assert.match(app,/['"]Địa can['"]:\s*5/);
+  assert.match(app,/palace_context:\s*0/);
+  assert.match(app,/hidden_factor:\s*1/);
+  assert.match(app,/operating_style:\s*2/);
+  assert.match(app,/action_channel:\s*3/);
+  assert.match(app,/heaven_stem_expression:\s*4/);
+  assert.match(app,/earth_stem_foundation:\s*5/);
   assert.match(app,/detailItem\("palace"/);
 });
 

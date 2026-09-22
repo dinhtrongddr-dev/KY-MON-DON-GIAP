@@ -109,10 +109,17 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
   });
   const natalBoard=result.natal?.baseBoard||null;
   const palaceNumber=value=>typeof value==='number'?value:Number(String(value||'').match(/(\d+)$/)?.[1]||0);
+  const compactSemanticRole=x=>x?{name:x.name,meaning:x.meaning,light:x.light,shadow:x.shadow,strength:x.strength}:null;
   const semanticClaims=claims.map(claim=>{
     const support=claimSupport.find(x=>x.claimId===claim.claimId),domainId=semanticDomainForMenh(claim.domain);
     const palaceNumbers=[...new Set((support?.palaces||[]).map(palaceNumber).filter(Boolean))];
-    const palaces=natalBoard?semanticGuideForBoard(natalBoard,{mode:'destiny',domainId,palaceNumbers}).map(p=>({palace:p.palace,keywords:p.keywords,summary:p.summary,items:p.items.map(i=>({layer:i.layer,name:i.name,tags:i.tags,meaning:i.meaning})),states:p.states.map(s=>({id:s.id,rule:s.rule}))})):[];
+    const palaces=natalBoard?semanticGuideForBoard(natalBoard,{mode:'destiny',domainId,palaceNumbers,analysisPalaces:result.analysisLayers?.byPalace||{}}).map(p=>({
+      palace:p.palace,keywords:p.keywords,summary:p.summary,states:p.states.map(s=>({id:s.id,rule:s.rule})),strengthExpression:p.strength_expression,
+      palaceContext:compactSemanticRole(p.palace_context),actionChannel:compactSemanticRole(p.action_channel),operatingStyle:compactSemanticRole(p.operating_style),hiddenFactor:compactSemanticRole(p.hidden_factor),
+      heavenStemExpression:{primary:compactSemanticRole(p.heaven_stem_expression.primary),secondary:p.heaven_stem_expression.secondary.map(compactSemanticRole)},
+      earthStemFoundation:compactSemanticRole(p.earth_stem_foundation),domainTranslation:p.domain_translation,associations:p.associations,
+      items:p.items.map(i=>({layer:i.layer,role:i.role,name:i.name,meaning:i.meaning,primary:i.primary}))
+    })):[];
     return {claimId:claim.claimId,domainId,palaces};
   });
   const domainIds=[...new Set(semanticClaims.map(x=>x.domainId))],semanticDomains=Object.fromEntries(domainIds.map(id=>[id,semanticDomainVocabulary(id)]));

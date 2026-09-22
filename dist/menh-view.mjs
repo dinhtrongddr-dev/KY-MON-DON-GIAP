@@ -145,14 +145,13 @@ function detailItemNode(type,layer,title,subtitle,copy){
   top.append(el('strong','',title),el('small','',layer+(subtitle?' · '+subtitle:'')));
   item.append(top,el('p','',copy));return item;
 }
-function semanticCardNode(palace,board,conditions=null){
-  const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board,conditions});
+function semanticCardNode(palace,board,conditions=null,analysisLayer=null){
+  const semantic=semanticBundle(palace,{mode:'destiny',domainId:'general_decision',board,conditions,strength:analysisLayer?.strength||null});
   const section=el('section','semantic-card');section.setAttribute('aria-label','Dịch nghĩa nhanh theo Mệnh bàn');
   const head=el('div','semantic-card-head'),eyebrow=el('p','eyebrow','Dịch nghĩa nhanh · '+semantic.domainLabel);
   head.append(eyebrow,el('span','semantic-version',semantic.version));section.append(head);
-  const chips=el('div','semantic-keywords');for(const word of semantic.keywords)chips.append(el('span','',word));section.append(chips);
+  const chips=el('div','semantic-keywords');for(const word of semantic.keywords.slice(0,3))chips.append(el('span','',word));section.append(chips);
   section.append(el('p','semantic-summary',semantic.summary));
-  if(semantic.states.length)section.append(el('p','semantic-state',semantic.states.map(x=>x.rule).join(' ')));
   const details=el('details','semantic-components'),summary=el('summary','','Xem nghĩa từng thành phần'),list=el('ul');
   for(const item of semantic.items){const li=el('li');li.append(el('strong','',item.layer+' · '+item.name),el('span','',item.meaning));list.append(li);}
   details.append(summary,list);section.append(details);return section;
@@ -186,8 +185,9 @@ function renderMenhPalaceDetail(detail,titleNode,palace,board,analysisLayers=nul
   name.append(el('strong','','Cung '+palace.vi+' '+palace.number+' · '+palace.han),el('small','',palace.direction||'Trung tâm'));
   main.append(el('span','detail-gua',palace.trigram||'中'),name);title.append(main,el('span','element-chip',palace.element));
   detail.append(title,el('p','detail-image',palace.image||''));
-  detail.append(semanticCardNode(palace,board,conditions));
-  const layerCard=strengthStructureCard(analysisLayers?.byPalace?.[palace.number]||null);if(layerCard)detail.append(layerCard);
+  const analysisLayer=analysisLayers?.byPalace?.[palace.number]||null;
+  detail.append(semanticCardNode(palace,board,conditions,analysisLayer));
+  const layerCard=strengthStructureCard(analysisLayer);if(layerCard)detail.append(layerCard);
   const list=el('div','detail-list');
   if(palace.number===5){
     list.append(
