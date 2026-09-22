@@ -28,6 +28,14 @@ test('floating result navigation is a compact circular bubble and AI sits before
   for(const label of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành'])assert.equal(html.includes(label),false);
 });
 
+test('Hỏi Việc init tolerates removed helper copy and selected palace uses one merged heading',()=>{
+  assert.match(app,/const timezoneHelp=document\.querySelector\('#timezone-help'\);[\s\S]*if\(timezoneHelp\)timezoneHelp\.textContent=/);
+  assert.doesNotMatch(html,/class="inspector-head"/);
+  assert.match(html,/id="inspector-title" class="visually-hidden"/);
+  assert.match(app,/Cung \$\{palace\.vi\} \$\{palace\.number\} · \$\{palace\.han\}/);
+  assert.match(css,/#chart-form\.input-grid\{[\s\S]*grid-template-columns:minmax\(360px,1\.65fr\) minmax\(220px,\.85fr\) minmax\(180px,\.55fr\)/);
+});
+
 test('selected palace separates modern translation from traditional gloss and keeps the full modern Cung-Thần-Tinh-Môn-Can breakdown',()=>{
   assert.match(app,/Dịch tân thời/);
   assert.match(app,/Dịch cổ ngữ/);

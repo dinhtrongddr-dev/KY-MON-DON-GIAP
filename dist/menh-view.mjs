@@ -179,11 +179,11 @@ function strengthStructureCard(layer){
   return section;
 }
 function renderMenhPalaceDetail(detail,titleNode,palace,board,analysisLayers=null){
-  titleNode.textContent=palace.vi+' '+palace.number+' cung';
+  if(titleNode)titleNode.textContent='Cung '+palace.vi+' '+palace.number;
   detail.replaceChildren();
   const conditions=palaceConditions(palace),title=el('div','detail-title');title.dataset.element=elementSlug(palace.element);
   const main=el('div','detail-title-main'),name=el('span');
-  name.append(el('strong','',palace.han),el('small','',palace.direction||'Trung tâm'));
+  name.append(el('strong','','Cung '+palace.vi+' '+palace.number+' · '+palace.han),el('small','',palace.direction||'Trung tâm'));
   main.append(el('span','detail-gua',palace.trigram||'中'),name);title.append(main,el('span','element-chip',palace.element));
   detail.append(title,el('p','detail-image',palace.image||''));
   detail.append(semanticCardNode(palace,board,conditions));
@@ -314,8 +314,8 @@ function renderNatalBoard(board,selfPalaceNumber=null,{interactive=false}={}){
 }
 function renderMenhWorkspace(board,selfPalaceNumber=null,analysisLayers=null){
   const workspace=el('div','workspace menh-workspace'),boardColumn=renderNatalBoard(board,selfPalaceNumber,{interactive:true});
-  const inspector=el('aside','inspector menh-inspector'),head=el('div','inspector-head'),title=el('h2','','Chọn một cung trên bàn'),detail=el('div','palace-detail');
-  head.append(el('div','menh-inspector-title-wrap'));head.firstChild.append(el('p','eyebrow','Luận tượng từng cung'),title);inspector.append(head,detail);
+  const inspector=el('aside','inspector menh-inspector'),title=el('h2','visually-hidden','Luận tượng từng cung'),detail=el('div','palace-detail');
+  inspector.append(title,detail);
   const elements=cloneMenhElementPanel();workspace.append(boardColumn,inspector,elements);
   const buttons=[...boardColumn.querySelectorAll('.palace')];
   const select=number=>{

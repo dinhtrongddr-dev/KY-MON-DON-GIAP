@@ -89,6 +89,13 @@ test('Mệnh element diagram template is the same visual system as Hỏi Việc 
   assert.match(view,/else\{\s*container\.append\(renderUnknownBoardNotice\(prepared\)\)/);
 });
 
+test('Mệnh palace inspector merges palace identity into one detail heading',()=>{
+  const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
+  assert.match(view,/Cung '\+palace\.vi\+' '\+palace\.number\+' · '\+palace\.han/);
+  assert.match(view,/el\('h2','visually-hidden','Luận tượng từng cung'\)/);
+  assert.doesNotMatch(view,/el\('div','inspector-head'\)/);
+});
+
 test('Mệnh puts AI before Tứ Trụ, uses the same single floating switch, and removes textual color legends',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   const ai=readFileSync(new URL('../dist/menh-ai.mjs',import.meta.url),'utf8');

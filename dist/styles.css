@@ -1254,3 +1254,21 @@ body.share-view-mode main{padding-top:18px}
 .help-page .help-card,.help-page .help-steps,.help-page .code-block{min-width:0;max-width:100%}
 .help-page .code-block{box-sizing:border-box}
 .help-page code,.help-page p,.help-page li{overflow-wrap:anywhere}
+
+/* HOVVIEC-FORM-ALIGN-1.0 · fixed Tháo Bổ leaves a clean three-column action row */
+@media (min-width:681px){
+  #chart-form.input-grid{
+    grid-template-columns:minmax(360px,1.65fr) minmax(220px,.85fr) minmax(180px,.55fr);
+  }
+  #chart-form .field-time,
+  #chart-form .field-zone,
+  #chart-form .submit-field{grid-column:auto}
+}
+.inspector>.visually-hidden+.palace-detail{padding-top:18px}
+
+/* HOVVIEC-FORM-ALIGN-1.1 · align date, timezone and submit controls on one horizontal axis */
+@media (min-width:681px){
+  #chart-form .submit-field>span,
+  #chart-form .submit-field>small{display:none}
+  #chart-form .submit-field{padding-top:27px}
+}

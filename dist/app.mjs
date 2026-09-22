@@ -82,7 +82,8 @@ function resolveFormTimePlace(){return resolveTimePlace(parseInputValue(),timePl
 function syncTimePlaceControls(){
   const iana=timezoneModeInput.value==='iana_civil';
   timezoneInput.disabled=iana;ianaTimezoneInput.disabled=!iana;dstDisambiguationInput.disabled=!iana;
-  document.querySelector('#timezone-help').textContent=iana?'IANA sẽ quyết định UTC offset lịch sử/DST; ô UTC cố định tạm không dùng.':'UTC offset cố định · hành vi tương thích cũ.';
+  const timezoneHelp=document.querySelector('#timezone-help');
+  if(timezoneHelp)timezoneHelp.textContent=iana?'IANA sẽ quyết định UTC offset lịch sử/DST; ô UTC cố định tạm không dùng.':'UTC offset cố định · hành vi tương thích cũ.';
 }
 
 function renderPillars(chart) {
@@ -313,7 +314,7 @@ function classicalIntro(){
 
 function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
   const palace = chart.palaces.find((item) => item.number === selectedPalace) || chart.palaces[0];
-  inspectorTitle.textContent = `${palace.vi} ${palace.number} cung`;
+  if(inspectorTitle)inspectorTitle.textContent = `Cung ${palace.vi} ${palace.number}`;
   const palaceElement = elementSlug(palace.element);
   const attention=attentionProfile?.byPalace?.[palace.number]||null;
   const nianmingRows=(prepared?.analysis?.nianming||currentAnalysis?.nianming)?.byPalace?.[palace.number]||[];
@@ -331,7 +332,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     <p class="attention-note">Màu chỉ giúp ưu tiên đọc; không phải xác suất hay phán quyết tốt/xấu tuyệt đối.</p>
   </section>`:'';
   const title = `<div class="detail-title" data-element="${palaceElement}">
-    <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.han}</strong><small>${palace.direction||"Trung tâm"}</small></span></div>
+    <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>Cung ${palace.vi} ${palace.number} · ${palace.han}</strong><small>${palace.direction||"Trung tâm"}</small></span></div>
     <span class="element-chip">${palace.element}</span>
   </div>`;
 
