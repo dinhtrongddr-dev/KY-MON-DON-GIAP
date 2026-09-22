@@ -89,6 +89,11 @@ test('Mệnh element diagram template is the same visual system as Hỏi Việc 
   assert.match(view,/else\{\s*container\.append\(renderUnknownBoardNotice\(prepared\)\)/);
 });
 
+test('Mệnh app tolerates helper text removed from the simplified form',()=>{
+  assert.match(app,/const timezoneHelp=\$\('menh-timezone-help'\);if\(timezoneHelp\)timezoneHelp\.textContent=/);
+  assert.match(app,/const birthTimeHelp=\$\('birth-time-help'\);if\(birthTimeHelp\)birthTimeHelp\.textContent=/);
+});
+
 test('Mệnh palace inspector merges palace identity into one detail heading',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   assert.match(view,/Cung '\+palace\.vi\+' '\+palace\.number\+' · '\+palace\.han/);

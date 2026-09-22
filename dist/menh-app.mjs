@@ -60,7 +60,7 @@ function collectTimePlace(){
 function syncTimePlace(){
   const iana=timezoneMode.value==='iana_civil';
   timezone.disabled=iana;ianaTimezone.disabled=!iana;dstDisambiguation.disabled=!iana;
-  $('menh-timezone-help').textContent=iana?'IANA quyết định UTC offset lịch sử/DST tại ngày sinh; ô UTC cố định tạm không dùng.':'UTC offset cố định · tương thích Mệnh 1.0';
+  const timezoneHelp=$('menh-timezone-help');if(timezoneHelp)timezoneHelp.textContent=iana?'IANA quyết định UTC offset lịch sử/DST tại ngày sinh; ô UTC cố định tạm không dùng.':'UTC offset cố định · tương thích Mệnh 1.0';
 }
 export function collectMenhForm(){
   return {
@@ -83,12 +83,12 @@ export function syncUnknownBirthTime(){
   if(unknown.checked){
     if(time.value)rememberedTime=time.value;
     time.value='';hour.value='';minute.value='';hour.disabled=true;minute.disabled=true;
-    $('birth-time-help').textContent='Không cần chọn giờ. Hệ thống sẽ đối chiếu các khung giờ sinh và các mốc cuộc đời bạn cung cấp.';
+    const birthTimeHelp=$('birth-time-help');if(birthTimeHelp)birthTimeHelp.textContent='Không cần chọn giờ. Hệ thống sẽ đối chiếu các khung giờ sinh và các mốc cuộc đời bạn cung cấp.';
   }else{
     hour.disabled=false;minute.disabled=false;
     if(!time.value&&rememberedTime)time.value=rememberedTime;
     syncTimeSelectorsFromValue(time.value);
-    $('birth-time-help').textContent='Cuộn danh sách để chọn giờ và phút theo định dạng 24 giờ.';
+    const birthTimeHelp=$('birth-time-help');if(birthTimeHelp)birthTimeHelp.textContent='Cuộn danh sách để chọn giờ và phút theo định dạng 24 giờ.';
   }
 }
 function clearResult(){
