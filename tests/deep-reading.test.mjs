@@ -174,3 +174,16 @@ test('negotiation-style stage overclaim, repeated verification and excess emphas
   assert.doesNotMatch(JSON.stringify(result),/Hợp đồng đã hoàn tất/);
   assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
 });
+
+test('certainty or probability wording is neutralized without discarding an otherwise valid negotiation reading',async()=>{
+  const p=prepareReading({...body,mode:'negotiation',question:'Tôi nên đàm phán điều khoản nào trước để tiến tới thỏa thuận?'});let count=0;
+  const result=await interpretReading(p,{runner:async()=>{
+    count++;const r=readingFixture(p);
+    r.summary.text+=' Kết quả chắc chắn sẽ thành công.';
+    r.actions[0].text+=' Xác suất thành công 80%.';
+    return r;
+  }});
+  assert.equal(count,2);assert.equal(result.status,'reading');
+  assert.doesNotMatch(JSON.stringify(result),/chắc chắn sẽ thành công|80%/i);
+  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
+});

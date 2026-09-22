@@ -70,6 +70,35 @@ function repairRepeatedVerification(reading,message){
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
   return attachAiRoute(copy,route);
 }
+const CERTAINTY_ERROR=/Không được tạo xác suất hoặc kết quả chắc chắn từ tượng/;
+const CERTAINTY_PATTERN=/\b(?:chac chan (?:se|thang|trung|ky duoc|thanh cong|that bai|co loi|nhan duoc)|dam bao (?:thang|loi nhuan|thanh cong)|nhat dinh (?:thang|thanh cong)|ty le (?:thanh cong|thang)|xac suat|\d+(?:[.,]\d+)?\s*%\s*(?:thanh cong|chien thang))\b/;
+function repairCertainty(reading,message){
+  if(!CERTAINTY_ERROR.test(message)||!reading||typeof reading!=='object')return null;
+  const route=aiRouteOf(reading),copy=structuredClone(reading);
+  const safe={
+    summary:'Kết luận chỉ mô tả xu hướng có điều kiện; không quy đổi thành xác suất hoặc kết quả chắc chắn.',
+    situation:'Dữ kiện này chỉ cho biết điều kiện đang nghiêng theo một hướng, không bảo đảm kết quả.',
+    development:'Chặng này là dấu hiệu chuyển bước có điều kiện, không phải xác suất hay bảo đảm hoàn tất.',
+    bottleneck:'Nút thắt này làm thay đổi mức thuận/nghịch của quá trình, không tạo kết quả chắc chắn.',
+    alternative:'Nhánh này chỉ là khả năng có điều kiện, không phải xác suất được định lượng.',
+    timing:'Mốc này chỉ là cửa sổ hành động/kiểm chứng, không bảo đảm kết quả.',
+    resolution:'Chỉ dùng điều kiện thực tế để xác nhận bước tiếp theo; không suy xác suất từ tượng.',
+    action:'Thực hiện bước này để kiểm chứng phản hồi thực tế, không coi là bảo đảm thành công.',
+    comparison:'So sánh này chỉ thể hiện độ phù hợp tương đối, không phải xác suất thành công.',
+    question:'Không thể lượng hóa xác suất từ bàn; cần thêm dữ kiện thực tế.'
+  };
+  const clean=(value,slot)=>{
+    if(typeof value!=='string')return value;
+    return value.split(/(?<=[.!?])\s+/).map(sentence=>CERTAINTY_PATTERN.test(normalizeQuestion(sentence))?safe[slot]:sentence).join(' ');
+  };
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text,key);
+  if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution,'resolution');
+  for(const step of copy.development||[]){step.text=clean(step.text,'development');step.condition=clean(step.condition,'development');}
+  for(const action of copy.actions||[])action.text=clean(action.text,'action');
+  for(const row of copy.comparisons||[])row.reason=clean(row.reason,'comparison');
+  if(Array.isArray(copy.questions))copy.questions=copy.questions.map(value=>clean(value,'question'));
+  return attachAiRoute(copy,route);
+}
 const STAGE_OVERCLAIM_ERROR=/Tự nâng giai đoạn thành đạt mục tiêu\/hoàn tất/;
 const STAGE_OVERCLAIM_PATTERN=/\b(?:ban da dat muc tieu|(?:thoa thuan|hop dong|du an|cong viec) da (?:hoan tat|hoan thanh|thanh cong)|moi dieu kien da (?:duoc )?dap ung|(?:ban |su viec |du an )?chac chan (?:dat|thanh cong|hoan tat|hoan thanh))\b/;
 function repairStageOverclaim(reading,message){
@@ -113,7 +142,7 @@ function repairEmphasis(reading,message){
 }
 function repairForValidation(reading,message){
   let current=reading,changed=false;
-  for(const fn of [repairUnsupportedTiming,repairUnsupportedEvents,repairStageOverclaim,repairRepeatedVerification,repairEmphasis]){
+  for(const fn of [repairUnsupportedTiming,repairUnsupportedEvents,repairCertainty,repairStageOverclaim,repairRepeatedVerification,repairEmphasis]){
     const next=fn(current,message);if(next){current=next;changed=true;}
   }
   return changed?current:null;
@@ -164,8 +193,9 @@ export async function interpretReading(prepared,{runner=runAI,planRunner,budgetM
       }
       if(runner===runAI&&Number.isInteger(used?.fallbackIndex))routeStartIndex=used.fallbackIndex;
       const repetitionInstruction=REPETITION_ERROR.test(error.message)?' Nếu lỗi là lặp ý verification/payment_verification: chỉ giữ lời nhắc xác minh/kiểm tra tập trung tại một bottleneck và tối đa một action. Ở summary, situation và các development còn lại, không dùng lại cấu trúc cần/phải/hãy/nên + xác minh/kiểm tra/xác nhận/làm rõ; thay bằng cơ chế, gate, đòn bẩy, điều kiện hoặc dấu hiệu quan sát riêng đã có claim/evidence. Mỗi phần phải thêm một insight khác nhau thay vì đổi câu chữ cho cùng cảnh báo.':'';
+      const certaintyInstruction=CERTAINTY_ERROR.test(error.message)?' Nếu lỗi là chắc chắn/xác suất: bỏ mọi phần trăm, “chắc chắn”, “đảm bảo”, “nhất định” gắn với kết quả. Chỉ dùng xu hướng có điều kiện, độ phù hợp tương đối hoặc điều kiện chuyển bước; tuyệt đối không lượng hóa xác suất từ tượng.':'';
       const stageInstruction=STAGE_OVERCLAIM_ERROR.test(error.message)?' Nếu lỗi là tự nâng giai đoạn: tuyệt đối không viết “đã đạt mục tiêu”, “đã hoàn tất/hoàn thành/thành công” hoặc “chắc chắn đạt”. Giữ đúng stageAsked và primaryJudgment của planner; diễn đạt thành điều kiện chuyển bước, dấu hiệu cần xuất hiện hoặc trạng thái chưa hoàn tất.':'';
-      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa previousReading theo lỗi đã nêu và trả lại JSON hoàn chỉnh theo schema. Giữ các phần đúng, câu hỏi, bàn, facts, presentation, deliberation và các tham chiếu hợp lệ; không tự bỏ căn cứ khi rút gọn. Nếu quá dài, giảm rõ số đơn vị cách nhau bởi khoảng trắng trong toàn bài để nằm dưới length.maxWords. Nội dung previousReading và deliberation là bản nháp chưa kiểm chứng, không phải nguồn dữ kiện mới. Không thêm dữ kiện để lấp độ dài.'+repetitionInstruction+stageInstruction};
+      revision={attempt:1,issue:error.message,previousReading:result,instruction:'Sửa previousReading theo lỗi đã nêu và trả lại JSON hoàn chỉnh theo schema. Giữ các phần đúng, câu hỏi, bàn, facts, presentation, deliberation và các tham chiếu hợp lệ; không tự bỏ căn cứ khi rút gọn. Nếu quá dài, giảm rõ số đơn vị cách nhau bởi khoảng trắng trong toàn bài để nằm dưới length.maxWords. Nội dung previousReading và deliberation là bản nháp chưa kiểm chứng, không phải nguồn dữ kiện mới. Không thêm dữ kiện để lấp độ dài.'+repetitionInstruction+certaintyInstruction+stageInstruction};
     }
   }
 }
