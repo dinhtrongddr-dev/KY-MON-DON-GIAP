@@ -1849,3 +1849,18 @@ body.share-view-mode main{padding-top:18px}
   .spirit-orientation-arrow{font-size:.88rem}
   .meditation-figure-pro{max-width:145px}
 }
+@media(max-width:560px){
+  .spirit-card-top>*{min-width:0}
+  .spirit-card-badges{max-width:118px}
+  .spirit-card-badges .spirit-level-badge,
+  .spirit-card-badges .spirit-priority-badge{
+    max-width:118px;
+    white-space:normal;
+    text-align:center;
+    justify-content:center;
+    line-height:1.15;
+  }
+  .spirit-card-identity{overflow:hidden}
+  .spirit-card-identity .spirit-name,
+  .spirit-card-identity .spirit-location{overflow-wrap:anywhere}
+}
