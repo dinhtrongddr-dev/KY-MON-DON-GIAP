@@ -7,7 +7,7 @@ export function buildWriterContext(context) {
   const c=context.allInOne,g=c.reasoning,q=c.questionContext;
   const wantedEdges=new Set([...g.likelyScenario.stages.flatMap(s=>s.relationshipIds),...g.likelyScenario.agency.map(i=>i.edgeId)]);
   const ids=new Set(g.claims.flatMap(x=>x.evidenceIds));
-  for(const id of ['patterns','duty','day','hour','relation','time','timeplace','method','boundary','role_frame'])if(context.facts[id])ids.add(id);
+  for(const id of ['patterns','duty','day','hour','relation','time','timeplace','method','boundary','role_frame','spirit_activation'])if(context.facts[id])ids.add(id);
   const evidence=Object.fromEntries([...ids].filter(id=>context.facts[id]).map(id=>[id,context.facts[id]]));
   const relationships=g.relationships.filter(e=>wantedEdges.has(e.id));
   const actors=new Set([...g.evidenceBundles.flatMap(b=>b.actorIds),...relationships.flatMap(e=>[e.from,e.to])]);
@@ -16,7 +16,7 @@ export function buildWriterContext(context) {
       subject:{kind:q.subject.kind,text:q.subject.text,status:q.subject.status},stage:q.stage,timeHorizon:q.timeHorizon,
       constraints:q.constraints,userStatements:q.userStatements,options:q.options,stakeholders:q.stakeholders,direction:q.direction,
       clarificationQuestions:q.clarificationQuestions,vocabulary:q.vocabulary,needsClarification:q.needsClarification},
-    mode:g.mode,timePlace:context.timePlace?{version:context.timePlace.version,mode:context.timePlace.metadata.mode,civilTimeBasis:context.timePlace.metadata.civilTimeBasis,
+    mode:g.mode,spiritActivation:c.spiritActivation||null,timePlace:context.timePlace?{version:context.timePlace.version,mode:context.timePlace.metadata.mode,civilTimeBasis:context.timePlace.metadata.civilTimeBasis,
       effectiveOffsetHours:context.timePlace.metadata.effectiveOffsetHours,timeZone:context.timePlace.metadata.iana?.timeZone||null,
       ianaStatus:context.timePlace.metadata.iana?.status||null,coordinates:context.timePlace.metadata.coordinates,
       solar:context.timePlace.metadata.solar?{application:context.timePlace.metadata.solar.application,apparentSolarCorrectionMinutes:context.timePlace.metadata.solar.apparentSolarCorrectionMinutes,warning:context.timePlace.metadata.solar.warning}:null}:null,

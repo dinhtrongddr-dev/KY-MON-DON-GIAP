@@ -3,7 +3,8 @@ import {analyzeBoard} from '../analysis/index.mjs';
 import {normalizeActors} from '../analysis/usefulGod.mjs';
 import {relationGraph} from '../analysis/relationGraph.mjs';
 import {analyzeMode} from '../modes/index.mjs';
-import {classifyTopic} from './classifier.mjs';
+import {normalizeQuestion} from './classifier.mjs';
+import {activationGoalForTopic,evaluateSpiritActivation,resolveActivationGoal} from '../analysis/spiritActivation.mjs';
 import {normalizeAction} from '../modes/actionRules.mjs';
 import {compareTimes} from './timingComparison.mjs';
 import {buildQuestionContext} from './questionContext.mjs';
@@ -12,6 +13,44 @@ import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {relevantActorIds} from '../analysis/actorRelevance.mjs';
 import {normalizeNianmingInput} from '../analysis/nianmingEngine.mjs';
 export {buildReadingEvidenceGraph} from './reasoningPlanner.mjs';
+
+function requestedSpiritActivation(question,resolvedTopic){
+  const q=normalizeQuestion(question||'');
+  const requested=/\b(?:bat than|dung than nao|nen dung than|than nao (?:phu hop|cho|de)|kich hoat (?:bat than|phuong vi)|phuong vi ho tro|back facing|sau lung|thuc hanh (?:voi )?(?:than|phuong vi))\b/.test(q);
+  if(!requested)return null;
+  const explicit=[
+    ['negotiation',/\b(?:dam phan|thuong luong|nhuong bo)\b/],
+    ['meditation',/\b(?:tinh tam|thien|quan sat ban than|noi tam)\b/],
+    ['support',/\b(?:quy nhan|nguoi ho tro|ho tro)\b/],
+    ['creativity',/\b(?:sang tao|y tuong|truyen thong|ra mat)\b/],
+    ['travel',/\b(?:di xa|cong tac|chuyen cho|mo rong thi truong)\b/],
+    ['property',/\b(?:nha dat|bat dong san|mat bang)\b/],
+    ['dispute',/\b(?:xung dot|tranh chap|hoa giai|khieu nai)\b/],
+    ['investment',/\b(?:dau tu|co phieu|coin|tai san dau tu)\b/],
+    ['money',/\b(?:tai chinh|dong tien|tien bac|cong no)\b/],
+    ['business',/\b(?:kinh doanh|doanh nghiep|ban hang)\b/],
+    ['work',/\b(?:cong viec|su nghiep|xin viec|thang tien)\b/],
+    ['study',/\b(?:hoc tap|thi cu|chung chi|on thi)\b/],
+    ['love',/\b(?:tinh cam|hon nhan|nguoi yeu)\b/],
+    ['family',/\b(?:gia dinh|con cai|cha me|vo chong)\b/],
+    ['decision',/\b(?:ra quyet dinh|quyet dinh|phuong an)\b/]
+  ];
+  const id=explicit.find(([,pattern])=>pattern.test(q))?.[0]||activationGoalForTopic(resolvedTopic).id;
+  return resolveActivationGoal(id);
+}
+function compactSpiritActivation(result){
+  if(!result)return null;
+  const compact=row=>row?{
+    palace:row.palace,palaceName:row.palaceName,direction:row.direction,spirit:row.spirit,door:row.door,star:row.star,stem:row.stem,
+    backDirection:row.backDirection,faceDirection:row.faceDirection,activationLevel:row.activationLevel,reasons:row.reasons,warnings:row.warnings,
+    practice:{durationMinutes:row.practice?.durationMinutes||10,intention:row.practice?.intention||'',instruction:row.practice?.instruction||''}
+  }:null;
+  return {
+    version:result.version,requested:true,goal:{id:result.goal.id,label:result.goal.label},
+    recommendedPalace:result.recommendedPalace,recommended:compact(result.recommended),
+    candidates:result.candidates.slice(0,3).map(compact),warnings:[...result.warnings]
+  };
+}
 export function buildAnalysisContext(chart,body,facts) {
   const questionContext=buildQuestionContext(body.question,{mode:body.mode??'auto',topic:body.topic,depth:body.depth??'deep',direction:body.direction??null,subject:body.subject??null});
   const classification=questionContext.classification,actors=normalizeActors(body.actors??{}),nianmingInput=normalizeNianmingInput(body.nianming??{});
@@ -19,6 +58,14 @@ export function buildAnalysisContext(chart,body,facts) {
   const board=toQimenBoard(chart),selfPillar=questionContext.subject.mapping?pillarFromGanzhi(questionContext.subject.mapping.pillar):board.pillars.day;
   if(questionContext.subject.mapping)questionContext.subject.mapping.pillar=selfPillar.han;
   const analysis=analyzeBoard(board,{topic:resolvedTopic,actors,questionContext,selfPillar,nianming:nianmingInput});
+  const activationGoal=requestedSpiritActivation(body.question,resolvedTopic);
+  const spiritActivation=activationGoal?compactSpiritActivation(evaluateSpiritActivation(board,activationGoal,{analysis})):null;
+  if(spiritActivation){
+    const r=spiritActivation.recommended;
+    facts.spirit_activation=r
+      ?`${spiritActivation.version}: mục tiêu ${spiritActivation.goal.label}; engine ưu tiên ${r.spirit.name} tại ${r.palaceName} (${r.direction}); đặt ${r.backDirection} phía sau lưng, mặt hướng ${r.faceDirection}; mức ${r.activationLevel}. Lý do: ${r.reasons.join(' | ')||'không có lý do bổ sung'}. Cảnh báo: ${r.warnings.join(' | ')||'không có cảnh báo bổ sung'}. Đây là kết quả deterministic; AI chỉ được giải thích, không tự chọn lại Thần hoặc phương vị.`
+      :`${spiritActivation.version}: mục tiêu ${spiritActivation.goal.label}; không có phương vị đạt mức Có thể sử dụng trở lên. AI không được tự chọn một Bát Thần thay thế.`;
+  }
   const action=normalizeAction(['timing','direction'].includes(classification.mode)?body.action??'general':'general');
   const plan=analyzeMode(classification.mode,analysis,{action,direction:questionContext.direction});
   const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors,selfPillar,timePlace:body.timePlace??null}):null;
@@ -63,7 +110,7 @@ export function buildAnalysisContext(chart,body,facts) {
   const relevantPalaces=classification.mode==='direction'?analysis.palaces.map(p=>p.number):[...new Set(graph.nodes.map(n=>n.palace).filter(Boolean))];
   const known=graph.nodes.filter(n=>n.status!=='unresolved').length;
   const reasoning=buildReadingEvidenceGraph(analysis,questionContext,plan,graph,board);
-  return {board,analysis,plan,graph,classification,actors,nianmingInput,resolvedTopic,relevantPalaces,action,comparison,questionContext,reasoning,
+  return {board,analysis,plan,graph,classification,actors,nianmingInput,resolvedTopic,relevantPalaces,action,comparison,questionContext,reasoning,spiritActivation,
     coverage:{resolvedActors:known,totalActors:graph.nodes.length,confidence:null,
       meaning:'Độ đủ đại diện chỉ mô tả dữ liệu; chưa có xác suất dự báo được hiệu chuẩn.'}};
 }

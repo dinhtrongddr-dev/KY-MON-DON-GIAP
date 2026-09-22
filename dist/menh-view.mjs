@@ -3,6 +3,7 @@ import {formatInstantAtOffset,formatOffset} from './qimen/core/calendar.mjs';
 import {CONTROLS,GENERATES,palaceConditions} from './guide.mjs';
 import {semanticBundle} from './qimen/semantic/matrix.mjs';
 import {formatParts} from './reading-format.mjs';
+import {renderNatalSpiritActivation} from './spirit-activation-ui.mjs';
 
 const DOMAIN_LABEL=Object.freeze({
   GLOBAL:'Cấu trúc toàn cục',SELF:'Bản thân & tổng thể',FAMILY:'Gia đình & cha mẹ',CHILDREN:'Con cái',
@@ -422,6 +423,9 @@ export function renderMenhDeterministic(container,prepared){
     const selfPalaceNumber=Number(String(selfEvidence?.palace||'').match(/_(\d+)$/)?.[1]||0)||null;
     container.append(renderMenhChartMeta(board));
     container.append(renderMenhWorkspace(board,selfPalaceNumber,prepared.result.analysisLayers));
+    const spiritPanel=el('section','learning-panel spirit-activation-panel menh-spirit-activation');spiritPanel.setAttribute('aria-label','Thần bản mệnh và hướng thực hành');
+    renderNatalSpiritActivation(spiritPanel,{board,selfPalaceNumber,analysisLayers:prepared.result.analysisLayers});
+    container.append(spiritPanel);
     container.append(renderMenhMethodDetails(board,prepared.technical?.timePlace||null));
   }else{
     container.append(renderUnknownBoardNotice(prepared));

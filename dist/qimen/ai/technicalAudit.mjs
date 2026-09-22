@@ -15,6 +15,7 @@ export function auditTechnicalText(text,claimIds,context) {
   const claims=claimIds.map(id=>g.claims.find(c=>c.id===id)).filter(Boolean);
   const evidence=new Set(claims.flatMap(cl=>cl.evidenceIds));
   const supported=new Set([...evidence].filter(id=>/^p[1-9]$/.test(id)).map(id=>Number(id.slice(1))));
+  if(c.spiritActivation?.recommended?.palace) supported.add(Number(c.spiritActivation.recommended.palace));
   const placements=new Map();
   const add=(name,n)=>{const key=normalize(name);if(!placements.has(key))placements.set(key,new Set());placements.get(key).add(n);};
   for(const p of c.board.palaces){

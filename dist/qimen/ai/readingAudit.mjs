@@ -42,6 +42,41 @@ function auditClaims(passages,context,rows=[]) {
   const allowedDates=new Set([...sourceDates,...rowDates,...responseDates]);
   for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
 }
+const ACTIVATION_SPIRITS=['Trực Phù','Đằng Xà','Thái Âm','Lục Hợp','Bạch Hổ','Huyền Vũ','Cửu Địa','Cửu Thiên'];
+const ACTIVATION_DIRECTIONS=['Đông Bắc','Đông Nam','Tây Bắc','Tây Nam','Bắc','Đông','Nam','Tây'];
+function auditSpiritActivationText(prose,context){
+  const activation=context?.allInOne?.spiritActivation;
+  if(!activation?.requested)return [];
+  const normalized=normalizeQuestion(prose),errors=[],recommended=activation.recommended;
+  const recommendationPatterns=ACTIVATION_SPIRITS.flatMap(name=>{
+    const n=normalizeQuestion(name);
+    return [
+      {name,re:new RegExp(`\\b(?:nen dung|uu tien|chon|thuc hanh voi|goi y(?: hien tai)? la)\\s+(?:than\\s+)?${n}\\b`,'g')},
+      {name,re:new RegExp(`\\b${n}\\b[^.!?]{0,40}\\b(?:la lua chon uu tien|duoc uu tien|phu hop nhat)\\b`,'g')}
+    ];
+  });
+  if(!recommended){
+    if(recommendationPatterns.some(({re})=>re.test(normalized)))errors.push('Engine chưa có phương vị đủ điều kiện ưu tiên; AI không được tự chọn Bát Thần thay thế.');
+    return errors;
+  }
+  const expectedSpirit=normalizeQuestion(recommended.spirit.name),expectedPalace=normalizeQuestion(recommended.palaceName);
+  const expectedBack=normalizeQuestion(recommended.backDirection),expectedFace=normalizeQuestion(recommended.faceDirection),expectedLevel=normalizeQuestion(recommended.activationLevel);
+  if(!normalized.includes(expectedSpirit))errors.push('AI chưa nêu đúng Bát Thần do engine kích hoạt chọn.');
+  if(!normalized.includes(expectedPalace))errors.push('AI chưa nêu đúng cung do engine kích hoạt chọn.');
+  if(!normalized.includes(expectedBack)||!normalized.includes('sau lung'))errors.push('AI chưa nêu đủ hướng đặt sau lưng theo engine.');
+  if(!normalized.includes(expectedFace)||!/(?:mat|nhin) (?:huong|ve)/.test(normalized))errors.push('AI chưa nêu đủ hướng mặt nhìn theo engine.');
+  if(!normalized.includes(expectedLevel))errors.push('AI chưa nêu đúng mức phù hợp của phương vị.');
+  for(const {name,re} of recommendationPatterns){
+    if(normalizeQuestion(name)!==expectedSpirit&&re.test(normalized))errors.push('AI tự chọn Bát Thần khác với kết quả deterministic.');
+  }
+  const directionAlternation=ACTIVATION_DIRECTIONS.map(normalizeQuestion).sort((a,b)=>b.length-a.length).join('|');
+  for(const m of normalized.matchAll(new RegExp(`\\b(${directionAlternation})\\b[^.!?]{0,28}\\bsau lung\\b`,'g')))
+    if(m[1]!==expectedBack)errors.push('AI nêu hướng sau lưng khác kết quả deterministic.');
+  for(const m of normalized.matchAll(new RegExp(`\\b(?:mat|nhin) (?:huong|ve) (${directionAlternation})\\b`,'g')))
+    if(m[1]!==expectedFace)errors.push('AI nêu hướng mặt nhìn khác kết quả deterministic.');
+  return [...new Set(errors)];
+}
+
 function auditComparison(reason,row,context) {
   const c=context.allInOne;
   let board=c.board,analysis=c.analysis,numbers=[row.palace];
@@ -115,6 +150,7 @@ export function validateReading(r,facts,selectedTopic='general',context) {
     ...r.actions.map(a=>({slot:'action',text:a.text,claimIds:[g.recommendations.find(x=>x.id===a.recommendation_id).claimId]})),
     ...r.comparisons.map(a=>({slot:'comparison',text:a.reason,claimIds:[]})),...r.questions.map(text=>({slot:'question',text,claimIds:[]}))];
   const synthesisErrors=auditSynthesis(semanticPassages,context);if(synthesisErrors.length)reject(synthesisErrors.join(' '));
+  const activationErrors=auditSpiritActivationText(prose,context);if(activationErrors.length)reject(activationErrors.join(' '));
   auditClaims([prose,...r.comparisons.map(r=>r.reason),...r.questions],context,rows);
   for(const [value,ids] of [[r.bottleneck.resolution,r.bottleneck.claim_ids],...r.development.map(s=>[s.condition,s.claim_ids]),...r.actions.map(a=>[a.text,[g.recommendations.find(x=>x.id===a.recommendation_id).claimId]]),...r.questions.map(q=>[q,[]])]){
     const errors=auditTechnicalText(value,ids,context);if(errors.length)reject(errors.join(' '));

@@ -55,6 +55,8 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,ROUTED_EFFORT);
  assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/ai-progress-estimate.mjs',{headers})).status,200);
+ assert.equal((await fetch(url+'/spirit-activation-ui.mjs',{headers})).status,200);
+ assert.equal((await fetch(url+'/qimen/analysis/spiritActivation.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ai/contextBuilder.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/qimen/ui-controls.mjs',{headers})).status,200);
  for(const file of ['/guide.html','/server.html','/info.html','/info.mjs'])assert.equal((await fetch(url+file,{headers})).status,200,file);

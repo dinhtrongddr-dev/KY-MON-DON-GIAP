@@ -1317,6 +1317,58 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Chính danh, dẫn dắt và lực hỗ trợ từ trục có quyền hoặc uy tín.",
+        "modernMeaning": "Giữ trục, đứng đúng vai, dẫn dắt và huy động sự hỗ trợ có trách nhiệm.",
+        "strengths": [
+          "dẫn dắt",
+          "chính danh",
+          "giữ trật tự",
+          "kết nối nguồn hỗ trợ"
+        ],
+        "risks": [
+          "dựa quá nhiều vào quyền lực",
+          "cứng theo vị thế",
+          "chờ người khác quyết thay"
+        ],
+        "bestFor": [
+          "ra quyết định",
+          "công việc / sự nghiệp",
+          "tìm người hỗ trợ",
+          "việc cần đầu mối chịu trách nhiệm"
+        ],
+        "avoidFor": [
+          "thư giãn hoàn toàn",
+          "thử nghiệm tự do khi đang bị áp lực vị thế"
+        ],
+        "meditationTheme": "Giữ tâm vững, nhìn rõ trách nhiệm của mình và người có thể hỗ trợ.",
+        "activationTheme": "Ưu tiên khi cần giữ trục, xác định người chịu trách nhiệm và đưa việc về quyết định rõ ràng.",
+        "practiceInstruction": "Ngồi ổn định, giữ một mục tiêu duy nhất và tập trung vào câu hỏi: việc gì thuộc trách nhiệm của tôi, việc gì cần đúng người hỗ trợ?",
+        "practiceDurationMinutes": 10,
+        "relatedLifeAreas": [
+          "work",
+          "business",
+          "decision",
+          "support",
+          "negotiation"
+        ],
+        "activation_affinity": {
+          "work": 2.4,
+          "money": 1,
+          "investment": 0.7,
+          "business": 2,
+          "love": 0.6,
+          "family": 1,
+          "negotiation": 1.8,
+          "study": 1,
+          "creativity": 0.8,
+          "meditation": 1.1,
+          "decision": 2.8,
+          "support": 3,
+          "travel": 0.8,
+          "property": 1,
+          "dispute": 1.5,
+          "other": 1.5
         }
       },
       {
@@ -1442,6 +1494,58 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Nhiễu, tưởng tượng và vòng vèo khiến thông tin cần kiểm chứng.",
+        "modernMeaning": "Tăng độ nhạy với điều mơ hồ, ý tưởng và tín hiệu khó phân biệt; cần kiểm chứng trước khi tin.",
+        "strengths": [
+          "tưởng tượng",
+          "liên tưởng",
+          "nhạy với chi tiết bất thường",
+          "sáng tạo"
+        ],
+        "risks": [
+          "suy diễn quá mức",
+          "lo nghĩ vòng vo",
+          "nhầm cảm giác với dữ kiện",
+          "bị nhiễu thông tin"
+        ],
+        "bestFor": [
+          "sáng tạo",
+          "quan sát nội tâm",
+          "tìm giả thuyết cần kiểm chứng",
+          "việc cần nhìn nhiều khả năng"
+        ],
+        "avoidFor": [
+          "quyết định cần dữ kiện chắc ngay",
+          "tình huống đang lo âu hoặc nghi ngờ mạnh"
+        ],
+        "meditationTheme": "Quan sát ý nghĩ như giả thuyết, không vội biến cảm giác thành thông điệp.",
+        "activationTheme": "Có thể dùng để mở góc nhìn và ý tưởng khi người dùng vẫn giữ bước kiểm chứng thực tế.",
+        "practiceInstruction": "Ghi nhận ý nghĩ hoặc hình ảnh xuất hiện nhưng luôn thêm một câu: điều gì trong thực tế có thể kiểm chứng ý này?",
+        "practiceDurationMinutes": 8,
+        "relatedLifeAreas": [
+          "creativity",
+          "meditation",
+          "decision",
+          "study"
+        ],
+        "activation_affinity": {
+          "work": 0.5,
+          "money": 0.3,
+          "investment": 0.5,
+          "business": 0.6,
+          "love": 0.4,
+          "family": 0.3,
+          "negotiation": 0.8,
+          "study": 1.2,
+          "creativity": 2.8,
+          "meditation": 2,
+          "decision": 1.2,
+          "support": 0.3,
+          "travel": 0.5,
+          "property": 0.2,
+          "dispute": 0.7,
+          "other": 1
         }
       },
       {
@@ -1567,6 +1671,59 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Kín đáo, tinh tế và chuẩn bị ở hậu trường.",
+        "modernMeaning": "Thiên về tĩnh, quan sát sâu, chuẩn bị kín đáo và nhận ra phần chưa được chú ý.",
+        "strengths": [
+          "quan sát",
+          "nghiên cứu",
+          "chuẩn bị kín đáo",
+          "trực giác có kiểm chứng"
+        ],
+        "risks": [
+          "quá thụ động",
+          "giữ kín quá mức",
+          "suy nghĩ nhiều mà chậm hành động"
+        ],
+        "bestFor": [
+          "tĩnh tâm / quan sát bản thân",
+          "học tập",
+          "nghiên cứu",
+          "chuẩn bị",
+          "ra quyết định cần suy xét"
+        ],
+        "avoidFor": [
+          "việc cần phản ứng cực nhanh",
+          "tình huống phải công khai và hành động ngay"
+        ],
+        "meditationTheme": "Lắng tâm để nhận ra thông tin, cảm xúc và giả định chưa nhìn rõ.",
+        "activationTheme": "Ưu tiên khi cần giảm nhiễu, quan sát sâu và chuẩn bị trước khi hành động.",
+        "practiceInstruction": "Thở chậm, giữ câu hỏi đơn giản và quan sát điều gì đang bị bỏ sót; sau phiên ghi lại một việc có thể kiểm chứng.",
+        "practiceDurationMinutes": 10,
+        "relatedLifeAreas": [
+          "meditation",
+          "study",
+          "decision",
+          "creativity",
+          "investment"
+        ],
+        "activation_affinity": {
+          "work": 1.1,
+          "money": 0.8,
+          "investment": 1.5,
+          "business": 1,
+          "love": 1.3,
+          "family": 1.2,
+          "negotiation": 1.4,
+          "study": 2.5,
+          "creativity": 2,
+          "meditation": 3,
+          "decision": 2.4,
+          "support": 1,
+          "travel": 0.4,
+          "property": 1,
+          "dispute": 1.2,
+          "other": 1.4
         }
       },
       {
@@ -1704,6 +1861,59 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Kết nối, ghép lợi ích và tạo đồng thuận giữa các phía.",
+        "modernMeaning": "Tăng trọng tâm vào kết nối, đồng thuận, trao đổi nhu cầu và điểm có thể cùng tiến.",
+        "strengths": [
+          "hợp tác",
+          "thương lượng",
+          "kết nối",
+          "hòa giải"
+        ],
+        "risks": [
+          "chiều lòng quá mức",
+          "né xung đột cần thiết",
+          "đánh đồng hòa khí với đồng thuận thật"
+        ],
+        "bestFor": [
+          "quan hệ / tình cảm",
+          "gia đình",
+          "đàm phán",
+          "hợp tác",
+          "tìm người hỗ trợ"
+        ],
+        "avoidFor": [
+          "tình huống cần cắt ranh giới ngay",
+          "việc cạnh tranh trực diện không còn không gian thương lượng"
+        ],
+        "meditationTheme": "Nhìn nhu cầu của mình và của bên liên quan mà không bỏ ranh giới.",
+        "activationTheme": "Ưu tiên khi mục tiêu cần phối hợp, thương lượng hoặc tìm điểm đồng thuận thực tế.",
+        "practiceInstruction": "Giữ một mục tiêu quan hệ cụ thể và hỏi: nhu cầu nào của mỗi bên cần được nói rõ để có bước chung khả thi?",
+        "practiceDurationMinutes": 10,
+        "relatedLifeAreas": [
+          "love",
+          "family",
+          "negotiation",
+          "support",
+          "business"
+        ],
+        "activation_affinity": {
+          "work": 1.2,
+          "money": 1,
+          "investment": 0.5,
+          "business": 2,
+          "love": 3,
+          "family": 2.8,
+          "negotiation": 3,
+          "study": 0.7,
+          "creativity": 1,
+          "meditation": 1.3,
+          "decision": 1.2,
+          "support": 2.8,
+          "travel": 0.7,
+          "property": 1,
+          "dispute": 2,
+          "other": 1.5
         }
       },
       {
@@ -1829,6 +2039,60 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Áp lực, va chạm và sự quyết liệt buộc vấn đề phải được xử lý rõ.",
+        "modernMeaning": "Tăng tính quyết liệt, sức ép và khả năng đối diện việc khó; cần kiểm soát mức căng.",
+        "strengths": [
+          "dứt khoát",
+          "chịu áp lực",
+          "xử lý việc khó",
+          "bảo vệ ranh giới"
+        ],
+        "risks": [
+          "quá tay",
+          "đối đầu",
+          "nóng vội",
+          "tạo thêm căng thẳng"
+        ],
+        "bestFor": [
+          "giải quyết xung đột có ranh giới rõ",
+          "việc cần quyết đoán",
+          "xử lý khủng hoảng",
+          "cạnh tranh"
+        ],
+        "avoidFor": [
+          "hòa giải nhẹ nhàng",
+          "thư giãn",
+          "tình cảm đang căng",
+          "việc cần mềm mỏng"
+        ],
+        "meditationTheme": "Nhận diện sức ép và chọn mức lực vừa đủ thay vì phản ứng quá mạnh.",
+        "activationTheme": "Chỉ ưu tiên khi mục tiêu thật sự cần quyết đoán và cung không có thêm cấu trúc gây quá tải.",
+        "practiceInstruction": "Giữ tư thế vững, nhận diện điều cần bảo vệ và chọn một hành động dứt khoát nhưng không làm tăng xung đột không cần thiết.",
+        "practiceDurationMinutes": 7,
+        "relatedLifeAreas": [
+          "dispute",
+          "work",
+          "business",
+          "decision"
+        ],
+        "activation_affinity": {
+          "work": 1.5,
+          "money": 0.7,
+          "investment": 0.4,
+          "business": 1.4,
+          "love": -0.8,
+          "family": -0.6,
+          "negotiation": 0.6,
+          "study": 0.3,
+          "creativity": 0.6,
+          "meditation": -0.8,
+          "decision": 1.3,
+          "support": 0.2,
+          "travel": 1,
+          "property": 0.4,
+          "dispute": 2.8,
+          "other": 0.5
         }
       },
       {
@@ -1954,6 +2218,60 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Ẩn tình, thông tin bất cân xứng và chiến lược kín.",
+        "modernMeaning": "Thiên về thông tin ẩn, nghiên cứu kín, chiến lược hậu trường và nhu cầu kiểm chứng độ minh bạch.",
+        "strengths": [
+          "nghiên cứu",
+          "điều tra",
+          "giữ kín thông tin",
+          "đọc phần chưa rõ"
+        ],
+        "risks": [
+          "nghi ngờ quá mức",
+          "thiếu minh bạch",
+          "sa vào suy đoán",
+          "né trao đổi trực tiếp"
+        ],
+        "bestFor": [
+          "nghiên cứu",
+          "ra quyết định khi còn thiếu dữ liệu",
+          "đầu tư cần rà thông tin",
+          "chuẩn bị chiến lược kín"
+        ],
+        "avoidFor": [
+          "cáo buộc người khác",
+          "kết luận động cơ bí mật",
+          "việc cần minh bạch công khai ngay"
+        ],
+        "meditationTheme": "Quan sát phần chưa rõ và tách dữ kiện thật khỏi giả định.",
+        "activationTheme": "Hữu ích khi cần rà thông tin ẩn hoặc chuẩn bị kín, với điều kiện luôn có bước kiểm chứng.",
+        "practiceInstruction": "Liệt kê điều đã biết, điều đang giả định và một nguồn thực tế có thể dùng để kiểm chứng phần chưa rõ.",
+        "practiceDurationMinutes": 10,
+        "relatedLifeAreas": [
+          "investment",
+          "decision",
+          "study",
+          "business",
+          "meditation"
+        ],
+        "activation_affinity": {
+          "work": 1,
+          "money": 1.2,
+          "investment": 2.2,
+          "business": 1.5,
+          "love": 0.3,
+          "family": 0.4,
+          "negotiation": 1.4,
+          "study": 1.8,
+          "creativity": 1.2,
+          "meditation": 1.6,
+          "decision": 2.2,
+          "support": 0.4,
+          "travel": 0.8,
+          "property": 1,
+          "dispute": 1.3,
+          "other": 1.4
         }
       },
       {
@@ -2080,6 +2398,59 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Ổn định, hạ thấp trọng tâm và tích lũy nền tảng.",
+        "modernMeaning": "Thiên về ổn định, nền tảng, tích lũy, kiên trì và làm việc theo nhịp bền.",
+        "strengths": [
+          "ổn định",
+          "tích lũy",
+          "kiên trì",
+          "xây nền"
+        ],
+        "risks": [
+          "chậm đổi",
+          "quá bảo thủ",
+          "giữ trạng thái quá lâu"
+        ],
+        "bestFor": [
+          "nhà đất",
+          "tài chính cần giữ nền",
+          "gia đình",
+          "công việc dài hạn",
+          "tĩnh tâm"
+        ],
+        "avoidFor": [
+          "việc cần bứt tốc ngay",
+          "mục tiêu cần thay đổi nhanh và linh hoạt"
+        ],
+        "meditationTheme": "Trở về nền tảng, nhận ra điều gì cần duy trì bền thay vì thay đổi liên tục.",
+        "activationTheme": "Ưu tiên khi mục tiêu cần ổn định, tích lũy hoặc củng cố nền tảng.",
+        "practiceInstruction": "Ngồi vững, thở chậm và chọn một việc nền tảng cần duy trì đều trong những ngày tới.",
+        "practiceDurationMinutes": 12,
+        "relatedLifeAreas": [
+          "property",
+          "money",
+          "family",
+          "meditation",
+          "work"
+        ],
+        "activation_affinity": {
+          "work": 1.6,
+          "money": 2.1,
+          "investment": 1.3,
+          "business": 1.3,
+          "love": 1.3,
+          "family": 2.2,
+          "negotiation": 0.8,
+          "study": 1.1,
+          "creativity": 0.4,
+          "meditation": 2.3,
+          "decision": 1.3,
+          "support": 1,
+          "travel": -0.3,
+          "property": 3,
+          "dispute": 0.5,
+          "other": 1.4
         }
       },
       {
@@ -2210,6 +2581,60 @@
             "《遁甲演义》·八神"
           ],
           "modernized": true
+        },
+        "coreMeaning": "Nâng tầm, mở rộng phạm vi và thúc tốc độ.",
+        "modernMeaning": "Thiên về mở rộng, tầm nhìn, hành động, đi xa và đưa việc ra khỏi phạm vi cũ.",
+        "strengths": [
+          "mở rộng",
+          "hành động",
+          "tầm nhìn",
+          "bứt phá"
+        ],
+        "risks": [
+          "đi quá nhanh",
+          "mở rộng quá sức",
+          "thiếu nền tảng",
+          "đánh giá thấp chi tiết"
+        ],
+        "bestFor": [
+          "công việc / sự nghiệp",
+          "kinh doanh",
+          "đi xa / mở rộng",
+          "ra mắt",
+          "sáng tạo cần triển khai"
+        ],
+        "avoidFor": [
+          "việc cần thu hẹp và nghỉ ngơi",
+          "mục tiêu cần giữ nguyên trạng lâu dài"
+        ],
+        "meditationTheme": "Mở góc nhìn nhưng chọn một bước hành động thực tế vừa sức.",
+        "activationTheme": "Ưu tiên khi mục tiêu cần mở rộng phạm vi, tăng tốc hoặc chuyển ý tưởng thành hành động.",
+        "practiceInstruction": "Mở rộng góc nhìn về mục tiêu rồi chốt một bước hành động cụ thể có thể thực hiện ngay sau phiên.",
+        "practiceDurationMinutes": 8,
+        "relatedLifeAreas": [
+          "work",
+          "business",
+          "travel",
+          "creativity",
+          "decision"
+        ],
+        "activation_affinity": {
+          "work": 2.6,
+          "money": 1.4,
+          "investment": 1.2,
+          "business": 2.8,
+          "love": 0.8,
+          "family": 0.6,
+          "negotiation": 1.2,
+          "study": 1,
+          "creativity": 2.6,
+          "meditation": 0.8,
+          "decision": 2,
+          "support": 1,
+          "travel": 3,
+          "property": 0.7,
+          "dispute": 1,
+          "other": 1.5
         }
       }
     ],

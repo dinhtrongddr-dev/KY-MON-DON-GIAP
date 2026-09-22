@@ -11,6 +11,7 @@ import {semanticBundle,semanticDomainForTopic} from './qimen/semantic/matrix.mjs
 import {classifyTopics} from './qimen/ai/classifier.mjs';
 import {analyzeBoard} from './qimen/analysis/index.mjs';
 import {buildAttentionProfile} from './qimen/analysis/attentionUi.mjs';
+import {renderHourlySpiritActivation} from './spirit-activation-ui.mjs';
 
 const form = document.querySelector("#chart-form");
 const datetimeInput = document.querySelector("#datetime");
@@ -30,6 +31,7 @@ const flags = document.querySelector("#board-flags");
 const detail = document.querySelector("#palace-detail");
 const inspectorTitle = document.querySelector("#inspector-title");
 const methodCopy = document.querySelector("#method-copy");
+const spiritActivationPanel=document.querySelector('#spirit-activation');
 const workspace = document.querySelector(".workspace");
 const elementPanel = document.querySelector(".element-panel");
 if (workspace && elementPanel) workspace.append(elementPanel);
@@ -398,6 +400,7 @@ function renderChart(chart) {
   renderFlags(chart,currentAttention);
   renderDetail(chart,null,currentAttention);
   renderMethod(chart);
+  if(spiritActivationPanel)renderHourlySpiritActivation(spiritActivationPanel,{board:toQimenBoard(chart),analysis:currentAnalysis,goal:topicInput.value||'general'});
   document.querySelector('#question-summary').textContent = currentQuestion ? `Câu hỏi của bàn: ${currentQuestion}` : 'Chưa ghi câu hỏi.';
   document.dispatchEvent(new Event('qimen-chart'));
 }
