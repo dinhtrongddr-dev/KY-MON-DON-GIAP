@@ -117,15 +117,18 @@ export function initMenhAi({prepare,activity=null}){
       setConnectionState('checking');const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
       setConnectionState('connected');status.textContent='AI đang gửi lượt luận Mệnh lên server…';
       activityReadingId=track('startReading');
-      const started=await jobClient.start('/api/menh/read/start',prepared.request,controller.signal);
-      let data=started.legacyResult;
-      if(!data){
-        activeJobId=started.jobId;
-        clearTimeout(requestTimeout);requestTimeout=null;
-        status.textContent=started.reused?'Đã nối lại lượt luận Mệnh đang chạy trên server.':'AI đang luận Mệnh trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
-        data=await jobClient.wait(started.jobId,controller.signal);
-        if(activeJobId===started.jobId)activeJobId=null;
-      }
+      const data=await jobClient.run('/api/menh/read/start',prepared.request,controller.signal,{
+        onStarted:()=>{clearTimeout(requestTimeout);requestTimeout=null;},
+        onJob:(jobId,started)=>{
+          activeJobId=jobId;
+          status.textContent=started.reused?'Đã nối lại lượt luận Mệnh đang chạy trên server.':'AI đang luận Mệnh trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
+        },
+        onRecovered:()=>{
+          activeJobId=null;
+          status.textContent='Lượt luận Mệnh trên server vừa bị gián đoạn; app đang tự khôi phục và luận lại cùng dữ liệu.';
+        }
+      });
+      activeJobId=null;
       if(v!==version)return;
       validateMenhReadingResponse(data,prepared);
       renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;setFloatingAiReady(answer.childElementCount>0);

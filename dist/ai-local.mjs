@@ -132,15 +132,18 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      if(v!==version)return;
      setConnectionState('connected');status.textContent='AI đang gửi lượt luận lên server…';
      activityReadingId=track('startReading');
-     const started=await jobClient.start('/api/read/start',prepared.request,controller.signal);
-     let data=started.legacyResult;
-     if(!data){
-       activeJobId=started.jobId;
-       clearTimeout(requestTimeout);requestTimeout=null;
-       status.textContent=started.reused?'Đã nối lại lượt luận đang chạy trên server.':'AI đang luận trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
-       data=await jobClient.wait(started.jobId,controller.signal);
-       if(activeJobId===started.jobId)activeJobId=null;
-     }
+     const data=await jobClient.run('/api/read/start',prepared.request,controller.signal,{
+       onStarted:()=>{clearTimeout(requestTimeout);requestTimeout=null;},
+       onJob:(jobId,started)=>{
+         activeJobId=jobId;
+         status.textContent=started.reused?'Đã nối lại lượt luận đang chạy trên server.':'AI đang luận trên server. Có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';
+       },
+       onRecovered:()=>{
+         activeJobId=null;
+         status.textContent='Lượt luận trên server vừa bị gián đoạn; app đang tự khôi phục và luận lại cùng dữ liệu.';
+       }
+     });
+     activeJobId=null;
      if(v!==version)return;
      status.textContent='AI đang hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);

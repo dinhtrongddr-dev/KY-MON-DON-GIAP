@@ -35,3 +35,28 @@ test('job client cancel uses the explicit DELETE job endpoint',async t=>{
   await client.cancel('abcdefghijklmnopqrstuvwx');
   assert.equal(method,'DELETE');assert.match(path,/\/api\/jobs\/abcdefghijklmnopqrstuvwx$/);
 });
+
+test('job client recreates one lost server job after a restart and returns the replacement result',async t=>{
+  const original={fetch:globalThis.fetch,document:globalThis.document};
+  t.after(()=>{globalThis.fetch=original.fetch;globalThis.document=original.document;});
+  globalThis.document={hidden:false};
+  let starts=0,polls=0,recovered=0;const jobs=[];
+  globalThis.fetch=async url=>{
+    if(url.endsWith('/api/read/start')){
+      starts++;
+      return response({jobId:starts===1?'abcdefghijklmnopqrstuvwx':'zyxwvutsrqponmlkjihgfedc',status:'running',reused:false},202);
+    }
+    if(url.includes('/api/jobs/')){
+      polls++;
+      if(url.endsWith('abcdefghijklmnopqrstuvwx'))return response({error:'Lượt luận không tồn tại hoặc đã hết thời gian lưu.'},404);
+      return response({jobId:'zyxwvutsrqponmlkjihgfedc',status:'completed',result:{reading:{status:'completed'},recovered:true}});
+    }
+    throw new Error('unexpected '+url);
+  };
+  const client=createReadingJobClient({endpoint:'https://relay.example',getToken:()=> 'token',pollMs:1,hiddenPollMs:1});
+  const result=await client.run('/api/read/start',{request:'same'},new AbortController().signal,{
+    onJob(id){jobs.push(id);},onRecovered(){recovered++;}
+  });
+  assert.deepEqual(result,{reading:{status:'completed'},recovered:true});
+  assert.equal(starts,2);assert.equal(recovered,1);assert.deepEqual(jobs,['abcdefghijklmnopqrstuvwx','zyxwvutsrqponmlkjihgfedc']);assert.equal(polls,2);
+});

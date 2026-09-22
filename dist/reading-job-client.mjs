@@ -51,9 +51,22 @@ export function createReadingJobClient({endpoint,getToken,onRunning,onReconnect,
       await pause(globalThis.document?.hidden?hiddenPollMs:pollMs,signal);
     }
   }
+  async function run(startPath,body,signal,{onStarted,onJob,onRecovered,maxRestarts=1}={}){
+    let started=await start(startPath,body,signal),restarts=0;onStarted?.(started);
+    while(true){
+      if(Object.prototype.hasOwnProperty.call(started,'legacyResult'))return started.legacyResult;
+      onJob?.(started.jobId,started);
+      try{return await wait(started.jobId,signal);}
+      catch(e){
+        if(e?.status!==404||restarts>=maxRestarts)throw e;
+        restarts++;onRecovered?.(restarts);
+        started=await start(startPath,body,signal);onStarted?.(started);
+      }
+    }
+  }
   async function cancel(jobId){
     if(!jobId)return;
     try{await request('/api/jobs/'+encodeURIComponent(jobId),{method:'DELETE'});}catch{}
   }
-  return {start,wait,cancel};
+  return {start,wait,run,cancel};
 }
