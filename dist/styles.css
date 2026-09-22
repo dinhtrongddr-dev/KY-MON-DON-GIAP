@@ -1773,23 +1773,28 @@ body.share-view-mode main{padding-top:18px}
   -webkit-line-clamp:2;
 }
 .spirit-orientation-figure{
+  position:relative;
   display:grid;
-  grid-template-columns:17px minmax(0,1fr) 17px;
-  align-items:center;
-  gap:1px;
+  place-items:center;
   width:100%;
   min-width:0;
 }
 .spirit-orientation-arrow{
+  position:absolute;
+  top:50%;
+  z-index:2;
   color:#b18525;
   font-size:1.05rem;
   font-weight:950;
   line-height:1;
   text-align:center;
+  transform:translateY(-50%);
 }
+.spirit-orientation-arrow-back{left:0}
+.spirit-orientation-arrow-face{right:0}
 .meditation-figure-pro{
   display:block;
-  width:100%;
+  width:calc(100% - 14px);
   max-width:180px;
   height:auto;
   aspect-ratio:512/360;
@@ -1851,7 +1856,7 @@ body.share-view-mode main{padding-top:18px}
     border-radius:12px;
   }
   .spirit-orientation-visual{
-    grid-template-columns:minmax(58px,.82fr) minmax(92px,1.18fr) minmax(58px,.82fr);
+    grid-template-columns:minmax(56px,.72fr) minmax(100px,1.56fr) minmax(56px,.72fr);
     gap:4px;
   }
   .spirit-orientation-side{gap:3px}
@@ -1862,9 +1867,8 @@ body.share-view-mode main{padding-top:18px}
   }
   .spirit-orientation-direction{font-size:.78rem}
   .spirit-orientation-spirit{font-size:.61rem;line-height:1.18}
-  .spirit-orientation-figure{grid-template-columns:13px minmax(0,1fr) 13px}
   .spirit-orientation-arrow{font-size:.78rem}
-  .meditation-figure-pro{max-width:132px;border-radius:9px}
+  .meditation-figure-pro{width:calc(100% - 10px);max-width:145px;border-radius:9px}
 }
 @media(max-width:560px){
   .spirit-card-top>*{min-width:0}
