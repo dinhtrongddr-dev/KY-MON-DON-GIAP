@@ -46,8 +46,8 @@ function meditatingFigure(data){
 }
 function directionSide(kind,label,direction,spiritName){
   const side=el('div','spirit-orientation-side spirit-orientation-side-'+kind);
-  side.append(el('span','spirit-orientation-axis',label),el('strong','spirit-orientation-direction',direction));
   if(kind==='back')side.append(el('span','spirit-orientation-spirit',displaySpiritName(spiritName)));
+  side.append(el('span','spirit-orientation-axis',label),el('strong','spirit-orientation-direction',direction));
   return side;
 }
 function directionDiagram(data){

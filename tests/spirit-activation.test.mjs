@@ -187,6 +187,10 @@ test('mobile activation orientation keeps all dynamic direction data inside one 
   assert.match(direction,/directionSide\('back','LƯNG',data\.backDirection,data\.spirit\.name\)/);
   assert.match(direction,/directionSide\('face','MẶT',data\.faceDirection,data\.spirit\.name\)/);
   assert.match(direction,/displaySpiritName\(spiritName\)/);
+  assert.ok(
+    direction.indexOf("displaySpiritName(spiritName)")<direction.indexOf("el('span','spirit-orientation-axis',label)"),
+    'back-side deity name must render above the LƯNG badge'
+  );
   assert.match(direction,/\.\/assets\/meditating-side-user\.jpg/);
   assert.doesNotMatch(direction,/<svg|innerHTML|BẠN/);
   assert.ok(asset.size>10000&&asset.size<250000);
