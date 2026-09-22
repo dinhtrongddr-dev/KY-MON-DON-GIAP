@@ -183,7 +183,7 @@ function renderMenhPalaceDetail(detail,titleNode,palace,board,analysisLayers=nul
   detail.replaceChildren();
   const conditions=palaceConditions(palace),title=el('div','detail-title');title.dataset.element=elementSlug(palace.element);
   const main=el('div','detail-title-main'),name=el('span');
-  name.append(el('strong','',palace.vi+' · '+palace.han),el('small','',(palace.direction||'Trung tâm')+' · cung '+palace.number));
+  name.append(el('strong','',palace.han),el('small','',palace.direction||'Trung tâm'));
   main.append(el('span','detail-gua',palace.trigram||'中'),name);title.append(main,el('span','element-chip',palace.element));
   detail.append(title,el('p','detail-image',palace.image||''));
   detail.append(semanticCardNode(palace,board,conditions));

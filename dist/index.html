@@ -108,11 +108,10 @@
             <label class="field field-time">
               <span>Ngày · giờ · phút</span>
               <input id="datetime" name="datetime" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" required />
-              <small>Thời điểm dùng để lập bàn</small>
             </label>
             <label class="field field-zone">
               <span>Múi giờ UTC</span>
-              <select id="timezone" name="timezone" aria-describedby="timezone-help">
+              <select id="timezone" name="timezone">
                 <option value="7" selected>UTC+07 · Việt Nam</option>
                 <option value="8">UTC+08 · Trung Quốc</option>
                 <option value="9">UTC+09</option>
@@ -122,7 +121,6 @@
                 <option value="-5">UTC−05</option>
                 <option value="-8">UTC−08</option>
               </select>
-              <small id="timezone-help">Giờ địa phương, chưa hiệu chỉnh chân thái dương</small>
             </label>
             <details class="timeplace-details" hidden>
               <summary>Múi giờ IANA & địa điểm · nâng cao</summary>

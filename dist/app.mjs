@@ -331,7 +331,7 @@ function renderDetail(chart,prepared=null,attentionProfile=currentAttention) {
     <p class="attention-note">Màu chỉ giúp ưu tiên đọc; không phải xác suất hay phán quyết tốt/xấu tuyệt đối.</p>
   </section>`:'';
   const title = `<div class="detail-title" data-element="${palaceElement}">
-    <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.vi} · ${palace.han}</strong><small>${palace.direction} · cung ${palace.number}</small></span></div>
+    <div class="detail-title-main"><span class="detail-gua">${palace.trigram || "中"}</span><span><strong>${palace.han}</strong><small>${palace.direction||"Trung tâm"}</small></span></div>
     <span class="element-chip">${palace.element}</span>
   </div>`;
 
