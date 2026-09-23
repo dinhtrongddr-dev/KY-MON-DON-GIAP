@@ -1,5 +1,5 @@
 export const plainReadingText=text=>text.replace(/\*\*([^*]+)\*\*/g,'$1');
-const TECHNICAL_BOLD=/\b(?:cung\s*\d+|niên can|nhật can|thời can|thiên can|địa can|thiên bàn|địa bàn|bát môn|cửu tinh|bát thần|trực phù|trực sử|phục ngâm|phản ngâm|không vong|mã tinh|hưu môn|sinh môn|thương môn|đỗ môn|cảnh môn|tử môn|kinh môn|khai môn|thiên bồng|thiên nhậm|thiên xung|thiên phụ|thiên anh|thiên nhuế|thiên trụ|thiên tâm|thiên cầm|đằng xà|thái âm|lục hợp|bạch hổ|huyền vũ|cửu địa|cửu thiên|can\s+(?:giáp|ất|bính|đinh|mậu|kỷ|canh|tân|nhâm|quý))\b/iu;
+const TECHNICAL_BOLD=/\b(?:cung\s*\d+|(?:khảm|khôn|chấn|tốn|trung|càn|đoài|cấn|ly)\s*[1-9]?|niên can|nhật can|thời can|thiên can|địa can|thiên bàn|địa bàn|bát môn|cửu tinh|bát thần|trực phù|trực sử|phục ngâm|phản ngâm|không vong|tuần không|mã tinh|nhập mộ|kích hình|tứ hại|môn\s*(?:bức|chế|hòa|nghĩa)|hưu môn|sinh môn|thương môn|đỗ môn|cảnh môn|tử môn|kinh môn|khai môn|thiên bồng|thiên nhậm|thiên xung|thiên phụ|thiên anh|thiên nhuế|thiên trụ|thiên tâm|thiên cầm|đằng xà|thái âm|lục hợp|bạch hổ|huyền vũ|cửu địa|cửu thiên|can\s+(?:giáp|ất|bính|đinh|mậu|kỷ|canh|tân|nhâm|quý))\b/iu;
 export function formatError(text,{allowComparisonEmphasis=false}={}) {
   if((text.match(/\*\*/g)||[]).length%2||/\*{3,}/.test(text))return 'Dấu tô đậm chưa cân bằng.';
   for(const paragraph of text.split(/\n\s*\n/)){
@@ -28,6 +28,11 @@ export function formatParts(text,{automatic=true}={}) {
     for(const m of chosen){const start=m.index+m[0].length-m[0].trimStart().length;if(start>end)parts.push({text:text.slice(end,start),strong:false});parts.push({text:m[0].trimStart(),strong:true});end=m.index+m[0].length;}
   }
   if(end<text.length)parts.push({text:text.slice(end),strong:false});
+  const firstStrong=parts.findIndex(part=>part.strong);
+  if(firstStrong>0){
+    const prefix=parts.slice(0,firstStrong).map(part=>part.text).join('');
+    if(TECHNICAL_BOLD.test(prefix))for(let i=0;i<firstStrong;i++)if(!parts[i].strong)parts[i].technical=true;
+  }
   return parts;
 }
 export function renderProse(text,parent,doc=parent.ownerDocument||document) {
@@ -35,7 +40,10 @@ export function renderProse(text,parent,doc=parent.ownerDocument||document) {
   const inline=(value,node)=>{
     const parts=formatParts(value);
     if(parts.every(p=>!p.strong)){node.textContent=value;return;}
-    for(const part of parts)append(part.strong?'strong':'span',part.text,node);
+    for(const part of parts){
+      const child=append(part.strong?'strong':'span',part.text,node);
+      if(part.technical)child.className='ai-technical-prefix';
+    }
   };
   for(const block of text.split(/\n\s*\n/)){
     if(!block.trim())continue;
@@ -50,4 +58,21 @@ export function renderProse(text,parent,doc=parent.ownerDocument||document) {
       }
     }else{const p=append('p','',parent);p.className='ai-prose';inline(block,p);}
   }
+}
+
+export function mountAiTechnicalToggle(container,doc=container.ownerDocument||document){
+  container.classList?.toggle('ai-show-technical',false);
+  const bar=doc.createElement('div');bar.className='ai-technical-controls';
+  const button=doc.createElement('button');button.type='button';button.className='ai-technical-toggle';
+  let shown=false;
+  const sync=show=>{
+    shown=!!show;
+    container.classList?.toggle('ai-show-technical',shown);
+    button.textContent=shown?'Ẩn căn cứ Kỳ Môn':'Hiện căn cứ Kỳ Môn';
+    button.setAttribute('aria-pressed',String(shown));
+    button.setAttribute('aria-label',shown?'Ẩn các câu thuật ngữ Kỳ Môn trong bài luận':'Hiện các câu thuật ngữ Kỳ Môn trong bài luận');
+  };
+  sync(false);
+  button.addEventListener('click',()=>sync(!shown));
+  bar.append(button);container.append(bar);return button;
 }

@@ -1,6 +1,6 @@
 import {resultTabs,renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {buildPresentationProfile} from './qimen/ai/presentation.mjs';
-import {renderProse} from './reading-format.mjs';
+import {renderProse,mountAiTechnicalToggle} from './reading-format.mjs';
 // Emphasis uses created DOM nodes; model HTML is always literal text.
 export function renderReading(answer,data,prepared) {
   const r=data.reading,doc=answer.ownerDocument||document,g=prepared.context.allInOne.reasoning,profile=buildPresentationProfile(prepared.context);
@@ -64,6 +64,7 @@ export function renderReading(answer,data,prepared) {
     const list=node('ul','',answer);for(const question of r.questions)node('li',question,list);
     answer.hidden=false;return;
   }
+  mountAiTechnicalToggle(answer,doc);
   if(r.status==='verified_fallback'){
     prose(r.summary.text,answer);trace(r.summary.claim_ids,answer,answer);
     section('Dữ kiện đã tính',r.situation,answer);

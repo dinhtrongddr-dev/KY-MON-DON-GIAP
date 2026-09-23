@@ -114,6 +114,12 @@ test('successful AI reading is recorded without passing the question to activity
   assert.equal(ids['result-switch'].dataset.target,'ai');
   assert.equal(ids['result-switch'].textContent,'Xem AI');
   assert.equal(ids['result-switch'].classes.has('is-ai-alert'),true);
+  const rendered=[];const collect=node=>{rendered.push(node);node.children.forEach(collect);};collect(ids['ai-answer']);
+  const technicalToggle=rendered.find(node=>node.className==='ai-technical-toggle');
+  assert.ok(technicalToggle);assert.equal(technicalToggle.textContent,'Hiện căn cứ Kỳ Môn');
+  assert.equal(ids['ai-answer'].classes.has('ai-show-technical'),false);
+  await technicalToggle.fire('click');assert.equal(technicalToggle.textContent,'Ẩn căn cứ Kỳ Môn');assert.equal(ids['ai-answer'].classes.has('ai-show-technical'),true);
+  await technicalToggle.fire('click');assert.equal(technicalToggle.textContent,'Hiện căn cứ Kỳ Môn');assert.equal(ids['ai-answer'].classes.has('ai-show-technical'),false);
   assert.equal(ids['ai-answer'].scrolled,undefined);
   await ids['result-switch'].fire('click');
   assert.deepEqual(ids['ai-answer'].scrolled,{behavior:'smooth',block:'start'});

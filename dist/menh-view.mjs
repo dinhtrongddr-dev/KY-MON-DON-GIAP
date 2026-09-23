@@ -2,7 +2,7 @@ import {STAR_QIN,elementSlug} from './qimen/core/palace.mjs';
 import {formatInstantAtOffset,formatOffset} from './qimen/core/calendar.mjs';
 import {CONTROLS,GENERATES,palaceConditions} from './guide.mjs';
 import {semanticBundle} from './qimen/semantic/matrix.mjs';
-import {formatParts} from './reading-format.mjs';
+import {formatParts,mountAiTechnicalToggle} from './reading-format.mjs';
 import {renderNatalSpiritActivation} from './spirit-activation-ui.mjs';
 
 const DOMAIN_LABEL=Object.freeze({
@@ -447,6 +447,7 @@ function focusParagraph(text){
   const p=el('p');
   for(const part of formatParts(String(text||''),{automatic:false})){
     if(part.strong)p.append(el('strong','menh-ai-focus',part.text));
+    else if(part.technical)p.append(el('span','ai-technical-prefix',part.text));
     else p.append(document.createTextNode(part.text));
   }
   return p;
@@ -457,6 +458,7 @@ function appendAiParagraphs(card,value){
 }
 export function renderMenhAi(container,reading){
   container.replaceChildren();
+  mountAiTechnicalToggle(container,container.ownerDocument||document);
   const grid=el('div','menh-ai-grid');
   for(const key of Object.keys(SECTION_LABEL)){
     const section=reading[key];if(!section?.text?.trim())continue;

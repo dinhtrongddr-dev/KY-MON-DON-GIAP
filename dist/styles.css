@@ -949,6 +949,13 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-trace:hover,.ai-trace:focus-visible { background:#e5f2eb; outline:2px solid var(--jade); outline-offset:2px; }
 
 .ai-model-used{display:inline-flex;align-items:center;gap:.35rem;margin:.35rem 0 .8rem;padding:.42rem .7rem;border:1px solid #b9c7bf;border-radius:999px;font-size:.82rem;font-weight:700;background:#f7faf8}
+.ai-technical-controls{display:flex;justify-content:flex-start;margin:.1rem 0 .85rem}
+.ai-technical-toggle{appearance:none;min-height:38px;padding:7px 11px;border:1px solid #9eb7aa;border-radius:999px;background:#f6faf7;color:var(--jade-dark);font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
+.ai-technical-toggle:hover,.ai-technical-toggle:focus-visible{background:#e8f3ec;outline:2px solid rgba(21,83,60,.26);outline-offset:2px}
+.ai-technical-prefix{display:none}
+.ai-show-technical .ai-technical-prefix{display:inline}
+@media(max-width:480px){.ai-technical-toggle{min-height:36px;padding:6px 10px;font-size:.74rem}}
+@media print{.ai-technical-controls{display:none!important}}
 
 /* KM-MENH-1.0 */
 .product-nav{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--line);background:rgba(255,255,255,.72)}

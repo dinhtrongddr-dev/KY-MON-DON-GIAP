@@ -157,7 +157,7 @@ test('Mệnh deterministic basis is collapsed by default like Hỏi Việc evide
 });
 test('Mệnh long-form reading visually emphasizes fast-scan translated takeaways without HTML injection',()=>{
   const view=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
-  assert.doesNotMatch(view,/FOCUS_PATTERNS/);assert.match(view,/formatParts/);assert.match(view,/automatic:false/);assert.match(view,/menh-ai-focus/);assert.match(view,/semanticCardNode/);
+  assert.doesNotMatch(view,/FOCUS_PATTERNS/);assert.match(view,/formatParts/);assert.match(view,/automatic:false/);assert.match(view,/menh-ai-focus/);assert.match(view,/ai-technical-prefix/);assert.match(view,/mountAiTechnicalToggle/);assert.match(view,/semanticCardNode/);
   assert.match(view,/document\.createTextNode/);assert.doesNotMatch(view,/innerHTML/);
   assert.match(view,/renderMenhPalaceDetail/);
 });
