@@ -8,7 +8,7 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Trên cấu hình VPS hiện tại, route ChatGPT đi qua 9router local; Prism là fallback local riêng và không thay đổi cấu hình upstream. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
 
-Bản 17.6.2 / TG-CB-6.3 (protocol 6) cải thiện nút nổi Bàn ↔ AI: khi bài luận hoàn tất, nút **Xem Bàn** tự chuyển thành **Xem AI** và nháy sáng để báo kết quả mới; người dùng bấm **Xem AI** mới được đưa tới bài luận, sau đó nút đổi lại **Xem Bàn**. Hỏi Việc và Mệnh dùng cùng hành vi; thay đổi dữ liệu/bắt đầu lượt mới sẽ xóa trạng thái báo kết quả. Engine lập bàn và protocol AI không đổi.
+Bản 17.6.3 / TG-CB-6.3 (protocol 6) làm bài luận AI dễ đọc hơn: các câu căn cứ/thuật ngữ Kỳ Môn đứng trước phần dịch nghĩa vẫn được giữ nguyên trong DOM nhưng mặc định ẩn; nút **Hiện căn cứ Kỳ Môn** cho phép bật lại toàn bộ phần kỹ thuật và đổi thành **Ẩn căn cứ Kỳ Môn** khi đang mở. Hỏi Việc và Mệnh dùng cùng cơ chế; prompt tiếp tục bắt cấu trúc kỹ thuật trước → dịch nghĩa sau, không đổi engine lập bàn, deterministic reasoning hay protocol AI.
 
 Core TG-ROTATING-2.0 giữ nguyên. Sáu mode và Auto, so 2-12 thời điểm bằng bàn riêng, tám phương vị và dữ liệu đã lưu vẫn được hỗ trợ. Source phát hành từ GitHub main lên Cloudflare Pages. Kiến trúc hiện tại: `QIMEN-ARCHITECTURE.md`.
 
