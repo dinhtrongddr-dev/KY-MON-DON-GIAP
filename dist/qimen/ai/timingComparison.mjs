@@ -38,3 +38,44 @@ export function compareTimes(base,rawCandidates,{action='general',topic='general
   return {action,values,candidates,ranking:rankCandidates(candidates.map(({board,details,rolePalaces,...rest})=>rest)),
     convention:RANK_CONVENTION+' Giữ đại diện đã chọn ở bàn hỏi xuyên các ứng viên: Nhật trụ khi hỏi việc mình, hoặc Can Chi được xác nhận khi hỏi thay (Giáp dùng cùng nghi ẩn); Thời can thuộc từng bàn ứng viên. Không đổi người hỏi theo ngày ứng viên. KM-TIMEPLACE-2.0 resolve lại offset IANA cho từng ứng viên khi IANA mode được bật; fixed-offset mode giữ nguyên offset cũ. Giờ Mặt Trời không tự áp vào bàn.'};
 }
+
+
+const DATE_SCAN_HOURS=Object.freeze([0,2,4,6,8,10,12,14,16,18,20,22]);
+const two=n=>String(n).padStart(2,'0');
+function parseTimingDate(value){
+  if(typeof value!=='string')throw new Error('Ngày ứng viên không hợp lệ.');
+  const m=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m)throw new Error('Nhập ngày theo định dạng YYYY-MM-DD.');
+  const [,year,month,day]=m.map(Number),probe=new Date(Date.UTC(year,month-1,day));
+  if(probe.getUTCFullYear()!==year||probe.getUTCMonth()!==month-1||probe.getUTCDate()!==day)throw new Error('Ngày ứng viên không tồn tại.');
+  return {year,month,day,value};
+}
+function localCandidateValue(input){return `${input.year}-${two(input.month)}-${two(input.day)}T${two(input.hour)}:${two(input.minute)}`;}
+export function selectBestTimesForDates(base,rawDates,{action='general',topic='general',actors={},selfPillar=base.pillars.day,timePlace=null}={}){
+  if(!Array.isArray(rawDates)||rawDates.length<2||rawDates.length>12)throw new Error('Chọn từ 2 đến 12 ngày để so sánh.');
+  const dates=rawDates.map(parseTimingDate);
+  if(new Set(dates.map(x=>x.value)).size!==dates.length)throw new Error('Các ngày so sánh không được trùng nhau.');
+  const selections=dates.map(date=>{
+    const viable=[],errors=[];
+    for(const hour of DATE_SCAN_HOURS){
+      const value=`${date.value}T${two(hour)}:00`;
+      try{
+        resolveTimePlace({year:date.year,month:date.month,day:date.day,hour,minute:0,tzOffset:base.input.tzOffset},timePlace);
+        viable.push(value);
+      }catch(error){errors.push(error);}
+    }
+    if(viable.length<2)throw errors[0]||new Error('Không tìm được đủ khung giờ dân dụng hợp lệ trong ngày đã chọn.');
+    const scan=compareTimes(base,viable,{action,topic,actors,selfPillar,timePlace});
+    const bestRank=scan.ranking[0]?.rank;
+    const tied=scan.ranking.filter(row=>row.rank===bestRank).sort((a,b)=>a.input.hour-b.input.hour||a.input.minute-b.input.minute);
+    const best=tied[0];
+    if(!best)throw new Error('Không tìm được khung giờ phù hợp để so sánh trong ngày đã chọn.');
+    return {date:date.value,value:localCandidateValue(best.input),scannedSlots:viable.length,tiedBestSlots:tied.length};
+  });
+  return {
+    mode:'date_scan',
+    slotHours:[...DATE_SCAN_HOURS],
+    values:selections.map(x=>x.value),
+    selections
+  };
+}

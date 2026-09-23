@@ -50,12 +50,44 @@ export function initNianmingInputMasks(doc=document){
 
 export function initModeControls(doc=document) {
   const $=id=>doc.getElementById(id),mode=$('qimen-mode'),question=$('question');
+  let timingInputMode='date';
+  const timingSaved=new WeakMap();
+  const timingInputs=()=>[...doc.querySelectorAll('.timing-candidate')];
+  const syncTimingModeUi=()=>{
+    const dateButton=$('timing-mode-date'),exactButton=$('timing-mode-exact'),note=$('timing-mode-note'),add=$('add-candidate');
+    for(const [button,value] of [[dateButton,'date'],[exactButton,'exact']])if(button){const active=timingInputMode===value;button.classList.toggle('is-active',active);button.setAttribute('aria-pressed',String(active));}
+    if(note)note.textContent=timingInputMode==='date'
+      ?'Chọn từ 2 đến 12 ngày. App tự quét 12 khung giờ Tý–Hợi của từng ngày, lấy mốc đại diện giữa mỗi thời thần rồi chọn khung phù hợp nhất để so sánh giữa các ngày.'
+      :'Chọn từ 2 đến 12 thời điểm cụ thể, đủ ngày · giờ · phút. Dùng khi bạn đã có sẵn các lịch hẹn cần so sánh.';
+    if(add)add.textContent=timingInputMode==='date'?'Thêm ngày':'Thêm thời điểm';
+  };
+  const configureTimingInput=(input,next,previous=timingInputMode)=>{
+    const saved=timingSaved.get(input)||{date:'',exact:''};
+    if(previous&&input.value)saved[previous]=input.value;
+    if(next==='date'&&!saved.date&&saved.exact)saved.date=saved.exact.slice(0,10);
+    input.type=next==='date'?'date':'datetime-local';
+    input.min=next==='date'?'1900-01-01':'1900-01-01T00:00';
+    input.max=next==='date'?'2100-12-31':'2100-12-31T23:59';
+    input.value=saved[next]||'';
+    timingSaved.set(input,saved);
+  };
+  const setTimingInputMode=(next,{notify=true}={})=>{
+    if(!['date','exact'].includes(next)||next===timingInputMode){syncTimingModeUi();return;}
+    const previous=timingInputMode;
+    for(const input of timingInputs())configureTimingInput(input,next,previous);
+    timingInputMode=next;syncTimingModeUi();
+    if(notify)$('chart-form')?.dispatchEvent(new Event('change',{bubbles:true}));
+  };
   for(const id of MODES){const option=doc.createElement('option');option.value=id;option.textContent=MODE_LABELS[id];mode.append(option);}
   for(const id of ['customer','competitor','decisionMaker','subject']) {
     const select=$('actor-'+id);
     if(!select)continue;
     for(let i=0;i<60;i++){const p=pillarFromGanzhi(sexagenaryName(i)),option=doc.createElement('option');option.value=p.han;option.textContent=p.vi;select.append(option);}
   }
+  for(const input of timingInputs()){input.type='date';input.min='1900-01-01';input.max='2100-12-31';timingSaved.set(input,{date:input.value||'',exact:''});}
+  syncTimingModeUi();
+  $('timing-mode-date')?.addEventListener('click',event=>{event.preventDefault();setTimingInputMode('date');});
+  $('timing-mode-exact')?.addEventListener('click',event=>{event.preventDefault();setTimingInputMode('exact');});
   const update=()=>{
     const q=buildQuestionContext(question.value,{mode:mode.value,topic:$('topic')?.value||'general'}),c=q.classification;
     $('mode-explanation').textContent=`${q.domainLabel} · ${MODE_LABELS[c.mode]} · ${c.reason}`+(c.ambiguous?' Ý định còn mơ hồ; hãy kiểm tra chế độ đã chọn hoặc chọn lại.':'');
@@ -66,8 +98,11 @@ export function initModeControls(doc=document) {
   $('add-candidate').addEventListener('click',()=>{
     const list=$('timing-candidates');if(list.children.length>=12)return;
     const row=doc.createElement('div');row.className='candidate-row';
-    const label=doc.createElement('label');label.className='field';const title=doc.createElement('span');title.textContent='Thời điểm bổ sung';
-    const input=doc.createElement('input');input.type='datetime-local';input.min='1900-01-01T00:00';input.max='2100-12-31T23:59';input.className='timing-candidate';label.append(title,input);
+    const label=doc.createElement('label');label.className='field';const title=doc.createElement('span');title.textContent='Mốc bổ sung';
+    const input=doc.createElement('input');input.className='timing-candidate';
+    input.type=timingInputMode==='date'?'date':'datetime-local';
+    input.min=timingInputMode==='date'?'1900-01-01':'1900-01-01T00:00';input.max=timingInputMode==='date'?'2100-12-31':'2100-12-31T23:59';
+    timingSaved.set(input,{date:'',exact:''});label.append(title,input);
     const remove=doc.createElement('button');remove.type='button';remove.className='button button-quiet';remove.textContent='Bỏ';remove.addEventListener('click',()=>{row.remove();$('chart-form').dispatchEvent(new Event('change',{bubbles:true}));});
     row.append(label,remove);list.append(row);input.focus();
   });
@@ -80,6 +115,7 @@ export function initModeControls(doc=document) {
       subject:$('subject-label')?.value.trim()&&$('actor-subject')?.value?{label:$('subject-label').value.trim(),pillar:$('actor-subject').value}:null,
       direction:actual==='direction'?{origin:$('direction-origin')?.value||'',kind:$('direction-kind')?.value||''}:null,
       action:['timing','direction'].includes(actual)?$('qimen-action').value:'general',
-      candidates:actual==='timing'?[...doc.querySelectorAll('.timing-candidate')].map(el=>el.value).filter(Boolean):[]};
+      timingInputMode:actual==='timing'?timingInputMode:null,
+      candidates:actual==='timing'?timingInputs().map(el=>el.value).filter(Boolean):[]};
   };
 }

@@ -11,7 +11,7 @@ class Element {
   focus(){this.focused=true;}
 }
 function setup(){
-  const ids=Object.fromEntries(['qimen-mode','question','mode-explanation','timing-options','direction-options','direction-origin','direction-kind','subject-label','actor-subject','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
+  const ids=Object.fromEntries(['qimen-mode','question','mode-explanation','timing-options','timing-mode-date','timing-mode-exact','timing-mode-note','direction-options','direction-origin','direction-kind','subject-label','actor-subject','action-options','qimen-action','add-candidate','timing-candidates','chart-form','actor-customer','actor-competitor','actor-decisionMaker'].map(id=>[id,new Element()]));
 ids['qimen-mode'].tag='select';ids['qimen-action'].value='general';
   for(const id of ['customer','competitor','decisionMaker']){const el=ids['actor-'+id];el.tag='select';el.append(new Element('option'));}
   for(let i=0;i<2;i++){const input=new Element('input');input.className='timing-candidate';ids['timing-candidates'].append(input);}
@@ -47,7 +47,7 @@ test('mode controls start on Auto and show timing inputs only for timing intent'
   assert.equal(options().mode,'auto');assert.equal(ids['qimen-mode'].children.length,7);assert.deepEqual(options().actors,{});
   ids.question.value='Ngày nào nên gửi báo giá?';ids.question.fire('input');
   assert.equal(ids['timing-options'].hidden,false);assert.equal(ids['action-options'].hidden,false);
-  inputs()[0].value='2026-09-14T09:00';inputs()[1].value='2026-09-15T10:00';assert.equal(options().candidates.length,2);
+  inputs()[0].value='2026-09-14';inputs()[1].value='2026-09-15';assert.equal(options().candidates.length,2);assert.equal(options().timingInputMode,'date');
   ids['qimen-mode'].value='business';ids['qimen-mode'].fire('change');assert.equal(ids['timing-options'].hidden,true);assert.deepEqual(options().candidates,[]);
   ids['actor-customer'].value='甲子';assert.deepEqual(options().actors,{customer:'甲子'});
 });
@@ -68,4 +68,30 @@ test('direction and confirmed subject inputs are carried into requests and hidde
   assert.deepEqual(options().subject,{label:'Em trai',pillar:'甲子'});
   ids['qimen-mode'].value='prediction';ids['qimen-mode'].fire('change');
   assert.equal(ids['direction-options'].hidden,true);assert.equal(options().direction,null);
+});
+
+test('timing entry defaults to date scan and can switch to exact time without losing the saved date values',()=>{
+  const {ids,inputs,options}=setup();ids.question.value='Ngày nào nên ký hợp đồng?';ids.question.fire('input');
+  assert.equal(inputs()[0].type,'date');assert.equal(ids['add-candidate'].textContent,'Thêm ngày');
+  inputs()[0].value='2026-09-20';inputs()[1].value='2026-09-21';
+  assert.deepEqual(options().candidates,['2026-09-20','2026-09-21']);assert.equal(options().timingInputMode,'date');
+  ids['timing-mode-exact'].fire('click');
+  assert.equal(inputs()[0].type,'datetime-local');assert.equal(inputs()[0].value,'');assert.equal(ids['add-candidate'].textContent,'Thêm thời điểm');assert.equal(options().timingInputMode,'exact');
+  inputs()[0].value='2026-09-20T09:30';inputs()[1].value='2026-09-21T14:45';assert.deepEqual(options().candidates,['2026-09-20T09:30','2026-09-21T14:45']);
+  ids['timing-mode-date'].fire('click');
+  assert.equal(inputs()[0].type,'date');assert.equal(inputs()[0].value,'2026-09-20');assert.equal(inputs()[1].value,'2026-09-21');assert.equal(options().timingInputMode,'date');
+});
+
+test('timing page wires date-scan and exact-time modes into the AI request path',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const [html,app]=await Promise.all([
+    readFile(new URL('../dist/index.html',import.meta.url),'utf8'),
+    readFile(new URL('../dist/app.mjs',import.meta.url),'utf8')
+  ]);
+  assert.match(html,/id="timing-mode-date"[^>]*>Chọn ngày</);
+  assert.match(html,/id="timing-mode-exact"[^>]*>Giờ cụ thể</);
+  assert.match(html,/class="timing-candidate" type="date"/);
+  assert.match(app,/selectBestTimesForDates/);
+  assert.match(app,/if\(options\.timingInputMode==='date'\)/);
+  assert.match(app,/delete options\.timingInputMode/);
 });

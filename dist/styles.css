@@ -1242,10 +1242,13 @@ body.share-view-mode main{padding-top:18px}
 .related-person-card .field{margin:0}
 .related-person-card .field>span{font-size:.78rem}
 .related-person-card input{min-height:44px}
-.nianming-mode-links{min-height:22px;display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:.72rem;color:var(--muted)}
-.nianming-mode-link{appearance:none;border:0;background:transparent;padding:0;color:var(--muted);font:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
-.nianming-mode-link:hover,.nianming-mode-link:focus-visible{color:var(--jade-dark)}
-.nianming-mode-link.is-active{color:var(--jade-dark);font-weight:800;text-decoration:none;cursor:default}
+.nianming-mode-links,.timing-mode-links{min-height:22px;display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:.72rem;color:var(--muted)}
+.nianming-mode-link,.timing-mode-link{appearance:none;border:0;background:transparent;padding:0;color:var(--muted);font:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
+.nianming-mode-link:hover,.nianming-mode-link:focus-visible,.timing-mode-link:hover,.timing-mode-link:focus-visible{color:var(--jade-dark)}
+.nianming-mode-link.is-active,.timing-mode-link.is-active{color:var(--jade-dark);font-weight:800;text-decoration:none;cursor:default}
+.timing-mode-links{margin-top:6px;font-size:.8rem}
+#timing-mode-note{margin:5px 0 8px;color:var(--text);font-size:.8rem;line-height:1.45}
+.timing-scan-note{margin:8px 0 0;color:var(--muted);font-size:.72rem;line-height:1.4}
 .related-people-options>.nianming-note{margin:10px 0 0}
 @media(max-width:760px){
   .related-people-list{grid-template-columns:1fr}

@@ -1,6 +1,6 @@
 import {initSharedView} from './share-view.mjs';
 import {BRANCHES, STAR_QIN, elementSlug} from './qimen/core/palace.mjs';
-import {formatInstantAtOffset, formatOffset} from './qimen/core/calendar.mjs';
+import {formatInstantAtOffset, formatOffset, pillarFromGanzhi} from './qimen/core/calendar.mjs';
 import {generateQimen,toQimenBoard} from './qimen/core/board.mjs';
 import {resolveTimePlace,localInputValueAtZone} from './qimen/timePlace.mjs';
 import {TOPICS, GENERATES, CONTROLS, locateStem, palaceConditions} from './guide.mjs';
@@ -9,6 +9,8 @@ import {initModeControls,initNianmingInputMasks} from './qimen/ui-controls.mjs';
 import {createActivityLog} from './activity-log.mjs';
 import {semanticBundle,semanticDomainForTopic} from './qimen/semantic/matrix.mjs';
 import {classifyTopics} from './qimen/ai/classifier.mjs';
+import {buildQuestionContext} from './qimen/ai/questionContext.mjs';
+import {selectBestTimesForDates} from './qimen/ai/timingComparison.mjs';
 import {analyzeBoard} from './qimen/analysis/index.mjs';
 import {buildAttentionProfile} from './qimen/analysis/attentionUi.mjs';
 import {renderHourlySpiritActivation} from './spirit-activation-ui.mjs';
@@ -519,7 +521,18 @@ function prepareAiInput(){
   generateAndRender();
   if(!errorBox.hidden)throw new Error(errorBox.textContent);
   if(!currentTimePlace)throw new Error('Chưa có dữ liệu thời gian/địa điểm hợp lệ.');
-  return {question:questionInput.value.trim(),topic:topicInput.value,method:QIMEN_METHOD,input:{...currentTimePlace.originalInput},timePlace:{...currentTimePlace.request},...readingOptions()};
+  const options=readingOptions();
+  if(options.timingInputMode==='date'){
+    const base=toQimenBoard(currentChart);
+    const questionContext=buildQuestionContext(questionInput.value,{mode:options.mode,topic:topicInput.value,direction:options.direction,subject:options.subject,depth:options.depth});
+    const selfPillar=options.subject?.pillar?pillarFromGanzhi(options.subject.pillar):base.pillars.day;
+    const scan=selectBestTimesForDates(base,options.candidates,{
+      action:options.action,topic:questionContext.resolvedTopic,actors:options.actors,selfPillar,timePlace:{...currentTimePlace.request}
+    });
+    options.candidates=scan.values;
+  }
+  delete options.timingInputMode;
+  return {question:questionInput.value.trim(),topic:topicInput.value,method:QIMEN_METHOD,input:{...currentTimePlace.originalInput},timePlace:{...currentTimePlace.request},...options};
 }
 // Render with the same components and exact AI chart, then restore live nodes and selection.
 function captureReportVisual(prepared){

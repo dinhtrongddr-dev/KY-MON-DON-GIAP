@@ -34,7 +34,7 @@ def source_files(root):
                          '. Run npm run prepare:windows in the source repository.')
     files = {root / name for name in REQUIRED}
     for pattern in ['local/*.mjs', 'dist/*.mjs', 'dist/*.html', 'dist/*.css',
-                    'dist/*.svg', 'dist/*.png', 'dist/assets/*.png',
+                    'dist/*.svg', 'dist/*.png', 'dist/assets/*.png', 'dist/assets/*.jpg', 'dist/assets/*.jpeg',
                     'dist/qimen/**/*.mjs', 'tests/*.mjs', 'tests/*.py', 'tests/fixtures/*.json',
                     'scripts/*.mjs', 'scripts/*.json', 'scripts/*.py',
                     'relay/src/*.js', 'relay/test/*.mjs', 'relay/*.md',

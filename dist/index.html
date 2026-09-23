@@ -92,12 +92,18 @@
               </details>
               <div id="action-options" hidden><label class="field"><span>Mục tiêu hành động để so sánh</span><select id="qimen-action"><option value="general">Mở việc nói chung</option><option value="quote">Gửi báo giá / hồ sơ</option><option value="sign">Ký / thống nhất hợp đồng</option><option value="meet">Gặp khách / gọi điện</option><option value="launch">Triển khai công việc</option></select></label></div>
               <div id="timing-options" hidden>
-                <p>Nhập từ 2 đến 12 thời điểm muốn so sánh, cùng múi giờ. App dùng cố định Tháo Bổ. Đây là chọn thời điểm hành động, không phải dự báo ngày có kết quả.</p>
-                <div id="timing-candidates" class="candidate-fields">
-                  <label class="field"><span>Thời điểm 1</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
-                  <label class="field"><span>Thời điểm 2</span><input class="timing-candidate" type="datetime-local" min="1900-01-01T00:00" max="2100-12-31T23:59" /></label>
+                <div class="timing-mode-links" role="group" aria-label="Cách chọn thời điểm">
+                  <button id="timing-mode-date" class="timing-mode-link is-active" type="button" aria-pressed="true">Chọn ngày</button>
+                  <span aria-hidden="true">·</span>
+                  <button id="timing-mode-exact" class="timing-mode-link" type="button" aria-pressed="false">Giờ cụ thể</button>
                 </div>
-                <button id="add-candidate" class="button button-quiet" type="button">Thêm thời điểm</button>
+                <p id="timing-mode-note">Chọn từ 2 đến 12 ngày. App tự quét 12 khung giờ Tý–Hợi của từng ngày, lấy mốc đại diện giữa mỗi thời thần rồi chọn khung phù hợp nhất để so sánh giữa các ngày.</p>
+                <div id="timing-candidates" class="candidate-fields">
+                  <label class="field"><span>Mốc 1</span><input class="timing-candidate" type="date" min="1900-01-01" max="2100-12-31" /></label>
+                  <label class="field"><span>Mốc 2</span><input class="timing-candidate" type="date" min="1900-01-01" max="2100-12-31" /></label>
+                </div>
+                <button id="add-candidate" class="button button-quiet" type="button">Thêm ngày</button>
+                <p class="timing-scan-note">Chế độ Chọn ngày dùng phút 00 tại giữa mỗi thời thần để đại diện cho 12 khung giờ. Nếu cần so đúng lịch hẹn, chuyển sang “Giờ cụ thể”.</p>
               </div>
               <div id="direction-options" class="candidate-fields" hidden>
                 <label class="field"><span>Điểm quy chiếu phương hướng</span><input id="direction-origin" type="text" maxlength="240" placeholder="Ví dụ: cửa chính văn phòng" /></label>
@@ -257,7 +263,7 @@
 
       <footer>
         <p>Kỳ Môn là hệ thống huyền học truyền thống; kết quả dùng để tham khảo, không thay thế tư vấn tài chính, y tế hoặc pháp lý.</p>
-        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">v17.6.0 · kiểm toán</a>.</p>
+        <p>Lịch Can Chi và tiết khí dùng <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noreferrer">lunar-javascript</a> (MIT) · <a href="./audit.html">v17.6.1 · kiểm toán</a>.</p>
       </footer>
     </div>
 

@@ -2,6 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {prepareReading,buildReadingRequest,validateReading} from '../local/reading.mjs';
 import {generateQimen} from '../dist/qimen/core/board.mjs';
 import {rankCandidates} from '../dist/qimen/modes/actionRules.mjs';
+import {compareTimes,selectBestTimesForDates} from '../dist/qimen/ai/timingComparison.mjs';
 import {readingFixture} from './reading-fixture.mjs';
 const body={question:'Ngày nào nên gửi báo giá?',mode:'timing',action:'quote',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7},candidates:['2026-09-14T09:00','2026-09-15T14:00','2026-09-16T10:30']};
 test('timing computes multiple distinct boards with one preserved core and a fixed self representative',()=>{
@@ -47,4 +48,31 @@ test('AI cannot omit other candidate comparisons or add a fabricated time',()=>{
   assert.equal(validateReading(known,p.facts,'contract',p.context),known);
   const invented=readingFixture(p);invented.comparisons[0].reason+=' Mốc 17/09 không có trong danh sách.';
   assert.throws(()=>validateReading(invented,p.facts,'contract',p.context),/ngày chính xác ngoài dữ liệu/);
+});
+
+test('date mode scans all 12 double-hour centres and keeps the earliest rank-1 slot for each selected day',()=>{
+  const prepared=prepareReading(body),dates=['2026-09-14','2026-09-15','2026-09-16'];
+  const scan=selectBestTimesForDates(prepared.board,dates,{action:'quote',topic:'contract',selfPillar:prepared.board.pillars.day});
+  assert.equal(scan.mode,'date_scan');assert.deepEqual(scan.slotHours,[0,2,4,6,8,10,12,14,16,18,20,22]);
+  assert.equal(scan.values.length,3);assert.equal(scan.selections.length,3);
+  const two=n=>String(n).padStart(2,'0');
+  for(const selection of scan.selections){
+    assert.equal(selection.scannedSlots,12);assert.match(selection.value,/^\d{4}-\d{2}-\d{2}T(?:00|02|04|06|08|10|12|14|16|18|20|22):00$/);
+    const slots=scan.slotHours.map(hour=>`${selection.date}T${two(hour)}:00`);
+    const exact=compareTimes(prepared.board,slots,{action:'quote',topic:'contract',selfPillar:prepared.board.pillars.day});
+    const rank=exact.ranking[0].rank;
+    const tied=exact.ranking.filter(row=>row.rank===rank).sort((x,y)=>x.input.hour-y.input.hour||x.input.minute-y.input.minute);
+    const expected=`${selection.date}T${two(tied[0].input.hour)}:${two(tied[0].input.minute)}`;
+    assert.equal(selection.value,expected);
+  }
+});
+test('date mode rejects bad/duplicate dates and skips a nonexistent DST slot instead of failing the whole day',()=>{
+  const prepared=prepareReading(body);
+  for(const dates of [undefined,[],['2026-09-14'],Array(13).fill('2026-09-14'),['2026-09-14','2026-09-14'],['2026-02-30','2026-09-14'],['invalid','2026-09-14']])
+    assert.throws(()=>selectBestTimesForDates(prepared.board,dates,{action:'quote',topic:'contract'}));
+  const nyBody={...body,input:{year:2024,month:3,day:9,hour:12,minute:0,tzOffset:-5},timePlace:{mode:'iana_civil',timeZone:'America/New_York'}};
+  const ny=prepareReading(nyBody);
+  const scan=selectBestTimesForDates(ny.board,['2024-03-10','2024-03-11'],{action:'quote',topic:'contract',timePlace:ny.timePlace.request});
+  assert.equal(scan.selections[0].scannedSlots,11);
+  assert.equal(scan.selections[1].scannedSlots,12);
 });
