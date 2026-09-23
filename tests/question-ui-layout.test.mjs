@@ -25,6 +25,8 @@ test('floating result navigation exposes lively Xem Bàn and Kích Thần bubble
   assert.match(css,/\.floating-result-nav\s*\{[\s\S]*position:fixed/);
   assert.match(css,/QUICK-NAV-BUBBLES-1\.0/);
   assert.match(css,/\.floating-result-button\{[\s\S]*min-width:96px;[\s\S]*height:50px;[\s\S]*border-radius:24px 24px 24px 14px/);
+  assert.match(css,/\.floating-result-button\.is-ai-alert\{[\s\S]*animation:aiResultPulse/);
+  assert.match(css,/@keyframes aiResultPulse/);
   assert.match(app,/spiritSwitch\?\.addEventListener\('click'/);
   const ai=html.indexOf('class="learning-panel ai-panel'),meta=html.indexOf('class="chart-meta"');
   assert.ok(ai>0&&meta>ai,'AI panel must appear before Tứ Trụ/chart meta');

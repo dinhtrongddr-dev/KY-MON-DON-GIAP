@@ -113,6 +113,9 @@ test('Mệnh puts AI immediately after the board, exposes Xem Bàn and Kích Th�
   const spiritAppend=view.indexOf("const spiritPanel=el('section'",pillarsAppend);
   assert.ok(workspaceAppend>0&&aiAppend>workspaceAppend&&pillarsAppend>aiAppend&&spiritAppend>pillarsAppend,'Mệnh must render Bàn → AI → Tứ Trụ → deeper panels');
   assert.match(ai,/resultSwitch\.dataset\.target=aiTarget\?'ai':'board'/);
+  assert.match(ai,/setFloatingAiReady\(answer\.childElementCount>0,\{notify:true\}\)/);
+  assert.match(ai,/classList\.toggle\('is-ai-alert',floatingAiReady&&notify\)/);
+  assert.doesNotMatch(ai,/scrollToAnswer\(\)/);
   assert.match(ai,/answer\.childElementCount>0/);
   assert.match(app,/floatingNav\.hidden=false/);
   for(const label of ['Mộc · xanh lá','Hỏa · đỏ','Thổ · nâu','Kim · vàng','Thủy · xanh dương','Màu dùng để nhận diện hành']){

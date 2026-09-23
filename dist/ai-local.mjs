@@ -43,12 +43,14 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    resultSwitch.setAttribute('aria-label',aiTarget?'Xem phần luận AI':'Xem bàn Kỳ Môn');
    resultSwitch.classList.toggle('is-ready',floatingAiReady);
  };
- const setFloatingAiReady=ready=>{
+ const setFloatingAiReady=(ready,{notify=false}={})=>{
    floatingAiReady=!!ready;
-   setSwitchTarget('board');
+   setSwitchTarget(floatingAiReady?'ai':'board');
+   resultSwitch?.classList.toggle('is-ai-alert',floatingAiReady&&notify);
  };
  setFloatingAiReady(false);
  resultSwitch?.addEventListener('click',()=>{
+   resultSwitch.classList.toggle('is-ai-alert',false);
    if(resultSwitch.dataset.target==='ai'&&floatingAiReady&&!answer.hidden&&answer.childElementCount){
      answer.scrollIntoView?.({behavior:'smooth',block:'start'});
      setSwitchTarget('board');
@@ -96,7 +98,6 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    read.textContent=isReading?'Đang luận AI…':readLabel;status.textContent=message;
    return controller;
  };
- const scrollToAnswer=()=>{const go=()=>answer.scrollIntoView?.({behavior:'smooth',block:'start'});if(typeof requestAnimationFrame==='function')requestAnimationFrame(go);else go();};
  const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);pdf.clear();};
  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
@@ -147,13 +148,12 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      if(v!==version)return;
      status.textContent='AI đang hoàn thiện bài luận…';
      renderReading(answer,validateReadingResponse(data,prepared),prepared);
-     setFloatingAiReady(data.reading.status!=='needs_clarification'&&!answer.hidden&&answer.childElementCount>0);
+     setFloatingAiReady(data.reading.status!=='needs_clarification'&&!answer.hidden&&answer.childElementCount>0,{notify:true});
      const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
      if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
      if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed,prepared);
      status.textContent=data.reading.status==='verified_fallback'?`Đã nhận bài luận AI${modelText}. Một số phần còn cần đối chiếu thêm.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin để AI luận đúng sự việc.':`Đã nhận bài luận AI${modelText}.`;
-     scrollToAnswer();
    }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });
 }

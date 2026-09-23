@@ -1479,6 +1479,9 @@ body.share-view-mode main{padding-top:18px}
 .floating-spirit-button:hover,.floating-spirit-button:focus-visible{background:linear-gradient(145deg,#f6df91,#d0a23b)}
 .floating-result-button:active{transform:translateY(-1px) scale(.985)}
 .floating-result-button.is-ready{box-shadow:0 10px 24px rgba(18,42,31,.24),0 0 0 2px rgba(241,211,121,.26) inset}
+.floating-result-button.is-ai-alert{
+  animation:aiResultPulse .95s ease-in-out infinite;
+}
 .floating-result-button:disabled{transform:none;filter:none}
 .spirit-activation-panel.is-quick-highlight,.menh-spirit-activation.is-quick-highlight{
   animation:spiritQuickHighlight .9s ease;
@@ -1490,6 +1493,13 @@ body.share-view-mode main{padding-top:18px}
 @keyframes spiritQuickHighlight{
   0%,100%{box-shadow:none}
   35%{box-shadow:0 0 0 5px rgba(201,154,50,.2),0 12px 28px rgba(18,62,46,.12)}
+}
+@keyframes aiResultPulse{
+  0%,100%{box-shadow:0 10px 24px rgba(18,42,31,.24),0 0 0 2px rgba(241,211,121,.26) inset;filter:brightness(1)}
+  45%{box-shadow:0 10px 28px rgba(18,42,31,.28),0 0 0 5px rgba(244,199,72,.42),0 0 22px rgba(244,199,72,.48);filter:brightness(1.16) saturate(1.08)}
+}
+@media (prefers-reduced-motion:reduce){
+  .floating-result-button.is-ai-alert{animation:none;outline:3px solid rgba(244,199,72,.58);outline-offset:3px}
 }
 @media(max-width:560px){
   .floating-result-nav{right:10px;gap:7px}

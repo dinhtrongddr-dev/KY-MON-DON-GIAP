@@ -77,7 +77,7 @@ test('Guide covers modes, AI wait expectation, Mệnh use and beginner board rea
   assert.match(guide,/2–4 phút/);
   for(const layer of ['Cung','Thần','Tinh','Môn','Can'])assert.ok(guide.includes('<strong>'+layer+'</strong>'));
   assert.match(guide,/Không nhớ giờ sinh/);
-  assert.match(guide,/Xem luận AI/);
+  assert.match(guide,/Xem AI/);
 });
 
 test('Server page contains VPS setup while info page owns activity and system detail',()=>{
