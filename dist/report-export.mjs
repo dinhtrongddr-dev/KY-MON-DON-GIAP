@@ -1,4 +1,5 @@
 import {SHARE_ORIGIN} from './site-config.mjs';
+import {capturePcReportPages,extractReadingBlocks,writeQuestionPdf} from './question-report.mjs';
 const clean=value=>String(value??'').replace(/\s+/g,' ').trim();
 const selectedText=id=>{const el=document.getElementById(id);return clean(el?.selectedOptions?.[0]?.textContent||el?.value);};
 const PAGE_W=1240,PAGE_H=1754,MARGIN=82,CONTENT_W=PAGE_W-MARGIN*2,PAGE_BOTTOM=PAGE_H-96;
@@ -205,6 +206,35 @@ export function initPdfExport({kind,buttonId,statusId,prepare,boardSelector,capt
       }
     }catch(e){status.textContent=e.message||'Không tạo được link chia sẻ.';shareLink.hidden=true;}
     finally{button.disabled=false;if(!status.textContent)status.textContent=before;}
+  });
+  return {setModel,clear};
+}
+
+export function initPdfDownload({kind,buttonId,statusId,captureReportVisual,capturePages=capturePcReportPages,extractBlocks=extractReadingBlocks,writePdf=writeQuestionPdf,downloadFile=download}){
+  const button=document.getElementById(buttonId),status=document.getElementById(statusId);let model='',preparedContext=null,generation=0;
+  if(!button)return {setModel(){},clear(){}};
+  const setStatus=value=>{if(status)status.textContent=value;};
+  const clear=()=>{generation++;model='';preparedContext=null;button.hidden=true;};
+  const setModel=(modelUsed,prepared)=>{generation++;model=modelUsed?`${modelUsed.label} / ${modelUsed.effort}`:'';preparedContext=prepared;button.hidden=false;};
+  button.addEventListener('click',async()=>{
+    if(button.disabled)return;
+    const exactPrepared=preparedContext,exactModel=model,version=generation;
+    if(!exactPrepared){setStatus('Hãy luận bằng AI trước khi xuất PDF.');return;}
+    const answer=document.getElementById(kind==='menh'?'menh-ai-answer':'ai-answer');
+    if(!answer){setStatus('Chưa có bài luận AI để xuất PDF.');return;}
+    button.disabled=true;const before=status?.textContent||'';setStatus('Đang tạo file PDF…');
+    try{
+      const blocks=extractBlocks(answer);
+      const source=document.getElementById(kind==='menh'?'menh-result':'result')?.cloneNode?.(true);
+      const visual=captureReportVisual?.(exactPrepared);
+      const pages=await capturePages(kind,{includeReading:false,...(source?{source}:{}),...(visual?{visual}:{})});
+      if(version!==generation)return;
+      const blob=await writePdf({pages,blocks,model:exactModel,prepared:exactPrepared});
+      if(version!==generation)return;
+      const name=`ky-mon-ban-${kind==='menh'?'menh':'hoi-viec'}.pdf`;
+      downloadFile(blob,name);setStatus('Đã tải file PDF về máy.');
+    }catch(error){if(version===generation)setStatus(error?.message||'Không tạo được PDF.');}
+    finally{button.disabled=false;if(version===generation&&!status?.textContent)setStatus(before);}
   });
   return {setModel,clear};
 }
