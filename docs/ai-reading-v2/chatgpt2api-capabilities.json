@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "QimenProviderCapabilities/1",
+  "provider": "chatgpt2api",
+  "testedAt": "2026-09-25",
+  "endpoint": "http://127.0.0.1:3000/v1",
+  "deployment": {
+    "networkExposure": "loopback-only",
+    "imageDigest": "sha256:fbee934fd5363ef6ce5f7632df854f87c770e382bf0f874f8c59372eeded6aab",
+    "upstreamSourceReference": "basketikun/chatgpt2api@dc105e51bd486bd75c8ef4f74be4bc4724bdfc33",
+    "note": "The live tested GHCR digest is the release pin for this probe; source-reference behavior was audited separately."
+  },
+  "models": {
+    "advertised": ["auto","gpt-5-3-mini","gpt-5-5","gpt-5-5-mini","gpt-5-6","gpt-5-6-mini"],
+    "probed": ["gpt-5-6"],
+    "effectiveUpstreamModelObserved": false
+  },
+  "text": {
+    "unicodeVietnamese": "probed-pass",
+    "systemUserRoles": "probed-pass",
+    "longWriterPayload": "probed-pass",
+    "streamSSE": "probed-pass",
+    "streamDoneMarker": "probed-pass",
+    "clientCancel": "probed-pass",
+    "serviceHealthyAfterCancel": "probed-pass",
+    "maxTokensTruncation": "probed-unsupported-or-ignored"
+  },
+  "reasoning": {
+    "requested": "xhigh",
+    "transmittedByProxy": "extended",
+    "effectiveUpstreamEffortObserved": false,
+    "mappingEvidence": "live image source maps xhigh/extended to extended"
+  },
+  "authAndErrors": {
+    "invalidAuth401": "probed-pass",
+    "upstream403WithoutAccount": "probed-pass",
+    "quota429": "unknown-not-forced",
+    "rateLimit429": "unknown-not-forced",
+    "upstream5xx": "covered-by-adapter-tests-not-forced-live",
+    "networkFailure": "covered-by-adapter-tests",
+    "timeout": "probed-via-client-cancel"
+  },
+  "cache": {
+    "enabledDuringProbe": true,
+    "identicalRequestObserved": {
+      "firstLatencyMs": 5062,
+      "secondLatencyMs": 8,
+      "identicalBody": true
+    },
+    "evaluationRule": "cached replay is never counted as an independent AI sample"
+  },
+  "decision": "GO_LIMITED_WRITER_ONLY"
+}

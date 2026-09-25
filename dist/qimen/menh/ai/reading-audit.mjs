@@ -96,7 +96,7 @@ export function validateNarrativeMenh(reading,context){
     const n=normalize(prose);
     // Certainty is checked against the contract by the mandatory fidelity
     // reviewer; negated statements must not fail a keyword-presence gate.
-    if(/\b(?:da xay ra|chac chan da|ban da)\b/.test(n))
+    if(/\b(?:da xay ra|chac chan da|ban da (?:ket hon|ly hon|mat viec|nghi viec|sinh con|co \d+ con|mac benh|phau thuat|mua nha|ban nha))\b/.test(n))
       reject('Không tự nâng xu hướng thành sự kiện ngoài đời.');
     if(context.birthTimeMode==='UNKNOWN'&&/\bgio sinh (?:dung|chinh xac|la)\b/.test(n))
       reject('Không được tự chọn giờ sinh.');

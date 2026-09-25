@@ -4,7 +4,7 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf} from './ai-client.mjs';
+import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf,writerProviderFromEnv} from './ai-client.mjs';
 import {runSurfaceText} from './surface-writer.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
@@ -18,6 +18,7 @@ import {NIANMING_VERSION} from '../dist/qimen/analysis/nianmingEngine.mjs';
 import {defaultShareDir,loadShare,pruneShares,renderSharePage,saveShare} from './share-store.mjs';
 import {createOutcomeRegistry,defaultOutcomeRegistryPath} from './outcome-registry.mjs';
 import {OUTCOME_REGISTRY_VERSION,VALIDATION_VERSION} from '../dist/qimen/validation/protocol.mjs';
+import {NARRATIVE_VERSION} from '../dist/qimen/ai/narrativePrimitives.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const TUNNEL_SUFFIX='.trycloudflare.com';
 const KEEPALIVE_CHUNK=' '.repeat(2048);
@@ -191,7 +192,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
          return send(200,{validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,record});
        }catch(e){return send(400,{error:e.message||'Không ghi nhận được outcome.'});}
      }
-     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
+     if(path==='/api/status'&&req.method==='GET')return send(200,{service:'qimen-local',router:ROUTING_MODE,model:MODEL,reasoningEffort:REASONING_EFFORT,writerProvider:writerProviderFromEnv(),writerModel:writerProviderFromEnv()==='chatgpt2api'?(process.env.CHATGPT2API_WRITER_MODEL||'gpt-5-6'):MODEL,writerEffort:writerProviderFromEnv()==='chatgpt2api'?(process.env.CHATGPT2API_REASONING_EFFORT||'xhigh'):REASONING_EFFORT,pipelineVersion:NARRATIVE_VERSION,rules:RULE_VERSION,protocol:READING_PROTOCOL,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,validationRules:VALIDATION_VERSION,outcomeRegistryRules:OUTCOME_REGISTRY_VERSION,timeZoneRuntime:'Intl/IANA',tzdbVersion:process.versions.tz||null,access:host.type==='tunnel'?'internet':'local'});
      const jobMatch=/^\/api\/jobs\/([A-Za-z0-9_-]{20,64})$/.exec(path);
      if(jobMatch&&['GET','DELETE'].includes(req.method)){
        pruneJobs();const job=jobs.get(jobMatch[1]);

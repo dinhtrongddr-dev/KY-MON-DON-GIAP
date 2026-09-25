@@ -1,0 +1,422 @@
+{
+  "generatedAt": "2026-09-25T06:39:55.310Z",
+  "variant": "A-legacy-current",
+  "results": [
+    {
+      "caseId": "CASE_B",
+      "round": 1,
+      "latencyMs": 212523,
+      "valid": true,
+      "error": null,
+      "status": "reading",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "reading",
+        "topic_id": "work",
+        "mode": "prediction",
+        "questionType": "prediction",
+        "summary": {
+          "text": "**Bàn nghiêng về việc đơn nghỉ có thể được tiếp nhận và xử lý, nhưng mức thuận chỉ có điều kiện; chưa thể coi nộp ngay là chắc chắn được nghỉ đúng gần cuối tháng 10.** Phương án có cửa trao đổi và thu xếp, song quy trình nghỉ, việc bàn giao và phản hồi chính thức cần được làm rõ trước khi coi kết quả đã thành. Với kế hoạch ở nhà ít nhất một năm, bàn chưa cho thấy thế thuận bền sẵn có. Khả năng duy trì nguồn lực vẫn có tín hiệu, nhưng phần dự phòng dài hạn yếu và dễ mất ổn định; sự phối hợp gia đình cũng phải chuyển thành trách nhiệm cụ thể. **Bạn có thể đi theo lựa chọn nghỉ việc, nhưng chỉ nên cam kết trọn một năm sau khi kiểm chứng được sức chịu tài chính, nguồn hỗ trợ và cách duy trì nhịp nghề nghiệp.** Bàn không khẳng định bạn sẽ ù lì, tụt hậu hoặc khó tìm việc; đây là các rủi ro cần chủ động quản trị, không phải kết quả đã định.",
+          "claim_ids": [
+            "claim_7",
+            "claim_2",
+            "claim_4",
+            "claim_6",
+            "claim_1"
+          ]
+        },
+        "situation": {
+          "text": "Cung Đoài 7 là trục của quyết định, nguồn lực tài chính và việc chăm con, có Sinh Môn, Thiên Bồng, Thái Âm, Canh trên Quý. Sinh Môn và Canh có lực, nhưng Thiên Bồng yếu và tổ hợp Canh–Quý tạo thế khóa mạnh; ba vai cùng cung chỉ được tính là một cụm điều kiện. Cung này còn tạo áp lực lên cung Tốn 4 của người hỏi. **Nhu cầu chăm con và nỗi lo kinh tế đang cùng đẩy quyết định vào thế gấp, trong khi nền thực hiện chưa đủ rõ để cam kết ngay.**\n\nNgười hỏi ở Tốn 4, gặp Kinh Môn, Thiên Nhuế, Huyền Vũ, Kỷ trên Ất và thế Môn khắc Cung. Cụm này cho thấy sự cảnh giác, xu hướng nhìn nhiều vào điểm yếu và phần thông tin chưa sáng; bản thân vẫn có khả năng xử lý nhưng môi trường đang gây sức ép. **Nỗi lo tụt hậu dễ làm bạn dao động, nhưng bàn không xác nhận rằng nghỉ việc sẽ khiến bạn mất năng lực hoặc không thể quay lại thị trường lao động.**\n\nKhả năng phối hợp gia đình ở Khôn 2 có Hưu Môn, Thiên Tâm, Lục Hợp, Đinh trên Kỷ và Dịch Mã. Thiên Tâm và Lục Hợp hỗ trợ tính toán, trao đổi và tạo đồng thuận; ngược lại Hưu Môn rất yếu, lại bị môi trường khắc chế, nên trạng thái nghỉ và chăm con không tự nhiên trở thành một nhịp sống nhẹ nhàng. **Kế hoạch một năm chỉ bền khi trách nhiệm chăm sóc, thời gian hỗ trợ và nguồn chi trả được thống nhất thành việc cụ thể, thay vì chỉ có sự đồng tình chung.**\n\nKhâu thực hiện ở Càn 6 có Thương Môn, Thiên Nhậm, Đằng Xà, Nhâm trên Đinh và gặp Tuần Không; cung này còn đối với cung người hỏi. Vì vậy phải tách rõ việc nộp đơn, nhận phản hồi và được xác nhận ngày nghỉ. Phần vốn dự phòng tại Khảm 1 có Đỗ Môn, Thiên Xung, Trực Phù, Mậu trên Canh, nhưng Mậu yếu và cấu trúc dễ xáo trộn nên chỉ là tín hiệu đối chiếu thận trọng. **Hiện chưa nên xem cuối tháng 10 là kết quả chắc chắn, cũng chưa thể mặc định nguồn lực sẽ tự đủ cho cả năm nghỉ việc.**",
+          "claim_ids": [
+            "claim_7",
+            "claim_4",
+            "claim_2",
+            "claim_6",
+            "claim_1"
+          ]
+        },
+        "development": [],
+        "bottleneck": {
+          "text": "Nút thắt chính nằm tại cụm Đoài 7: cửa tạo nguồn lực có sức nhưng tổ hợp Canh–Quý khóa đúng tầng thực hiện, trong khi quyết định nghỉ, tiền bạc và nhu cầu chăm con cùng chồng lên một cụm. Nếu chưa tách riêng thủ tục nghỉ, sức chịu tài chính và cách tổ chức chăm con, một dấu hiệu thuận ở một mặt rất dễ bị hiểu thành toàn bộ phương án đã thuận. **Kết luận sẽ xấu đi nếu phản hồi thực tế không phù hợp với mốc nghỉ mong muốn, nguồn lực không chịu được khoảng nghỉ dự kiến hoặc trách nhiệm gia đình chưa được nhận rõ.**",
+          "claim_ids": [
+            "claim_7"
+          ],
+          "resolution": "Trước khi mở rộng cam kết thành nghỉ trọn một năm, cần lấy thông tin trực tiếp về quy trình và mốc xử lý đơn, kiểm tra nguồn lực thực sự có thể sử dụng, rồi thống nhất cách tổ chức chăm con và sinh hoạt. Khi các phần này có câu trả lời rõ, khả năng mới chuyển được thành bước thực hiện."
+        },
+        "actions": [
+          {
+            "recommendation_id": "action_7",
+            "text": "Trước khi nộp đơn, hãy kiểm tra trực tiếp thời hạn báo trước, các bước bàn giao và điều kiện để kết thúc công việc vào mốc mong muốn; đồng thời đối chiếu nguồn lực thực có thể dùng trong thời gian nghỉ. Việc này tháo đúng nút khóa và giúp phân biệt mong muốn nghỉ với khả năng thực hiện đúng kế hoạch."
+          },
+          {
+            "recommendation_id": "action_2",
+            "text": "Thống nhất với gia đình một phương án có thể kiểm tra về trách nhiệm chăm con, sinh hoạt và hỗ trợ khi phát sinh; trong phương án đó nên giữ một nhịp tối thiểu để duy trì kỹ năng hoặc kết nối nghề nghiệp. Mục tiêu là làm kế hoạch một năm bền hơn, không phải mặc định rằng bạn có khả năng tụt hậu."
+          }
+        ],
+        "alternative": {
+          "text": "",
+          "claim_ids": [],
+          "id": ""
+        },
+        "timing": {
+          "text": "",
+          "claim_ids": []
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    },
+    {
+      "caseId": "CASE_B",
+      "round": 2,
+      "latencyMs": 174715,
+      "valid": true,
+      "error": null,
+      "status": "verified_fallback",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "verified_fallback",
+        "topic_id": "work",
+        "mode": "prediction",
+        "questionType": "prediction",
+        "summary": {
+          "text": "**Chưa có bài luận AI đủ căn cứ sau một lượt sửa.** Phần dưới chỉ gồm dữ kiện do ứng dụng tính và giới hạn đã xác định; chưa kết luận kết quả ngoài thực tế.",
+          "claim_ids": []
+        },
+        "situation": {
+          "text": "Đoài 7 (Kim): Sinh Môn (Thổ); Thiên Bồng (Thủy); thần Thái Âm; thiên can Canh, địa can Quý; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.\n\nKhôn 2 (Thổ): Hưu Môn (Thủy); Thiên Tâm (Kim); thần Lục Hợp; thiên can Đinh, địa can Kỷ; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ có; không mang Thiên Cầm.\n\nTốn 4 (Mộc): Kinh Môn (Kim); Thiên Nhuế (Thổ); thần Huyền Vũ; thiên can Kỷ + Bính, địa can Ất; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; mang Thiên Cầm và can ký từ Trung Ngũ.\n\nCàn 6 (Kim): Thương Môn (Mộc); Thiên Nhậm (Thổ); thần Đằng Xà; thiên can Nhâm, địa can Đinh; Tuần Không theo tuần giờ có; Dịch Mã theo chi giờ không; không mang Thiên Cầm.\n\nKhảm 1 (Thủy): Đỗ Môn (Mộc); Thiên Xung (Mộc); thần Trực Phù; thiên can Mậu, địa can Canh; Tuần Không theo tuần giờ không; Dịch Mã theo chi giờ không; không mang Thiên Cầm.",
+          "claim_ids": [
+            "claim_7",
+            "claim_2",
+            "claim_4",
+            "claim_6",
+            "claim_1"
+          ]
+        },
+        "development": [],
+        "bottleneck": {
+          "text": "",
+          "claim_ids": [],
+          "resolution": ""
+        },
+        "actions": [],
+        "alternative": {
+          "text": "",
+          "claim_ids": [],
+          "id": ""
+        },
+        "timing": {
+          "text": "**Chưa xác định ngày xảy ra kết quả.** Chưa có mốc ứng kỳ đủ rõ trong phạm vi câu hỏi. Phản/Phục ngâm vẫn chỉ điều chỉnh nhịp; engine không tự bịa ngày từ một ký hiệu đơn lẻ.",
+          "claim_ids": []
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    },
+    {
+      "caseId": "CASE_B",
+      "round": 3,
+      "latencyMs": 223801,
+      "valid": true,
+      "error": null,
+      "status": "reading",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "reading",
+        "topic_id": "work",
+        "mode": "prediction",
+        "questionType": "prediction",
+        "summary": {
+          "text": "**Bàn nghiêng về việc nghỉ có cửa triển khai, nhưng mức thuận chỉ có điều kiện; chưa thể coi nộp đơn ngay sẽ tự động được giải quyết đúng gần cuối tháng 10.** Khâu thủ tục có thể được khởi động, song giữa khởi động, được chấp thuận, bàn giao xong và thực sự nghỉ vẫn là các tầng khác nhau.\n\nPhương án ở nhà chăm con ít nhất một năm cũng không bị phủ định, nhưng đòi hỏi nền tài chính, sự phối hợp gia đình và nhịp duy trì nghề nghiệp được tổ chức chắc hơn hiện tại. **Nếu ba trụ này thành hình, khoảng nghỉ có thể vận hành tương đối ổn; nếu còn mơ hồ, áp lực kinh tế và cảm giác mất nhịp sẽ dễ làm phương án chao đảo.** Bàn không cho thấy bạn tất yếu trở nên ù lì, cũng không đủ căn cứ để kết luận sau này chắc chắn khó tìm được việc; rủi ro nằm ở một năm nghỉ thiếu cấu trúc hơn là ở bản thân quyết định chăm con.",
+          "claim_ids": [
+            "claim_7",
+            "claim_2",
+            "claim_4",
+            "claim_6",
+            "claim_1"
+          ]
+        },
+        "situation": {
+          "text": "Người hỏi tại Tốn 4 gặp Kinh Môn, Thiên Nhuế, Huyền Vũ, Kỷ trên Ất; Kinh Môn khắc cung, còn Kỷ–Ất biểu thị nền thông tin chưa sáng rõ. **Bạn có năng lực sắp xếp lại cuộc sống, nhưng hiện quyết định đang chịu sức ép lớn từ lo âu, những giả định về tương lai và mong muốn sớm thoát khỏi trạng thái phân vân.** Đây là dấu hiệu nên phân biệt quyết định có chuẩn bị với quyết định nhằm giải tỏa áp lực tức thời.\n\nCung sự việc tại Đoài 7 có Sinh Môn, Thiên Bồng, Thái Âm, Canh trên Quý; Sinh Môn và Canh có lực nhưng Canh–Quý tạo thế khóa mạnh. Quyết định nghỉ, dòng tiền và việc chăm con cùng nằm trong một cụm điều kiện, không phải ba dấu hiệu thuận độc lập. **Động lực chăm con và khả năng tạo phương án mới là có thật, nhưng sự thuận lợi của việc nghỉ phụ thuộc trực tiếp vào độ chắc của nguồn lực; tiến được thủ tục chưa đồng nghĩa đã đủ sức duy trì một năm.**\n\nCung phối hợp tại Khôn 2 có Hưu Môn, Thiên Tâm, Lục Hợp, Đinh trên Kỷ và Dịch Mã; Thiên Tâm mạnh, nhưng Hưu Môn yếu và bị hoàn cảnh cung chế. **Gia đình có cửa để đi đến đồng thuận và tổ chức lại sinh hoạt, song thiện chí chỉ trở thành điểm tựa khi trách nhiệm chăm sóc, nguồn hỗ trợ và giới hạn của từng phía có hình thức cụ thể.** Đây là đòn bẩy quan trọng nhất để thời gian ở nhà không biến thành việc một mình bạn gánh toàn bộ áp lực.\n\nKhâu thực hiện tại Càn 6 có Thương Môn, Thiên Nhậm, Đằng Xà, Nhâm trên Đinh, lại gặp Tuần Không và đối cung với người hỏi. **Hồ sơ hoặc trao đổi có thể bắt đầu, nhưng quá trình xử lý dễ phát sinh phần chưa rõ, thay đổi hoặc cần bổ sung trước khi thành kết quả thực tế.** Vì vậy chưa có căn cứ để bảo đảm đúng mốc gần cuối tháng 10, dù nhịp sự việc không nhất thiết quá chậm.\n\nNguồn lực dự phòng tại Khảm 1 có Đỗ Môn, Thiên Xung, Trực Phù, Mậu trên Canh; Mậu yếu và cấu trúc Mậu–Canh làm nền nguồn lực dễ mất ổn định khi cam kết mở rộng. Trong khi đó, Thiên Nhuế tại cung người hỏi thiên về sửa phần yếu và duy trì học hỏi. **Khoảng nghỉ một năm khả thi hơn khi được coi là một giai đoạn có tổ chức, không phải sự rút khỏi nghề nghiệp hoàn toàn; duy trì một nhịp học hoặc thực hành nhỏ sẽ làm giảm nguy cơ mất đà.**",
+          "claim_ids": [
+            "claim_7",
+            "claim_2",
+            "claim_4",
+            "claim_6",
+            "claim_1"
+          ]
+        },
+        "development": [],
+        "bottleneck": {
+          "text": "Nút thắt chính nằm tại Đoài 7: Sinh Môn mở khả năng tạo nguồn lực, nhưng Canh–Quý khóa trực tiếp trục quyết định nghỉ, tài chính và chăm con. **Điều làm thay đổi kết luận không phải riêng việc bạn có đủ quyết tâm hay không, mà là phương án đã có nền vận hành thực tế hay vẫn dựa nhiều vào giả định.** Nếu nút này chưa tháo, đơn nghỉ có thể được tiếp nhận hoặc tiến một phần nhưng chưa bảo đảm đúng mốc, và việc nghỉ trọn một năm dễ thiếu bền vững.",
+          "claim_ids": [
+            "claim_7"
+          ],
+          "resolution": "Trước cam kết khó đảo ngược, tập trung kiểm tra một lần theo cùng một bộ dữ kiện: thời hạn báo trước và bàn giao, nguồn lực thực sự sử dụng được, trách nhiệm gia đình, giới hạn chịu đựng của phương án và điều kiện kích hoạt phương án dự phòng."
+        },
+        "actions": [
+          {
+            "recommendation_id": "action_7",
+            "text": "Lập một trang quyết định duy nhất và đối chiếu bằng thông tin trực tiếp: quy trình nghỉ và bàn giao, các nguồn lực có thể dùng trong thời gian nghỉ, trách nhiệm chăm con của từng phía và phương án nếu nguồn lực giảm. Cấu trúc khóa nằm đúng trục sự việc–tài chính–con cái; hoàn tất bước này giúp phân biệt việc có thể nộp đơn ngay với việc mới chỉ mong muốn nộp ngay."
+          },
+          {
+            "recommendation_id": "action_4",
+            "text": "Tổ chức kế hoạch một năm thành các chặng có mốc đánh giá, đồng thời giữ một hoạt động nghề nghiệp nhỏ nhưng đều như học, cập nhật chuyên môn hoặc thực hành phù hợp hoàn cảnh. Cách làm theo bước nhỏ giảm sức ép “đã nghỉ là phải theo đến cùng”, đồng thời giúp khoảng nghỉ phục vụ mục tiêu chăm con mà không đồng nghĩa cắt đứt hoàn toàn nhịp nghề nghiệp."
+          }
+        ],
+        "alternative": {
+          "text": "",
+          "claim_ids": [],
+          "id": ""
+        },
+        "timing": {
+          "text": "",
+          "claim_ids": []
+        },
+        "comparisons": [],
+        "questions": []
+      }
+    },
+    {
+      "caseId": "CASE_A",
+      "round": 1,
+      "latencyMs": 148250,
+      "valid": true,
+      "error": null,
+      "status": "reading",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "reading",
+        "specVersion": "KM-MENH-1.0",
+        "profileId": "ZHANG_ADVANCED_CLASS_LIFETIME",
+        "overview": {
+          "text": "Toàn bàn đồng thời có Phục Ngâm và Phản Ngâm, cụ thể Cửu Tinh mang tính Phục Ngâm còn Bát Môn mang tính Phản Ngâm. Phục Ngâm làm một số mô thức dễ lặp, chậm đổi hoặc phải xử lý nhiều lần; Phản Ngâm khiến cách hành động có thể đảo chiều, tiến rồi chỉnh, mở rồi thu. Hai lớp này phải được xét trước các tín hiệu thuận tại từng cung, nhưng không phải phán quyết xấu tuyệt đối. **Trục lớn của bàn là học cách tạo tiến triển trong một môi trường vừa có quán tính cũ, vừa thường xuyên đổi hướng.** Vì vậy, thành quả thường phụ thuộc vào khả năng nhận ra lúc nào nên bền bỉ và lúc nào phải thay điều kiện, thay vì chỉ tăng sức ép.\n\nNhật can Kỷ ở Càn 6 thiên về hoạch định kín và kiểm soát cấu trúc; Khôn 2 tập trung Sinh Môn, Trực Phù cùng nguồn lực nuôi dưỡng; Khai Môn ở Tốn 4 mở trục nghề nghiệp nhưng sức phát huy có giới hạn; Cấn 8 là nền đại vận hiện tại với Thiên Nhậm và Tử Môn. **Bốn chủ đề xuyên suốt là tư duy chiến lược, xây nguồn lực thực, sửa những điểm tồn đọng và biết khép chu kỳ đúng lúc.** Bàn phù hợp với cách phát triển có nền tảng, có quy trình và có khả năng điều chỉnh; nếu quá cầu toàn, giữ kín hoặc cố điều khiển mọi biến số, chính ưu điểm tổ chức lại dễ trở thành điểm nghẽn.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "SELF_CORE",
+            "CAREER_CORE",
+            "WEALTH_CORE",
+            "MARRIAGE_CORE"
+          ]
+        },
+        "self": {
+          "text": "Nhật can Kỷ đặt tại Càn 6 hành Kim, đồng cung Thiên Tâm, Đỗ Môn và Thái Âm, với thiên can Kỷ và địa can Kỷ. Cung Càn có mức lực mạnh, nhưng Thiên Tâm ở mức rất yếu, Đỗ Môn ở mức trung bình, còn Kỷ đang ở pha Suy; cung lại gặp Tuần Không, tổ hợp Kỷ–Kỷ mang nghĩa tự lặp và Cung khắc Môn. Phục Ngâm làm quán tính này dai hơn, trong khi Phản Ngâm khiến phương thức xử lý đôi lúc đổi qua đổi lại. **Bề ngoài có thể gánh trách nhiệm và giữ nguyên tắc khá tốt, nhưng bên trong thường phải tiêu hao nhiều công sức để biến kế hoạch thành kết quả rõ ràng.** Khi điều kiện chưa đủ, càng ép tiến càng dễ quay lại đúng nút thắt cũ; hiệu quả hơn là đổi dữ liệu, quy trình hoặc người phối hợp.\n\nThiên Tâm biểu thị năng lực phân tích, tổ chức và tìm phương án; Đỗ Môn dẫn hành động qua chuyên môn sâu, kiểm soát truy cập và phần việc kín; Thái Âm thêm sắc thái quan sát tinh tế, chuẩn bị hậu trường. Mức lực của Thiên Tâm yếu hơn môi trường Càn cho thấy năng lực quản trị không mất đi nhưng khó phát huy trọn vẹn nếu phải liên tục ứng phó hoặc ôm quá nhiều lớp chi tiết. **Điểm mạnh nổi bật là biết nhìn cấu trúc, phát hiện sai lệch và chuẩn bị kỹ trước khi quyết định.** Mặt cần tự quản là xu hướng suy tính quá lâu, ít chia sẻ tiến độ, hoặc dùng kiểm soát để bù cho cảm giác chưa chắc chắn; nếu phân chia rõ việc nào cần bảo mật và việc nào cần trao đổi sớm, năng lực này dễ trở thành lợi thế thực dụng.\n\nTrực Phù Thiên Cầm ở Khôn 2 và Trực Sử Tử Môn ở Cấn 8 đều thuộc môi trường Thổ sinh cho cung bản thân hành Kim; Thời can Đinh cũng ở Khôn 2, tạo cùng một nền nâng đỡ chứ không phải nhiều lá phiếu độc lập. Khôn 2 có Sinh Môn, Thiên Nhuế và Trực Phù với mức lực mạnh; Cấn 8 có Thiên Nhậm, Tử Môn và Bạch Hổ, cũng đang mạnh. **Nguồn hỗ trợ của bản thân thường đến từ nền tảng, trách nhiệm, người có vai trò chính thức và khả năng sửa việc cũ, hơn là từ cơ hội ngẫu nhiên.** Tuy nhiên, được nâng đỡ không đồng nghĩa mọi việc tự thông: cần chủ động hoàn tất, thu gọn hoặc thay khuôn vận hành thì nguồn lực bên ngoài mới thực sự chuyển thành kết quả.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "SELF_CORE"
+          ]
+        },
+        "family": {
+          "text": "Cha mẹ và gia đình gốc lấy Niên can Giáp tại Càn 6 làm trục tổng hợp; Càn 6 đồng thời là lớp đối chiếu phía cha. Cung này có Thiên Tâm, Đỗ Môn, Thái Âm, Kỷ–Kỷ và Tuần Không; môi trường cung mạnh nhưng năng lực của Thiên Tâm yếu, còn tổ hợp Kỷ–Kỷ thiên về sự việc lặp lại hoặc khó tháo nếu giữ nguyên điều kiện. Phục Ngâm và Phản Ngâm giới hạn mức thuận của các tín hiệu riêng lẻ, nên không thể chỉ lấy tính lãnh đạo của Càn để kết luận. **Nền gia đình có xu hướng coi trọng trách nhiệm, nguyên tắc, kế hoạch và việc giữ những điều nội bộ, nhưng cũng dễ tồn tại các vấn đề được xử lý âm thầm hoặc lặp qua nhiều giai đoạn.** Vai trò định hướng có thể rõ, song cách biểu đạt tình cảm hoặc nhu cầu thực tế đôi lúc kín hơn mức cần thiết.\n\nKhôn 2 là lớp đối chiếu phía mẹ, có Sinh Môn, Thiên Nhuế, Trực Phù, Đinh và Mậu; cả cung, Môn và Tinh đều có mức lực mạnh. Theo vai trò can hợp được cung cấp, Niên can Giáp thuộc dương được dùng để bổ sung hình tượng phía cha, còn Kỷ là can hợp bổ sung hình tượng phía mẹ; lớp này chỉ hỗ trợ cách phân vai, không thay thế trục Niên can cùng Càn–Khôn. **Phía nuôi dưỡng của gia đình thiên về duy trì nguồn lực, chăm sóc, sửa chữa và gánh phần việc thiết thực.** Mặt sáng là sức bền và khả năng tạo hậu phương; mặt bóng là dễ ôm việc, chậm thay đổi hoặc biến sự chăm lo thành kiểm soát. Hai phía có thể khác cách thể hiện nhưng cùng gặp bài toán chung là phải nói rõ nhu cầu thay vì chỉ làm tròn vai.\n\nCon cái lấy Thời can Đinh ở Khôn 2 làm trục và đối chiếu với bản thân tại Càn 6; quan hệ cung là Thổ sinh Kim. Đinh–Đinh hỗ trợ việc thông tin hoặc giấy tờ đến đúng điểm cần thiết, trong khi Sinh Môn tạo kênh phát triển, Thiên Nhuế nhấn vào học hỏi và sửa phần chưa hoàn thiện, Trực Phù thêm vai trò quy tắc và người dẫn dắt. Đinh ở pha Suy nên vẫn dùng được nhưng sức duy trì cần được nuôi đều; đây không phải căn cứ suy số lượng, giới tính hay kết cục y tế của con cái. **Quan hệ với thế hệ sau có xu hướng mang tính nâng đỡ, đầu tư điều kiện và đồng hành qua từng bước điều chỉnh.** Nếu áp nguyên tắc quá chặt, trẻ hoặc người trẻ dễ ít nói ra nhu cầu; nếu giữ khung rõ nhưng cho phép thử nghiệm và phản hồi, mối liên hệ này có thể trở thành một nguồn trưởng thành cho cả hai phía.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "FAMILY_PARENTS",
+            "FAMILY_PARENT_PAIR_ROLE",
+            "CHILDREN_CORE"
+          ]
+        },
+        "marriage": {
+          "text": "Trong hôn nhân, bản thân vẫn lấy Nhật can Kỷ tại Càn 6, còn Hưu Môn nằm ở Ly 9. Càn 6 có Đỗ Môn, Thiên Tâm, Thái Âm và Tuần Không nên cách tham gia quan hệ thiên về suy xét, giữ kín và muốn có cấu trúc; Ly 9 có Hưu Môn, Thiên Anh, Cửu Thiên và Nhâm–Nhâm, trong đó Thiên Anh mạnh nhưng Hưu Môn yếu, Môn lại khắc Cung. Phục Ngâm làm một số cách tương tác dễ lặp, còn Phản Ngâm làm nhịp gần–xa hoặc mở–thu dễ thay đổi. **Nhu cầu sâu là một quan hệ có thể nghỉ ngơi, hòa giải và đồng hành, nhưng cách thể hiện đôi lúc lại nghiêng về kiểm soát, hình ảnh hoặc kỳ vọng tiến nhanh.** Muốn bền cần phân biệt giữa giữ riêng tư lành mạnh với đóng cửa cảm xúc.\n\nLục Hợp ở Khảm 1, đồng cung Cảnh Môn, Thiên Bồng, Quý–Quý; Cảnh Môn mạnh nhưng cung Khảm và Thiên Bồng yếu. Cấu trúc này đặt sự kết nối cạnh nhu cầu làm rõ, công khai hoặc diễn đạt, đồng thời vẫn có phần cảm xúc và thông tin khó nhìn thấy ngay. **Khả năng tạo đồng thuận có tồn tại, nhưng sự gắn kết chỉ vững khi những điều mơ hồ được nói thành lời và được kiểm chứng bằng hành vi.** Quan hệ có thể dễ được bắt đầu hoặc duy trì nhờ giao tiếp, song nếu chỉ dựa vào hình ảnh, suy đoán hoặc mạng lưới xung quanh, hai người dễ hiểu khác nhau về cùng một vấn đề.\n\nTrục Ất–Canh đặt Ất tại Tốn 4 và Canh tại Đoài 7. Ất–Ất thiên về giữ nền hơn là thúc danh vị, nhưng Tốn yếu, Khai Môn rất yếu và có áp lực Môn–Cung; Canh–Canh tại Đoài mang tính va chạm trực diện, đồng cung Thiên Trụ, Thương Môn và Đằng Xà nên dễ hội tụ giao tiếp sắc, cạnh tranh, nghi ngờ hoặc vòng vo. Ất có mức lực khá mạnh và mềm, Canh cũng khá mạnh nhưng đang ở pha chuẩn bị. **Một phía của quan hệ muốn dung hòa và đi từng bước, trong khi phía kia có xu hướng đòi xử lý dứt điểm; nếu thiếu quy tắc đối thoại, khác biệt này dễ thành kéo–đẩy.** Khi hai người thống nhất trước cách tranh luận, thời điểm ra quyết định và giới hạn lời nói, chính sự khác biệt lại có thể giúp quan hệ vừa mềm vừa có khả năng giải quyết nút thắt.\n\nCan hợp của Nhật can Kỷ là Giáp được đặt tại Khôn 2 như lớp bổ sung về phối ngẫu; Khôn 2 có Sinh Môn, Thiên Nhuế, Trực Phù, Đinh và Mậu với mức lực mạnh. Lớp này nhấn nền tảng thực tế, chăm sóc, khả năng cùng xây nguồn lực và sửa sai, nhưng không thay thế Hưu Môn, Lục Hợp hay trục Ất–Canh. **Hôn nhân phù hợp hơn với mô hình cùng xây đời sống cụ thể, phân vai minh bạch và chấp nhận điều chỉnh định kỳ, thay vì chỉ dựa vào cảm xúc mạnh ban đầu.** Bàn không cho phép kết luận số lần kết hôn; điều đáng chú ý là chất lượng giao tiếp và khả năng thoát khỏi vòng lặp cũ sẽ quyết định mức phát huy của các tín hiệu thuận.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "MARRIAGE_CORE"
+          ]
+        },
+        "career": {
+          "text": "Tính chất nghề nghiệp lấy Thiên Tâm và Đỗ Môn tại cung bản thân Càn 6. Thiên Tâm chủ hoạch định, quản trị và xử lý vấn đề; Đỗ Môn dẫn vào kỹ thuật, chuyên môn sâu, kiểm soát thông tin hoặc phần việc hậu trường; Thái Âm bổ sung khả năng chuẩn bị kín. Càn 6 mạnh nhưng Thiên Tâm rất yếu, Đỗ Môn trung bình, Kỷ ở pha Suy và cung gặp Tuần Không; Kỷ–Kỷ cho thấy điểm nghẽn dễ tự lặp nếu không đổi điều kiện. **Sở trường nghề nghiệp nằm ở việc nhìn hệ thống, quản chi tiết, phát hiện lỗi và xử lý những phần người khác khó thấy.** Năng lực này phát huy tốt khi phạm vi trách nhiệm rõ, dữ liệu đủ và có quyền sắp xếp quy trình; ngược lại, môi trường mơ hồ dễ khiến công sức bị phân tán vào kiểm soát tiểu tiết.\n\nKhai Môn ở Tốn 4 là trục cơ hội và tổ chức; Tốn thuộc Mộc bị bản thân ở Càn thuộc Kim khắc. Cung Tốn yếu, Khai Môn rất yếu, Thiên Phụ trung bình, Ất khá mạnh và có Mã tinh; nội bộ cung còn có quan hệ Môn khắc Cung. **Cơ hội nghề nghiệp thường cần được chủ động định hình, thương lượng và theo đuổi, chứ ít khi chỉ mở sẵn rồi tự vận hành.** Khả năng kiểm soát cơ hội là lợi thế nếu dùng để chọn đúng trọng tâm, nhưng nếu mở quá nhiều hướng hoặc ép tiến khi nền chưa đủ, cơ hội dễ đổi dạng, chậm xác nhận hoặc buộc phải làm lại.\n\nĐỗ Môn tại Càn 6 chỉ bổ sung cho tính chất kín, kỹ thuật và điểm nghẽn, không phải một bằng chứng độc lập để nhân đôi kết luận; Phục Ngâm và Phản Ngâm tiếp tục đặt giới hạn lên mặt thuận của cung nghề. **Hướng phù hợp là những vai trò kết hợp tư duy chiến lược với chuyên môn sâu và khả năng chuẩn hóa.** Tùy năng lực thực tế, có thể hợp với quản trị vận hành, phân tích, kiểm soát nội bộ, quy trình, bảo mật, kỹ thuật hậu trường, tư vấn chuyên môn hoặc quản lý hồ sơ; đây là các ví dụ tương đồng hiện đại, không phải nghề cố định. Con đường bền hơn là xây uy tín bằng chất lượng xử lý và hệ thống có thể kiểm chứng, thay vì chạy theo danh vị quá nhanh.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "CAREER_CORE"
+          ]
+        },
+        "wealth": {
+          "text": "Tài vận lấy Sinh Môn tại Khôn 2 làm chính và đối chiếu với bản thân tại Càn 6; quan hệ là Thổ sinh Kim nên thuộc thế nâng đỡ. Khôn 2 có cung, Sinh Môn và Thiên Nhuế đều mạnh, Trực Phù giữ vai trò hậu trường, Đinh và Mậu cung cấp hai lớp thông tin–kỹ thuật và vốn–vật chất. Thiên Nhuế ở đây được đọc theo khả năng nhận diện điểm yếu, học từ lỗi và sửa phần chưa hoàn thiện, không phải chẩn đoán bệnh. **Khả năng tạo tài chính thiên về xây nguồn lực thật, nuôi dòng giá trị và cải thiện thứ đang vận hành chưa tốt.** Mô hình này hợp tích lũy có quy trình hơn là chỉ trông vào một lần tăng mạnh.\n\nMậu tại Khôn 2 là lớp bổ sung về vốn và khả năng giữ tài sản, có mức lực khá mạnh ở pha đang định hình; Đinh ở mức trung bình và pha Suy, thiên về thông tin, tài liệu và giải pháp chi tiết. Tổ hợp Đinh–Đinh thuận cho thông tin đến đúng điểm cần, còn Mậu–Đinh hỗ trợ tiếp cận và trình bày nhưng vẫn cảnh báo rằng trở ngại cấu trúc có thể gây tranh luận; Trực Phù nhấn vai trò người quyết định hoặc nguồn hỗ trợ có chính danh. **Tiền bạc dễ được củng cố khi sổ sách, quyền quyết định và cách phân bổ vốn đều rõ ràng.** Giá trị không chỉ nằm ở lượng nguồn lực đang có mà còn ở khả năng sửa thất thoát, hoàn tất thủ tục và biến thông tin thành hành động có kiểm soát.\n\nBản thân và Sinh Môn đều nằm về khuynh hướng ngoại, tạo xu thế phát triển hoạt động hoặc nguồn thu ngoài phạm vi quen thuộc; điều này không đồng nghĩa bắt buộc di cư, rời quê hay mất tài sản gốc. Phục Ngâm có thể làm dòng phát triển chậm hoặc lặp chu kỳ, còn Phản Ngâm có thể khiến phương án thu–chi, mở rộng–thu gọn phải điều chỉnh nhiều lần. **Tài vận có dư địa phát triển khi chủ động mở thị trường, mạng lưới hoặc cách làm mới nhưng vẫn giữ kỷ luật nền tảng.** Nên coi tín hiệu thuận là năng lực tạo và giữ nguồn lực, không phải lời hứa về số tiền; càng mở rộng, càng cần tiêu chí đo lường, giới hạn vốn và khả năng quay về trạng thái an toàn.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "WEALTH_CORE"
+          ]
+        },
+        "luck": {
+          "text": "Tuổi 33 nằm trong đại vận 15 năm từ 31 đến 45 tại Cấn 8, hiện là năm thứ ba của vận. Cấn 8 có Thiên Nhậm, Tử Môn, Bạch Hổ và Tân–Tân; cung, Tinh và Môn đều có mức lực mạnh, còn Tân ở trạng thái Mộ, thiên về cất giữ, chuẩn hóa hoặc chờ mở khóa. **Nền thời kỳ này nghiêng về củng cố, gánh trách nhiệm, thu hồi phần kém hiệu quả và xây sự ổn định lâu dài.** Áp lực có thể rõ hơn bình thường, nhưng mục đích biểu tượng là buộc việc quan trọng được xử lý dứt điểm, không phải báo trước biến cố chắc chắn.\n\nBa cửa sổ của vận được chia rõ: tuổi 31–35 nhấn lớp Cửu Tinh, tuổi 36–40 nhấn lớp Bát Môn, tuổi 41–45 nhấn quan hệ can và trạng thái cung. Giai đoạn hiện tại lấy Thiên Nhậm làm trọng tâm; giai đoạn kế tiếp mới nhấn Tử Môn; giai đoạn cuối mới đi sâu vào Tân–Tân và trạng thái cất giữ của cung. Tử Môn trong cấu trúc này chỉ việc khép chu kỳ, thu gọn hoặc đưa việc về trạng thái tĩnh, không phải nghĩa chết chóc. **Năm năm đầu phù hợp nhất với việc gây nền, nhận trách nhiệm và làm cho hệ thống bền hơn; chưa cần nóng vội chứng minh bằng tốc độ.**\n\nThiên Nhậm biểu thị sự bền bỉ và tích lũy, Tử Môn biểu thị năng lực kết thúc phần cũ, Bạch Hổ tạo sắc thái quyết liệt và áp lực, còn Tân nhấn việc tinh chỉnh. **Toàn vận đặt câu hỏi không phải “mở thêm bao nhiêu”, mà là “giữ lại điều gì, sửa điều gì và đóng điều gì để nền sống chắc hơn”.** Nếu biết cắt phần tiêu hao và kiên trì hoàn thiện tài sản, kỹ năng hoặc cấu trúc công việc, giai đoạn này có thể tạo độ bền đáng kể; nếu chỉ chịu đựng mà không tái cấu trúc, cảm giác trì trệ dễ kéo dài.",
+          "claim_ids": [
+            "LUCK_CURRENT"
+          ]
+        },
+        "annual": {
+          "text": "Theo phép định vị đang áp dụng cho bàn này, can lưu niên Bính là lớp chính và được đặt trên Thiên bàn tại Chấn 3; đây là quy ước kỹ thuật của lần luận này, không được coi là giáo điều chung cho mọi truyền thừa. Chấn 3 có Thiên Xung, Kinh Môn, Huyền Vũ và Bính–Bính; cung yếu, Kinh Môn rất yếu, Thiên Xung trung bình, Bính khá mạnh, đồng thời Môn khắc Cung. **Lớp chính của năm làm nổi bật nhu cầu khởi động và nói rõ vấn đề, nhưng tốc độ dễ đi trước độ đầy đủ của thông tin.** Khi gặp việc bất ngờ, phản ứng tốt nhất là xác minh trước khi công bố hoặc quyết định, bởi vẻ ngoài rõ ràng có thể vẫn đi cùng phần hậu trường chưa sáng tỏ.\n\nChi Ngọ kích hoạt Ly 9 ở vai trò thứ cấp. Ly 9 có Thiên Anh mạnh, Hưu Môn yếu, Cửu Thiên, Nhâm–Nhâm và quan hệ Môn khắc Cung; bối cảnh này đặt sự hiển lộ, danh tiếng và truyền đạt cạnh nhu cầu nghỉ, hòa giải hoặc duy trì quan hệ. **Lớp phụ khiến các vấn đề về hình ảnh, giao tiếp và quan hệ dễ được chú ý hơn, nhưng không phải lúc nào mở rộng nhanh cũng giúp ổn định.** Có thể xuất hiện nhu cầu làm rõ vị thế hoặc cách hợp tác; kết quả tùy thuộc việc các bên có giảm nhịp để nghe và sửa cách tương tác hay không.\n\nLy 9 đồng thời là nơi đặt Hưu Môn trong trục hôn nhân, nên kích hoạt thứ cấp có thể làm chủ đề quan hệ, hòa giải hoặc cách công khai cảm xúc trở nên đáng chú ý hơn; Chấn 3 chủ yếu kích hoạt tốc độ, cảnh báo và thông tin, không tự tạo thêm một lĩnh vực số mệnh mới. Cả hai cung đều mang thế Môn khắc Cung, một bên có Bính sáng nhưng Huyền Vũ ẩn, một bên có Thiên Anh nổi bật nhưng Hưu Môn yếu. **Thông điệp tổng hợp của năm là chủ động nhưng không hấp tấp, minh bạch nhưng không phô trương, và mở rộng sau khi đã kiểm tra phần khuất.** Đây chỉ là sự kích hoạt theo năm trên bàn cố định, không phải bằng chứng rằng một sự kiện cụ thể chắc chắn sẽ xảy ra.",
+          "claim_ids": [
+            "ANNUAL_CURRENT",
+            "MARRIAGE_CORE"
+          ]
+        },
+        "birthTimeNote": {
+          "text": "",
+          "claim_ids": []
+        }
+      }
+    },
+    {
+      "caseId": "CASE_A",
+      "round": 2,
+      "latencyMs": 251816,
+      "valid": true,
+      "error": null,
+      "status": "reading",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "reading",
+        "specVersion": "KM-MENH-1.0",
+        "profileId": "ZHANG_ADVANCED_CLASS_LIFETIME",
+        "overview": {
+          "text": "Kết quả deterministic hiện có: Toàn bàn có Phục Ngâm + Phản Ngâm. Đây là cấu trúc nền ưu tiên cao: phải xét trước các tín hiệu cục bộ và có thể giới hạn/cap mặt thuận của chúng trong các domain bị ảnh hưởng; không phải một veto xấu tuyệt đối hay bằng chứng sự kiện chắc chắn.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "self": {
+          "text": "Nhật can Kỷ đặt bản thân tại Càn 6 (Kim). Càn 6: Thiên Tâm, Đỗ Môn, Thái Âm; thiên can 己, địa can 己; Cửu Tinh phế; Tuần Không. Trực Phù và Trực Sử được đối chiếu riêng; Thời can ở Khôn 2 (Thổ) là trục diễn biến đời sống bổ sung, không phải một lá phiếu thứ hai. Bối cảnh Phản Ngâm + Phục Ngâm phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.",
+          "claim_ids": [
+            "SELF_CORE",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "family": {
+          "text": "Gia đình/cha mẹ lấy Niên can tại Càn 6 (Kim) làm trục tổng hợp; Càn 6 và Khôn 2 là lớp đối chiếu cha/mẹ. Quy tắc can hợp của Niên can chỉ bổ sung vai trò (FATHER / MOTHER), không thay thế ba lớp chính. Niên can JIA thuộc YANG: vai trò truyền thống là FATHER; can hợp JI là MOTHER. Đây chỉ là corroborator, không phải bộ giải duy nhất. Con cái lấy Thời can ở Khôn 2 (Thổ) làm trục, đối chiếu với bản thân tại Càn 6 (Kim). Lớp này không cho phép suy số con, giới tính, vô sinh hay kết cục y tế chắc chắn. Bối cảnh Phản Ngâm + Phục Ngâm phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.",
+          "claim_ids": [
+            "FAMILY_PARENTS",
+            "FAMILY_PARENT_PAIR_ROLE",
+            "CHILDREN_CORE",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "marriage": {
+          "text": "Hôn nhân được đọc bằng bundle bắt buộc: bản thân Càn 6 (Kim), Hưu Môn Ly 9 (Hỏa), Lục Hợp Khảm 1 (Thủy), trục Ất–Canh và can hợp của Nhật can (JIA) tại Khôn 2 (Thổ). Không ký hiệu nào được dùng làm “phối ngẫu duy nhất”. Bối cảnh Phản Ngâm + Phục Ngâm phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.",
+          "claim_ids": [
+            "MARRIAGE_CORE",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "career": {
+          "text": "Sự nghiệp: tính chất nghề nhìn từ Thiên Tâm + Đỗ Môn ở cung bản thân; Khai Môn tại Tốn 4 (Mộc) là trục cơ hội/tổ chức và Mộc bị Kim khắc; Đỗ Môn tại Càn 6 (Kim) chỉ là lớp bổ sung. Không chấm điểm thành công nghề nghiệp. Bối cảnh Phản Ngâm + Phục Ngâm phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.",
+          "claim_ids": [
+            "CAREER_CORE",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "wealth": {
+          "text": "Tài vận lấy Sinh Môn tại Khôn 2 (Thổ) làm chính; quan hệ với bản thân là SUPPORT. Mậu tại Khôn 2 (Thổ) chỉ bổ sung góc vốn/nguồn lực. Nội–ngoại cho xu hướng “DEVELOPMENT_OR_ENTERPRISE_AWAY_FROM_ORIGIN”, không suy thành sự kiện di cư hay số tiền chắc chắn. Bối cảnh Phản Ngâm + Phục Ngâm phải được xét trước; tín hiệu thuận cục bộ có thể bị giới hạn/cap nhưng đây không phải veto xấu tuyệt đối.",
+          "claim_ids": [
+            "WEALTH_CORE",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "luck": {
+          "text": "Tuổi 33 nằm trong đại vận 31–45 tại GEN_8; lớp đang nhấn là NINE_STAR. Đây là nền thời kỳ, không tự tạo sự kiện.",
+          "claim_ids": [
+            "LUCK_CURRENT"
+          ]
+        },
+        "annual": {
+          "text": "Lưu niên BING_WU: can đã giải thành BING tại ZHEN_3 trên Thiên bàn là lớp chính; chi tại LI_9 là lớp phụ. Đây là kích hoạt trên bàn natal cố định, không phải sự kiện chắc chắn.",
+          "claim_ids": [
+            "ANNUAL_CURRENT"
+          ]
+        },
+        "birthTimeNote": {
+          "text": "",
+          "claim_ids": []
+        }
+      }
+    },
+    {
+      "caseId": "CASE_A",
+      "round": 3,
+      "latencyMs": 169649,
+      "valid": true,
+      "error": null,
+      "status": "reading",
+      "route": "sol",
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "reading": {
+        "status": "reading",
+        "specVersion": "KM-MENH-1.0",
+        "profileId": "ZHANG_ADVANCED_CLASS_LIFETIME",
+        "overview": {
+          "text": "Toàn bàn đồng thời có Cửu Tinh Phục Ngâm và Bát Môn Phản Ngâm, nên lớp nền phải được đọc trước mọi tín hiệu cục bộ. Phục Ngâm làm sự việc dễ lặp, chậm hoặc giữ nguyên khuôn cũ; Phản Ngâm tạo chiều đảo hướng, giằng co và khó duy trì một nhịp duy nhất. Hai cơ chế này giới hạn độ phát huy của các cung thuận, nhưng không phải phán quyết xấu tuyệt đối. **Chủ đề lớn của bàn là vừa cần xây nền bền, vừa phải học cách đổi phương pháp thay vì lặp lại cùng một cách xử lý.**\n\nCung bản thân Càn 6 thiên về hoạch định kín và trách nhiệm; cụm Khôn 2 lại có lực nuôi dưỡng, tăng trưởng và nguồn lực rõ; cung vận Cấn 8 nhấn vào củng cố, thu gọn và gánh vác; lưu niên kích hoạt Chấn 3 cùng Ly 9, đưa tốc độ, thông tin và sự hiển lộ lên trước. **Năng lực tạo nền không thiếu, nhưng thành quả thường đến rõ hơn khi biết chọn ít mục tiêu, kiểm chứng dữ liệu và biến mỗi lần đảo chiều thành một vòng chỉnh sửa có chủ đích.**",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "SELF_CORE",
+            "WEALTH_CORE",
+            "LUCK_CURRENT",
+            "ANNUAL_CURRENT"
+          ]
+        },
+        "self": {
+          "text": "Nhật can Kỷ đặt tại Càn 6 hành Kim, cùng Thiên Tâm, Đỗ Môn và Thái Âm; Thiên–Địa bàn đều là Kỷ. Môi trường cung ở mức mạnh, nhưng Thiên Tâm rất yếu, Đỗ Môn ở mức trung bình, Kỷ đang pha Suy; cung lại gặp Tuần Không, Càn khắc Đỗ Môn và tổ hợp Kỷ–Kỷ biểu hiện sự tự lặp, tắc sâu khi điều kiện chưa đổi. **Bề ngoài có xu hướng nguyên tắc và chịu trách nhiệm, còn bên trong thường suy tính nhiều, chuẩn bị kỹ nhưng dễ mắc kẹt trong chính phương án của mình.** Điểm mạnh nằm ở khả năng tổ chức, phân tích và giữ kín việc quan trọng; áp lực xuất hiện khi muốn kiểm soát đủ mọi chi tiết trước khi hành động.\n\nTrực Phù Thiên Cầm ký tại Khôn 2 hành Thổ và Trực Sử Tử Môn ở Cấn 8 hành Thổ; cả hai cung đều sinh cho cung bản thân hành Kim. Khôn 2 có Sinh Môn, Thiên Nhuế và Trực Phù với lực cung–môn–tinh khá rõ; Cấn 8 có Thiên Nhậm, Tử Môn và Bạch Hổ, cũng đang có lực mạnh. **Đời sống có xu hướng được nâng đỡ bởi nguồn lực thực tế, người có trách nhiệm hoặc khả năng sửa chữa vấn đề, nhưng sự nâng đỡ thường đi kèm yêu cầu phải chốt việc cũ và chịu áp lực đến cùng.** Tử Môn ở đây nên hiểu là khả năng đóng chu kỳ, thu hồi và chuyển sang trạng thái ổn định, không phải dấu hiệu chết chóc.\n\nThời can Đinh ở Khôn 2 đối chiếu với Nhật can tại Càn 6 theo quan hệ Thổ sinh Kim. Cụm này đồng thời chứa Sinh Môn, Thiên Nhuế, Trực Phù và Mậu, nhưng đây là một vùng lực tập trung chứ không phải nhiều lần cộng điểm độc lập. **Khi quy trình, hậu cần, thông tin và nền vật chất được chuẩn bị đúng, bản thân dễ phát huy tốt hơn nhiều so với lúc chỉ dựa vào ý chí.** Vì vậy, cách vận hành phù hợp thường là dựng hệ thống hỗ trợ, chia bước nhỏ và dùng phản hồi thực tế để tháo nút, thay vì ép một kế hoạch còn thiếu điều kiện phải tiến ngay.\n\nPhục Ngâm và Phản Ngâm cùng tác động lên trục bản thân, nên khả năng giữ nền và xu hướng đổi hướng có thể xuất hiện xen kẽ. Các tín hiệu hỗ trợ từ Khôn 2 và Cấn 8 vẫn có giá trị, nhưng không xóa được Tuần Không cùng vòng tự lặp tại Càn 6. **Điểm cần tự quản không phải là thiếu năng lực, mà là tránh biến sự thận trọng thành trì hoãn hoặc biến một lần thay đổi thành chuỗi đổi ý.** Khi đặt tiêu chí kết thúc rõ, giới hạn thời gian suy xét và chấp nhận thử nghiệm có kiểm soát, thế mạnh chiến lược và chuyên môn sâu sẽ dễ đi vào thực tế hơn.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "SELF_CORE"
+          ]
+        },
+        "family": {
+          "text": "Cha mẹ và gia đình gốc lấy Niên can Giáp tại Càn 6 làm trục tổng hợp; Càn 6 là lớp đối chiếu phía cha, Khôn 2 là lớp đối chiếu phía mẹ. Theo vai trò can hợp, Giáp thuộc dương bổ sung hình tượng cha, còn Kỷ là can hợp bổ sung hình tượng mẹ; lớp này chỉ xác nhận vai trò, không thay thế trục Niên can cùng hai cung Càn–Khôn. **Nền gia đình có xu hướng coi trọng trách nhiệm, trật tự và khả năng tự gánh vác, nhưng cách chăm lo giữa các thành viên có thể khác nhau rõ rệt.**\n\nCàn 6 có Thiên Tâm, Đỗ Môn, Thái Âm và Kỷ–Kỷ; cung mạnh nhưng tinh yếu, gặp Tuần Không, quan hệ Càn khắc Đỗ Môn và thế Kỷ–Kỷ thiên về tắc nghẽn, tự lặp. Niên can, cung cha và can hợp cùng hội tụ tại vùng này chỉ tạo một cụm chỉ dấu gia đình, không được nhân thành nhiều kết luận độc lập. **Phía gia đình gốc dễ mang sắc thái kín đáo, nguyên tắc và lo xa; có năng lực sắp xếp việc khó nhưng cũng dễ giữ những cách ứng xử cũ quá lâu.** Sự hỗ trợ có thể thể hiện qua trách nhiệm hoặc giải quyết công việc hơn là bộc lộ tình cảm trực tiếp; một số lời hứa hay kỳ vọng cũng có thể cần thời gian mới thành hình.\n\nKhôn 2 có Thiên Nhuế, Sinh Môn, Trực Phù, Đinh và Mậu; cung, môn và tinh đều có lực, không có quan hệ môn–cung tương khắc. Đinh thiên về thông tin và xử lý tinh tế, Mậu thiên về nền vật chất; Thiên Nhuế chỉ cơ chế nhận ra phần chưa hoàn thiện để chăm sóc hoặc sửa chữa, không phải chẩn đoán bệnh. **Lớp phía mẹ và hậu phương gia đình thiên về nuôi dưỡng, duy trì điều kiện sống và xử lý những việc còn dang dở.** Mặt sáng là sức bền và khả năng gom nguồn lực; mặt cần lưu ý là dễ ôm việc, chăm quá mức hoặc để các vấn đề cũ lặp lại dưới hình thức khác.\n\nCon cái lấy Thời can Đinh tại Khôn 2 làm trục, đối chiếu với bản thân tại Càn 6 theo thế Thổ sinh Kim. Đinh đang pha Suy nhưng được môi trường Khôn 2 mạnh nâng đỡ; tổ hợp Đinh–Đinh thuận cho thông tin, giấy tờ hoặc bước hoàn tất nhỏ đến đúng chỗ. **Quan hệ với con cái hoặc vai trò nuôi dạy có xu hướng đặt nặng việc tạo môi trường ổn định, đồng hành học hỏi và sửa từng điểm cụ thể.** Sự hỗ trợ có thể đi hai chiều, nhưng nên tránh biến chăm sóc thành kiểm soát chi tiết. Lớp này chỉ mô tả cách tương tác và điều kiện phát triển, không cho phép suy số con, giới tính hay kết cục sinh sản.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "FAMILY_PARENTS",
+            "FAMILY_PARENT_PAIR_ROLE",
+            "CHILDREN_CORE"
+          ]
+        },
+        "marriage": {
+          "text": "Trong hôn nhân, bản thân vẫn lấy Nhật can Kỷ tại Càn 6 với Thiên Tâm, Đỗ Môn, Thái Âm và Tuần Không; đây chỉ là lớp mô tả cách mình tham gia quan hệ, không phải hình tượng phối ngẫu duy nhất. Phục Ngâm và Phản Ngâm cùng giới hạn toàn trục tình cảm. **Bạn có xu hướng tiếp cận quan hệ bằng trách nhiệm và suy xét kỹ, nhưng dễ khép kín khi chưa chắc chắn hoặc khi cảm thấy mình phải kiểm soát tình thế.**\n\nHưu Môn ở Ly 9 đi cùng Thiên Anh, Cửu Thiên và Nhâm; Thiên Anh mạnh nhưng Hưu Môn yếu, Nhâm ở trạng thái cất giữ, đồng thời Hưu Môn hành Thủy khắc cung Ly hành Hỏa. **Nhu cầu hòa giải và duy trì quan hệ có thật, song thường phải hoạt động trong bối cảnh cảm xúc, hình ảnh hoặc kỳ vọng đang khá nóng và dễ bị đẩy nhanh.** Nếu chú trọng vẻ ngoài ổn thỏa hơn nội dung thực, quan hệ dễ rơi vào nhịp lúc muốn mở rộng, lúc lại trì hoãn.\n\nLục Hợp ở Khảm 1 cùng Thiên Bồng, Cảnh Môn và Quý; cung Khảm rất yếu, Thiên Bồng yếu nhưng Cảnh Môn mạnh, còn Quý có lực tích lũy. Cung hành Thủy khắc Cảnh Môn hành Hỏa, tạo thế vừa cần công khai vừa còn phần sâu kín chưa dễ biểu đạt. **Khả năng kết nối và tìm điểm đồng thuận hiện diện, nhưng sự bền vững phụ thuộc vào việc nói rõ điều đang được kỳ vọng, thay vì để đối phương tự suy đoán.** Các mối liên hệ có thể phong phú, song số lượng kết nối không tự đồng nghĩa với chất lượng cam kết.\n\nTrục Ất–Canh đặt Ất tại Tốn 4 với Thiên Phụ, Khai Môn, Cửu Địa và Mã; cung cùng Khai Môn đều yếu, có áp lực môn–cung và tổ hợp Ất–Ất thiên về giữ nền. Canh ở Đoài 7 cùng Thiên Trụ, Thương Môn và Đằng Xà; Canh có lực chuẩn bị nhưng tổ hợp Canh–Canh dễ thành va chạm cứng, trong khi thông tin có thể vòng vèo. **Một phía của quan hệ cần sự mềm mại, học cách mở lòng từng bước; phía còn lại dễ phản ứng bằng tranh luận hoặc quyết định quá dứt khi căng thẳng tăng.** Sự dịch chuyển hay thay đổi hoàn cảnh có thể thúc quan hệ tiến lên, nhưng không thay thế được kỹ năng giao tiếp trực tiếp.\n\nCan hợp của Nhật can là Giáp đặt tại Khôn 2, nơi có Sinh Môn, Thiên Nhuế và Trực Phù với nền cung mạnh; đây là lớp bổ sung về phối ngẫu và nền quan hệ, không lấn át Hưu Môn, Lục Hợp hay trục Ất–Canh. **Điểm hội tụ tích cực nằm ở khả năng cùng xây nền thực tế, chăm sóc và sửa những phần chưa ổn; điểm thử thách là tránh để vai trò, tiền bạc hoặc trách nhiệm thay cho sự gần gũi.** Bàn không chỉ ra số lần kết hôn; nó cho thấy quan hệ phù hợp hơn với nhịp phát triển có kiểm chứng, ranh giới rõ và khả năng quay lại xử lý vấn đề mà không tái diễn cùng kiểu đối đầu.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "MARRIAGE_CORE"
+          ]
+        },
+        "career": {
+          "text": "Tính chất nghề nghiệp lấy Thiên Tâm và Đỗ Môn tại cung bản thân Càn 6 làm chính, cùng Thái Âm và Kỷ–Kỷ. Thiên Tâm rất yếu theo khí mùa, Đỗ Môn ở mức trung bình, còn môi trường Càn 6 mạnh nhưng gặp Tuần Không và vòng Kỷ–Kỷ tự lặp. **Khí chất nghề thiên về phân tích, tổ chức, xử lý kín và giải bài toán phức tạp hơn là phô diễn liên tục trước đám đông.** Có năng lực thấy cấu trúc và kiểm soát chi tiết, nhưng cần điều kiện rõ mới tránh được tình trạng kế hoạch nhiều mà đầu ra chậm.\n\nKhai Môn ở Tốn 4 hành Mộc, đi cùng Thiên Phụ, Cửu Địa, Ất và Mã; so với bản thân Càn 6 hành Kim thì Mộc bị Kim khắc. Cung Tốn và Khai Môn đều yếu, Khai Môn lại khắc cung, nên cơ hội mở việc có thể bị sức ép về môi trường, thủ tục hoặc khả năng tập trung. **Bạn thường có thế chủ động lựa chọn và định hình cơ hội, nhưng cửa nghề không tự mở chỉ bằng ý tưởng; nó cần quan hệ đúng, hồ sơ đủ và bước triển khai cụ thể.** Mã làm tăng xu hướng di chuyển hoặc đổi cách tiếp cận, song nên phân biệt vận động có mục tiêu với mở quá nhiều hướng.\n\nĐỗ Môn tại Càn 6 chỉ là lớp xác nhận cho chiều kỹ thuật, chuyên sâu, bảo mật hoặc điểm nghẽn; vì nằm ngay cung bản thân nên không được cộng thêm như một tín hiệu độc lập. Thiên Tâm cho khả năng hoạch định và xử lý, Thái Âm tăng sắc thái hậu trường, còn Kỷ nhấn vào sắp xếp chi tiết. **Có thể phù hợp với các vai trò như quản trị vận hành, phân tích hệ thống, kiểm soát nội bộ, bảo mật, nghiên cứu chuyên sâu hoặc công việc kỹ thuật phía sau sản phẩm, nếu kỹ năng thực tế được củng cố.** Đây là những ví dụ tương đồng với cấu trúc, không phải tên nghề cố định.\n\nPhục Ngâm làm đường nghề dễ có giai đoạn lặp vai trò hoặc tiến chậm; Phản Ngâm khiến định hướng, tổ chức hoặc điều kiện bên ngoài có lúc đảo chiều. Các tín hiệu Khai Môn và Thiên Tâm vẫn hữu dụng, nhưng mặt thuận bị giới hạn nếu tiếp tục dùng một chiến lược đã chứng minh là không thông. **Con đường bền hơn là tích lũy chuyên môn có thể kiểm chứng, mở cơ hội có chọn lọc và coi mỗi lần đổi hướng là một lần tái cấu trúc, không phải bắt đầu lại từ số không.** Thành tựu nghề nghiệp vì vậy dễ gắn với độ sâu, quy trình và khả năng hoàn tất hơn là tốc độ thăng tiến bề mặt.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "CAREER_CORE"
+          ]
+        },
+        "wealth": {
+          "text": "Tài vận lấy Sinh Môn tại Khôn 2 làm trục chính; Khôn 2 và Sinh Môn đều hành Thổ, cung–môn không tương khắc và đang có lực mạnh. So với bản thân tại Càn 6 hành Kim, Khôn 2 tạo quan hệ Thổ sinh Kim; Thiên Nhuế và Trực Phù cùng tham gia cung này. **Nguồn tài chính có xu hướng được nâng bởi khả năng tạo giá trị thực, duy trì tài sản, sửa phần kém hiệu quả và xây hệ thống có sức nuôi lâu dài.** Đây là nền thuận tại chỗ, nhưng không đồng nghĩa tiền bạc luôn tăng đều vì toàn bàn vẫn chịu nhịp lặp và đảo chiều.\n\nMậu ở Khôn 2 là lớp bổ sung về vốn và nguồn lực, có lực khá mạnh ở pha đang định hình; Đinh thiên về thông tin, giấy tờ và giải pháp nhưng sức duy trì đã giảm. Tổ hợp Đinh–Đinh hỗ trợ những bước hoàn tất nhỏ, còn Mậu–Đinh thuận cho tiếp cận hoặc trình bày nhưng vẫn cảnh báo trở ngại cấu trúc có thể sinh tranh cãi. Các dấu hiệu này cùng nằm một cung nên chỉ tạo một cụm tài lực, không phải nhiều lần bảo chứng. **Tiền dễ giữ và phát triển hơn khi vốn, chứng từ, quyền quyết định và cách vận hành được đặt trong cùng một hệ thống rõ ràng.**\n\nThiên Nhuế, Sinh Môn, Đinh và Mậu tại Khôn 2 cho phép phân biệt giá trị thật với kỳ vọng: giá trị thật nằm ở khả năng nuôi dòng tiền, sửa điểm yếu và chứng minh bằng tài sản, sản phẩm hoặc hồ sơ; kỳ vọng dễ phình khi chỉ nhìn vào tiềm năng tăng trưởng hay sự công nhận của người có vị thế. **Cấu trúc này hợp với lối tích lũy có kiểm chứng hơn là chạy theo mức tăng mang tính hình ảnh.** Nếu tham gia kinh doanh hay đầu tư, cách phù hợp về mặt biểu tượng là hiểu rõ thứ tạo doanh thu, khả năng giữ vốn và điều kiện thoát khỏi một phương án; đây không phải kết luận tư vấn tài chính chuyên môn.\n\nBản thân và Sinh Môn đều thuộc xu hướng ngoại, tạo chiều phát triển hoặc lập nghiệp ra ngoài phạm vi gốc. Đây chỉ là hướng mở rộng môi trường, thị trường, mạng lưới hoặc cách làm, không buộc phải di cư và không khẳng định mất tài sản quê nhà. Phục Ngâm có thể làm vốn quay chậm, còn Phản Ngâm có thể tạo những lần điều chỉnh kế hoạch. **Tài vận phát huy tốt hơn khi mở rộng có chọn lọc, mang năng lực cốt lõi sang môi trường mới nhưng vẫn giữ chuẩn kiểm soát nguồn lực.** Tránh đồng nhất cơ hội lớn với nhu cầu phải mở thật nhanh, bởi sức mạnh của cung này nằm nhiều ở nuôi dưỡng và củng cố.",
+          "claim_ids": [
+            "GLOBAL_STRUCTURE",
+            "WEALTH_CORE"
+          ]
+        },
+        "luck": {
+          "text": "Tuổi 33 nằm trong đại vận 15 năm từ 31 đến 45 tại Cấn 8. Ba cửa sổ lần lượt là 31–35 tuổi xét Cửu Tinh, 36–40 tuổi xét Bát Môn, và 41–45 tuổi xét Thập Can khắc ứng cùng trạng thái cung; hiện tại đang ở cửa sổ đầu, nên Thiên Nhậm là lớp được nhấn mạnh. **Giai đoạn hiện thời thiên về xây sức bền, nhận trách nhiệm và tạo nền có thể duy trì, hơn là theo đuổi kết quả nhanh bằng nhiều hướng song song.**\n\nCấn 8 có Thiên Nhậm, Tử Môn, Bạch Hổ và Tân; cung, tinh và môn đều mạnh, còn Tân ở trạng thái Mộ, thiên về cất giữ, chuẩn hóa hoặc chờ điều kiện mở khóa. Bạch Hổ biểu thị áp lực và tính quyết liệt, không tự biến thành tai nạn; Tử Môn biểu thị đóng chu kỳ, thu hồi và làm tĩnh, không phải dự báo tử vong. **Nền vận này có thể hợp với việc hoàn thành việc tồn, củng cố tài sản hoặc quy trình và nhận một vai trò cần sức chịu đựng.** Mặt cần quản là cố chấp, giữ quá lâu hoặc chỉ hành động khi áp lực đã tích tụ cao.\n\nTừ 36–40 tuổi, trọng tâm chuyển sang Tử Môn nên câu hỏi chính sẽ là việc gì cần khép lại, thu gọn hoặc tái cấu trúc. Từ 41–45 tuổi, Tân cùng trạng thái Cấn 8 được nhấn mạnh, làm nổi bật việc tinh chỉnh, bảo toàn và xử lý phần đã tích lũy. **Ba cửa sổ tạo một tiến trình: dựng nền và gánh việc, sau đó đóng phần không còn hiệu quả, rồi chuẩn hóa thành cấu trúc bền hơn.** Đây là nhịp kích hoạt của thời kỳ chứ không phải lời hứa về sự kiện; kết quả còn tùy cách lựa chọn và điều kiện thực tế trong từng năm.",
+          "claim_ids": [
+            "LUCK_CURRENT"
+          ]
+        },
+        "annual": {
+          "text": "Lưu niên Bính Ngọ lấy can Bính tại Chấn 3 trên Thiên bàn làm lớp chính; chi Ngọ tại Ly 9 là lớp thứ cấp. Trong cách triển khai kỹ thuật của bàn này, quyền ưu tiên của can năm được dùng theo lớp Thiên bàn đã có đối chiếu truyền thừa, nhưng không coi đó là giáo điều phổ quát cho mọi hệ phái. Chấn 3 có Thiên Xung, Kinh Môn, Huyền Vũ và Bính–Bính; cung yếu, Kinh Môn rất yếu, Thiên Xung trung bình, còn Bính khá mạnh. **Năm dễ làm nổi bật nhu cầu khởi động, phản ứng nhanh và đưa vấn đề ra ánh sáng, nhưng tốc độ có thể vượt trước độ đầy đủ của thông tin.**\n\nTại Chấn 3, Kinh Môn hành Kim khắc cung Mộc, còn Huyền Vũ tăng phần thông tin chưa rõ hoặc chiến lược kín; Bính tạo xu hướng công khai và thúc tốc độ, Thiên Xung muốn phá thế đứng yên. Chi Ngọ kích hoạt Ly 9 có Thiên Anh mạnh, Hưu Môn yếu, Cửu Thiên và Nhâm ở trạng thái cất giữ; Hưu Môn khắc cung Ly. Ly 9 đồng thời là trục Hưu Môn đã dùng trong hôn nhân, nên lớp phụ có thể làm rõ hơn chuyện giao tiếp, hình ảnh, hòa giải hoặc nhịp phát triển quan hệ. **Điều cần phân biệt là cái đang gây chú ý với cái đã đủ chắc: càng nhiều tín hiệu gấp, càng nên kiểm chứng nội dung, cam kết và người chịu trách nhiệm.**\n\nCan năm vẫn giữ vai trò chính, vì vậy chiều Chấn 3 về hành động, cảnh báo và thông tin cần được đọc trước chiều Ly 9 về hình ảnh, quan hệ và mở rộng. Hai cung chỉ cho biết vùng natal đang được kích hoạt, không chứng minh chắc chắn sẽ xảy ra tranh chấp, thay việc hay biến cố tình cảm. Phục Ngâm và Phản Ngâm của bàn gốc tiếp tục khiến diễn biến có thể vừa lặp vừa đổi chiều. **Kết tinh của toàn bàn là dùng kỷ luật để biến vòng lặp thành kinh nghiệm và dùng kiểm chứng để biến đảo chiều thành điều chỉnh có giá trị.** Khi nền lực ở Khôn 2 được tổ chức tốt, sự kín sâu của Càn 6 và tốc độ của Chấn 3 có thể phối hợp thành hành động chắc hơn, thay vì kéo nhau về hai cực trì hoãn và nóng vội.",
+          "claim_ids": [
+            "ANNUAL_CURRENT",
+            "GLOBAL_STRUCTURE"
+          ]
+        },
+        "birthTimeNote": {
+          "text": "",
+          "claim_ids": []
+        }
+      }
+    }
+  ]
+}

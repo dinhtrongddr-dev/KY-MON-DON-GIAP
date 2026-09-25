@@ -56,10 +56,11 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
     for(const match of q.matchAll(timings)){
       const before=q.slice(0,match.index),after=q.slice(match.index+match[0].length);
       const orderPhrase=match[0]==='thu tu'&&/^thứ\s+tự(?=\s|[.,;:!?]|$)/iu.test(p.text.slice(match.index));
+      const everythingSelfChanges=match[0]==='thu tu'&&/\bmoi\s*$/.test(before)&&/^\s*(?:thay doi|dieu chinh|van hanh|dien ra)\b/.test(after);
       const weekday=/^thu\s+(?:hai|ba|tu|nam|sau|bay)\b/.test(match[0]);
       const ordinalWeekday=weekday&&/\b(?:moc|lua chon|ung vien|phuong an|thoi diem|buoc|hang|muc|nhom|truong hop|lan|xep|dung|giu|thuoc|phan|y|dieu|yeu to|can cu|chuong|dong|cot|vi tri)\s*$/.test(before);
       const temporalWeekday=weekday&&(/\b(?:vao|den|tu|truoc|sau|ke tu|ngay|sang|chieu|toi)\s*$/.test(before)||/^\s*(?:tuan|ngay|sang|chieu|toi|se\b|co\s+ket\s+qua\b)/.test(after)||/\b(?:se|xay ra|ung vao|tien ve|nhan tien|hen|gap|goi|gui|ky|thanh toan)\b/.test(before.split(/[.!?;]/).at(-1)));
-      if(orderPhrase||ordinalWeekday||weekday&&!temporalWeekday)continue;
+      if(orderPhrase||everythingSelfChanges||ordinalWeekday||weekday&&!temporalWeekday)continue;
       const prefix=before.split(/[.!?;]/).at(-1);
       const denied=/\b(?:chua|khong (?:the|co|nen|duoc|phai))\b/.test(prefix)&&!/\b(neu|nhung|tuy nhien)\b/.test(prefix);
       const forecasts=/\b(se|xay ra|ung vao|tien ve|nhan tien|tien vao)\b/.test(prefix);
@@ -78,13 +79,15 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
     const onlyResponseCandidates=calendarDates.length&&calendarDates.every(m=>responseDates.has(m[0])||responseDates.has(m[0]+'/'+String(c.board.input.year)));
     const futureIndex=q.search(/\b(se|chac chan|nhat dinh)\b/);
     const futurePrefix=futureIndex>=0?q.slice(0,futureIndex).split(/[.!?;]/).at(-1):'';
-    const negatedFuture=/\b(?:khong phai(?: la)?|khong dong nghia|khong the|khong nen|khong duoc|chua|khong co can cu de)\b[^.!?;]{0,120}$/.test(futurePrefix);
+    const negatedFuture=/\b(?:khong phai(?: la)?|khong dong nghia|khong the|khong nen|khong duoc|khong xac nhan(?: rang)?|chua|khong co can cu de)\b[^.!?;]{0,120}$/.test(futurePrefix);
     const unconditionalFuture=futureIndex>=0&&!conditionalPrefix(q,futureIndex)&&!negatedFuture;
     if(calendarDates.length&&!['comparison','question'].includes(p.slot)&&unconditionalFuture&&!onlyTimingCandidates&&!onlyResponseCandidates)issues.push('Khoảng lịch câu hỏi không phải ngày dự báo kết quả.');
     if(onlyTimingCandidates&&unconditionalFuture&&/\b(?:se|chac chan|nhat dinh)\b[^.!?;]{0,80}\b(?:ky duoc|thanh cong|duoc ky|duoc phe duyet|duoc thanh toan|nhan duoc|tien ve|hoan tat|hoan thanh)\b/.test(q))issues.push('Ứng viên chọn thời điểm không phải ngày bảo đảm kết quả.');
     if(onlyResponseCandidates&&unconditionalFuture&&/\b(?:se|chac chan|nhat dinh)\b[^.!?;]{0,100}\b(?:xay ra|ky duoc|thanh cong|duoc ky|duoc phe duyet|duoc thanh toan|nhan duoc|tien ve|hoan tat|hoan thanh)\b/.test(q))issues.push('Ứng kỳ deterministic là cửa sổ kích hoạt/kiểm chứng, không phải ngày bảo đảm kết quả.');
     for(const match of q.matchAll(/\b(?:khach hang|doi tac|khoan thu|hop dong(?: moi)?|tien|ban)\s+(?:da|dang|se)\s+(?:duoc )?(?:dong y|chuyen tien|nhan|xac nhan|ky|thanh toan|phe duyet|vao tai khoan)[^.!?;]*/g)){
-      if(!conditionalPrefix(q,match.index)&&!source.includes(match[0].replace(/[,.]$/,'')))issues.push('Bài luận tự khẳng định sự kiện ngoài điều người dùng đã kể.');
+      const eventPrefix=q.slice(0,match.index).split(/[.!?;]/).at(-1);
+      const deniedEvent=/\b(?:khong xac nhan(?: rang)?|khong bao dam(?: rang)?|khong co can cu de|khong the khang dinh(?: rang)?|chua du co so de)\b[^.!?;]{0,140}$/.test(eventPrefix);
+      if(!conditionalPrefix(q,match.index)&&!deniedEvent&&!source.includes(match[0].replace(/[,.]$/,'')))issues.push('Bài luận tự khẳng định sự kiện ngoài điều người dùng đã kể.');
     }
     for(const match of q.matchAll(/\b(?:ban da dat muc tieu|(?:thoa thuan|hop dong|du an|cong viec) da (?:hoan tat|hoan thanh|thanh cong)|moi dieu kien da (?:duoc )?dap ung|(?:ban |su viec |du an )?chac chan (?:dat|thanh cong|hoan tat|hoan thanh))[^.!?;]*/g)){
       if(!conditionalPrefix(q,match.index)&&!source.includes(match[0]))issues.push('Tự nâng giai đoạn thành đạt mục tiêu/hoàn tất, trái nhận định có điều kiện của planner.');

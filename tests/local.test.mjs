@@ -53,7 +53,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);
  }
  assert.equal(called,1);
- const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,ROUTED_EFFORT);
+ const status=await(await fetch(url+'/api/status',{headers})).json();assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.rules,RULE_VERSION);assert.equal(status.reasoningEffort,ROUTED_EFFORT);assert.equal(status.writerProvider,'current');assert.equal(status.writerModel,ROUTED_MODEL);assert.equal(status.pipelineVersion,1);
  assert.equal((await fetch(url+'/reading-core.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/ai-progress-estimate.mjs',{headers})).status,200);
  assert.equal((await fetch(url+'/spirit-activation-ui.mjs',{headers})).status,200);

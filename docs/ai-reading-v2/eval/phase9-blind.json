@@ -1,0 +1,653 @@
+{
+  "rubric": [
+    "focus",
+    "clarity",
+    "depth",
+    "specificity",
+    "repetition",
+    "certainty",
+    "actionability"
+  ],
+  "items": [
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "kind": "question",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "kind": "question",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "kind": "question",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "kind": "question",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "kind": "menh",
+      "round": 1,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "kind": "menh",
+      "round": 2,
+      "variant": "X",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "kind": "menh",
+      "round": 1,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "kind": "menh",
+      "round": 2,
+      "variant": "Y",
+      "valid": false,
+      "sections": null
+    }
+  ]
+}

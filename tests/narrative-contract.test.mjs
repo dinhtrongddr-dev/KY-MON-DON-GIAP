@@ -188,3 +188,27 @@ test('both real fixtures produce readable fallback meanings without internal Eng
     assert.doesNotMatch(meaningOf(r),/\b(?:deterministic|resolver|claim|evidence|pipeline|corroborator|cap|veto|profile)\b|GLOBAL_STRUCTURE|KM-/i);
   }
 });
+
+
+test('v2 semantic guards do not mistake natural Vietnamese for a weekday or promised outcome',()=>{
+  const relationship=prepareReading({input:{year:2026,month:9,day:20,hour:21,minute:5,tzOffset:7},question:'Tôi có nên tiếp tục mối quan hệ này hay dừng lại?',topic:'general',mode:'auto',method:'chaibu'});
+  const rc=buildQuestionNarrativeContract(relationship.context),rd=fallbackDraft(rc);
+  section(rd,'answer').text+=' Đừng chỉ kỳ vọng mọi thứ tự thay đổi.';
+  assert.doesNotThrow(()=>validateReading(hydrateSurfaceReading(rd,rc),relationship.facts,'general',relationship.context));
+
+  const property=prepareReading({input:{year:2026,month:9,day:21,hour:10,minute:25,tzOffset:7},question:'Tôi có nên ký hợp đồng thuê mặt bằng này trong tháng này không?',topic:'general',mode:'auto',method:'chaibu'});
+  const pc=buildQuestionNarrativeContract(property.context),pd=fallbackDraft(pc);
+  const timing=section(pd,'timing');
+  if(timing)timing.text='Các mốc 24/09/2026, 25/09/2026 và 30/09/2026 chỉ để quan sát; không xác nhận rằng hợp đồng sẽ được ký vào các ngày đó.';
+  assert.doesNotThrow(()=>validateReading(hydrateSurfaceReading(pd,pc),property.facts,'general',property.context));
+  const promised=fallbackDraft(pc),promisedTiming=section(promised,'timing');
+  if(promisedTiming)promisedTiming.text='Hợp đồng sẽ được ký vào 30/09/2026.';
+  assert.throws(()=>validateReading(hydrateSurfaceReading(promised,pc),property.facts,'general',property.context));
+});
+
+test('unknown-birth-time guidance may reference experiences without inventing a specific life event',()=>{
+  const prepared=prepareMenhReading({birthDateLocal:'1990-01-01',birthTimeMode:'UNKNOWN',birthTimeLocal:null,tzOffset:7,age:37,annualYear:2026});
+  const context=buildMenhWriterContext(prepared.result,{birthTimeMode:'UNKNOWN'}),contract=buildMenhNarrativeFromContext(context),draft=fallbackDraft(contract);
+  section(draft,'birthTimeNote').text+=' Có thể dựa vào những chuyện bạn đã trải qua để thu hẹp hướng nghiên cứu, nhưng cách này chưa thể xác nhận giờ sinh thật.';
+  assert.doesNotThrow(()=>validateMenhReading(hydrateSurfaceReading(draft,contract),context));
+});

@@ -1,0 +1,683 @@
+{
+  "summary": {
+    "samples": 80,
+    "validNow": 80,
+    "invalidNow": 0,
+    "changed": [
+      {
+        "caseId": "Q11_RELATIONSHIP",
+        "variant": "C",
+        "round": 2,
+        "wasValid": false,
+        "validNow": true,
+        "error": null
+      },
+      {
+        "caseId": "Q12_PROPERTY",
+        "variant": "B",
+        "round": 1,
+        "wasValid": false,
+        "validNow": true,
+        "error": null
+      },
+      {
+        "caseId": "Q12_PROPERTY",
+        "variant": "B",
+        "round": 2,
+        "wasValid": false,
+        "validNow": true,
+        "error": null
+      },
+      {
+        "caseId": "M03_UNKNOWN_1990",
+        "variant": "B",
+        "round": 1,
+        "wasValid": false,
+        "validNow": true,
+        "error": null
+      }
+    ]
+  },
+  "rows": [
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q02_FAMILY_CHILDCARE",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q03_GENERIC_STRATEGY",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q04_CONTRACT_OUTCOME",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q05_CONTRACT_STRATEGY",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q07_NEGOTIATION",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q08_FINANCE",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q09_CAREER_SWITCH",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q10_CHILD_SCHOOL",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q11_RELATIONSHIP",
+      "variant": "C",
+      "round": 2,
+      "wasValid": false,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "variant": "B",
+      "round": 1,
+      "wasValid": false,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "variant": "B",
+      "round": 2,
+      "wasValid": false,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q13_USER_MILESTONE",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "Q14_DIRECTION",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M02_KNOWN_1990",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "variant": "B",
+      "round": 1,
+      "wasValid": false,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M03_UNKNOWN_1990",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M04_FUYIN_1970",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M05_FANYIN_1964",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "variant": "B",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "variant": "B",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "variant": "C",
+      "round": 1,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    },
+    {
+      "caseId": "M06_KNOWN_1994",
+      "variant": "C",
+      "round": 2,
+      "wasValid": true,
+      "validNow": true,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-09-25T06:30:39.962Z",
+  "results": [
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "C",
+      "round": 3,
+      "latencyMs": 8083,
+      "valid": true,
+      "error": null,
+      "model": "gpt-5-6",
+      "provider": "chatgpt2api",
+      "styleIssues": [
+        "REPEATED_VERIFICATION"
+      ],
+      "sections": [
+        {
+          "id": "answer",
+          "text": "Việc nghỉ việc theo hướng bạn đang tính có thể tiếp tục chuẩn bị, nhưng chưa nên chốt ngay khi những điểm đang cản vẫn còn nguyên. Điều quan trọng lúc này là tháo gỡ những trở ngại ảnh hưởng trực tiếp đến quyết định, thay vì chỉ dựa vào mong muốn được ở nhà chăm con."
+        },
+        {
+          "id": "decision",
+          "text": "Mong muốn dành thời gian chăm con là một hướng có ý nghĩa với bạn, nhưng mức sẵn sàng thực hiện còn cần đi cùng nguồn lực, sự thu xếp và điều kiện giải quyết cụ thể. Trước khi gửi đơn, bạn nên nhìn rõ phần nào đã ổn và phần nào còn thiếu, nhất là khả năng duy trì sinh hoạt khi không còn nguồn thu quen thuộc.\n\nVới việc trao đổi nghỉ việc, nên chú ý cách trình bày và làm rõ nhu cầu để hạn chế phát sinh sức ép không cần thiết. Nếu các điều kiện quan trọng chưa được xác nhận, việc tiến hành quá nhanh có thể khiến bạn phải gánh thêm áp lực thay vì đạt được sự ổn định mong muốn."
+        },
+        {
+          "id": "approval_timing",
+          "text": "Mốc gần cuối tháng 10 mà bạn đang dự tính là một kế hoạch sắp xếp, chưa phải là thời điểm đã được xác nhận chắc chắn. Việc gửi đơn và việc được chấp thuận nghỉ là hai bước khác nhau, nên vẫn cần tính đến quá trình trao đổi và giải quyết thực tế.\n\nTrước khi đặt kỳ vọng vào mốc thời gian này, bạn nên chuẩn bị cách trao đổi rõ ràng và kiểm tra những điều kiện liên quan để phương án có cơ sở hơn."
+        },
+        {
+          "id": "financial_capacity",
+          "text": "Về nguồn lực kinh tế trong thời gian nghỉ, hiện chưa thể kết luận là đủ hay thiếu nếu chưa đặt các khoản thu có thể dựa vào cạnh những chi phí phải gánh. Bạn nên rà lại những khoản cần duy trì, khả năng xoay xở và mức độ ổn định của sinh hoạt gia đình trước khi quyết định.\n\nViệc kiểm tra kỹ nền tảng tài chính sẽ giúp khoảng thời gian ở nhà chăm con trở thành lựa chọn chủ động hơn, thay vì tạo thêm lo lắng sau khi nghỉ."
+        },
+        {
+          "id": "career_return",
+          "text": "Việc nghỉ một thời gian để chăm con chưa cho phép kết luận rằng bạn sẽ bị tụt hậu hoặc mất hướng nghề nghiệp. Điều cần chuẩn bị là giữ cho bản thân còn kết nối với công việc và duy trì một nhịp học hỏi phù hợp trong thời gian ở nhà.\n\nKhi có ý định quay lại, việc giữ nền tảng và cập nhật từng chút một có thể giúp bạn bớt cảm giác bị ngắt quãng. Trước mắt, nên tập trung làm rõ những điều kiện cần có để vừa chăm con vừa bảo toàn khả năng trở lại công việc."
+        },
+        {
+          "id": "action_2",
+          "text": "Điều nên làm trước khi quyết định là kiểm tra xem phía có liên quan đã thực sự đủ điều kiện để thực hiện hay chỉ đang thúc đẩy bước tiếp theo. Bạn cũng nên giảm bớt những yêu cầu hoặc kỳ vọng chưa có cơ sở rõ ràng, để lựa chọn được cân nhắc trên nền tảng thực tế hơn."
+        }
+      ]
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "variant": "B",
+      "round": 3,
+      "latencyMs": 18600,
+      "valid": true,
+      "error": null,
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "styleIssues": [],
+      "sections": [
+        {
+          "id": "answer",
+          "text": "Bạn có thể tiếp tục chuẩn bị cho phương án nghỉ việc để chăm con, nhưng hiện chưa nên chốt khi những trở ngại về tài chính, thủ tục nghỉ và kế hoạch quay lại công việc vẫn còn nguyên. Chỉ nên quyết định sau khi đã tháo được các điểm ảnh hưởng trực tiếp này; vì vậy, chưa thể xem việc nghỉ ở nhà ít nhất một năm là thuận lợi một cách chắc chắn."
+        },
+        {
+          "id": "decision",
+          "text": "Mong muốn dành trọn thời gian chăm con là một chuyện, còn mức độ sẵn sàng để nghỉ việc lại là chuyện khác. Phương án này có ý nghĩa với bạn, nhưng cần đi cùng nguồn lực đủ dùng, sự thu xếp trong sinh hoạt và điều kiện giải quyết từ nơi làm việc; nếu chưa rõ các phần đó, việc quyết định ngay có thể làm áp lực hiện tại tăng thêm."
+        },
+        {
+          "id": "approval_timing",
+          "text": "Mốc gần cuối tháng 10 hiện nên được coi là mục tiêu để sắp xếp, chưa phải thời điểm đã được xác nhận. Việc bạn gửi đơn bây giờ và việc đơn được chấp thuận theo đúng mốc mong muốn là hai chuyện riêng, nên cần trao đổi trực tiếp về quy trình, thời gian xử lý và phần trách nhiệm của mỗi phía."
+        },
+        {
+          "id": "financial_capacity",
+          "text": "Muốn biết mình có thể nghỉ ở nhà ít nhất một năm hay không, bạn cần đặt các nguồn thu thực sự có thể dựa vào cạnh toàn bộ chi phí phải gánh trong thời gian nghỉ. Những dấu hiệu hỗ trợ hiện có chưa cho biết số dư thực tế, nên kế hoạch tài chính cần được làm rõ trước khi nộp đơn hoặc cam kết với phương án nghỉ dài hạn."
+        },
+        {
+          "id": "career_return",
+          "text": "Việc tạm nghỉ một thời gian chưa đủ để kết luận rằng bạn sẽ ù lì, tụt hậu hoặc mất đường quay lại nghề nghiệp. Điều này phụ thuộc nhiều vào cách bạn chuẩn bị: duy trì liên hệ với công việc và dành một nhịp đều đặn cho việc học, cập nhật kiến thức sẽ giúp việc trở lại sau này bớt khó khăn hơn."
+        },
+        {
+          "id": "action_2",
+          "text": "Trước khi tiến thêm, hãy kiểm tra xem phía đang tác động đến việc nghỉ có thật sự đủ điều kiện thực hiện phần việc của họ hay mới chỉ đang thúc bạn đưa ra quyết định. Chỉ nên chốt khi các thông tin quan trọng đã được xác nhận trực tiếp và có thể kiểm tra."
+        }
+      ]
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "C",
+      "round": 3,
+      "latencyMs": 9711,
+      "valid": true,
+      "error": null,
+      "model": "gpt-5-6",
+      "provider": "chatgpt2api",
+      "styleIssues": [],
+      "sections": [
+        {
+          "id": "overview",
+          "text": "Tổng thể cho thấy bạn có xu hướng suy nghĩ có hệ thống, thích phân tích vấn đề, sắp xếp các yếu tố và tìm giải pháp dựa trên sự cân nhắc. Điểm mạnh này giúp bạn xử lý những việc cần sự chuẩn bị và tổ chức, nhưng cũng cần tự quản ở chỗ không để việc tính toán trở thành quá mức hoặc khiến bản thân muốn kiểm soát mọi chi tiết. Trong cuộc sống, nhiều việc có thể không đi theo một đường thẳng hoàn toàn; bạn thường cần điều chỉnh cách làm, quay lại hoàn thiện phần còn thiếu hoặc sửa những bước đã thực hiện.\n\nVí dụ minh họa là khi giải quyết một công việc quan trọng, bạn có thể không vội làm ngay mà thường xem xét nguồn lực, sắp xếp thứ tự và tìm phương án phù hợp hơn. Cách này tạo sự chắc chắn, nhưng cũng cần giữ sự linh hoạt để không mất quá nhiều thời gian vào việc chuẩn bị."
+        },
+        {
+          "id": "self",
+          "text": "Về bản thân, bạn có xu hướng sống kín đáo, giữ ranh giới riêng và thích đi sâu vào lĩnh vực mình quan tâm. Bạn có thể phát huy tốt khả năng quan sát, tích lũy kiến thức và chuẩn bị phía sau trước khi thể hiện ra bên ngoài. Nguồn lực của bạn thường đến từ sự ngăn nắp, khả năng tổ chức và việc chú ý đến những chi tiết nhỏ.\n\nĐiều cần cân bằng là không nên giữ mọi suy nghĩ hoặc kế hoạch ở bên trong quá lâu. Khi cần thiết, việc chia sẻ đúng lúc và kết nối với người phù hợp có thể giúp những khả năng đã tích lũy được phát huy rõ hơn."
+        },
+        {
+          "id": "family",
+          "text": "Trong gia đình, xu hướng nổi bật là coi trọng sự sắp xếp, trách nhiệm và việc duy trì nề nếp. Bạn có thể quan tâm đến việc tạo một môi trường có định hướng, trong đó mỗi người có vai trò và cách phát triển riêng. Với việc chăm sóc con cái, sự bền bỉ trong nuôi dưỡng, duy trì nguồn lực và chú ý đến những điểm cần cải thiện là những mặt có thể được thể hiện.\n\nVí dụ minh họa là khi đồng hành cùng con trong học tập hoặc sinh hoạt, bạn có thể không chỉ quan tâm kết quả trước mắt mà còn chú ý cách xây dựng thói quen lâu dài. Tuy nhiên, sự định hướng cũng cần đi cùng khả năng lắng nghe để giữ sự cân bằng trong quan hệ gia đình."
+        },
+        {
+          "id": "marriage",
+          "text": "Trong đời sống chung, điều đáng chú ý là xu hướng dùng sự phân tích và sắp xếp để duy trì mối quan hệ. Bạn có thể quan tâm đến việc giải quyết vấn đề một cách có lý do rõ ràng, cùng nhau tìm phương án phù hợp thay vì chỉ dựa vào cảm xúc nhất thời.\n\nĐiểm cần lưu ý là sự cẩn thận và mong muốn mọi việc được hợp lý có thể khiến bạn dễ giữ nhiều suy nghĩ trong lòng. Việc thể hiện cảm xúc, chia sẻ nhu cầu và tạo không gian mềm mại trong giao tiếp sẽ giúp đời sống chung hài hòa hơn."
+        },
+        {
+          "id": "career",
+          "text": "Trong công việc, hướng phù hợp là những việc cần phân tích, tổ chức, tìm giải pháp có tính toán và sử dụng khả năng sắp xếp. Bạn có thể phát huy tốt ở môi trường cần nghiên cứu, quản lý thông tin, xử lý vấn đề hoặc xây dựng quy trình. Cách làm hiệu quả nhất là chủ động sắp xếp công việc nhưng vẫn cần phù hợp với nguồn lực thực tế đang có.\n\nVí dụ minh họa là khi nhận một nhiệm vụ phức tạp, bạn có thể chia nhỏ vấn đề, xác định ưu tiên rồi tiến hành từng bước. Sự chủ động này là lợi thế, nhưng cũng nên tránh tự ôm quá nhiều phần việc nếu nguồn lực chưa đáp ứng."
+        },
+        {
+          "id": "wealth",
+          "text": "Về tài vận, nguồn lực có xu hướng được nâng đỡ, nhưng mức độ phát huy còn phụ thuộc vào cách bạn thu xếp và sử dụng trong thực tế. Bạn có thể xây dựng giá trị thông qua sự bền bỉ, khả năng duy trì, chăm sóc và phát triển những nguồn lực đang có.\n\nNgoài nền tảng quen thuộc, cũng có khả năng mở rộng qua những môi trường hoặc cơ hội mới. Điều quan trọng là giữ sự tỉnh táo trong việc lựa chọn, để sự tích lũy lâu dài đi cùng với cách quản lý phù hợp."
+        },
+        {
+          "id": "luck",
+          "text": "Giai đoạn 31–45 tuổi là nền để nhìn vào những ưu tiên hiện tại, không phải sự sắp đặt của từng sự kiện cụ thể. Đây là thời kỳ có thể chú trọng việc xây dựng nền tảng, xác định điều cần giữ lại, điều cần điều chỉnh và cách duy trì sự ổn định lâu dài.\n\nSự phát triển trong giai đoạn này có thể đến từ việc biết giới hạn, củng cố những gì đang có và tích lũy từng bước thay vì chỉ tập trung vào thay đổi nhanh chóng."
+        },
+        {
+          "id": "annual",
+          "text": "Nhịp sống trong năm đang xét thiên về sự chuyển động và thúc đẩy sự việc được đưa ra ánh sáng hoặc tiến về phía trước. Đây là lúc có thể chú ý đến cách bắt đầu, thể hiện ý tưởng và phản ứng phù hợp trước những thay đổi trong đời sống.\n\nViệc giữ sự chủ động đi cùng khả năng quan sát sẽ giúp bạn tận dụng tốt những chuyển biến, đồng thời tránh hành động vội vàng khi tình huống còn cần thêm thông tin."
+        }
+      ]
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "variant": "B",
+      "round": 3,
+      "latencyMs": 20702,
+      "valid": true,
+      "error": null,
+      "model": "gpt-5.6-sol",
+      "provider": "9router/codex",
+      "styleIssues": [],
+      "sections": [
+        {
+          "id": "overview",
+          "text": "Bạn thiên về phân tích, tổ chức và tìm giải pháp có tính toán. Điểm mạnh này phát huy tốt khi bạn biết dừng đúng lúc; nếu suy xét quá lâu, nó dễ chuyển thành kiểm soát hoặc tính toán quá mức. Đường đời và công việc thường không đi thẳng một mạch, nên việc điều chỉnh cách làm hoặc quay lại xử lý phần cũ là điều cần được xem như một phần tự nhiên của quá trình."
+        },
+        {
+          "id": "self",
+          "text": "Bạn có xu hướng kín đáo, giữ ranh giới và thích chuẩn bị kỹ ở hậu trường. Khả năng đi sâu vào chi tiết giúp bạn tích lũy chuyên môn, nhưng cũng nên chủ động chia sẻ những điều cần thiết để người khác hiểu cách bạn đang sắp xếp công việc."
+        },
+        {
+          "id": "family",
+          "text": "Trong gia đình, bạn dễ đảm nhận vai trò chủ động định hướng và tổ chức, đồng thời coi trọng nề nếp cùng ranh giới riêng. Với con cái, cách chăm sóc phù hợp thiên về sự bền bỉ: vừa nuôi dưỡng nguồn lực, vừa nhận ra những điểm còn yếu để từng bước hoàn thiện."
+        },
+        {
+          "id": "marriage",
+          "text": "Trong đời sống chung, bạn có xu hướng chủ động sắp xếp, phân tích vấn đề và tìm cách giải quyết rõ ràng. Quan hệ được duy trì tốt hơn khi hai bên vừa nói rõ điều cần được nhìn nhận, vừa dành chỗ cho nghỉ ngơi, mềm hóa khác biệt và thích nghi với những điều chưa thể biết hết ngay từ đầu."
+        },
+        {
+          "id": "career",
+          "text": "Trong công việc, bạn thiên về chủ động sắp xếp và giải quyết vấn đề có tính toán. Hướng phát triển phù hợp có thể gắn với việc đi sâu chuyên môn, học hỏi, hướng dẫn hoặc kết nối tri thức và tài liệu; tuy nhiên, kế hoạch cần được đặt vừa với nguồn lực thực tế thay vì ôm quá nhiều việc cùng lúc."
+        },
+        {
+          "id": "wealth",
+          "text": "Nguồn lực tài chính có phần nâng đỡ bạn, nhưng mức độ phát huy vẫn phụ thuộc vào cách thu xếp thực tế. Việc tạo dựng nguồn lực phù hợp với lối đi bền bỉ, biết nuôi dưỡng cái đang có, sửa những điểm chưa hoàn thiện và từng bước tạo thêm giá trị; cơ hội cũng có thể đến từ môi trường ngoài nền quen thuộc."
+        },
+        {
+          "id": "luck",
+          "text": "Giai đoạn 31–45 tuổi là nền để hiểu các ưu tiên hiện tại, không phải một lịch trình cố định của những sự kiện sẽ xảy ra. Trọng tâm phù hợp là biết đặt giới hạn, dừng lại để củng cố nền tảng, duy trì điều cần thiết và tích lũy theo hướng bền vững."
+        },
+        {
+          "id": "annual",
+          "text": "Trong năm đang xét, nhịp sống có thể thiên về khởi động và thúc đẩy sự việc chuyển từ tĩnh sang động. Khi cần hành động nhanh hoặc phá thế trì trệ, bạn vẫn nên chú ý các tín hiệu cảnh báo, truyền đạt rõ điều quan trọng và dành khoảng nghỉ cần thiết để giữ quan hệ ổn định."
+        }
+      ]
+    }
+  ]
+}
