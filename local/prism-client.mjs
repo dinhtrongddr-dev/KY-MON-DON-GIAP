@@ -49,3 +49,46 @@ export async function runPrism(instructions,input,schema,{signal,fetchImpl=fetch
  if(typeof text!=='string'||!text.trim())throw new Error('Prism không trả nội dung cho lượt luận.');
  return extractJson(text);
 }
+
+function codedError(message,code,{fallbackAllowed=false}={}){
+ const error=new Error(message);
+ Object.defineProperty(error,'code',{value:code,enumerable:false});
+ Object.defineProperty(error,'fallbackAllowed',{value:fallbackAllowed,enumerable:false});
+ return error;
+}
+
+export async function runPrismText(instructions,input,{signal,fetchImpl=fetch,env=process.env,model,effort}={}){
+ signal?.throwIfAborted();
+ const runtime=runtimeFromEnv(env);
+ const requestedModel=String(model||runtime.model||'').trim()||runtime.model;
+ const requestedEffort=String(effort||runtime.effort||'').trim()||runtime.effort;
+ let response;
+ try{
+  response=await fetchImpl(runtime.base+'/chat/completions',{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':'Bearer '+runtime.apiKey},
+   body:JSON.stringify({
+    model:requestedModel,
+    reasoning_effort:requestedEffort,
+    stream:false,
+    messages:[
+     {role:'system',content:String(instructions||'')},
+     {role:'user',content:typeof input==='string'?input:JSON.stringify(input)}
+    ]
+   }),
+   signal
+  });
+ }catch(error){
+  if(signal?.aborted||error?.name==='AbortError')throw codedError('Đã hủy hoặc hết thời gian chờ AI.','AI_CANCELLED');
+  throw codedError('Không kết nối được Prism proxy local. Kiểm tra runtime Prism trên VPS rồi thử lại.','AI_NETWORK');
+ }
+ if(response.status===401||response.status===403)throw codedError('Prism proxy từ chối khóa truy cập local.','AI_AUTH');
+ if(response.status===429)throw codedError('Prism hiện chưa nhận thêm lượt.','AI_RATE_LIMIT');
+ if(response.status>=500)throw codedError('Prism upstream đang bảo trì hoặc suy giảm dịch vụ.','AI_UNAVAILABLE');
+ if(!response.ok)throw codedError('Prism proxy chưa hoàn tất lượt luận (HTTP '+response.status+').','AI_ROUTE_ERROR');
+ let data;
+ try{data=await response.json();}catch{throw codedError('Prism proxy trả phản hồi không hợp lệ.','AI_MALFORMED_OUTPUT');}
+ const text=data?.choices?.[0]?.message?.content;
+ if(typeof text!=='string'||!text.trim())throw codedError('Prism không trả nội dung cho lượt luận.','AI_MALFORMED_OUTPUT');
+ return text.trim();
+}
