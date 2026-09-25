@@ -92,10 +92,10 @@ test('writer receives derived Nian Ming only and never receives raw birth date',
   assert.equal(writer.readingGraph.nianmingProfile.policy.evidenceScoreAllowed,false);
 });
 
-test('protocol 6 request round-trip binds Nian Ming and changes only request fingerprint, not chart fingerprint',async()=>{
+test('protocol 7 request round-trip binds Nian Ming and changes only request fingerprint, not chart fingerprint',async()=>{
   const base=await buildReadingRequest(body);
   const nm=await buildReadingRequest({...body,nianming:{self:'17/07/1994',customer:'1990'}});
-  assert.equal(READING_PROTOCOL,6);assert.equal(nm.request.protocol,6);assert.equal(nm.request.nianmingRules,'KM-NIANMING-1.0');
+  assert.equal(READING_PROTOCOL,7);assert.equal(nm.request.protocol,7);assert.equal(nm.request.nianmingRules,'KM-NIANMING-1.0');
   assert.equal(nm.chartFingerprint,base.chartFingerprint);
   assert.notEqual(nm.requestFingerprint,base.requestFingerprint);
   assert.deepEqual(nm.request.nianming,{self:'1994-07-17',customer:'1990'});

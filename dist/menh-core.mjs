@@ -14,7 +14,7 @@ import {summarizeUnknownCandidateResults} from './qimen/menh/stability.mjs';
 import {DEFAULT_MENH_PROFILE_ID} from './qimen/menh/profiles.mjs';
 import {MENH_SPEC_VERSION,MENH_RUNTIME_VERSION} from './qimen/menh/version.mjs';
 
-export const MENH_PROTOCOL=2;
+export const MENH_PROTOCOL=3;
 export const MENH_RULE_VERSION=MENH_RUNTIME_VERSION;
 
 const freeze=value=>{

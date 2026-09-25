@@ -25,6 +25,13 @@ test('16 topics × 2 methods produce deterministic, resolved evidence without tr
   }
 });
 
+test('writer schema separates natural meaning from technical evidence',()=>{
+  const p=prepareReading(payload),section=readingSchema(p.facts,p.context).properties.summary;
+  assert.deepEqual(Object.keys(section.properties),['meaning','technicalEvidence','claim_ids']);
+  assert.deepEqual(section.required,['meaning','technicalEvidence','claim_ids']);
+  assert.equal(section.properties.technicalEvidence.type,'array');
+});
+
 test('readings bind to question, method, time, offset, topic and the exact recomputed board',async()=>{
   const p=await buildReadingRequest(payload);
   assert.deepEqual(validateReadingResponse(envelope(p),p).reading,valid);

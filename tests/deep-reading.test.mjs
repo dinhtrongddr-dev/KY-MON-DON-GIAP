@@ -98,7 +98,7 @@ test('clarification stays short and never fabricates a three-stage outcome',asyn
 });
 
 test('v6 request fingerprint binds the planner, mode, Nian Ming-ready contract and shared semantic matrix',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,6);assert.equal(READING_PROTOCOL,6);assert.equal(RULE_VERSION,'TG-CB-6.3');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);assert.equal(p.request.nianmingRules,'KM-NIANMING-1.0');
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,7);assert.equal(READING_PROTOCOL,7);assert.equal(RULE_VERSION,'TG-CB-6.3');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);assert.equal(p.request.nianmingRules,'KM-NIANMING-1.0');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
   const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.1');assert.equal(writer.semanticMatrix.domain.id,'business');assert.ok(writer.semanticMatrix.palaces.length>0);
 });

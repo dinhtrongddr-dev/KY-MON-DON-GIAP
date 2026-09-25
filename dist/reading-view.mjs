@@ -1,6 +1,6 @@
 import {resultTabs,renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {buildPresentationProfile} from './qimen/ai/presentation.mjs';
-import {renderProse,mountAiTechnicalToggle} from './reading-format.mjs';
+import {renderProse,renderReadingSection,sectionMeaning,mountAiTechnicalToggle} from './reading-format.mjs';
 // Emphasis uses created DOM nodes; model HTML is always literal text.
 export function renderReading(answer,data,prepared) {
   const r=data.reading,doc=answer.ownerDocument||document,g=prepared.context.allInOne.reasoning,profile=buildPresentationProfile(prepared.context);
@@ -54,19 +54,19 @@ export function renderReading(answer,data,prepared) {
       for(const button of item.buttons)button.addEventListener('click',()=>{details.open=true;details.focus();details.scrollIntoView?.({block:'nearest',behavior:'smooth'});});
     }
   };
-  const section=(title,value,parent,tracePanel=parent)=>{if(!parent||!value?.text)return null;const el=node('section','',parent,'ai-assessment');if(title)node('h3',title,el);prose(value.text,el);trace(value.claim_ids,el,tracePanel);return el;};
+  const section=(title,value,parent,tracePanel=parent)=>{if(!parent||!sectionMeaning(value))return null;const el=node('section','',parent,'ai-assessment');if(title)node('h3',title,el);renderReadingSection(value,el,doc);trace(value.claim_ids,el,tracePanel);return el;};
   answer.replaceChildren();node('h3',r.status==='needs_clarification'?'Cần làm rõ trước khi luận':'Nhận định cho sự việc này',answer);
   if(data.modelUsed){
     node('p',`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`,answer,'ai-model-used');
   }
   if(r.status==='needs_clarification'){
-    const opening=node('div','',answer,'ai-opening');prose(r.summary.text,opening);
+    const opening=node('div','',answer,'ai-opening');renderReadingSection(r.summary,opening,doc);
     const list=node('ul','',answer);for(const question of r.questions)node('li',question,list);
     answer.hidden=false;return;
   }
   mountAiTechnicalToggle(answer,doc);
   if(r.status==='verified_fallback'){
-    prose(r.summary.text,answer);trace(r.summary.claim_ids,answer,answer);
+    renderReadingSection(r.summary,answer,doc);trace(r.summary.claim_ids,answer,answer);
     section('Dữ kiện đã tính',r.situation,answer);
     const obstacle=section('Điều kiện cần xác minh',r.bottleneck,answer);if(obstacle&&r.bottleneck.resolution)prose(r.bottleneck.resolution,obstacle);
     for(const action of r.actions){prose(action.text,answer);trace([g.recommendations.find(a=>a.id===action.recommendation_id).claimId],answer,answer);}
@@ -80,9 +80,9 @@ export function renderReading(answer,data,prepared) {
   const tabs=resultTabs(answer,profile.tabs);
   const narrative=node('article','',tabs.quick,'ai-narrative');
   const narrativeBlock=(value,extra='')=>{
-    if(!value?.text&&!extra)return;
+    if(!sectionMeaning(value)&&!extra)return;
     const block=node('section','',narrative,'ai-narrative-block');
-    prose(value?.text,block);if(extra)prose(extra,block);
+    renderReadingSection(value,block,doc);if(extra)prose(extra,block);
   };
   narrativeBlock(r.summary);
   narrativeBlock(r.situation);
@@ -90,7 +90,7 @@ export function renderReading(answer,data,prepared) {
   narrativeBlock(r.bottleneck,r.bottleneck.resolution);
   if(profile.showAlternative)narrativeBlock(r.alternative);
   for(const action of r.actions)narrativeBlock({text:action.text});
-  if(r.timing?.text)narrativeBlock(r.timing);
+  if(sectionMeaning(r.timing))narrativeBlock(r.timing);
   const quickClaimIds=[...new Set([r.summary,r.situation,...r.development,r.bottleneck,r.alternative,r.timing].flatMap(part=>part?.claim_ids||[]))];
   trace(quickClaimIds,narrative,tabs.quick);
 
@@ -102,7 +102,7 @@ export function renderReading(answer,data,prepared) {
       business:{current:'Khâu hiện tại',next:'Gate kế tiếp',outcome:'Điều kiện chốt'},
       negotiation:{current:'Vị thế hiện tại',next:'Nhịp trao đổi',outcome:'Tiếp tục hoặc dừng'}
     }[profile.mode]||{current:'Hiện tại',next:'Chuyển biến',outcome:'Kết quả có điều kiện'};
-    for(const step of r.development){const item=node('li','',stages);node('span',stageLabels[step.stage],item,'ai-stage-label');prose(step.text,item);prose(step.condition,item);trace(step.claim_ids,item,tabs.story);}
+    for(const step of r.development){const item=node('li','',stages);node('span',stageLabels[step.stage],item,'ai-stage-label');renderReadingSection(step,item,doc);prose(step.condition,item);trace(step.claim_ids,item,tabs.story);}
     if(!r.development.length&&g.eventStages&&profile.mode!=='prediction'){
       node('p','Chuỗi điều kiện do bộ luận tổng hợp; đây không phải các sự kiện đã xảy ra.',tabs.story,'ai-note');
       for(const step of g.eventStages.stages.filter(s=>['EMERGENCE','FORMATION','EXECUTION','REALIZATION'].includes(s.stage))){

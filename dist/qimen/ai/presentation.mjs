@@ -63,5 +63,10 @@ export function buildPresentationProfile(context) {
     profile.reasoningGoal='So sánh phương vị từ đúng điểm quy chiếu và mục tiêu hành động; không dựng diễn biến thời gian hoặc suy tọa độ ngoài dữ liệu.';
   }
 
+  if(mode==='strategy'&&!asksDevelopment&&/\b(co nen|nen hay|can nhac|quyet dinh)\b/.test(text)){
+    profile.layout='focused';profile.showDevelopment=false;profile.showAlternative=false;
+    profile.tabs=profile.tabs.filter(([id])=>id!=='story');
+    profile.reasoningGoal='Trả lời quyết định trước, rồi giải thích lần lượt các khía cạnh thực tế trong narrativeContract.facets. Giữ các đánh đổi và điều kiện trong bài luận, không ép chúng vào ba chặng thời gian.';
+  }
   return Object.freeze(profile);
 }

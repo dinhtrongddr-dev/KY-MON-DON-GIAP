@@ -3,7 +3,7 @@ export function menhReadingSchema(context){
   const str={type:'string'},arr=items=>({type:'array',items});
   const obj=properties=>({type:'object',additionalProperties:false,required:Object.keys(properties),properties});
   const ids=context.allowedClaimIds.length?{type:'string',enum:context.allowedClaimIds}:str;
-  const section=obj({text:str,claim_ids:arr(ids)});
+  const section=obj({meaning:str,technicalEvidence:arr(str),claim_ids:arr(ids)});
   return obj({
     status:{type:'string',enum:['reading']},
     specVersion:{type:'string',enum:[context.specVersion]},

@@ -15,7 +15,7 @@ export {NIANMING_VERSION};
 
 // One deterministic contract is used by the browser and the AI bridge.
 export const RULE_VERSION = 'TG-CB-6.3';
-export const READING_PROTOCOL = 6;
+export const READING_PROTOCOL = 7;
 const UPGRADE_MESSAGE = `Bộ kết nối AI chưa cùng bộ quy tắc ${RULE_VERSION}. Hãy cập nhật bộ kết nối theo hướng dẫn; chưa thể nhận lời luận khác phiên bản.`;
 const named = p => `${p.vi} ${p.number} (${p.element})`;
 const yes = flag => flag ? 'có' : 'không';

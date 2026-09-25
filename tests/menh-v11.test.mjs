@@ -20,12 +20,12 @@ test('KM-MENH-1.1 upgrades runtime/protocol while preserving frozen 1.0 spec ide
   assert.equal(MENH_SPEC_VERSION,'KM-MENH-1.0');
   assert.equal(MENH_RUNTIME_VERSION,'KM-MENH-1.1');
   assert.equal(MENH_RULE_VERSION,'KM-MENH-1.1');
-  assert.equal(MENH_PROTOCOL,2);
+  assert.equal(MENH_PROTOCOL,3);
   const p=await buildMenhReadingRequest(known);
   assert.equal(p.result.specVersion,'KM-MENH-1.0');
   assert.equal(p.result.runtimeVersion,'KM-MENH-1.1');
   assert.equal(p.request.rules,'KM-MENH-1.1');
-  assert.equal(p.request.protocol,2);
+  assert.equal(p.request.protocol,3);
   assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);
 });
 

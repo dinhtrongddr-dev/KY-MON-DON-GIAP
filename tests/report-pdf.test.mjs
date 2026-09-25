@@ -55,14 +55,26 @@ test('PDF preserves emphasized AI phrases as bold and renders an app-like colore
 
 test('browser UI exposes a cross-device web-link share action for Hỏi việc and Mệnh',()=>{
   const question=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8'),menh=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8'),client=readFileSync(new URL('../dist/report-export.mjs',import.meta.url),'utf8'),server=readFileSync(new URL('../local/server.mjs',import.meta.url),'utf8');
+  assert.match(question,/id="report-download-pdf"[^>]*>Xuất PDF<\/button>/);assert.match(menh,/id="menh-report-download-pdf"[^>]*>Xuất PDF<\/button>/);
   assert.match(question,/id="report-pdf"[^>]*>Chia sẻ link kết quả</);assert.match(menh,/id="menh-report-pdf"[^>]*>Chia sẻ link kết quả</);
   assert.match(client,/schemaVersion:'QimenShare\/1'/);assert.match(client,/SHARE_ORIGIN/);assert.match(client,/\/api\/share/);assert.match(client,/navigator\.share\(\{title:'Kỳ Môn Bàn'.*url:data\.url/);
   assert.match(client,/navigator\.clipboard\?\.writeText\(data\.url\)/);assert.match(client,/Mở link chia sẻ/);assert.doesNotMatch(client,/buildScreenshotPdf/);
   assert.match(server,/path==='\/api\/share'/);assert.match(server,/\/s\//);assert.match(server,/X-Robots-Tag/);
 });
 
-const {writeQuestionPdf,extractReadingBlocks}=await import('../dist/question-report.mjs');
-const {initPdfExport}=await import('../dist/report-export.mjs');
+const {writeQuestionPdf,extractReadingBlocks,pcPageSlices}=await import('../dist/question-report.mjs');
+const {initPdfExport,initPdfDownload}=await import('../dist/report-export.mjs');
+
+test('native capture moves a complete diagram to the next page even when it leaves whitespace',()=>{
+  const node=(top,bottom)=>({getBoundingClientRect(){return {top,bottom,height:bottom-top};}});
+  const diagram=node(950,2450);
+  const root={getBoundingClientRect(){return {top:0,bottom:3300,height:3300};},querySelectorAll(){return [diagram];}};
+  const slices=pcPageSlices(root);
+  assert.equal(slices[0].height,950);
+  assert.ok(slices.some(s=>s.top<=950&&s.top+s.height>=2450),'diagram must stay intact');
+  assert.equal(slices.reduce((sum,s)=>sum+s.height,0),3300);
+  assert.ok(slices.every(s=>s.height>0&&s.height<=2000));
+});
 
 test('question link sharing uses the exact retained AI request and never prepares again',async t=>{
   const saved={document:globalThis.document,fetch:globalThis.fetch,location:globalThis.location,navigator:globalThis.navigator};
@@ -90,6 +102,45 @@ test('question link sharing uses the exact retained AI request and never prepare
   const ai=readFileSync(new URL('../dist/ai-local.mjs',import.meta.url),'utf8');
   assert.match(ai,/const prepared=await buildReadingRequest\(body\)/);assert.match(ai,/pdf\.setModel\(data\.modelUsed,prepared\)/);
 });
+
+test('PDF download captures the native UI and keeps AI prose as a text layer',async t=>{
+  const saved={document:globalThis.document};
+  t.after(()=>{if(saved.document===undefined)delete globalThis.document;else Object.defineProperty(globalThis,'document',{value:saved.document,writable:true,configurable:true});});
+  let click,prepareCalls=0,captureOptions,writerOptions,downloaded;
+  const button={hidden:true,disabled:false,addEventListener(name,handler){click=handler;}};
+  const answer={};
+  const doc={getElementById(id){return id==='pdf-download'?button:id==='ai-answer'?answer:null;}};
+  Object.defineProperty(globalThis,'document',{value:doc,writable:true,configurable:true});
+  const prepared={request:{question:'Câu hỏi đã gắn với bàn'},input:{question:'Câu hỏi đã gắn với bàn'}};
+  const pdf=initPdfDownload({
+    kind:'question',buttonId:'pdf-download',statusId:'status',
+    prepare(){prepareCalls++;throw Error('không được lập lại bàn');},
+    capturePages:async(_kind,options)=>{captureOptions=options;return [{url:'data:image/jpeg;base64,/9j/2Q==',width:1440,height:500}]},
+    extractBlocks:node=>{assert.equal(node,answer);return [{kind:'paragraph',runs:[{text:'Kết luận thật',bold:false}]}]},
+    writePdf:async options=>{writerOptions=options;return new Blob(['pdf'],{type:'application/pdf'});},
+    downloadFile:(blob,name)=>{downloaded={blob,name};}
+  });
+  pdf.setModel({label:'Model',effort:'high'},prepared);await click();
+  assert.equal(prepareCalls,0);assert.deepEqual(captureOptions,{includeReading:false});
+  assert.equal(writerOptions.prepared,prepared);assert.equal(writerOptions.model,'Model / high');
+  assert.equal(writerOptions.blocks[0].runs[0].text,'Kết luận thật');assert.equal(downloaded.name,'ky-mon-ban-hoi-viec.pdf');
+});
+
+test('PDF export freezes prose before capture and discards a download invalidated by a new chart',async t=>{
+  const before=globalThis.document;t.after(()=>{globalThis.document=before;});
+  let click,release,text='Bài cũ',downloads=0,seen;
+  const button={hidden:true,disabled:false,addEventListener(_,handler){click=handler;}},status={textContent:''};
+  globalThis.document={getElementById:id=>id==='pdf'?button:id==='status'?status:{}};
+  const pdf=initPdfDownload({kind:'question',buttonId:'pdf',statusId:'status',
+    capturePages:()=>new Promise(resolve=>{release=resolve;}),extractBlocks:()=>[{runs:[{text}]}],
+    writePdf:options=>{seen=options;return new Blob(['pdf']);},downloadFile:()=>downloads++});
+  pdf.setModel({label:'old',effort:'high'},{});
+  let pending=click();text='Bài mới';release([]);await pending;
+  assert.equal(seen.blocks[0].runs[0].text,'Bài cũ');
+  pending=click();pdf.clear();status.textContent='Đã đổi bàn';release([]);await pending;
+  assert.equal(downloads,1);assert.equal(status.textContent,'Đã đổi bàn');
+  assert.equal(button.disabled,false);assert.equal(button.hidden,true);
+});
 function element(tag,...children){
   const node={nodeType:1,tagName:tag,childNodes:children.map(c=>typeof c==='string'?{nodeType:3,textContent:c}:c),querySelectorAll(){return [];},cloneNode(){return this;}};
   node.children=node.childNodes.filter(c=>c.nodeType===1);for(const child of node.childNodes)child.parentNode=node;return node;
@@ -105,7 +156,7 @@ test('reading extraction keeps inline strong emphasis in paragraphs and single b
 
 test('question and Mệnh visuals rasterize the native 1440px desktop result without export reflow',()=>{
   const code=readFileSync(new URL('../dist/question-report.mjs',import.meta.url),'utf8');
-  for(const pattern of [/foreignObject/,/PC_CAPTURE_WIDTH=1440/,/position:fixed;left:-30000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/capturePcReportPages/,/reportSource\(kind\)/,/doc\.importNode\(reportSource\(kind\),true\)/,/taiji-export/,/querySelectorAll\('img\.taiji-ink'\)/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
+  for(const pattern of [/foreignObject/,/PC_CAPTURE_WIDTH=1440/,/position:fixed;left:-30000px/,/document\.fonts\.ready/,/cssRules/,/requestAnimationFrame.*requestAnimationFrame/,/capturePcReportPages/,/reportSource\(kind\)/,/doc\.importNode\(options.source\|\|reportSource\(kind\),true\)/,/export-role-pair/,/animation:none!important;transition:none!important/])assert.match(code,pattern);
   assert.match(code,/kind==='menh'\?'menh-result':'result'/);
   assert.match(code,/main\.append\(result\);shell\.append\(main\)/);
   assert.doesNotMatch(code,/WIDTH=900|snapshot\.elements|snapshot\.roles|workspace\.append\(adopt/);

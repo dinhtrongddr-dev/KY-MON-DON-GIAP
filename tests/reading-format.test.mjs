@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatParts,formatError,renderProse} from '../dist/reading-format.mjs';
+import {formatParts,formatError,renderProse,sectionMeaning,sectionTechnicalText,sectionText,renderReadingSection} from '../dist/reading-format.mjs';
 class Node {
   constructor(tag){this.tag=tag;this.children=[];this.value='';}
   append(...xs){this.children.push(...xs);}
@@ -64,4 +64,28 @@ test('technical Kỳ Môn prefix is separable from the translated meaning withou
 test('ordinary prose before a highlighted takeaway is not mislabeled as Kỳ Môn technical text',()=>{
   const parts=formatParts('Điểm đáng chú ý ở đây là tiến độ đang chậm. **Nên thu hẹp phạm vi trước khi tăng cam kết.**',{automatic:false});
   assert.equal(parts.some(part=>part.technical),false);
+});
+
+test('structured reading sections keep natural meaning visible and technical evidence separately toggleable',()=>{
+  const section={
+    meaning:'**Nên giữ phạm vi nhỏ trước khi tăng cam kết.**',
+    technicalEvidence:['Cung Càn 6 có Khai Môn và Thiên Tâm; đây là căn cứ của trục hành động.'],
+    claim_ids:['CLAIM_1']
+  };
+  assert.equal(sectionMeaning(section),section.meaning);
+  assert.equal(sectionTechnicalText(section),section.technicalEvidence[0]);
+  assert.equal(sectionText(section),section.technicalEvidence[0]+'\n\n'+section.meaning);
+  const root=new Node('div');renderReadingSection(section,root,doc);
+  assert.equal(root.children.length,2);
+  assert.ok(root.children[0].children.some(child=>child.tag==='strong'));
+  assert.equal(root.children[1].className,'ai-technical-block ai-technical-prefix');
+  assert.match(root.children[1].textContent,/Cung Càn 6/);
+});
+
+test('structured meaning never uses legacy bold-prefix hiding and evidence never gains automatic emphasis',()=>{
+  const root=new Node('div');
+  renderReadingSection({meaning:'Không Vong ở đây chỉ là cách gọi. **Bạn vẫn nên giữ phương án dự phòng.**',technicalEvidence:['Cần kiểm tra điều kiện trước khi mở rộng cam kết.'],claim_ids:[]},root,doc);
+  const visible=root.children[0],technical=root.children[1];
+  assert.ok(visible.children.every(child=>child.className!=='ai-technical-prefix'));
+  assert.ok(technical.children.every(p=>p.children.every(child=>child.tag!=='strong')));
 });

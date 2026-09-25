@@ -1,9 +1,10 @@
-const EXCLUDED='button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical';
+const EXCLUDED='button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs,#reading-panel-technical,#reading-panel-story,#reading-panel-actions,#reading-panel-timing .ai-assessment';
 
 // Read only already-validated rendered prose; never parse model HTML or broaden bold rules.
 export function extractReadingBlocks(answer){
   if(!answer)throw new Error('Không tìm thấy bài luận AI.');
   const root=answer.cloneNode(true);root.querySelectorAll(EXCLUDED).forEach(node=>node.remove());
+  if(!answer.classList?.contains('ai-show-technical'))root.querySelectorAll('.ai-technical-prefix').forEach(node=>node.remove());
   const blocks=[];
   const inline=(node,bold=false)=>{
     if(node.nodeType===3)return [{text:node.textContent,bold}];
@@ -48,7 +49,7 @@ export async function waitForExportLayout(doc){
 
 const PC_CAPTURE_WIDTH=1440,PC_CAPTURE_SLICE=2000;
 const PC_CAPTURE_REMOVE=[
-  '#local-setup','.local-controls','.local-preference','.ai-feedback','.activity-summary','.activity-history',
+  '#local-setup','.local-controls','.compact-ai-actions','.local-preference','.ai-feedback','.activity-summary','.activity-history',
   '#rule-analyze','#rule-preview','.report-pdf-button','.ai-trace','.ai-evidence','.ai-note',
   '.menh-scope','.reading-strip'
 ].join(',');
@@ -60,7 +61,7 @@ function captureCssText(){
     .join('\n');
 }
 
-function cleanupPcReport(root,kind){
+function cleanupPcReport(root,kind,{includeReading=true}={}){
   root.hidden=false;root.removeAttribute('hidden');
   root.querySelectorAll(PC_CAPTURE_REMOVE).forEach(node=>node.remove());
   if(kind==='question'){
@@ -69,11 +70,11 @@ function cleanupPcReport(root,kind){
   }else{
     const answer=root.querySelector('#menh-ai-answer');if(answer){answer.hidden=false;answer.removeAttribute('hidden');}
   }
+  if(!includeReading)root.querySelectorAll('.ai-panel').forEach(node=>node.remove());
   root.querySelectorAll('[hidden]').forEach(node=>{
     if(node.matches('#ai-answer,#menh-ai-answer'))node.removeAttribute('hidden');
   });
   root.querySelectorAll('details').forEach(node=>node.open=true);
-  for(const img of root.querySelectorAll('img.taiji-ink')){const taiji=root.ownerDocument.createElement('span');taiji.className='taiji-export';taiji.textContent='☯';img.replaceWith(taiji);}
   root.querySelectorAll('button').forEach(node=>{
     if(node.closest('.element-diagram,.qimen-board,.menh-board-section')){node.tabIndex=-1;return;}
     if(node.closest('#ai-answer,#menh-ai-answer'))node.remove();
@@ -87,11 +88,22 @@ function reportSource(kind){
   return source;
 }
 
-function createPcShell(doc,kind){
+function createPcShell(doc,kind,options){
   const shell=doc.createElement('div');shell.className='page-shell pdf-pc-capture';
   const topbar=document.querySelector('.topbar');if(topbar)shell.append(doc.importNode(topbar,true));
   const main=doc.createElement('main');
-  const result=cleanupPcReport(doc.importNode(reportSource(kind),true),kind);
+  const result=cleanupPcReport(doc.importNode(options.source||reportSource(kind),true),kind,options);
+  if(kind==='question'&&options.visual){
+    const visual=options.visual;
+    for(const [selector,node] of [['#question-summary',visual.question],['#pillars',visual.pillars],['#calculation-summary',visual.summary],['.board-column',visual.board],['.element-panel',visual.elements]]){
+      if(node)result.querySelector(selector)?.replaceWith(doc.importNode(node,true));
+    }
+    result.querySelector('.workspace > .inspector')?.remove();
+    const roles=doc.createElement('section');roles.className='export-role-pair';
+    for(const role of visual.roles||[])roles.append(doc.importNode(role,true));
+    result.querySelector('.workspace')?.after(roles);
+    cleanupPcReport(result,kind,options);
+  }
   main.append(result);shell.append(main);doc.body.append(shell);return shell;
 }
 
@@ -100,28 +112,25 @@ function relativeBox(root,node){
   return {top:Math.max(0,r.top-rr.top),bottom:Math.min(rr.height,r.bottom-rr.top),height:r.height};
 }
 
-function pcPageSlices(root){
+export function pcPageSlices(root){
   const total=Math.ceil(root.getBoundingClientRect().height);
   if(total<=PC_CAPTURE_SLICE)return [{top:0,height:total}];
-  const keep=[...root.querySelectorAll('.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.qimen-board,.menh-board-section,.element-panel,.menh-claim,.menh-ai-section,.ai-narrative-block,.ai-actions>li')]
-    .map(node=>relativeBox(root,node)).filter(r=>r.height>40&&r.height<PC_CAPTURE_SLICE-100);
-  const points=[...root.querySelectorAll('h2,h3,h4,p,li,.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.element-panel,.menh-claim,.menh-ai-section,.ai-narrative-block')]
+  const keep=[...root.querySelectorAll('.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.qimen-board,.menh-board-section,.element-panel,.export-role-pair,.export-role,.menh-claim,.menh-ai-section,.ai-narrative-block,.ai-actions>li')]
+    .map(node=>relativeBox(root,node)).filter(r=>r.height>40&&r.height<=PC_CAPTURE_SLICE);
+  const points=[...root.querySelectorAll('h2,h3,h4,p,li,.chart-meta,.workspace,.menh-chart-meta,.menh-workspace,.element-panel,.export-role-pair,.menh-claim,.menh-ai-section,.ai-narrative-block')]
     .flatMap(node=>{const r=relativeBox(root,node);return [r.top,r.bottom];})
+    .concat(keep.flatMap(r=>[r.top,r.bottom]))
     .filter(y=>Number.isFinite(y)&&y>0&&y<total).sort((a,b)=>a-b);
   const insideKeep=y=>keep.some(r=>y>r.top+8&&y<r.bottom-8);
   const slices=[];let top=0;
   while(top<total-1){
     let bottom=Math.min(total,top+PC_CAPTURE_SLICE);
     if(bottom<total){
-      const crossing=keep.filter(r=>r.top<bottom-8&&r.bottom>bottom+8).sort((a,b)=>b.height-a.height)[0];
-      if(crossing&&crossing.top-top>=1050)bottom=Math.floor(crossing.top);
-      else if(crossing&&crossing.bottom-top<=PC_CAPTURE_SLICE)bottom=Math.ceil(crossing.bottom);
-      else{
-        const candidates=points.filter(y=>y>=top+1200&&y<=bottom&&!insideKeep(y));
-        if(candidates.length)bottom=Math.floor(candidates[candidates.length-1]);
-      }
+      // Prefer whitespace over cutting a board, diagram or pair of role cards.
+      const candidates=points.filter(y=>y>top+1&&y<=bottom&&!insideKeep(y));
+      if(candidates.length)bottom=Math.floor(candidates[candidates.length-1]);
     }
-    if(bottom<=top+300)bottom=Math.min(total,top+PC_CAPTURE_SLICE);
+    if(bottom<=top)bottom=Math.min(total,top+PC_CAPTURE_SLICE);
     slices.push({top,height:Math.ceil(bottom-top)});top=bottom;
   }
   return slices;
@@ -152,7 +161,7 @@ async function rasterPcSlice(doc,root,style,{top,height}){
   return {url:canvas.toDataURL('image/jpeg',.9),width:canvas.width,height:canvas.height};
 }
 
-export async function capturePcReportPages(kind='question'){
+export async function capturePcReportPages(kind='question',{includeReading=true,source,visual}={}){
   await document.fonts.ready;
   const frame=document.createElement('iframe');frame.title='Ảnh chụp PDF giao diện PC';frame.setAttribute('aria-hidden','true');
   frame.style.cssText=`position:fixed;left:-30000px;top:0;width:${PC_CAPTURE_WIDTH}px;height:1200px;border:0;pointer-events:none;visibility:hidden`;
@@ -166,10 +175,12 @@ export async function capturePcReportPages(kind='question'){
       .pdf-pc-capture{width:${PC_CAPTURE_WIDTH}px!important;max-width:none!important;margin:0!important;padding:0 54px 34px!important;box-sizing:border-box!important}
       .pdf-pc-capture main{padding-top:24px!important}
       .pdf-pc-capture .report-pdf-button{display:none!important}
-      .pdf-pc-capture .taiji-export{display:grid;place-items:center;width:100%;height:100%;font:700 92px/1 Georgia,serif;color:#18231f;text-shadow:0 3px 7px rgba(20,25,22,.13)}
+      .pdf-pc-capture .export-role-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:24px 0}
+      .pdf-pc-capture .export-role-pair .inspector{min-width:0;grid-column:auto;grid-row:auto}
+      .pdf-pc-capture .workspace:has(+ .export-role-pair){grid-template-columns:1fr}
       .pdf-slice-viewport{position:relative;width:${PC_CAPTURE_WIDTH}px;overflow:hidden;background:#fff}
     `;doc.head.append(style);
-    const root=createPcShell(doc,kind);await inlinePcImages(doc);await waitForExportLayout(doc);
+    const root=createPcShell(doc,kind,{includeReading,source,visual});await inlinePcImages(doc);await waitForExportLayout(doc);
     const slices=pcPageSlices(root),pages=[];
     for(const slice of slices)pages.push(await rasterPcSlice(doc,root,style,slice));
     return pages;

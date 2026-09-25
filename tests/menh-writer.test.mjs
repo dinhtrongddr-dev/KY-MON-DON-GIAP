@@ -50,11 +50,31 @@ test('KM-MENH production writer is explicitly one-shot long-form and guards mode
   const p=menhWriterInstructions().toLowerCase();
   for(const token of ['một lần','8.000–14.000','comprehensive_one_shot','không double-count','boardfacts','ví dụ hiện đại'])assert.ok(p.includes(token),token);
 });
+
+test('Mệnh writer schema separates natural meaning from technical evidence',async()=>{
+  const {menhReadingSchema}=await import('../dist/qimen/menh/ai/schema.mjs');
+  const schema=menhReadingSchema(context()).properties.overview;
+  assert.deepEqual(Object.keys(schema.properties),['meaning','technicalEvidence','claim_ids']);
+  assert.deepEqual(schema.required,['meaning','technicalEvidence','claim_ids']);
+  assert.equal(schema.properties.technicalEvidence.type,'array');
+});
 test('P9 reading audit accepts claim-bound prose and rejects fabricated claim ids',()=>{
   const ctx=context(),r=validReading(ctx);
   assert.equal(validateMenhReading(r,ctx),r);
   const bad=structuredClone(r);bad.career.claim_ids=['MADE_UP'];
   assert.throws(()=>validateMenhReading(bad,ctx),/ngoài deterministic context/);
+});
+
+test('Mệnh event audit distinguishes an explicit denial from an asserted past event',()=>{
+  const ctx=context();
+  for(const phrase of ['Không thể khẳng định sự việc đã xảy ra.', 'Đây không phải bằng chứng rằng điều đó đã xảy ra.', 'Chưa xác nhận việc đó đã xảy ra.']){
+    const r=validReading(ctx);r.self.text+=' '+phrase;
+    assert.equal(validateMenhReading(r,ctx),r,phrase);
+  }
+  for(const phrase of ['Sự việc đã xảy ra.', 'Không nên lo nữa vì việc đó đã xảy ra.', 'Không thể khẳng định sự việc đã xảy ra. Riêng lần này việc đó đã xảy ra.']){
+    const r=validReading(ctx);r.self.text+=' '+phrase;
+    assert.throws(()=>validateMenhReading(r,ctx),/thành sự kiện/,phrase);
+  }
 });
 test('Mệnh AI rejects bold technical basis but accepts bold natural translated meaning',()=>{
   const ctx=context(),bad=validReading(ctx);

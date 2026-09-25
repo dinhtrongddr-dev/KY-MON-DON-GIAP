@@ -1,7 +1,7 @@
 import {buildReadingRequest,assertCompatible,validateReadingResponse} from './reading-core.mjs';
 import {renderReading} from './reading-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
-import {initPdfExport} from './report-export.mjs';
+import {initPdfExport,initPdfDownload} from './report-export.mjs';
 import {createReadingJobClient} from './reading-job-client.mjs';
 import {estimateReadingMs,readingProgressText} from './ai-progress-estimate.mjs';
 export function initLocalAi({prepare,activity=null,captureReportVisual}) {
@@ -21,6 +21,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
  });
  const pdf=initPdfExport({kind:'question',buttonId:'report-pdf',statusId:'ai-status',prepare,boardSelector:'#qimen-board',captureReportVisual});
+ const pdfDownload=initPdfDownload({kind:'question',buttonId:'report-download-pdf',statusId:'ai-status',captureReportVisual});
  const setConnectionState=(state)=>{
    if(!tokenShell||!connectionIcon)return;
    const map={
@@ -98,8 +99,8 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    read.textContent=isReading?'Đang luận AI…':readLabel;status.textContent=message;
    return controller;
  };
- const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);pdf.clear();};
- const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
+ const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finishWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);pdf.clear();pdfDownload.clear();};
+  const invalidate=()=>{cancelWork();status.textContent='Dữ liệu đã thay đổi. Bấm Luận bằng AI để luận câu hỏi và bàn mới.';};
  document.getElementById('chart-form').addEventListener('input',invalidate);
  document.getElementById('chart-form').addEventListener('change',invalidate);
  document.addEventListener('qimen-chart',invalidate);
@@ -152,7 +153,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      const activityStatus=data.reading.status==='verified_fallback'?'fallback':data.reading.status==='needs_clarification'?'clarification':'completed';
      if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed:data.modelUsed});activityReadingId=null;}
      const modelText=data.modelUsed?` · ${data.modelUsed.label} / ${data.modelUsed.effort}`:'';
-     if(data.reading.status!=='needs_clarification')pdf.setModel(data.modelUsed,prepared);
+      if(data.reading.status!=='needs_clarification'){pdf.setModel(data.modelUsed,prepared);pdfDownload.setModel(data.modelUsed,prepared);}
      status.textContent=data.reading.status==='verified_fallback'?`Đã nhận bài luận AI${modelText}. Một số phần còn cần đối chiếu thêm.`:data.reading.status==='needs_clarification'?'Cần bổ sung thông tin để AI luận đúng sự việc.':`Đã nhận bài luận AI${modelText}.`;
    }catch(e){if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'timeout':'error'});activityReadingId=null;}if(v===version)status.textContent=controller.signal.aborted?'Đã hết thời gian chờ. Kiểm tra kết nối AI rồi thử lại.':e.message;}finally{if(v===version){active=null;finishWork();}}
  });

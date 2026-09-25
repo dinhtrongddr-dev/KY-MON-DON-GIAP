@@ -1,4 +1,5 @@
-import {formatError} from '../../../reading-format.mjs';
+import {formatError,sectionMeaning,sectionText} from '../../../reading-format.mjs';
+import {auditTechnicalText} from '../../ai/technicalAudit.mjs';
 const SECTION_KEYS=['overview','self','family','marriage','career','wealth','luck','annual','birthTimeNote'];
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const text=value=>typeof value==='string'&&value.length<=8000;
@@ -10,6 +11,28 @@ export class MenhReadingValidationError extends Error{
 }
 const reject=message=>{throw new MenhReadingValidationError(message);};
 
+function assertsPastEvent(content){
+  for(const clause of normalize(content).split(/[.!?;\n]+|\b(?:nhung|tuy nhien)\b/)){
+    for(const match of clause.matchAll(/\b(?:da xay ra|da chac chan|chac chan da)\b/g)){
+      const prefix=clause.slice(0,match.index);
+      const denial=/\b(?:khong|chua)\s+(?:(?:the|nen|duoc)\s+)?(?:khang dinh|ket luan|xac nhan|chung minh|biet|ro)\b[^,]{0,100}$|\bkhong phai\b[^,]{0,40}\bbang chung\b[^,]{0,60}$/.test(prefix);
+      if(!denial)return true;
+    }
+  }
+  return false;
+}
+
+function technicalContext(context){
+  if(!context.boardFacts)return null;
+  const board=context.boardFacts,byPalace=context.analysisLayers?.byPalace||{};
+  const palaces=board.palaces.map(p=>({number:p.number,voided:p.void,horse:p.horse,
+    conditions:{doorPressure:byPalace[p.number]?.structure?.doorRelation==='Môn khắc Cung'},stemPairs:[]}));
+  const support=new Map((context.claimSupport||[]).map(c=>[c.claimId,c.palaces]));
+  return {question:'',allInOne:{board,analysis:{palaces,roles:(context.analysisLayers?.roles||[]).map(r=>({...r,id:r.id==='menh_self'?'self':r.id==='menh_children'?'event':r.id}))},
+    reasoning:{claims:context.claims.map(c=>({id:c.claimId,ruleIds:c.ruleIds||[],evidenceIds:[...(c.evidenceIds||[]),
+      ...(support.get(c.claimId)||[]).map(p=>Number(String(p).match(/\d+$/)?.[0])).filter(n=>n>=1&&n<=9).map(n=>`p${n}`)]}))}}};
+}
+
 function auditGlobalStructure(reading,context){
   const global=context.globalStructure;
   if(!global?.active)return;
@@ -17,7 +40,7 @@ function auditGlobalStructure(reading,context){
     reject('KM-MENH writer thiếu deterministic GLOBAL_STRUCTURE claim.');
   if(!reading.overview.claim_ids.includes(global.claimId))
     reject('overview phải gắn GLOBAL_STRUCTURE khi có cấu trúc toàn cục ưu tiên cao.');
-  const n=normalize(reading.overview.text);
+  const n=normalize(sectionText(reading.overview));
   for(const mechanism of global.mechanisms||[]){
     if(mechanism==='FU_YIN'&&!/\b(phuc ngam|fu_yin)\b/.test(n))
       reject('overview phải nêu Phục Ngâm khi GLOBAL_FU_YIN đang hoạt động.');
@@ -32,7 +55,7 @@ function auditGlobalStructure(reading,context){
     reject('overview phải nói rõ GLOBAL_STRUCTURE không phải veto/phán quyết xấu tuyệt đối.');
   const sections=new Set((global.affectedDomains||[]).map(domain=>GLOBAL_SECTION_BY_DOMAIN[domain]).filter(Boolean));
   for(const key of sections){
-    if(reading[key]?.text?.trim()&&!reading[key].claim_ids.includes(global.claimId))
+    if(sectionMeaning(reading[key]).trim()&&!reading[key].claim_ids.includes(global.claimId))
       reject(key+': phải gắn GLOBAL_STRUCTURE vì domain này chịu cấu trúc toàn cục.');
   }
 }
@@ -50,7 +73,7 @@ function auditLongForm(reading,context){
   let expectedCount=0,actualTotal=0;
   for(const [key,min] of Object.entries(LONGFORM_MIN)){
     if(!expected[key])continue;
-    expectedCount++;const len=reading[key]?.text?.trim().length||0;actualTotal+=len;
+    expectedCount++;const len=sectionMeaning(reading[key]).trim().length||0;actualTotal+=len;
     if(len<min)reject(key+': bài luận production quá ngắn cho chế độ COMPREHENSIVE_ONE_SHOT ('+len+'/'+min+' ký tự sàn).');
   }
   const requiredTotal=Math.round(6800*(expectedCount/Object.keys(LONGFORM_MIN).length));
@@ -80,26 +103,31 @@ export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
     reject('KM-MENH writer đổi spec/profile.');
   const allowed=new Set(context.allowedClaimIds);
   const claimById=new Map(context.claims.map(c=>[c.claimId,c]));
+  const technical=technicalContext(context);
   const allText=[];
   for(const key of SECTION_KEYS){
     const section=reading[key];
-    if(!exact(section,['text','claim_ids'])||!text(section.text)||!Array.isArray(section.claim_ids))
+    const structured=Object.hasOwn(section||{},'meaning')||Object.hasOwn(section||{},'technicalEvidence');
+    const meaning=sectionMeaning(section),content=sectionText(section);
+    const shape=structured?['meaning','technicalEvidence','claim_ids']:['text','claim_ids'];
+    if(!exact(section,shape)||!text(structured?section.meaning:section.text)||structured&&(!Array.isArray(section.technicalEvidence)||section.technicalEvidence.length>16||section.technicalEvidence.some(value=>!text(value)||!value.trim())||content.length>16000||section.technicalEvidence.length&&!meaning.trim())||!Array.isArray(section.claim_ids))
       reject(key+': section không hợp lệ.');
-    const formatting=formatError(section.text);if(formatting)reject(key+': '+formatting);
+    const formatting=formatError(content);if(formatting)reject(key+': '+formatting);
     if(new Set(section.claim_ids).size!==section.claim_ids.length||section.claim_ids.some(id=>!allowed.has(id)))
       reject(key+': dùng claim id ngoài deterministic context.');
-    if(section.text.trim()&&!section.claim_ids.length&&key!=='birthTimeNote')
+    if(content.trim()&&!section.claim_ids.length&&key!=='birthTimeNote')
       reject(key+': đoạn có nội dung nhưng không có claim căn cứ.');
-    if(!section.text.trim()&&section.claim_ids.length)reject(key+': claim_ids không được treo trên đoạn rỗng.');
+    if(!content.trim()&&section.claim_ids.length)reject(key+': claim_ids không được treo trên đoạn rỗng.');
+    if(technical){const errors=auditTechnicalText(content,section.claim_ids,technical);if(errors.length)reject(key+': '+errors.join(' '));}
     for(const id of section.claim_ids){
       const claim=claimById.get(id);
-      if(claim.type==='NATAL_TENDENCY'&&/\b(da xay ra|da chac chan|chac chan da)\b/.test(normalize(section.text)))
+      if(claim.type==='NATAL_TENDENCY'&&assertsPastEvent(content))
         reject(key+': đã tự nâng NATAL_TENDENCY thành sự kiện.');
     }
-    allText.push(section.text);
+    allText.push(content);
   }
   if(context.birthTimeMode==='UNKNOWN'){
-    const n=normalize(reading.birthTimeNote.text);
+    const n=normalize(sectionMeaning(reading.birthTimeNote));
     if(!/phu thuoc gio sinh|khong nho gio sinh|on dinh/.test(n))
       reject('UNKNOWN birth time phải có ghi chú độ ổn định/phụ thuộc giờ sinh.');
     if(/gio sinh (dung|chinh xac|la)\s*\d/.test(n))

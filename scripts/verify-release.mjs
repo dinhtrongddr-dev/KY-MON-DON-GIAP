@@ -39,7 +39,7 @@ export function verifyRelease(directory = root) {
   if (pkg.type !== 'commonjs' || Object.keys(pkg.dependencies || {}).length) throw new Error('Keep the vendored lunar CommonJS boundary and dependency-free app runtime');
   const versionChecks = [
     ['dist/qimen.mjs', 'TG-ROTATING-2.0'], ['dist/reading-core.mjs', 'TG-CB-6.3'],
-    ['dist/reading-core.mjs', 'READING_PROTOCOL=6'], ['dist/qimen/analysis/nianmingEngine.mjs', 'KM-NIANMING-1.0'],
+    ['dist/reading-core.mjs', 'READING_PROTOCOL=7'], ['dist/qimen/analysis/nianmingEngine.mjs', 'KM-NIANMING-1.0'],
     ['dist/qimen/validation/protocol.mjs', 'KM-VALIDATION-1.0'], ['dist/qimen/validation/protocol.mjs', 'KM-OUTCOME-REGISTRY-1.0'],
     ['dist/qimen/ai/timingEngine.mjs', 'KM-TIMING-3.0'], ['local/ai-client.mjs', 'gemini-3.6-flash'],
   ];

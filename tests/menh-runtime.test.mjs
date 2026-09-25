@@ -46,7 +46,7 @@ test('KM-MENH request fingerprints change when birth data changes',async()=>{
   assert.notEqual(a.deterministicFingerprint,b.deterministicFingerprint);
   assert.notEqual(a.requestFingerprint,b.requestFingerprint);
   assert.equal(a.request.rules,'KM-MENH-1.1');
-  assert.equal(a.request.protocol,2);
+  assert.equal(a.request.protocol,3);
   assert.equal(a.request.caseRules,CASE_ENGINE_VERSION);
   assert.equal(a.result.specVersion,'KM-MENH-1.0');
   assert.equal(a.result.runtimeVersion,'KM-MENH-1.1');

@@ -542,13 +542,13 @@ function captureReportVisual(prepared){
   try{
     const reportAttention=buildAttentionProfile(prepared.analysis);
     renderPillars(prepared.chart);renderSummary(prepared.chart);renderBoard(prepared.chart,reportAttention,prepared.analysis);renderFlags(prepared.chart,reportAttention);
-    const topicRole=prepared.analysis.roles.find(item=>item.id==='topic_0');
-    const subject=topicRole?.palace!=null?topicRole:prepared.analysis.roles.find(item=>item.id==='event');
+    const primaryId=prepared.context.allInOne.reasoning.usefulGodProfile.roles.find(role=>role.tier==='primary')?.id;
+    const subject=prepared.analysis.roles.find(item=>item.id===primaryId);
     const roles=[prepared.analysis.roles.find(item=>item.id==='self'),subject].map((role,index)=>{
       if(!role)throw new Error('Thiếu đại diện trong dữ liệu AI.');
       const id=role.id;
       const card=document.createElement('article');card.className='inspector export-role';card.dataset.role=id;
-      const heading=document.createElement('h2');heading.textContent=index===0?'NGƯỜI HỎI · NHẬT CAN':id==='topic_0'?'SỰ VIỆC · DỤNG THẦN':'SỰ VIỆC · THỜI CAN';card.append(heading);
+      const heading=document.createElement('h2');heading.textContent=index===0?'NGƯỜI HỎI · NHẬT CAN':'SỰ VIỆC · DỤNG THẦN';card.append(heading);
       const basis=document.createElement('p');basis.textContent=`${role.label} · ${role.basis} · ${role.status}`;card.append(basis);
       if(role.palace==null){const note=document.createElement('p');note.textContent='Chưa xác định cung đại diện.';card.append(note);}
       else{selectedPalace=role.palace;renderDetail(prepared.chart,prepared,reportAttention);card.append(detail.cloneNode(true));}

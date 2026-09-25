@@ -954,6 +954,7 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-technical-toggle:hover,.ai-technical-toggle:focus-visible{background:#e8f3ec;outline:2px solid rgba(21,83,60,.26);outline-offset:2px}
 .ai-technical-prefix{display:none}
 .ai-show-technical .ai-technical-prefix{display:inline}
+.ai-show-technical .ai-technical-block{display:block;margin-top:.8rem;padding:.75rem 1rem;border-left:2px solid var(--line);font-size:.9em}
 @media(max-width:480px){.ai-technical-toggle{min-height:36px;padding:6px 10px;font-size:.74rem}}
 @media print{.ai-technical-controls{display:none!important}}
 
@@ -1060,7 +1061,7 @@ textarea:focus { outline:3px solid #bce8ce; }
 .rect-events{grid-column:1/-1;display:grid;gap:10px}.rect-events-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.rect-event-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end;padding:12px;border:1px solid var(--line);background:var(--paper)}.rect-remove{min-width:42px;height:42px;border:1px solid var(--line);background:transparent;font-size:26px;cursor:pointer}.rect-event-row .field{margin:0}@media(max-width:720px){.rect-event-row{grid-template-columns:1fr}.rect-remove{justify-self:end}}
 .menh-use-candidate{margin:0 16px 16px;width:calc(100% - 32px)}
 .menh-candidate-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}.menh-candidate-card>.menh-use-candidate{margin-top:10px;white-space:nowrap}@media(max-width:720px){.menh-candidate-card{grid-template-columns:1fr}.menh-candidate-card>.menh-use-candidate{width:100%;margin-top:-2px}}
-.report-pdf-button{margin-top:14px;min-height:46px}.report-pdf-button[hidden]{display:none}@media(max-width:720px){.report-pdf-button{width:100%}}
+.report-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.report-pdf-button{margin-top:0;min-height:46px}.report-pdf-button[hidden]{display:none}@media(max-width:720px){.report-actions{display:grid}.report-pdf-button{width:100%}}
 
 /* Desktop form and primary product navigation polish */
 @media (min-width:901px){

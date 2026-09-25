@@ -3,7 +3,7 @@ import {normalizeQuestion} from './classifier.mjs';
 import {buildWriterContext} from './writerContext.mjs';
 import {auditTechnicalText} from './technicalAudit.mjs';
 import {verifiedFallback} from './verifiedFallback.mjs';
-import {formatError,plainReadingText} from '../../reading-format.mjs';
+import {formatError,plainReadingText,sectionMeaning,sectionText} from '../../reading-format.mjs';
 import {createQimenBoard} from '../core/board.mjs';
 import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {analyzeBoard} from '../analysis/index.mjs';
@@ -104,17 +104,20 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   const compact=buildWriterContext(context).layout==='concise'&&Array.isArray(r.development)&&r.development.length===0;
   const comparisonMode=['timing','direction'].includes(c.classification.mode);
   const section=(slot,s,extra=[],min=clarification?0:35)=>{
-    if(!exact(s,['text','claim_ids',...extra])||!text(s.text,min)||!Array.isArray(s.claim_ids)||!unique(s.claim_ids)||s.claim_ids.length>6||s.claim_ids.some(id=>!allowed.has(id))||(!clarification&&s.text&&!s.claim_ids.length)||!s.text&&s.claim_ids.length)reject(`${slot}: đoạn luận thiếu căn cứ hoặc dùng kết luận ngoài planner.`);
+    const structured=Object.hasOwn(s||{},'meaning')||Object.hasOwn(s||{},'technicalEvidence');
+    const content=sectionText(s),meaning=sectionMeaning(s);
+    const shape=structured?['meaning','technicalEvidence','claim_ids',...extra]:['text','claim_ids',...extra];
+    if(!exact(s,shape)||!text(structured?s.meaning:s.text,min)||structured&&(!Array.isArray(s.technicalEvidence)||s.technicalEvidence.length>12||s.technicalEvidence.some(value=>!text(value,1,2000))||content.length>10000||s.technicalEvidence.length&&!meaning.trim())||!Array.isArray(s.claim_ids)||!unique(s.claim_ids)||s.claim_ids.length>6||s.claim_ids.some(id=>!allowed.has(id))||(!clarification&&content&&!s.claim_ids.length)||!content&&s.claim_ids.length)reject(`${slot}: đoạn luận thiếu căn cứ hoặc dùng kết luận ngoài planner.`);
     for(const id of s.claim_ids)if(g.claims.find(cl=>cl.id===id).evidenceIds.some(e=>!Object.hasOwn(facts,e)))reject(`${slot}: kết luận có căn cứ không tồn tại trong bàn.`);
-    const errors=auditTechnicalText(s.text,s.claim_ids,context);if(errors.length)reject(`${slot}: ${errors.join(' ')}`);
-    const formatting=formatError(s.text,{allowComparisonEmphasis:comparisonMode});if(formatting)reject(`${slot}: ${formatting}`);
+    const errors=auditTechnicalText(content,s.claim_ids,context);if(errors.length)reject(`${slot}: ${errors.join(' ')}`);
+    const formatting=formatError(content,{allowComparisonEmphasis:comparisonMode});if(formatting)reject(`${slot}: ${formatting}`);
   };
   section('summary',r.summary,[],clarification?10:60);section('situation',r.situation,[],compact?0:undefined);section('bottleneck',r.bottleneck,['resolution']);section('alternative',r.alternative,['id'],compact?0:undefined);section('timing',r.timing,[],compact?0:undefined);
   if(!Array.isArray(r.questions)||r.questions.length>3||r.questions.some(q=>!text(q,4,500)))reject('Câu hỏi làm rõ không hợp lệ.');
   for(const k of ['development','actions','comparisons'])if(!Array.isArray(r[k]))reject('Thiếu phần diễn biến hoặc hành động.');
   if(clarification){
-    if(!r.questions.length||r.development.length||r.actions.length||r.comparisons.length||[r.situation,r.bottleneck,r.alternative,r.timing].some(s=>s.text||s.claim_ids.length)||r.bottleneck.resolution||r.alternative.id)reject('Chưa rõ chủ thể thì chưa dựng diễn biến hoặc kết quả.');
-    auditClaims([r.summary.text,...r.questions],context);
+    if(!r.questions.length||r.development.length||r.actions.length||r.comparisons.length||[r.situation,r.bottleneck,r.alternative,r.timing].some(s=>sectionText(s)||s.claim_ids.length)||r.bottleneck.resolution||r.alternative.id)reject('Chưa rõ chủ thể thì chưa dựng diễn biến hoặc kết quả.');
+    auditClaims([sectionText(r.summary),...r.questions],context);
     for(const q of r.questions){const errors=auditTechnicalText(q,[],context);if(errors.length)reject(errors.join(' '));if(formatError(q))reject(formatError(q));}
     return r;
   }
@@ -130,8 +133,8 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   if(!text(r.bottleneck.resolution,30,1800))reject('Nút thắt chưa có điều kiện tháo gỡ để kiểm chứng.');
   const principal=g.likelyScenario.mainConflict;
   if(principal&&!r.bottleneck.claim_ids.includes(principal.claimId))reject('Nút thắt bỏ qua điều kiện đang chi phối.');
-  if(principal&&!/\b(chua|neu|dieu kien|xac nhan|kiem tra|phu thuoc)\b/.test(normalizeQuestion(r.bottleneck.text+' '+r.summary.text)))reject('Tượng trái chiều chưa được diễn giải có điều kiện.');
-  if(!(compact&&!r.alternative.text&&!r.alternative.id)&&(r.alternative.id!==g.likelyScenario.alternative.id||!r.alternative.claim_ids.some(id=>g.likelyScenario.alternative.claimIds.includes(id))))reject('Nhánh khác không khớp điều kiện đã lập.');
+  if(principal&&!/\b(chua|neu|dieu kien|xac nhan|kiem tra|phu thuoc)\b/.test(normalizeQuestion(sectionMeaning(r.bottleneck)+' '+sectionMeaning(r.summary))))reject('Tượng trái chiều chưa được diễn giải có điều kiện.');
+  if(!(compact&&!sectionText(r.alternative)&&!r.alternative.id)&&(r.alternative.id!==g.likelyScenario.alternative.id||!r.alternative.claim_ids.some(id=>g.likelyScenario.alternative.claimIds.includes(id))))reject('Nhánh khác không khớp điều kiện đã lập.');
   if(r.actions.length<(compact?1:2)||r.actions.length>4||!unique(r.actions.map(a=>a.recommendation_id)))reject('Cần các hành động khác nhau phù hợp độ phức tạp.');
   for(const a of r.actions)if(!exact(a,['recommendation_id','text'])||!text(a.text,40,1800)||!g.recommendations.some(x=>x.id===a.recommendation_id))reject('Hành động chưa gắn căn cứ hoặc quá chung chung.');
   const rows=c.comparison?.ranking||c.plan.computed.ranking||[],rowIds=rows.map(x=>x.id);
@@ -140,14 +143,15 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   for(const comparison of r.comparisons)auditComparison(comparison.reason,rows.find(row=>row.id===comparison.id),context);
   const sections=[r.summary,r.situation,...r.development,r.bottleneck,r.alternative,r.timing];
   const used=new Set(sections.flatMap(s=>s.claim_ids)),coreClaimCount=g.claims.filter(c=>c.status!=='corroboration_only').length;if(used.size<Math.min(compact?1:3,coreClaimCount))reject('Bài luận chưa phối hợp đủ các cụm tượng trọng tâm.');
-  const passages=[...sections.map(s=>s.text),...r.actions.map(a=>a.text)].filter(Boolean);
+  const passages=[...sections.map(sectionMeaning),...r.actions.map(a=>a.text)].filter(Boolean);
   for(let i=0;i<passages.length;i++)for(let j=i+1;j<passages.length;j++)if(passages[i].trim()===passages[j].trim()||repeated(passages[i],passages[j]))reject('Các phần đang lặp ý hoặc lặp đoạn; cần viết lại cho mỗi chặng.');
   // Audit every user-visible string, even when it sits outside the prose budget.
-  const prose=[...passages,r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' ');
-  const semanticPassages=[...['summary','situation','bottleneck','alternative','timing'].map(slot=>({slot,text:r[slot].text,claimIds:r[slot].claim_ids})),
-    ...r.development.flatMap(s=>[{slot:s.stage,text:s.text,claimIds:s.claim_ids},{slot:'condition',text:s.condition,claimIds:s.claim_ids}]),
+  const prose=[...sections.map(sectionText),...r.actions.map(a=>a.text),r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' ');
+  const semanticPassages=[...['summary','situation','bottleneck','alternative','timing'].map(slot=>({slot,text:sectionMeaning(r[slot]),claimIds:r[slot].claim_ids})),
+    ...r.development.flatMap(s=>[{slot:s.stage,text:sectionMeaning(s),claimIds:s.claim_ids},{slot:'condition',text:s.condition,claimIds:s.claim_ids}]),
     {slot:'resolution',text:r.bottleneck.resolution,claimIds:r.bottleneck.claim_ids},
     ...r.actions.map(a=>({slot:'action',text:a.text,claimIds:[g.recommendations.find(x=>x.id===a.recommendation_id).claimId]})),
+    ...sections.filter(s=>s.technicalEvidence?.length).map(s=>({slot:'technical',text:s.technicalEvidence.join('\n\n'),claimIds:s.claim_ids})),
     ...r.comparisons.map(a=>({slot:'comparison',text:a.reason,claimIds:[]})),...r.questions.map(text=>({slot:'question',text,claimIds:[]}))];
   const synthesisErrors=auditSynthesis(semanticPassages,context);if(synthesisErrors.length)reject(synthesisErrors.join(' '));
   const activationErrors=auditSpiritActivationText(prose,context);if(activationErrors.length)reject(activationErrors.join(' '));
@@ -156,7 +160,7 @@ export function validateReading(r,facts,selectedTopic='general',context) {
     const errors=auditTechnicalText(value,ids,context);if(errors.length)reject(errors.join(' '));
     if(formatError(value,{allowComparisonEmphasis:comparisonMode}))reject(formatError(value,{allowComparisonEmphasis:comparisonMode}));
   }
-  const budget=buildWriterContext(context).length,count=words(plainReadingText(prose)).length;
+  const budget=buildWriterContext(context).length,count=words(plainReadingText([...passages,r.bottleneck.resolution,...r.development.map(s=>s.condition)].join(' '))).length;
   if(count<budget.minWords)reject('Bài luận còn quá sơ lược; cần làm rõ cơ chế và diễn biến thay vì thêm lời chung chung.');
   if(count>budget.maxWords)reject('Bài luận vượt độ dài đã chọn; rút gọn phần lặp và giữ trọng tâm.');
   return r;

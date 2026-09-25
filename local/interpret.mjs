@@ -1,3 +1,6 @@
+import {buildNarrativeContract} from '../dist/qimen/ai/narrativeContract.mjs';
+import {timingMentions} from '../dist/qimen/ai/timingText.mjs';
+import {mapSectionContent} from '../dist/reading-format.mjs';
 import {instructionsFor, readingSchema, validateReading, ReadingValidationError} from './reading.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {DELIBERATION_INSTRUCTIONS,deliberationSchema,shouldDeliberate} from '../dist/qimen/ai/deliberation.mjs';
@@ -15,14 +18,18 @@ const TIMING_ONLY_ERROR=/(?:Mốc ứng kỳ ngoài Timing Engine|Ngày cụ th�
 function repairUnsupportedTiming(reading,message){
   if(!TIMING_ONLY_ERROR.test(message)||!reading||typeof reading!=='object')return null;
   const route=aiRouteOf(reading),copy=structuredClone(reading);
-  const duration=/\b(?:\d+|một|mot|hai|ba|bốn|bon|năm|nam|sáu|sau|bảy|bay)(?:\s*[-–]\s*(?:\d+|một|mot|hai|ba))?\s*(?:ngày|ngay|tuần|tuan|tháng|thang)(?:\s+nữa|\s+nua)?\b/giu;
-  const weekday=/\bthứ\s+(?:hai|ba|tư|tu|năm|nam|sáu|sau|bảy|bay)\b/giu;
-  const relative=/\b(?:chủ nhật|chu nhat|cuối tuần|cuoi tuan|đầu tuần|dau tuan|ngày mai|ngay mai|chiều mai|chieu mai|sáng mai|sang mai)\b/giu;
   const date=/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g;
-  const clean=value=>typeof value==='string'?value.replace(duration,'mốc thời gian chưa xác định').replace(weekday,'mốc ngày chưa xác định').replace(relative,'mốc thời gian chưa xác định').replace(date,'mốc ngày chưa xác định'):value;
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  const named=[...message.matchAll(/Mốc ứng kỳ ngoài Timing Engine: ([^;]+);/g)].map(m=>m[1]);
+  const clean=value=>{
+    if(typeof value!=='string')return value;
+    if(!named.length)return value.replace(date,'mốc ngày chưa xác định');
+    for(const mention of timingMentions(value).reverse())if(named.includes(mention.normalized))
+      value=value.slice(0,mention.index)+'mốc thời gian chưa xác định'+value.slice(mention.index+mention.text.length);
+    return value;
+  };
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],clean);
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
-  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const step of copy.development||[]){mapSectionContent(step,clean);step.condition=clean(step.condition);}
   for(const action of copy.actions||[])action.text=clean(action.text);
   for(const row of copy.comparisons||[])row.reason=clean(row.reason);
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
@@ -38,9 +45,9 @@ function repairUnsupportedEvents(reading,message){
     if(typeof value!=='string')return value;
     return value.split(/(?<=[.!?])\s+/).map(sentence=>EVENT_ASSERTION_PATTERN.test(normalizeQuestion(sentence))?safe[slot]:sentence).join(' ');
   };
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text,key);
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],value=>clean(value,key));
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution,'resolution');
-  for(const step of copy.development||[]){step.text=clean(step.text,'development');step.condition=clean(step.condition,'development');}
+  for(const step of copy.development||[]){mapSectionContent(step,value=>clean(value,'development'));step.condition=clean(step.condition,'development');}
   for(const action of copy.actions||[])action.text=clean(action.text,'action');
   for(const row of copy.comparisons||[])row.reason=clean(row.reason,'comparison');
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(value=>clean(value,'question'));
@@ -62,9 +69,9 @@ function repairRepeatedVerification(reading,message){
       return sentence.replace(VERIFY_IMPERATIVE,'đối chiếu');
     }).join(' ');
   };
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],clean);
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
-  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const step of copy.development||[]){mapSectionContent(step,clean);step.condition=clean(step.condition);}
   for(const action of copy.actions||[])action.text=clean(action.text);
   for(const row of copy.comparisons||[])row.reason=clean(row.reason);
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
@@ -115,9 +122,9 @@ function repairCertainty(reading,message){
   const clean=value=>typeof value==='string'
     ?value.split(/(?<=[.!?])\s+/).map(softenCertaintySentence).join(' ')
     :value;
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],clean);
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
-  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const step of copy.development||[]){mapSectionContent(step,clean);step.condition=clean(step.condition);}
   for(const action of copy.actions||[])action.text=clean(action.text);
   for(const row of copy.comparisons||[])row.reason=clean(row.reason);
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
@@ -144,9 +151,9 @@ function repairStageOverclaim(reading,message){
     if(typeof value!=='string')return value;
     return value.split(/(?<=[.!?])\s+/).map(sentence=>STAGE_OVERCLAIM_PATTERN.test(normalizeQuestion(sentence))?safe[slot]:sentence).join(' ');
   };
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text,key);
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],value=>clean(value,key));
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution,'resolution');
-  for(const step of copy.development||[]){step.text=clean(step.text,'development');step.condition=clean(step.condition,'development');}
+  for(const step of copy.development||[]){mapSectionContent(step,value=>clean(value,'development'));step.condition=clean(step.condition,'development');}
   for(const action of copy.actions||[])action.text=clean(action.text,'action');
   for(const row of copy.comparisons||[])row.reason=clean(row.reason,'comparison');
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(value=>clean(value,'question'));
@@ -156,9 +163,9 @@ const EMPHASIS_ERROR=/(?:Dấu tô đậm chưa cân bằng|Chỉ nhấn |Chỉ 
 function repairEmphasis(reading,message){
   if(!EMPHASIS_ERROR.test(message)||!reading||typeof reading!=='object')return null;
   const route=aiRouteOf(reading),copy=structuredClone(reading),clean=value=>typeof value==='string'?value.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*\*/g,''):value;
-  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])copy[key].text=clean(copy[key].text);
+  for(const key of ['summary','situation','bottleneck','alternative','timing'])if(copy[key])mapSectionContent(copy[key],clean);
   if(copy.bottleneck)copy.bottleneck.resolution=clean(copy.bottleneck.resolution);
-  for(const step of copy.development||[]){step.text=clean(step.text);step.condition=clean(step.condition);}
+  for(const step of copy.development||[]){mapSectionContent(step,clean);step.condition=clean(step.condition);}
   for(const action of copy.actions||[])action.text=clean(action.text);
   for(const row of copy.comparisons||[])row.reason=clean(row.reason);
   if(Array.isArray(copy.questions))copy.questions=copy.questions.map(clean);
@@ -189,7 +196,7 @@ export async function interpretReading(prepared,{runner=runAI,planRunner,budgetM
     deliberation=await planner(DELIBERATION_INSTRUCTIONS,baseWriterContext,deliberationSchema(prepared.context),{signal:combined});
     combined.throwIfAborted();
   }
-  const writerContext=deliberation?{...baseWriterContext,deliberation}:baseWriterContext;
+  const writerContext=deliberation?{...baseWriterContext,deliberation,narrativeContract:buildNarrativeContract(prepared.context,deliberation)}:baseWriterContext;
   let revision,routeStartIndex=0;
   for(let attempt=0;attempt<2;attempt++) {
     combined.throwIfAborted();

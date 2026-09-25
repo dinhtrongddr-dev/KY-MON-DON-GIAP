@@ -1,7 +1,7 @@
 import {buildMenhReadingRequest,assertMenhCompatible,validateMenhReadingResponse} from './menh-reading-core.mjs';
 import {renderMenhAi} from './menh-view.mjs';
 import {AI_RELAY_ORIGIN} from './site-config.mjs';
-import {initPdfExport} from './report-export.mjs';
+import {initPdfExport,initPdfDownload} from './report-export.mjs';
 import {createReadingJobClient} from './reading-job-client.mjs';
 import {estimateReadingMs,readingProgressText} from './ai-progress-estimate.mjs';
 
@@ -15,6 +15,7 @@ export function initMenhAi({prepare,activity=null}){
   let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
   const track=(method,...args)=>{try{return activity?.[method]?.(...args)??null;}catch{return null;}};
   const pdf=initPdfExport({kind:'menh',buttonId:'menh-report-pdf',statusId:'menh-ai-status',tokenId:'local-token',prepare,boardSelector:'#menh-deterministic .menh-qimen-board'});
+  const pdfDownload=initPdfDownload({kind:'menh',buttonId:'menh-report-download-pdf',statusId:'menh-ai-status'});
   const setConnectionState=(state)=>{
     if(!tokenShell||!connectionIcon)return;
     const map={
@@ -88,7 +89,7 @@ export function initMenhAi({prepare,activity=null}){
     read.disabled=true;check.disabled=true;cancel.hidden=false;read.textContent='Đang luận Mệnh…';status.textContent=message;
     return controller;
   };
-  const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();};
+  const cancelWork=()=>{version++;const jobId=activeJobId;activeJobId=null;active?.abort();active=null;if(jobId)void jobClient.cancel(jobId);if(activityReadingId){track('finishReading',activityReadingId,{status:'cancelled'});activityReadingId=null;}finish();pdf.clear();pdfDownload.clear();};
   const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
@@ -137,7 +138,7 @@ export function initMenhAi({prepare,activity=null}){
       validateMenhReadingResponse(data,prepared);
       renderMenhAi(answer,data.reading);if(data.modelUsed){const model=document.createElement('p');model.className='ai-model-used';model.textContent=`Model: ${data.modelUsed.label} / ${data.modelUsed.effort}`;answer.prepend(model);}answer.hidden=false;setFloatingAiReady(answer.childElementCount>0,{notify:true});
       if(activityReadingId){track('finishReading',activityReadingId,{status:'completed',modelUsed:data.modelUsed});activityReadingId=null;}
-      pdf.setModel(data.modelUsed);
+      pdf.setModel(data.modelUsed,prepared);pdfDownload.setModel(data.modelUsed,prepared);
       const modelText=data.modelUsed?' · '+data.modelUsed.label+' / '+data.modelUsed.effort:'';
       status.textContent='Đã nhận bài luận AI'+modelText+'.';
     }catch(e){

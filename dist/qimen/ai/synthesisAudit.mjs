@@ -1,5 +1,6 @@
 import {normalizeQuestion} from './classifier.mjs';
 import {plainReadingText} from '../../reading-format.mjs';
+import {timingMentions} from './timingText.mjs';
 const normalized=text=>normalizeQuestion(plainReadingText(text));
 const TAGS={
   opportunity:/\b(co hoi|duong mo)\b/,money:/\b(khoan thu|dong tien|nguon thu)\b/,payment:/\b(thanh toan|thuc nhan|tai khoan)\b/,
@@ -52,14 +53,14 @@ export function auditSynthesis(passages,context) {
       if(/[/:]/.test(q[match.index-1]||''))continue;
       if(!source.includes(match[0]))issues.push(`Bài luận tự thêm số tiền ngoài dữ liệu: ${match[0]}.`);
     }
-    const timings=/\b(?:\d+|mot|hai|ba|bon|nam|sau|bay)(?:\s*[-–]\s*(?:\d+|mot|hai|ba))?\s*(?:ngay|tuan|thang)(?:\s+nua)?\b|\bthu (?:hai|ba|tu|nam|sau|bay)\b|\b(?:chu nhat|cuoi tuan|dau tuan|ngay mai|chieu mai|sang mai)\b/g;
-    for(const match of q.matchAll(timings)){
-      const before=q.slice(0,match.index),after=q.slice(match.index+match[0].length);
-      const orderPhrase=match[0]==='thu tu'&&/^thứ\s+tự(?=\s|[.,;:!?]|$)/iu.test(p.text.slice(match.index));
+    const raw=plainReadingText(p.text);
+    for(const mention of timingMentions(raw)){
+      const match=[mention.normalized];
+      const before=normalized(raw.slice(0,mention.index))+' ',after=' '+normalized(raw.slice(mention.index+mention.text.length));
       const weekday=/^thu\s+(?:hai|ba|tu|nam|sau|bay)\b/.test(match[0]);
       const ordinalWeekday=weekday&&/\b(?:moc|lua chon|ung vien|phuong an|thoi diem|buoc|hang|muc|nhom|truong hop|lan|xep|dung|giu|thuoc|phan|y|dieu|yeu to|can cu|chuong|dong|cot|vi tri)\s*$/.test(before);
       const temporalWeekday=weekday&&(/\b(?:vao|den|tu|truoc|sau|ke tu|ngay|sang|chieu|toi)\s*$/.test(before)||/^\s*(?:tuan|ngay|sang|chieu|toi|se\b|co\s+ket\s+qua\b)/.test(after)||/\b(?:se|xay ra|ung vao|tien ve|nhan tien|hen|gap|goi|gui|ky|thanh toan)\b/.test(before.split(/[.!?;]/).at(-1)));
-      if(orderPhrase||ordinalWeekday||weekday&&!temporalWeekday)continue;
+      if(ordinalWeekday||weekday&&!temporalWeekday)continue;
       const prefix=before.split(/[.!?;]/).at(-1);
       const denied=/\b(?:chua|khong (?:the|co|nen|duoc|phai))\b/.test(prefix)&&!/\b(neu|nhung|tuy nhien)\b/.test(prefix);
       const forecasts=/\b(se|xay ra|ung vao|tien ve|nhan tien|tien vao)\b/.test(prefix);

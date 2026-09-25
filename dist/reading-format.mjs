@@ -1,4 +1,35 @@
 export const plainReadingText=text=>text.replace(/\*\*([^*]+)\*\*/g,'$1');
+export function sectionMeaning(section){
+  return typeof section?.meaning==='string'?section.meaning:(typeof section?.text==='string'?section.text:'');
+}
+export function sectionTechnicalEvidence(section){
+  if(!Array.isArray(section?.technicalEvidence))return [];
+  return section.technicalEvidence.filter(value=>typeof value==='string'&&value.trim()).map(value=>value.trim());
+}
+export function sectionTechnicalText(section){
+  return sectionTechnicalEvidence(section).join('\n\n');
+}
+export function sectionText(section){
+  return [sectionTechnicalText(section),sectionMeaning(section)].filter(Boolean).join('\n\n');
+}
+export function mapSectionContent(section,transform){
+  if(!section||typeof section!=='object')return section;
+  if(Object.hasOwn(section,'meaning')||Object.hasOwn(section,'technicalEvidence')){
+    if(typeof section.meaning==='string')section.meaning=transform(section.meaning);
+    if(Array.isArray(section.technicalEvidence))section.technicalEvidence=section.technicalEvidence.map(value=>typeof value==='string'?transform(value):value);
+  }else if(Object.hasOwn(section,'text'))section.text=transform(section.text);
+  return section;
+}
+export function renderReadingSection(section,parent,doc=parent?.ownerDocument||document){
+  if(!parent||!section)return;
+  const technical=sectionTechnicalText(section),meaning=sectionMeaning(section);
+  const structured=Object.hasOwn(section,'meaning');
+  if(meaning)renderProse(meaning,parent,doc,{legacyTechnicalPrefix:!structured});
+  if(technical){
+    const block=doc.createElement('div');block.className='ai-technical-block ai-technical-prefix';
+    renderProse(plainReadingText(technical),block,doc,{automatic:false,legacyTechnicalPrefix:false});parent.append(block);
+  }
+}
 const TECHNICAL_BOLD=/\b(?:cung\s*\d+|(?:khảm|khôn|chấn|tốn|trung|càn|đoài|cấn|ly)\s*[1-9]?|niên can|nhật can|thời can|thiên can|địa can|thiên bàn|địa bàn|bát môn|cửu tinh|bát thần|trực phù|trực sử|phục ngâm|phản ngâm|không vong|tuần không|mã tinh|nhập mộ|kích hình|tứ hại|môn\s*(?:bức|chế|hòa|nghĩa)|hưu môn|sinh môn|thương môn|đỗ môn|cảnh môn|tử môn|kinh môn|khai môn|thiên bồng|thiên nhậm|thiên xung|thiên phụ|thiên anh|thiên nhuế|thiên trụ|thiên tâm|thiên cầm|đằng xà|thái âm|lục hợp|bạch hổ|huyền vũ|cửu địa|cửu thiên|can\s+(?:giáp|ất|bính|đinh|mậu|kỷ|canh|tân|nhâm|quý))\b/iu;
 export function formatError(text,{allowComparisonEmphasis=false}={}) {
   if((text.match(/\*\*/g)||[]).length%2||/\*{3,}/.test(text))return 'Dấu tô đậm chưa cân bằng.';
@@ -16,7 +47,7 @@ export function formatError(text,{allowComparisonEmphasis=false}={}) {
   }
   return null;
 }
-export function formatParts(text,{automatic=true}={}) {
+export function formatParts(text,{automatic=true,legacyTechnicalPrefix=true}={}) {
   const parts=[],matches=[...text.matchAll(/\*\*([^*]+)\*\*/g)];
   let end=0;
   if(matches.length){
@@ -29,16 +60,16 @@ export function formatParts(text,{automatic=true}={}) {
   }
   if(end<text.length)parts.push({text:text.slice(end),strong:false});
   const firstStrong=parts.findIndex(part=>part.strong);
-  if(firstStrong>0){
+  if(legacyTechnicalPrefix&&firstStrong>0){
     const prefix=parts.slice(0,firstStrong).map(part=>part.text).join('');
     if(TECHNICAL_BOLD.test(prefix))for(let i=0;i<firstStrong;i++)if(!parts[i].strong)parts[i].technical=true;
   }
   return parts;
 }
-export function renderProse(text,parent,doc=parent.ownerDocument||document) {
+export function renderProse(text,parent,doc=parent.ownerDocument||document,options={}) {
   const append=(tag,value,root)=>{const node=doc.createElement(tag);node.textContent=value;root.append(node);return node;};
   const inline=(value,node)=>{
-    const parts=formatParts(value);
+    const parts=formatParts(value,options);
     if(parts.every(p=>!p.strong)){node.textContent=value;return;}
     for(const part of parts){
       const child=append(part.strong?'strong':'span',part.text,node);

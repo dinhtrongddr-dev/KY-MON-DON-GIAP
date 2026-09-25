@@ -2,7 +2,7 @@ import {STAR_QIN,elementSlug} from './qimen/core/palace.mjs';
 import {formatInstantAtOffset,formatOffset} from './qimen/core/calendar.mjs';
 import {CONTROLS,GENERATES,palaceConditions} from './guide.mjs';
 import {semanticBundle} from './qimen/semantic/matrix.mjs';
-import {formatParts,mountAiTechnicalToggle} from './reading-format.mjs';
+import {formatParts,renderReadingSection,sectionMeaning,mountAiTechnicalToggle} from './reading-format.mjs';
 import {renderNatalSpiritActivation} from './spirit-activation-ui.mjs';
 
 const DOMAIN_LABEL=Object.freeze({
@@ -461,9 +461,11 @@ export function renderMenhAi(container,reading){
   mountAiTechnicalToggle(container,container.ownerDocument||document);
   const grid=el('div','menh-ai-grid');
   for(const key of Object.keys(SECTION_LABEL)){
-    const section=reading[key];if(!section?.text?.trim())continue;
+    const section=reading[key];if(!sectionMeaning(section).trim())continue;
     const card=el('section','menh-ai-section'+(key==='birthTimeNote'?' menh-ai-note':''));
-    card.append(el('h3','',SECTION_LABEL[key]));appendAiParagraphs(card,section.text);grid.append(card);
+    card.append(el('h3','',SECTION_LABEL[key]));
+    if(Object.hasOwn(section,'meaning'))renderReadingSection(section,card);else appendAiParagraphs(card,section.text);
+    grid.append(card);
   }
   container.append(grid);
 }
