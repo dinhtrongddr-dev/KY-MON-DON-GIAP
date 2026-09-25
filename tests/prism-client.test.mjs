@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {runPrism,PRISM_MODEL,PRISM_REASONING_EFFORT} from '../local/prism-client.mjs';
+import {runPrism,runPrismText,PRISM_MODEL,PRISM_REASONING_EFFORT} from '../local/prism-client.mjs';
 
 const env={PRISM_PROXY_BASE_URL:'http://127.0.0.1:8787/v1',PRISM_PROXY_API_KEY:'local-test-key'};
 
@@ -23,4 +23,18 @@ test('Prism runner refuses non-loopback endpoint and missing local key',async()=
 
 test('Prism runner reports maintenance without leaking provider body',async()=>{
  await assert.rejects(runPrism('',{}, {},{env,fetchImpl:async()=>new Response('private',{status:503})}),/bảo trì|suy giảm/);
+});
+
+test('Prism text runner sends natural messages without JSON schema coercion',async()=>{
+ let request;
+ const fetchImpl=async(url,options)=>{
+  request={url,options};
+  return new Response(JSON.stringify({choices:[{message:{content:'Diễn giải tự nhiên.'}}]}),{status:200,headers:{'Content-Type':'application/json'}});
+ };
+ const result=await runPrismText('SYSTEM NATURAL',{question:'test'},{fetchImpl,env});
+ assert.equal(result,'Diễn giải tự nhiên.');
+ const body=JSON.parse(request.options.body);
+ assert.deepEqual(body.messages.map(x=>x.role),['system','user']);
+ assert.equal(body.messages[0].content,'SYSTEM NATURAL');
+ assert.doesNotMatch(body.messages[1].content,/JSON SCHEMA|HỢP ĐỒNG ĐẦU RA BẮT BUỘC/);
 });
