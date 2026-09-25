@@ -10,6 +10,7 @@ import {createBridge} from '../local/server.mjs';
 import {runCodex,MODEL,REASONING_EFFORT} from '../local/codex-client.mjs';
 import {MODEL as ROUTED_MODEL,REASONING_EFFORT as ROUTED_EFFORT} from '../local/ai-client.mjs';
 import {readingFixture} from './reading-fixture.mjs';
+import {questionDraft,questionReading,acceptFidelity} from './surface-fixture.mjs';
 const payload={question:'Trong 30 ngày tới tôi có nhận được hợp đồng A không?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:9,hour:15,minute:30,tzOffset:7}};
 const answer=readingFixture(prepareReading(payload));
 test('server recomputes chart, rejects missing question and invented evidence',()=>{
@@ -28,7 +29,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  });
  let called=0,charts=0,readingStatus=null;
  const activityStore={recordChart(){charts++;return 'c1';},startReading(){readingStatus='running';return 'r1';},finishReading(_id,{status}){readingStatus=status;},summary(){return {date:'2026-09-18',chartCount:charts,readingCount:readingStatus?1:0,recentReadings:readingStatus?[{at:Date.now(),status:readingStatus,model:'',route:'',effort:''}]:[]};}};
- const {server}=createBridge({token:'test-pair-token',activityStore,runner:async()=>{called++;return answer;}});
+ const {server}=createBridge({token:'test-pair-token',activityStore,reviewer:acceptFidelity,runner:async()=>{called++;return questionDraft(prepareReading(payload));}});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  t.after(()=>{server.closeAllConnections();server.close();});
  const url=`http://127.0.0.1:${server.address().port}`;
@@ -46,7 +47,7 @@ test('loopback API checks pairing, Host, Origin and request shape',async t=>{
  assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:'{broken'})).status,400);assert.equal(called,0);
  const prepared=await buildReadingRequest(payload);
  const v2=await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify(prepared.request)});assert.equal(v2.status,200);
- const data=await v2.json();assert.equal(data.model,ROUTED_MODEL);assert.equal(data.reasoningEffort,ROUTED_EFFORT);assert.deepEqual(validateReadingResponse(data,prepared).reading.summary,answer.summary);assert.equal(called,1);assert.equal(readingStatus,'completed');
+ const data=await v2.json();assert.equal(data.model,ROUTED_MODEL);assert.equal(data.reasoningEffort,ROUTED_EFFORT);assert.deepEqual(validateReadingResponse(data,prepared).reading,questionReading(prepareReading(payload)));assert.equal(called,1);assert.equal(readingStatus,'completed');
  activity=await(await fetch(url+'/api/activity?tzOffset=7',{headers:publicHeaders})).json();assert.equal(activity.activity.readingCount,1);
  for(const bad of [{rules:'TG-CB-1.0'},{chartFingerprint:'wrong'},{question:'Một sự việc khác.'},{input:{...payload.input,minute:31}},{protocol:1}]){
    assert.equal((await fetch(url+'/api/read',{method:'POST',headers,body:JSON.stringify({...prepared.request,...bad})})).status,409);

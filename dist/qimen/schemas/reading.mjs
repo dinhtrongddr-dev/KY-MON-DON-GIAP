@@ -1,6 +1,10 @@
+import {buildQuestionNarrativeContract} from '../ai/narrativeContract.mjs';
+import {surfaceSchema} from '../ai/surfaceReading.mjs';
 export const RESULT_KEYS=['status','topic_id','mode','questionType','summary','situation','development','bottleneck','actions','alternative','timing','comparisons','questions'];
 export const STAGES=['current','next','outcome'];
-export function readingSchema(_facts,context) {
+export function readingSchema(_facts,context) {return surfaceSchema(buildQuestionNarrativeContract(context));}
+// Explicitly retained only for historical response readers and stored fixtures.
+export function legacyReadingSchema(_facts,context) {
   const g=context?.allInOne?.reasoning;if(!g)throw new Error('Thiếu kế hoạch luận đã kiểm chứng.');
   const str={type:'string'},arr=items=>({type:'array',items});
   const obj=properties=>({type:'object',additionalProperties:false,required:Object.keys(properties),properties});

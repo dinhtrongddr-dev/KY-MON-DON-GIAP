@@ -35,7 +35,7 @@ function auditRepetition(passages,g) {
   }
   return [];
 }
-export function auditSynthesis(passages,context) {
+export function auditSynthesis(passages,context,{structured=false}={}) {
   const c=context.allInOne,g=c.reasoning,qc=g.questionContext,source=normalized(context.question),issues=[];
   const candidates=c.comparison?.candidates||[];
   const candidateDates=new Set(candidates.map(c=>`${c.input.year}-${String(c.input.month).padStart(2,'0')}-${String(c.input.day).padStart(2,'0')}`));
@@ -92,9 +92,9 @@ export function auditSynthesis(passages,context) {
     if(qc.domain==='finance'&&g.primaryJudgment.answerClass==='conditional_positive'){
       for(const match of q.matchAll(/\b(?:khong (?:co |biet (?:co )?)?(?:tien|khoan thu|phat sinh)|chac chan (?:tien|co tien|nhan tien))\b/g))
         if(!conditionalPrefix(q,match.index))issues.push('Kết luận trái primaryJudgment hoặc đồng nhất phát sinh với thực nhận.');
-      if(p.slot==='summary'&&qc.outcomeTarget.stageAsked==='emergence'&&!/\b(co (?:tin hieu|dau hieu|tuong|kha nang)|(?:thien|nghieng) ve co)\b/.test(q))
+      if(!structured&&p.slot==='summary'&&qc.outcomeTarget.stageAsked==='emergence'&&!/\b(co (?:tin hieu|dau hieu|tuong|kha nang)|(?:thien|nghieng) ve co)\b/.test(q))
         issues.push('Kết luận phải trả lời trực tiếp tín hiệu phát sinh theo primaryJudgment trước khi nêu giới hạn thực nhận.');
     }
   }
-  return [...new Set([...issues,...auditRepetition(passages,g)])];
+  return [...new Set([...issues,...(structured?[]:auditRepetition(passages,g))])];
 }

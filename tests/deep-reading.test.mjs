@@ -2,13 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {TOPICS,GENERATES,CONTROLS} from '../dist/guide.mjs';
 import {elementLink} from '../dist/reading-focus.mjs';
-import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION,instructionsFor} from '../local/reading.mjs';
+import {prepareReading,validateReading,buildReadingRequest,READING_PROTOCOL,RULE_VERSION} from '../local/reading.mjs';
+import {SURFACE_WRITER_INSTRUCTIONS} from '../dist/qimen/ai/surfacePrompt.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {attachAiRoute,aiRouteOf} from '../local/ai-client.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 import {parseStructuredText} from '../local/codex-client.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
+import {draftFor,acceptFidelity,questionContract,meaningOf,firstParagraph} from './surface-fixture.mjs';
 const body={question:'Báo giá sửa chữa đã nộp, tuần sau công ty tôi có được phản hồi không, phản hồi đó là gì?',topic:'contract',method:'chaibu',input:{year:2026,month:9,day:11,hour:10,minute:0,tzOffset:7}};
 
 test('all 25 element directions remain neutral between two business roles',()=>{
@@ -53,24 +55,29 @@ test('Hỏi Việc audit rejects bold technical basis and accepts bold natural t
   assert.equal(validateReading(good,p.facts,body.topic,p.context),good);
 });
 
-test('deterministic interaction metadata is bound by the app instead of delegated to the model',async()=>{
-  const p=prepareReading(body);
-  const output=await interpretReading(p,{runner:async(_instructions,_context,schema)=>{
-    assert.equal(Object.hasOwn(schema.properties.development.items.properties,'interaction_ids'),false);
-    const r=readingFixture(p);for(const step of r.development)delete step.interaction_ids;return r;
+test('deterministic evidence and interactions are bound by the app, never by the writer',async()=>{
+  const p=prepareReading({...body,question:'Diễn biến tiếp theo của việc ký hợp đồng thế nào?'}),contract=questionContract(p);
+  const output=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload,schema)=>{
+    const row=schema.properties.sections.items.properties;
+    assert.deepEqual(Object.keys(row).sort(),['id','text']);
+    assert.equal(Object.hasOwn(row,'technicalEvidence'),false);assert.equal(Object.hasOwn(row,'claim_ids'),false);
+    return draftFor(payload);
   }});
   assert.equal(output.status,'reading');
-  assert.deepEqual(output.development.map(x=>x.interaction_ids),p.context.allInOne.reasoning.likelyScenario.stages.map(x=>x.relationshipIds));
+  for(const u of contract.units.filter(u=>u.interactionIds))
+    assert.deepEqual(output.sections[u.id].paragraphs[0].trace.interaction_ids,u.interactionIds);
 });
 
-test('brief content gets exactly one bounded rewrite with the same facts and question',async()=>{
+test('missing provenance receives one structured rewrite without changing allowed meaning',async()=>{
   const p=prepareReading(body),seen=[];
-  const output=await interpretReading(p,{runner:async(instructions,context,schema,{signal})=>{
-    seen.push(context);assert.equal(instructions,instructionsFor(p.context));assert.equal(signal.aborted,false);assert.ok(schema.properties.development);
-    const r=readingFixture(p);if(seen.length===1)r.summary.text='Quá ngắn.';return r;
+  const output=await interpretReading(p,{reviewer:acceptFidelity,runner:async(instructions,payload,schema,{signal})=>{
+    seen.push(payload);assert.equal(instructions,SURFACE_WRITER_INSTRUCTIONS);assert.equal(signal.aborted,false);assert.equal(schema.properties.sections.type,'array');
+    const r=draftFor(payload);if(seen.length===1)r.sections.find(s=>s.id==='answer').claim_ids=['invented'];return r;
   }});
   assert.equal(seen.length,2);assert.equal(output.status,'reading');assert.equal(seen[0].revision,undefined);
-  assert.ok(seen[1].revision.issue);assert.deepEqual(seen[1].evidence,seen[0].evidence);assert.deepEqual(seen[1].readingGraph,seen[0].readingGraph);assert.equal(seen[1].question,body.question);
+  assert.ok(seen[1].revision.violations.some(v=>v.code==='SECTION_SCHEMA'));
+  assert.deepEqual(seen[1].units,seen[0].units);assert.equal(seen[1].question,body.question);
+  assert.equal(seen[0].readingGraph,undefined);assert.equal(seen[0].evidence,undefined);
 });
 
 test('a second inadequate reading returns verified facts; authentication or transport errors are never retried',async()=>{
@@ -91,10 +98,10 @@ test('cancel during rewrite aborts the same request; late output never succeeds'
   count=0;await assert.rejects(interpretReading(p,{signal:controller.signal,runner:async()=>{count++;}}),{name:'AbortError'});assert.equal(count,0);
 });
 
-test('clarification stays short and never fabricates a three-stage outcome',async()=>{
-  const p=prepareReading(body);let count=0;
-  const r=await interpretReading(p,{runner:async()=>{count++;return clarificationFixture(p);}});
-  assert.equal(count,1);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
+test('materially missing input is clarified before any writer call',async()=>{
+  const p=prepareReading({...body,mode:'direction'});let count=0;
+  const r=await interpretReading(p,{runner:async()=>{count++;return {};}});
+  assert.equal(count,0);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
 });
 
 test('v6 request fingerprint binds the planner, mode, Nian Ming-ready contract and shared semantic matrix',async()=>{
@@ -122,73 +129,58 @@ test('timing audit keeps valid prose, accepts deterministic response dates, and 
   assert.doesNotThrow(()=>validateReading(r,p.facts,body.topic,p.context));
 });
 
-test('a repeated unsupported timing claim no longer discards the whole valid AI reading',async()=>{
+test('invented timing is rewritten from structured feedback and never silently repaired',async()=>{
   const p=prepareReading(body);let count=0;
-  const result=await interpretReading(p,{runner:async()=>{
-    count++;const r=readingFixture(p);r.timing.text+=' Kết quả sẽ rõ trong 5 ngày.';return r;
+  const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload)=>{
+    count++;const r=draftFor(payload);
+    if(count===1)firstParagraph(r).meaning+=' Kết quả sẽ rõ trong 5 ngày.';
+    else assert.ok(payload.revision.violations.length);return r;
   }});
   assert.equal(count,2);assert.equal(result.status,'reading');
-  assert.doesNotMatch(JSON.stringify(result),/5 ngày/);
-  assert.match(result.timing.text,/mốc thời gian chưa xác định/i);
+  assert.doesNotMatch(meaningOf(result),/5 ngày/);
   assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
 });
 
-test('a repeated invented event assertion is neutralized without discarding the rest of the valid reading',async()=>{
+test('persistent invented events end in the exact natural fallback, not a patched AI success',async()=>{
   const p=prepareReading(body);let count=0;
-  const result=await interpretReading(p,{runner:async()=>{
-    count++;const r=readingFixture(p);r.situation.text+=' Khoản thu sẽ được xác nhận và chuyển tiền.';return r;
+  const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload)=>{
+    count++;const r=draftFor(payload);firstParagraph(r).meaning+=' Khoản thu sẽ được xác nhận và chuyển tiền.';return r;
   }});
-  assert.equal(count,2);assert.equal(result.status,'reading');
-  assert.doesNotMatch(JSON.stringify(result),/Khoản thu sẽ được xác nhận/);
-  assert.match(result.situation.text,/không xác nhận một sự kiện ngoài đời/i);
+  assert.equal(count,2);assert.equal(result.status,'verified_fallback');
+  assert.doesNotMatch(meaningOf(result),/Khoản thu sẽ được xác nhận/);
+  assert.doesNotMatch(meaningOf(result),/deterministic|cap|veto|Kết luận chỉ phản ánh/);
   assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));
 });
 
-test('repeated verification language is deduplicated after the bounded rewrite instead of forcing verified fallback',async()=>{
+test('repeated verification is a style report, not an automatic rewrite gate',async()=>{
   const p=prepareReading(body);let count=0;
-  const result=await interpretReading(p,{runner:async()=>{
-    count++;const r=readingFixture(p);
-    r.summary.text+=' Bạn cần xác minh quyền phê duyệt.';
-    r.situation.text+=' Bạn cần kiểm tra quyền phê duyệt.';
-    r.bottleneck.text+=' Bạn nên xác nhận quyền phê duyệt.';
-    r.actions[0].text+=' Hãy làm rõ quyền phê duyệt.';
+  const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload)=>{
+    count++;const r=draftFor(payload);
+    for(const section of r.sections)section.text+=' Bạn cần xác minh quyền phê duyệt.';
     return r;
   }});
-  assert.equal(count,2);assert.equal(result.status,'reading');
-  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
-  const prose=JSON.stringify(result);
-  assert.ok((prose.match(/(?:xác minh|kiểm tra|xác nhận|làm rõ) quyền phê duyệt/giu)||[]).length<=2);
+  assert.equal(count,1);assert.equal(result.status,'reading');
+  assert.ok((meaningOf(result).match(/xác minh quyền phê duyệt/g)||[]).length>1);
 });
 
-test('negotiation-style stage overclaim, repeated verification and excess emphasis are repaired without verified fallback',async()=>{
+test('a completed event invented in a negotiation answer is blocked before acceptance',async()=>{
   const p=prepareReading({...body,mode:'negotiation',question:'Tôi nên đàm phán điều khoản nào trước để tiến tới thỏa thuận?'});let count=0;
-  const result=await interpretReading(p,{runner:async()=>{
-    count++;const r=readingFixture(p);
-    r.summary.text+=' Hợp đồng đã hoàn tất. Bạn cần xác minh quyền phê duyệt.';
-    r.situation.text+=' **Một điểm.** **Hai điểm.** **Ba điểm.** Bạn cần kiểm tra quyền phê duyệt.';
-    r.bottleneck.text+=' Bạn nên xác nhận quyền phê duyệt.';
-    r.actions[0].text+=' Hãy làm rõ quyền phê duyệt.';
-    return r;
+  const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload)=>{
+    count++;const r=draftFor(payload);if(count===1)firstParagraph(r).meaning+=' Hợp đồng đã hoàn tất.';return r;
   }});
-  assert.equal(count,2);assert.equal(result.status,'reading');
-  assert.doesNotMatch(JSON.stringify(result),/Hợp đồng đã hoàn tất/);
-  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
+  assert.equal(count,2);assert.equal(result.status,'reading');assert.doesNotMatch(meaningOf(result),/Hợp đồng đã hoàn tất/);
 });
 
-test('certainty repair lowers confidence in place while preserving subject, mechanism, condition and action',async()=>{
-  const p=prepareReading({...body,mode:'negotiation',question:'Tôi nên đàm phán điều khoản nào trước để tiến tới thỏa thuận?'});let count=0;
-  const result=await interpretReading(p,{runner:async()=>{
-    count++;const r=readingFixture(p);
-    r.summary.text+=' Nếu người duyệt xác nhận điều khoản cuối, hợp đồng chắc chắn sẽ thành công.';
-    r.actions[0].text+=' Sau khi chốt phạm vi, xác suất thành công 80% nếu phản hồi thực tế phù hợp.';
-    return r;
+test('certainty rewrite preserves the subject and condition instead of inserting boilerplate',async()=>{
+  const p=prepareReading(body);let count=0;
+  const base='Nếu người duyệt xác nhận điều khoản cuối, hợp đồng ';
+  const reviewer=async(_i,{draft})=>({violations:count===1?[{code:'CERTAINTY_ESCALATION',unitId:'answer',sentence:firstParagraph(draft).meaning,reason:'Điều kiện chưa đủ để bảo đảm thành công.',allowedMeaning:['Kết luận và điều kiện đã duyệt.']}]:[]});
+  const result=await interpretReading(p,{reviewer,runner:async(_i,payload)=>{
+    count++;const r=draftFor(payload);
+    firstParagraph(r).meaning+=' '+base+(count===1?'chắc chắn sẽ thành công.':'nghiêng về khả năng tiến thêm một bước.');
+    if(count===2)assert.ok(payload.revision.violations.length);return r;
   }});
   assert.equal(count,2);assert.equal(result.status,'reading');
-  const prose=JSON.stringify(result);
-  assert.doesNotMatch(prose,/chắc chắn sẽ thành công|80%|xác suất thành công/i);
-  assert.match(result.summary.text,/Nếu người duyệt xác nhận điều khoản cuối, hợp đồng có khả năng thành công/i);
-  assert.match(result.actions[0].text,/Sau khi chốt phạm vi/i);
-  assert.match(result.actions[0].text,/nếu phản hồi thực tế phù hợp/i);
-  assert.doesNotMatch(prose,/Kết luận chỉ mô tả xu hướng có điều kiện; không quy đổi thành xác suất hoặc kết quả chắc chắn/i);
-  assert.doesNotThrow(()=>validateReading(result,p.facts,'contract',p.context));
+  assert.ok(meaningOf(result).includes(base+'nghiêng về khả năng'));
+  assert.doesNotMatch(meaningOf(result),/chắc chắn sẽ thành công|Kết luận chỉ mô tả xu hướng/);
 });

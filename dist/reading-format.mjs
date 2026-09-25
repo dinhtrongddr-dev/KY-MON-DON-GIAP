@@ -28,11 +28,6 @@ export function formatParts(text,{automatic=true}={}) {
     for(const m of chosen){const start=m.index+m[0].length-m[0].trimStart().length;if(start>end)parts.push({text:text.slice(end,start),strong:false});parts.push({text:m[0].trimStart(),strong:true});end=m.index+m[0].length;}
   }
   if(end<text.length)parts.push({text:text.slice(end),strong:false});
-  const firstStrong=parts.findIndex(part=>part.strong);
-  if(firstStrong>0){
-    const prefix=parts.slice(0,firstStrong).map(part=>part.text).join('');
-    if(TECHNICAL_BOLD.test(prefix))for(let i=0;i<firstStrong;i++)if(!parts[i].strong)parts[i].technical=true;
-  }
   return parts;
 }
 export function renderProse(text,parent,doc=parent.ownerDocument||document) {
@@ -42,7 +37,7 @@ export function renderProse(text,parent,doc=parent.ownerDocument||document) {
     if(parts.every(p=>!p.strong)){node.textContent=value;return;}
     for(const part of parts){
       const child=append(part.strong?'strong':'span',part.text,node);
-      if(part.technical)child.className='ai-technical-prefix';
+      // Emphasis is formatting only; it never classifies evidence.
     }
   };
   for(const block of text.split(/\n\s*\n/)){
@@ -68,6 +63,7 @@ export function mountAiTechnicalToggle(container,doc=container.ownerDocument||do
   const sync=show=>{
     shown=!!show;
     container.classList?.toggle('ai-show-technical',shown);
+    for(const block of container.querySelectorAll?.('.ai-technical-evidence')||[])block.hidden=!shown;
     button.textContent=shown?'Ẩn căn cứ Kỳ Môn':'Hiện căn cứ Kỳ Môn';
     button.setAttribute('aria-pressed',String(shown));
     button.setAttribute('aria-label',shown?'Ẩn các câu thuật ngữ Kỳ Môn trong bài luận':'Hiện các câu thuật ngữ Kỳ Môn trong bài luận');
@@ -75,4 +71,32 @@ export function mountAiTechnicalToggle(container,doc=container.ownerDocument||do
   sync(false);
   button.addEventListener('click',()=>sync(!shown));
   bar.append(button);container.append(bar);return button;
+}
+
+export function renderSurfaceReading(container,reading,{modelUsed}={}){
+  const doc=container.ownerDocument||document;
+  container.replaceChildren();
+  const node=(tag,text,parent,className)=>{
+    const e=doc.createElement(tag);e.textContent=text;if(className)e.className=className;parent.append(e);return e;
+  };
+  if(modelUsed)node('p','Model: '+modelUsed.label+' / '+modelUsed.effort,container,'ai-model-used');
+  mountAiTechnicalToggle(container,doc);
+  if(reading.status==='verified_fallback')node('p','Phần diễn giải AI chưa đạt kiểm tra. Đây là bản tóm tắt các nhận định đã được xác thực.',container,'ai-fallback-notice');
+  const article=node('article','',container,'ai-surface-reading');
+  for(const [id,section] of Object.entries(reading.sections)){
+    const card=node('section','',article,'ai-surface-section');
+    card.dataset.unitId=id;
+    node('h3',section.label,card);
+    for(const paragraph of section.paragraphs){
+      renderProse(paragraph.meaning,card,doc);
+      if(paragraph.technicalEvidence){
+        const technical=node('div','',card,'ai-technical-evidence');
+        technical.hidden=true;
+        technical.setAttribute('aria-label','Căn cứ Kỳ Môn cho nhận định này');
+        renderProse(paragraph.technicalEvidence,technical,doc);
+        // Machine trace stays attached to structured data; not copied into prose.
+      }
+    }
+  }
+  node('p',reading.note,container,'ai-note');
 }

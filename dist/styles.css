@@ -952,8 +952,13 @@ textarea:focus { outline:3px solid #bce8ce; }
 .ai-technical-controls{display:flex;justify-content:flex-start;margin:.1rem 0 .85rem}
 .ai-technical-toggle{appearance:none;min-height:38px;padding:7px 11px;border:1px solid #9eb7aa;border-radius:999px;background:#f6faf7;color:var(--jade-dark);font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
 .ai-technical-toggle:hover,.ai-technical-toggle:focus-visible{background:#e8f3ec;outline:2px solid rgba(21,83,60,.26);outline-offset:2px}
-.ai-technical-prefix{display:none}
-.ai-show-technical .ai-technical-prefix{display:inline}
+.ai-technical-evidence[hidden]{display:none!important}
+.ai-technical-evidence{margin:.75rem 0;padding:.8rem 1rem;border-left:3px solid var(--accent,#96774b);background:rgba(128,128,128,.07);font-size:.92em;overflow-wrap:anywhere}
+.ai-surface-section{margin:0 0 1.4rem;min-width:0}
+.ai-surface-section h3{margin:.5rem 0}
+.ai-surface-section .ai-prose{line-height:1.75}
+.ai-surface-reading{max-width:76ch;margin:auto;overflow-wrap:anywhere}
+.ai-fallback-notice{font-size:.9em;opacity:.85}
 @media(max-width:480px){.ai-technical-toggle{min-height:36px;padding:6px 10px;font-size:.74rem}}
 @media print{.ai-technical-controls{display:none!important}}
 

@@ -31,10 +31,16 @@ function richParagraph(node){
   for(const child of node.childNodes){const text=child.nodeType===3?child.textContent:child.textContent;if(!text)continue;runs.push({text, bold:child.nodeType===1&&(child.tagName==='STRONG'||child.classList?.contains('menh-ai-focus'))});}
   return runs.length?runs:[{text:clean(node.textContent),bold:false}];
 }
-function extractAiSections(kind){
-  if(kind==='menh')return [...document.querySelectorAll('#menh-ai-answer .menh-ai-section')].map(s=>({title:clean(s.querySelector('h3')?.textContent),paragraphs:[...s.querySelectorAll('p')].map(richParagraph).filter(r=>r.some(x=>clean(x.text)))})).filter(x=>x.paragraphs.length);
+export function extractAiSections(kind,doc=document){
+  const surface=[...doc.querySelectorAll((kind==='menh'?'#menh-ai-answer ':'#ai-answer ')+'.ai-surface-section')];
+  if(surface.length)return surface.map(section=>{
+    const copy=section.cloneNode(true);
+    copy.querySelectorAll('.ai-technical-evidence[hidden]').forEach(x=>x.remove());
+    return {title:clean(copy.querySelector('h3')?.textContent),paragraphs:[...copy.querySelectorAll('p')].map(richParagraph).filter(r=>r.some(x=>clean(x.text)))};
+  }).filter(x=>x.paragraphs.length);
+  if(kind==='menh')return [...doc.querySelectorAll('#menh-ai-answer .menh-ai-section')].map(s=>({title:clean(s.querySelector('h3')?.textContent),paragraphs:[...s.querySelectorAll('p')].map(richParagraph).filter(r=>r.some(x=>clean(x.text)))})).filter(x=>x.paragraphs.length);
   const labels={quick:'Bài luận',story:'Diễn biến',actions:'Điều cần làm',timing:'Ứng kỳ'};
-  return Object.entries(labels).map(([id,title])=>{const node=document.getElementById(`reading-panel-${id}`);if(!node)return null;const clone=node.cloneNode(true);clone.querySelectorAll('details,button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs').forEach(x=>x.remove());const blocks=[...clone.querySelectorAll('p,li')],paragraphs=(blocks.length?blocks:[clone]).map(richParagraph).filter(r=>r.some(x=>clean(x.text)));return paragraphs.length?{title,paragraphs}:null;}).filter(Boolean);
+  return Object.entries(labels).map(([id,title])=>{const node=doc.getElementById(`reading-panel-${id}`);if(!node)return null;const clone=node.cloneNode(true);clone.querySelectorAll('details,button,.ai-trace,.ai-evidence,.ai-model-used,.ai-note,.qimen-json,.ai-tabs').forEach(x=>x.remove());const blocks=[...clone.querySelectorAll('p,li')],paragraphs=(blocks.length?blocks:[clone]).map(richParagraph).filter(r=>r.some(x=>clean(x.text)));return paragraphs.length?{title,paragraphs}:null;}).filter(Boolean);
 }
 function extractAnalysisSections(kind){if(kind!=='menh')return [];return [...document.querySelectorAll('#menh-deterministic .menh-claim')].map(card=>({title:clean(card.querySelector('.eyebrow')?.textContent),paragraphs:[[{text:clean(card.querySelector('.menh-claim-text')?.textContent),bold:false}]]})).filter(x=>x.paragraphs[0][0].text);}
 function inputFields(kind,body){

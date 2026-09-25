@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {prepareReading,buildReadingRequest,validateReading} from '../local/reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
+import {draftFor,acceptFidelity} from './surface-fixture.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
 const body={question:'Tôi phải làm gì để giành hợp đồng trong 1 tháng tới?',topic:'general',mode:'auto',method:'chaibu',input:{year:2026,month:9,day:10,hour:10,minute:0,tzOffset:7}};
 test('writer contract accepts linked sections with planner claims and rejects fabricated references',()=>{
@@ -60,13 +61,13 @@ test('every rendered condition, resolution, comparison and clarification is chec
 });
 test('writer receives a compact planner and one repair preserves its facts, identity and cancellation budget',async()=>{
   const p=prepareReading(body),seen=[];let firstReading;
-  const result=await interpretReading(p,{runner:async(_instructions,context,_schema,{signal})=>{
+  const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_instructions,context,_schema,{signal})=>{
     seen.push(context);assert.equal(signal.aborted,false);
-    const r=readingFixture(p);if(seen.length===1){r.summary.claim_ids=['invented'];firstReading=structuredClone(r);}return r;
+    const r=draftFor(context);if(seen.length===1){r.sections.find(s=>s.id==='answer').claim_ids=['invented'];firstReading=structuredClone(r);}return r;
   }});
   assert.equal(result.status,'reading');assert.equal(seen.length,2);
-  assert.ok(seen[0].readingGraph);assert.equal(seen[0].allInOne,undefined);assert.equal(seen[0].board,undefined);
-  assert.deepEqual(seen[0].readingGraph,seen[1].readingGraph);assert.equal(seen[0].question,p.context.question);
+  assert.ok(seen[0].units);assert.equal(seen[0].readingGraph,undefined);assert.equal(seen[0].allInOne,undefined);assert.equal(seen[0].board,undefined);
+  assert.deepEqual(seen[0].units,seen[1].units);assert.equal(seen[0].question,p.context.question);
   assert.deepEqual(seen[1].revision.previousReading,firstReading,'the repair needs the rejected reading to correct it without losing valid sections');
   assert.ok(JSON.stringify(seen[0]).length<JSON.stringify(p.context).length/2);
 });

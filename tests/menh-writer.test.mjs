@@ -42,13 +42,15 @@ test('P9 writer context contains only prepared deterministic claims and locks mu
   assert.equal(ctx.semanticMatrix.domains.career.id,'career');
   assert.ok(Object.isFrozen(ctx));
 });
-test('P9 prompt explicitly forbids chart rebuild, scores, probabilities and deterministic prohibited claims',()=>{
-  const p=menhWriterInstructions().toLowerCase();
-  for(const token of ['không tự lập lại bàn','không cho điểm tổng mệnh','xác suất thành công','không đoán giờ sinh đúng'])assert.ok(p.includes(token));
+test('surface prompt is compact and confines narration to approved ideas',()=>{
+  const p=menhWriterInstructions();
+  assert.ok(p.length<3500);assert.match(p,/Không thêm người, dữ kiện, sự kiện, ngày, số tiền hoặc xác suất/);
+  assert.doesNotMatch(p,/usefulGodProfile|strengthProfile|COMPREHENSIVE_ONE_SHOT/);
 });
-test('KM-MENH production writer is explicitly one-shot long-form and guards modern extrapolation',()=>{
-  const p=menhWriterInstructions().toLowerCase();
-  for(const token of ['một lần','8.000–14.000','comprehensive_one_shot','không double-count','boardfacts','ví dụ hiện đại'])assert.ok(p.includes(token),token);
+test('Mệnh surface contract permits synthesis and natural examples without a character quota',()=>{
+  const p=menhWriterInstructions();
+  assert.match(p,/nối nhiều ý/);assert.match(p,/ví dụ đời thường/);
+  assert.doesNotMatch(p,/8.000–14.000|ký tự sàn|boardFacts|không double-count/);
 });
 test('P9 reading audit accepts claim-bound prose and rejects fabricated claim ids',()=>{
   const ctx=context(),r=validReading(ctx);
@@ -95,7 +97,9 @@ test('writer context exposes deterministic palace facts only for KNOWN mode',()=
   const unknown=buildMenhWriterContext(buildMenhDeterministicResult(createMenhNatal(board()),{claims:[]}),{birthTimeMode:'UNKNOWN',stability:{}});
   assert.equal(unknown.boardFacts,null);
 });
-test('production long-form audit rejects a structurally valid but shallow draft',()=>{
+test('legacy prose length no longer determines semantic depth',()=>{
   const ctx=context(),r=validReading(ctx);
-  assert.throws(()=>validateMenhReading(r,ctx,{enforceLongForm:true}),/quá ngắn|chưa đủ độ sâu/);
+  assert.doesNotThrow(()=>validateMenhReading(r,ctx,{enforceLongForm:true}));
+  const invalid=structuredClone(r);invalid.self.claim_ids=['MADE_UP'];
+  assert.throws(()=>validateMenhReading(invalid,ctx,{enforceLongForm:true}));
 });

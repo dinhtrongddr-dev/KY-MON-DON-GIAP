@@ -5,6 +5,7 @@ import {validateMenhReading} from './qimen/menh/ai/reading-audit.mjs';
 import {resolveTimePlace} from './qimen/timePlace.mjs';
 import {rectifyMenhCandidates,RECTIFICATION_EVENT_DOMAIN,RECTIFICATION_WINDOWS} from './qimen/menh/rectification.mjs';
 import {CASE_ENGINE_VERSION} from './qimen/case/engine.mjs';
+import {NARRATIVE_VERSION} from './qimen/ai/narrativePrimitives.mjs';
 
 const STEM=Object.freeze({'甲':'JIA','乙':'YI','丙':'BING','丁':'DING','戊':'WU','己':'JI','庚':'GENG','辛':'XIN','壬':'REN','癸':'GUI'});
 const BRANCH=Object.freeze({'子':'ZI','丑':'CHOU','寅':'YIN','卯':'MAO','辰':'CHEN','巳':'SI','午':'WU','未':'WEI','申':'SHEN','酉':'YOU','戌':'XU','亥':'HAI'});
@@ -180,7 +181,7 @@ async function digest(value){
 export async function menhReadingIdentity(prepared){
   const deterministicFingerprint=await digest({result:prepared.result,technical:prepared.technical,candidateCount:prepared.candidateCount});
   const caseGuidance=writerContextForPrepared(prepared).caseGuidance;
-  const requestFingerprint=await digest({protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,input:prepared.input,deterministicFingerprint,caseGuidance});
+  const requestFingerprint=await digest({protocol:MENH_PROTOCOL,narrativeVersion:NARRATIVE_VERSION,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,input:prepared.input,deterministicFingerprint,caseGuidance});
   return {deterministicFingerprint,requestFingerprint};
 }
 export async function buildMenhReadingRequest(body){

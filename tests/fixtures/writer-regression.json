@@ -1,0 +1,20 @@
+{
+  "menh": {
+    "fullName": "Cao Thị Thảo Trang",
+    "birthDateLocal": "1994-04-23",
+    "birthTimeLocal": "05:20",
+    "birthTimeMode": "KNOWN",
+    "tzOffset": 7,
+    "sexMetadata": "FEMALE",
+    "birthPlace": "Đồng Nai",
+    "age": 33,
+    "annualYear": 2026
+  },
+  "question": {
+    "input": {"year": 2026, "month": 9, "day": 22, "hour": 11, "minute": 28, "tzOffset": 7},
+    "question": "Tôi đang phân vân việc viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ để nghỉ ở nhà chăm con hoàn toàn (bé nay đã gần 7 tháng rồi), nhưng tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ và việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con, và lo bản thân ù lì tụt hậu không? Hãy cho tôi biết việc tôi quyết định nghỉ việc có thuận lợi được giải quyết không và thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+    "topic": "general",
+    "mode": "auto",
+    "method": "chaibu"
+  }
+}

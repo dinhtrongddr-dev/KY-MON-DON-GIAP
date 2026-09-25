@@ -29,10 +29,10 @@ test('graph edges have correct endpoints and unresolved actors never acquire inv
   }
   assert.ok(!c.graph.relations.some(e=>[e.from,e.to].includes('competitor')));
 });
-test('four modes bind different plans/prompts to the same board and produce validated complete chains',async()=>{
+test('four modes bind different plans to the same board and share a surface expression contract',async()=>{
   const readings=await Promise.all(['prediction','strategy','business','negotiation'].map(mode=>buildReadingRequest({...body,mode})));
   assert.equal(new Set(readings.map(p=>p.chartFingerprint)).size,1);assert.equal(new Set(readings.map(p=>p.requestFingerprint)).size,4);
-  assert.equal(new Set(readings.map(p=>instructionsFor(p.context))).size,4);
+  assert.equal(new Set(readings.map(p=>instructionsFor(p.context))).size,1);
   for(const p of readings){const r=readingFixture(p);assert.equal(validateReading(r,p.facts,'contract',p.context),r);}
   const changed=structuredClone(readings[0]);changed.context.allInOne.graph.relations[0].type='forged';
   assert.notEqual((await readingIdentity(changed)).requestFingerprint,readings[0].requestFingerprint);

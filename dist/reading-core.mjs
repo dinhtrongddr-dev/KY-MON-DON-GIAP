@@ -11,6 +11,7 @@ import {BASE_WRITER_INSTRUCTIONS} from './qimen/ai/prompts.mjs';
 import {synthesisInstructions} from './qimen/ai/prompts.mjs';
 import {CASE_ENGINE_VERSION} from './qimen/case/engine.mjs';
 import {NIANMING_VERSION} from './qimen/analysis/nianmingEngine.mjs';
+import {NARRATIVE_VERSION} from './qimen/ai/narrativePrimitives.mjs';
 export {NIANMING_VERSION};
 
 // One deterministic contract is used by the browser and the AI bridge.
@@ -101,7 +102,7 @@ async function digest(value) {
 }
 export async function readingIdentity(prepared) {
   const chartFingerprint = await digest(prepared.chart);
-  const requestFingerprint = await digest({rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,chartFingerprint,context:prepared.context});
+  const requestFingerprint = await digest({rules:RULE_VERSION,narrativeVersion:NARRATIVE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,chartFingerprint,context:prepared.context});
   return {chartFingerprint,requestFingerprint};
 }
 export async function buildReadingRequest(body) {

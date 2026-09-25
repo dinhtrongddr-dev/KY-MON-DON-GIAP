@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
 import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf} from './ai-client.mjs';
+import {runSurfaceText} from './surface-writer.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
 import {prepareMenhReading,menhReadingIdentity,MENH_RULE_VERSION,MENH_PROTOCOL} from './menh-reading.mjs';
@@ -54,7 +55,7 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=runAI,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
  let busy=false,activeJob=null;
  const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
@@ -87,7 +88,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
    job.promise=(async()=>{
      let activityReadingId=track('startReading');
      try{
-       const result=isMenh?await interpretMenhReading(prepared,{runner,signal:job.controller.signal}):await interpretReading(prepared,{runner,signal:job.controller.signal});
+       const result=isMenh?await interpretMenhReading(prepared,{runner,reviewer,signal:job.controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:job.controller.signal});
        const {data,modelUsed}=readingData(isMenh,prepared,identity,result);
        const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
        if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
@@ -259,7 +260,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runAI
           res.once('close',stopKeepAlive);
         }
         try{
-          const result=isMenhRead?await interpretMenhReading(prepared,{runner,signal:controller.signal}):await interpretReading(prepared,{runner,signal:controller.signal});
+          const result=isMenhRead?await interpretMenhReading(prepared,{runner,reviewer,signal:controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:controller.signal});
           const used=aiRouteOf(result);
           const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
           const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';

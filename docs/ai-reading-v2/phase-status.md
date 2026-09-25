@@ -4,43 +4,86 @@ Reference branch at start: `develop`
 Reference SHA: `5a52c5eefec13201e28eb847797890490bef09ff`  
 Implementation branch: `feature/ai-reading-v2-chatgpt2api`
 
-## Phase 0 — repository baseline
+## Current result
 
-Status: **repo audit verified; production runtime not re-verified in this branch**.
+Status: **implementation branch passes the complete repository gate; production is not switched or deployed**.
 
-Verified from GitHub source:
+Verified in an isolated VPS worktree:
 
-- `develop` still points at the v17.6.3 snapshot used by the upgrade plan.
-- Legacy structured routing remains Sol → Gemini → Prism, quota-only fallback.
-- Prism structured mode still injects JSON schema and parses JSON.
-- Hỏi Việc and Mệnh still use their legacy structured Writer/validator paths.
-- Frozen deterministic engine files were not modified by this work.
+- `npm run check`: 566/566 JavaScript tests passed.
+- Python regression: 1/1 passed.
+- `npm run verify`: static assets, six protected core files, launcher pin, versions and module syntax passed.
+- The original `develop` worktree was not reset or overwritten.
 
-Not verified here:
+## Phase 0 — repository/runtime baseline
 
-- currently running VPS process identity and deployed SHA;
-- live 9router/Prism/chatgpt2api account quota;
-- live model entitlement/effective model;
-- DNS/Tunnel process state.
+GitHub source still starts from v17.6.3 at `5a52c5e...`.
+
+The VPS develop worktree also contained an existing uncommitted Writer-layer refactor. That work was read and merged into the isolated feature worktree instead of being reset. Production process/DNS/Tunnel/provider entitlement remain separate runtime checks.
 
 ## Phase 2 — provider interface
 
-Status: **implemented on feature branch; CI validation pending at time of this note**.
+Status: **implemented and tested**.
 
-Added:
+- `generateStructured` preserves the current structured Sol → Gemini → Prism route.
+- `generateText` is independent of JSON-schema coercion.
+- Codex and Prism both have natural-text transports.
+- Writer provider selection is explicit.
+- Selecting `chatgpt2api` does not silently downgrade to another route.
+- Requested/reported/effective model and effort metadata remain distinct.
 
-- unstructured Codex text generation without `outputSchema`;
-- unstructured Prism text generation without JSON-schema prompt coercion;
-- `generateStructured` and `generateText` provider interface;
-- Writer text routing separated from legacy structured routing;
-- explicit provider metadata that does not claim an effective model/effort when it cannot be observed;
-- no silent downgrade when `chatgpt2api` is explicitly selected.
+## Phase 3 — narrative contract and provenance
 
-Legacy `runAI` structured behavior is intentionally preserved.
+Status: **implemented and tested**.
 
-## Phase 8 — chatgpt2api capability spike
+- Hỏi Việc and Mệnh create a downstream narrative contract without changing the board or deterministic conclusions.
+- Facts, conditions, global modifiers, facets and technical evidence stay backend-owned.
+- Contract construction is covered by regression fixtures for Case A and Case B.
 
-Status: **adapter + pinned experimental deployment artifacts implemented; live capability probe blocked until runtime credentials/account are configured outside GitHub**.
+## Phase 4 — question-aware facets / Mệnh life topics
+
+Status: **implemented and tested**.
+
+- Hỏi Việc uses explicit facets from the real question instead of forcing every reading into three stages.
+- Case B retains decision, requested late-October milestone, one-year resources and career-return concerns.
+- Mệnh keeps life-topic sections and applies global modifiers by scope instead of requiring technical password wording.
+
+## Phase 5 — free Surface Writer
+
+Status: **implemented and wired to the text provider path**.
+
+The Writer now receives only the approved natural-language projection and returns a lightweight envelope:
+
+```json
+{"sections":[{"id":"approved-section-id","text":"natural Vietnamese prose"}]}
+```
+
+The Writer does **not** return `claim_ids`, atom IDs, certainty codes, technical evidence or trace metadata. Backend code reattaches provenance and evidence deterministically.
+
+Production-default orchestration on this branch uses `runSurfaceText` for the Writer, while Planner and semantic reviewer remain on structured `runAI`.
+
+## Phase 6 — semantic audit, bounded repair and fallback
+
+Status: **implemented and tested**.
+
+- Hard integrity/factual checks remain code-owned.
+- Independent semantic review checks prose against approved meaning.
+- At most one content-repair pass is used before natural deterministic fallback.
+- Style/repetition is a quality report only; it no longer acts as an automatic rewrite gate.
+- Legacy sentence-level regex repair is removed from the v2 interpretation path.
+
+## Phase 7 — meaning/evidence rendering and export
+
+Status: **implemented in the feature worktree and covered by repository tests**.
+
+- Meaning and technical evidence are separate fields.
+- The existing technical-evidence toggle hides whole evidence fields, not text guessed from formatting.
+- Hỏi Việc/Mệnh rendering and report export understand the new shape.
+- Legacy/fingerprint/integrity checks remain protected by the existing test suite.
+
+## Phase 8 — chatgpt2api capability adapter
+
+Status: **adapter + pinned experimental deployment artifacts implemented; live account/model probe still separate**.
 
 Upstream source pin:
 
@@ -49,23 +92,22 @@ Upstream source pin:
 Implemented:
 
 - loopback-only client at `http://127.0.0.1:3000/v1`;
-- explicit auth key requirement when enabled;
-- Chat Completions text path for Writer;
-- model catalog discovery labelled advertised-only;
-- requested/reported/effective model fields kept distinct;
-- `xhigh` is transmitted as requested, but effective effort remains unknown unless independently observed;
-- auth/rate-limit/unavailable/network/malformed/cancel error classes;
-- Docker Compose source-pinned to upstream commit and bound to `127.0.0.1:3000:80`;
-- no secret committed and no public Tunnel route added.
+- explicit runtime auth-key requirement;
+- Chat Completions text path for the Surface Writer;
+- catalog discovery marked advertised-only, never entitlement proof;
+- conservative model/effort observability;
+- auth/rate-limit/unavailable/network/malformed/cancel error mapping;
+- source-pinned Docker deployment bound to `127.0.0.1:3000:80`;
+- no credentials committed and no public provider/admin tunnel.
 
-## Deliberately not done yet
+## Deliberately not done
 
-- chatgpt2api is **not** the production default;
-- no account token/cookie is stored in this repository;
-- no deterministic engine, Dụng Thần, Strength, Structure, Role, Timing, Kích Thần, đại vận or lưu niên logic changed;
-- no Phase 3–7 NarrativeFactPackage/Writer-v2/semantic-audit UI switch has been claimed complete;
-- no production deploy or merge.
+- no production merge or deploy;
+- no production provider switch;
+- no account token/cookie in GitHub;
+- no claim that a live ChatGPT account/model/effort has been proven through the proxy;
+- no change to deterministic engine, Dụng Thần, Strength, Structure, Role, Timing, Kích Thần, đại vận or lưu niên.
 
 ## Next dependency
 
-Before replacing the user-facing Writer, continue Phase 3 → 7 and then run Phase 9 A/B evaluation. The provider decision is separate: Writer v2 can ship on the current provider even if chatgpt2api is rejected after live probing.
+Run the live Phase 8 capability probe only with runtime credentials already provisioned outside GitHub, then perform Phase 9 A/B evaluation. Writer-v2/current-provider and Writer-v2/chatgpt2api must be judged separately before any production canary.

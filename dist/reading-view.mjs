@@ -1,8 +1,9 @@
 import {resultTabs,renderTechnical,renderComparison} from './qimen/ui-results.mjs';
 import {buildPresentationProfile} from './qimen/ai/presentation.mjs';
-import {renderProse,mountAiTechnicalToggle} from './reading-format.mjs';
+import {renderProse,mountAiTechnicalToggle,renderSurfaceReading} from './reading-format.mjs';
 // Emphasis uses created DOM nodes; model HTML is always literal text.
 export function renderReading(answer,data,prepared) {
+  if(data.reading?.narrativeVersion){renderSurfaceReading(answer,data.reading,{modelUsed:data.modelUsed});answer.hidden=false;return;}
   const r=data.reading,doc=answer.ownerDocument||document,g=prepared.context.allInOne.reasoning,profile=buildPresentationProfile(prepared.context);
   const node=(tag,text,parent,className)=>{const el=doc.createElement(tag);el.textContent=text;if(className)el.className=className;parent.append(el);return el;};
   const prose=(text,parent)=>{if(text&&parent)renderProse(text,parent,doc);};

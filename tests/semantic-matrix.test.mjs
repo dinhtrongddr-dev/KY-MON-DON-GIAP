@@ -92,7 +92,7 @@ test('UI remains concise and does not render internal state ids while AI context
   assert.match(app,/keywords\.slice\(0,3\)/);assert.match(menhView,/keywords\.slice\(0,3\)/);
   for(const ui of [app,menhView]){assert.doesNotMatch(ui,/semantic\.states\.map\(x=>x\.id/);assert.doesNotMatch(ui,/ZHANG_ADVANCED_CLASS_LIFETIME/);}
   for(const writer of [eventWriter,menhWriter]){assert.match(writer,/palaceContext/);assert.match(writer,/heavenStemExpression/);assert.match(writer,/strengthExpression/);}
-  for(const prompt of [eventPrompt,menhPrompt]){assert.match(prompt,/semanticMatrix 1\.1/);assert.match(prompt,/palaceContext/);assert.match(prompt,/không.*xác suất/i);}
+  for(const prompt of [eventPrompt,menhPrompt]){assert.match(prompt,/SURFACE_WRITER_INSTRUCTIONS/);assert.doesNotMatch(prompt,/palaceContext|strengthProfile|semanticMatrix/);}
 });
 
 test('palace bundle exposes at most three UI keywords and natural state wording without assigning a role',()=>{

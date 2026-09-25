@@ -59,7 +59,7 @@ test('LWF05 exposes FanYin as a global hard structure claim',()=>{
   assert.deepEqual(context.globalStructure.mechanisms,['FAN_YIN']);
 });
 
-test('global-structure audit requires precedence, explicit mechanism and claim trace in affected sections',()=>{
+test('global-structure audit requires trace without forcing mechanism or precedence wording',()=>{
   const {context}=z18Context();
   const good=validGlobalReading(context);
   assert.equal(validateMenhReading(good,context),good);
@@ -69,12 +69,12 @@ test('global-structure audit requires precedence, explicit mechanism and claim t
   assert.throws(()=>validateMenhReading(missingOverviewClaim,context),/overview phải gắn GLOBAL_STRUCTURE/);
 
   const missingMechanism=structuredClone(good);
-  missingMechanism.overview.text='Đây là cấu trúc ưu tiên phải xét trước và có thể giới hạn tín hiệu thuận cục bộ, nhưng không phải veto xấu tuyệt đối.';
-  assert.throws(()=>validateMenhReading(missingMechanism,context),/Phục Ngâm/);
+  missingMechanism.overview.text='Việc thường tiến chậm và có phần phải làm lại; những điểm thuận cần thời gian để phát huy.';
+  assert.doesNotThrow(()=>validateMenhReading(missingMechanism,context));
 
   const missingPrecedence=structuredClone(good);
-  missingPrecedence.overview.text='Toàn bàn có Phục Ngâm nhưng không phải veto xấu tuyệt đối.';
-  assert.throws(()=>validateMenhReading(missingPrecedence,context),/precedence\/cap/);
+  missingPrecedence.overview.text='Bạn có thể tận dụng điểm thuận khi đã thu xếp được những điều đang cản.';
+  assert.doesNotThrow(()=>validateMenhReading(missingPrecedence,context));
 
   const missingCareerTrace=structuredClone(good);
   missingCareerTrace.career.claim_ids=['CAREER_CORE'];

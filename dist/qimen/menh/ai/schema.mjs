@@ -1,5 +1,8 @@
+import {buildMenhNarrativeFromContext} from './narrative-contract.mjs';
+import {surfaceSchema} from '../../ai/surfaceReading.mjs';
 export const MENH_READING_SECTIONS=Object.freeze(['overview','self','family','marriage','career','wealth','luck','annual','birthTimeNote']);
-export function menhReadingSchema(context){
+export function menhReadingSchema(context){return surfaceSchema(buildMenhNarrativeFromContext(context));}
+export function legacyMenhReadingSchema(context){
   const str={type:'string'},arr=items=>({type:'array',items});
   const obj=properties=>({type:'object',additionalProperties:false,required:Object.keys(properties),properties});
   const ids=context.allowedClaimIds.length?{type:'string',enum:context.allowedClaimIds}:str;

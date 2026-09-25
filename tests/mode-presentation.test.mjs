@@ -35,8 +35,11 @@ test('timing and direction are comparison layouts, not generic event narratives'
   }
 });
 
-test('timing writer keeps candidate technical facts inside the matching comparison row',()=>{
-  const c=context('timing');c.allInOne.questionContext.questionType='selection';
-  assert.match(synthesisInstructions('BASE',c),/chỉ được viết trong comparisons\[\]\.reason của đúng id ứng viên/i);
-  assert.match(synthesisInstructions('BASE',c),/không được bịa khách hàng, công ty, người duyệt/i);
+test('surface layouts ask for stages only when the question requests a process',()=>{
+  for(const mode of ['prediction','strategy','business','negotiation']){
+    const p=buildPresentationProfile(context(mode),{structured:true});
+    assert.equal(p.showDevelopment,false);assert.equal(p.layout,'facets');
+    assert.equal(buildPresentationProfile(context(mode,{question:'Diễn biến tiếp theo ra sao?'}),{structured:true}).showDevelopment,true);
+  }
+  assert.equal(synthesisInstructions('BASE',context('timing')),'BASE');
 });

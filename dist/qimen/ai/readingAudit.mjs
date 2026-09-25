@@ -8,6 +8,8 @@ import {createQimenBoard} from '../core/board.mjs';
 import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {analyzeBoard} from '../analysis/index.mjs';
 import {auditSynthesis} from './synthesisAudit.mjs';
+import {buildQuestionNarrativeContract} from './narrativeContract.mjs';
+import {validateSurfaceReading,surfaceParagraphs,SurfaceValidationError,naturalSurfaceFallback} from './surfaceReading.mjs';
 export class ReadingValidationError extends Error {constructor(message){super(message);this.name='ReadingValidationError';}}
 const reject=message=>{throw new ReadingValidationError(message);};
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -27,11 +29,14 @@ function negatesCertainty(prefix) {
     /\b(?:chua|khong) (?:co )?du can cu de (?:khang dinh|ket luan|noi)(?: rang)?\s*$/.test(clause)||
     /\bkhong (?:nen|duoc|the) (?:dien giai|coi|xem) [^.!?;]{1,160} (?:la|thanh)(?: dau hieu)?\s*$/.test(clause);
 }
-function auditClaims(passages,context,rows=[]) {
+function auditClaims(passages,context,rows=[],{structured=false}={}) {
   const prose=passages.join(' '),normalized=normalizeQuestion(prose),source=normalizeQuestion(context.question);
   if(/\b(?:km-case|caseguidance|deterministic_golden|derived_regression|source_golden|regression_locked|test_locked|source_locked|sourcecase|sourceref)\b/i.test(normalized))reject('Bài luận làm lộ metadata Case Engine nội bộ.');
   const certainty=[...normalized.matchAll(/\b(chac chan (se|thang|trung|ky duoc|thanh cong|that bai|co loi|nhan duoc)|dam bao (thang|loi nhuan|thanh cong)|nhat dinh (thang|thanh cong))\b/g)];
-  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)/.test(normalized)||certainty.some(m=>!negatesCertainty(normalized.slice(0,m.index))))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
+  // The structured path has a mandatory independent fidelity review. A lexical
+  // match cannot decide whether a fluent sentence asserts or denies certainty.
+  // Fabricated numerical probabilities remain a deterministic integrity error.
+  if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)/.test(normalized)||!structured&&certainty.some(m=>!negatesCertainty(normalized.slice(0,m.index))))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
   for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g)){
     if(/[/:]/.test(normalized[m.index-1]||''))continue;
     if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
@@ -44,7 +49,7 @@ function auditClaims(passages,context,rows=[]) {
 }
 const ACTIVATION_SPIRITS=['Trực Phù','Đằng Xà','Thái Âm','Lục Hợp','Bạch Hổ','Huyền Vũ','Cửu Địa','Cửu Thiên'];
 const ACTIVATION_DIRECTIONS=['Đông Bắc','Đông Nam','Tây Bắc','Tây Nam','Bắc','Đông','Nam','Tây'];
-function auditSpiritActivationText(prose,context){
+function auditSpiritActivationText(prose,context,{requireDisclosure=true}={}){
   const activation=context?.allInOne?.spiritActivation;
   if(!activation?.requested)return [];
   const normalized=normalizeQuestion(prose),errors=[],recommended=activation.recommended;
@@ -61,11 +66,13 @@ function auditSpiritActivationText(prose,context){
   }
   const expectedSpirit=normalizeQuestion(recommended.spirit.name),expectedPalace=normalizeQuestion(recommended.palaceName);
   const expectedBack=normalizeQuestion(recommended.backDirection),expectedFace=normalizeQuestion(recommended.faceDirection),expectedLevel=normalizeQuestion(recommended.activationLevel);
-  if(!normalized.includes(expectedSpirit))errors.push('AI chưa nêu đúng Bát Thần do engine kích hoạt chọn.');
-  if(!normalized.includes(expectedPalace))errors.push('AI chưa nêu đúng cung do engine kích hoạt chọn.');
-  if(!normalized.includes(expectedBack)||!normalized.includes('sau lung'))errors.push('AI chưa nêu đủ hướng đặt sau lưng theo engine.');
-  if(!normalized.includes(expectedFace)||!/(?:mat|nhin) (?:huong|ve)/.test(normalized))errors.push('AI chưa nêu đủ hướng mặt nhìn theo engine.');
-  if(!normalized.includes(expectedLevel))errors.push('AI chưa nêu đúng mức phù hợp của phương vị.');
+  if(requireDisclosure){
+    if(!normalized.includes(expectedSpirit))errors.push('AI chưa nêu đúng Bát Thần do engine kích hoạt chọn.');
+    if(!normalized.includes(expectedPalace))errors.push('AI chưa nêu đúng cung do engine kích hoạt chọn.');
+    if(!normalized.includes(expectedBack)||!normalized.includes('sau lung'))errors.push('AI chưa nêu đủ hướng đặt sau lưng theo engine.');
+    if(!normalized.includes(expectedFace)||!/(?:mat|nhin) (?:huong|ve)/.test(normalized))errors.push('AI chưa nêu đủ hướng mặt nhìn theo engine.');
+    if(!normalized.includes(expectedLevel))errors.push('AI chưa nêu đúng mức phù hợp của phương vị.');
+  }
   for(const {name,re} of recommendationPatterns){
     if(normalizeQuestion(name)!==expectedSpirit&&re.test(normalized))errors.push('AI tự chọn Bát Thần khác với kết quả deterministic.');
   }
@@ -77,7 +84,7 @@ function auditSpiritActivationText(prose,context){
   return [...new Set(errors)];
 }
 
-function auditComparison(reason,row,context) {
+function auditComparison(reason,row,context,{formatting=true}={}) {
   const c=context.allInOne;
   let board=c.board,analysis=c.analysis,numbers=[row.palace];
   if(c.classification.mode==='timing'){
@@ -90,10 +97,11 @@ function auditComparison(reason,row,context) {
   }
   const scoped={question:context.question,allInOne:{board,analysis,reasoning:{claims:[{id:row.id,evidenceIds:numbers.map(n=>`p${n}`),ruleIds:[]}]}}};
   const errors=auditTechnicalText(reason,[row.id],scoped);if(errors.length)reject(`So sánh ${row.id}: ${errors.join(' ')}`);
-  const formatting=formatError(reason,{allowComparisonEmphasis:true});if(formatting)reject(`So sánh ${row.id}: ${formatting}`);
+  const formatIssue=formatting?formatError(reason,{allowComparisonEmphasis:true}):null;if(formatIssue)reject(`So sánh ${row.id}: ${formatIssue}`);
 }
 export function validateReading(r,facts,selectedTopic='general',context) {
   const c=context?.allInOne,g=c?.reasoning;
+  if(r?.narrativeVersion)return validateNarrativeQuestion(r,context);
   if(g&&r?.status==='verified_fallback'){
     if(JSON.stringify(r)!==JSON.stringify(verifiedFallback(context)))reject('Phần dữ kiện dự phòng không khớp dữ liệu đã tính.');
     return r;
@@ -160,4 +168,38 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   if(count<budget.minWords)reject('Bài luận còn quá sơ lược; cần làm rõ cơ chế và diễn biến thay vì thêm lời chung chung.');
   if(count>budget.maxWords)reject('Bài luận vượt độ dài đã chọn; rút gọn phần lặp và giữ trọng tâm.');
   return r;
+}
+
+export function validateNarrativeQuestion(reading,context){
+  try{
+    const contract=buildQuestionNarrativeContract(context,{deliberation:reading.planning});
+    validateSurfaceReading(reading,contract);
+    if(reading.status==='verified_fallback'){
+      if(JSON.stringify(reading)!==JSON.stringify(naturalSurfaceFallback(contract,reading.planning)))reject('Dự phòng không khớp phần diễn giải đã kiểm chứng.');
+      return reading;
+    }
+    const paragraphs=surfaceParagraphs(reading);
+    const rows=context.allInOne.comparison?.ranking||context.allInOne.plan.computed.ranking||[];
+    const violations=[];
+    for(const p of paragraphs){
+      try{
+        const passage={slot:p.unitId==='answer'?'summary':p.unitId.startsWith('comparison_')?'comparison':p.unitId,text:p.meaning,claimIds:p.claim_ids};
+        const synthesis=auditSynthesis([passage],context,{structured:true});if(synthesis.length)reject(synthesis.join(' '));
+        auditClaims([p.meaning],context,rows,{structured:true});
+        const activationErrors=auditSpiritActivationText(p.meaning,context,{requireDisclosure:false});if(activationErrors.length)reject(activationErrors.join(' '));
+        const unit=contract.units.find(u=>u.id===p.unitId);
+        if(unit.comparisonId)auditComparison(p.meaning,rows.find(r=>r.id===unit.comparisonId),context,{formatting:false});
+        else{const errors=auditTechnicalText(p.meaning,p.claim_ids,context);if(errors.length)reject(errors.join(' '));}
+        if(/<script\b|javascript:/i.test(p.meaning))reject('Không nhận mã thực thi trong nội dung bài.');
+      }catch(error){
+        if(!(error instanceof ReadingValidationError))throw error;
+        violations.push({code:'FACTUAL_INTEGRITY',unitId:p.unitId,sentence:p.meaning,reason:error.message});
+      }
+    }
+    if(violations.length)throw new SurfaceValidationError(violations);
+    return reading;
+  }catch(error){
+    if(error instanceof SurfaceValidationError){const failure=new ReadingValidationError(error.message);failure.violations=error.violations;throw failure;}
+    throw error;
+  }
 }

@@ -27,8 +27,8 @@ test('floating result navigation exposes lively Xem Bàn and Kích Thần bubble
   assert.match(css,/\.floating-result-button\{[\s\S]*min-width:96px;[\s\S]*height:50px;[\s\S]*border-radius:24px 24px 24px 14px/);
   assert.match(css,/\.floating-result-button\.is-ai-alert\{[\s\S]*animation:aiResultPulse/);
   assert.match(css,/@keyframes aiResultPulse/);
-  assert.match(css,/\.ai-technical-prefix\{display:none\}/);
-  assert.match(css,/\.ai-show-technical \.ai-technical-prefix\{display:inline\}/);
+  assert.doesNotMatch(css,/ai-technical-prefix/);
+  assert.match(css,/\.ai-technical-evidence\[hidden\]\{display:none!important\}/);
   assert.match(css,/\.ai-technical-toggle/);
   assert.match(app,/spiritSwitch\?\.addEventListener\('click'/);
   const ai=html.indexOf('class="learning-panel ai-panel'),meta=html.indexOf('class="chart-meta"');

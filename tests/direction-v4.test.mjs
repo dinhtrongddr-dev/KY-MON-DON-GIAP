@@ -137,6 +137,6 @@ test('Phase 11 UI explicitly shows directional overlays without changing rank la
   const prompt=readFileSync(new URL('../dist/qimen/ai/prompts.mjs',import.meta.url),'utf8');
   assert.match(ui,/Phương vị cổ điển/);
   assert.match(ui,/không đổi thứ hạng/);
-  assert.match(prompt,/KM-DIRECTION-4\.0/);
-  assert.match(prompt,/tránh đối đầu trực diện/);
+  assert.match(prompt,/SURFACE_WRITER_INSTRUCTIONS/);
+  assert.doesNotMatch(prompt,/KM-DIRECTION-4\.0/);
 });

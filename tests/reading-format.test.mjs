@@ -49,17 +49,13 @@ test('unmarked verified prose gets only existing meaning emphasized',()=>{
   assert.ok(parts.some(p=>p.strong&&p.text.startsWith('Chưa')));
 });
 
-test('technical Kỳ Môn prefix is separable from the translated meaning without changing text order',()=>{
-  const text='Càn 6 có Thiên Xung + Hưu Môn, gặp Môn bức cung. **Cách triển khai có lực thúc đẩy nhưng dễ bị quy trình bó lại.**';
+test('bold positions never classify technical content for hiding',()=>{
+  const text='Càn 6 có Thiên Xung + Hưu Môn. **Cách triển khai có lực thúc đẩy nhưng dễ bị quy trình bó lại.**';
   const parts=formatParts(text,{automatic:false});
   assert.equal(parts.map(part=>part.text).join(''),text.replaceAll('**',''));
-  assert.ok(parts.some(part=>part.technical&&/Càn 6.*Thiên Xung.*Hưu Môn.*Môn bức/s.test(part.text)));
-  assert.deepEqual(parts.filter(part=>part.strong).map(part=>part.text),['Cách triển khai có lực thúc đẩy nhưng dễ bị quy trình bó lại.']);
+  assert.equal(parts.some(part=>part.technical),false);
   const root=new Node('div');renderProse(text,root,doc);
-  const all=[];const visit=node=>{all.push(node);node.children.forEach(visit);};visit(root);
-  const technical=all.find(node=>node.className==='ai-technical-prefix');
-  assert.ok(technical);assert.match(technical.textContent,/Càn 6/);
-  assert.ok(all.some(node=>node.tag==='strong'&&/Cách triển khai/.test(node.textContent)));
+  assert.match(root.textContent,/Càn 6/);assert.match(root.textContent,/Cách triển khai/);
 });
 test('ordinary prose before a highlighted takeaway is not mislabeled as Kỳ Môn technical text',()=>{
   const parts=formatParts('Điểm đáng chú ý ở đây là tiến độ đang chậm. **Nên thu hẹp phạm vi trước khi tăng cam kết.**',{automatic:false});

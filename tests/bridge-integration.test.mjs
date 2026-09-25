@@ -6,7 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createBridge} from '../local/server.mjs';
 import {buildReadingRequest,prepareReading,validateReadingResponse,READING_PROTOCOL,NIANMING_VERSION} from '../local/reading.mjs';
-import {readingFixture} from './reading-fixture.mjs';
+import {questionDraft,questionReading,acceptFidelity} from './surface-fixture.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 import {createOutcomeRegistry} from '../local/outcome-registry.mjs';
 import {OUTCOME_REGISTRY_VERSION,VALIDATION_VERSION} from '../dist/qimen/validation/protocol.mjs';
@@ -16,7 +16,7 @@ const relay='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
 const payload={question:'Trong 30 ngay toi toi co nhan duoc hop dong A khong?',topic:'contract',mode:'prediction',method:'chaibu',input:{year:2026,month:9,day:14,hour:9,minute:0,tzOffset:7}};
 
 async function start(t,options={}) {
-  const {server}=createBridge({token:'integration-token',...options});
+  const {server}=createBridge({token:'integration-token',reviewer:acceptFidelity,...options});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   t.after(()=>{server.closeAllConnections();server.close();});
   return (path,{headers={},body,onData,method}={})=>new Promise((resolve,reject)=>{
@@ -89,7 +89,7 @@ test('question bridge fails closed when KM-CASE or KM-NIANMING compatibility is 
 
 test('Phase 12 validation registry is opt-in, sanitized and separate from normal AI reads',async t=>{
   const body={input:{year:2026,month:9,day:16,hour:7,minute:46,tzOffset:7},question:'Trong tuần này tôi có khoản tiền vào được phát sinh không?',topic:'general',mode:'auto',method:'chaibu'};
-  const prepared=await buildReadingRequest(body),answer=readingFixture(prepareReading(body));
+  const prepared=await buildReadingRequest(body),answer=questionDraft(prepareReading(body));
   let clock=Date.parse('2026-09-16T00:50:00Z');
   const outcomeRegistry=createOutcomeRegistry({now:()=>clock});
   const call=await start(t,{outcomeRegistry,runner:async()=>answer});
@@ -123,12 +123,12 @@ test('Phase 12 validation registry is opt-in, sanitized and separate from normal
 });
 
 test('slow tunnel readings preserve one complete validated current-protocol JSON document',async t=>{
-  const prepared=await buildReadingRequest(payload),answer=readingFixture(prepareReading(payload));
+  const prepared=await buildReadingRequest(payload),answer=questionDraft(prepareReading(payload));
   const call=await start(t,{keepAliveAfterMs:5,keepAliveEveryMs:5,runner:async()=>{await new Promise(resolve=>setTimeout(resolve,40));return answer;}});
   const result=await call('/api/read',{body:prepared.request});
   assert.equal(result.status,200);
   assert.match(result.text,/^ +\{/);
-  assert.deepEqual(validateReadingResponse(JSON.parse(result.text),prepared).reading,answer);
+  assert.deepEqual(validateReadingResponse(JSON.parse(result.text),prepared).reading,questionReading(prepareReading(payload)));
 });
 
 test('a provider error after tunnel keepalive completes as JSON and releases the next reading',async t=>{
@@ -184,7 +184,7 @@ test('repeated wrong pairing attempts are throttled separately for each relay cl
 });
 
 test('async reading job survives client disconnect semantics and can be reattached without a second AI call',async t=>{
-  const prepared=await buildReadingRequest(payload),answer=readingFixture(prepareReading(payload));
+  const prepared=await buildReadingRequest(payload),answer=questionDraft(prepareReading(payload));
   let release,calls=0;const gate=new Promise(resolve=>release=resolve);
   const call=await start(t,{runner:async()=>{calls++;await gate;return answer;}});
   const first=await call('/api/read/start',{body:prepared.request});assert.equal(first.status,202);
@@ -196,7 +196,7 @@ test('async reading job survives client disconnect semantics and can be reattach
   let finished;
   for(let i=0;i<50;i++){finished=JSON.parse((await call('/api/jobs/'+started.jobId)).text);if(finished.status!=='running')break;await new Promise(r=>setTimeout(r,5));}
   assert.equal(finished.status,'completed');assert.equal(calls,1);
-  assert.deepEqual(validateReadingResponse(finished.result,prepared).reading,answer);
+  assert.deepEqual(validateReadingResponse(finished.result,prepared).reading,questionReading(prepareReading(payload)));
 });
 
 test('async reading job can be explicitly cancelled instead of depending on a dropped HTTP connection',async t=>{

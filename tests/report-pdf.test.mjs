@@ -75,6 +75,7 @@ test('question link sharing uses the exact retained AI request and never prepare
   const doc={
     getElementById(id){return id==='button'?button:id==='status'?status:id==='local-token'?token:null;},
     querySelector(selector){return selector==='#result'?snapshotRoot:null;},
+    querySelectorAll(){return [];},
     createElement(){return {hidden:false,className:'',target:'',rel:'',textContent:'',href:'',removeAttribute(name){delete this[name];}};}
   };
   Object.defineProperty(globalThis,'document',{value:doc,writable:true,configurable:true});

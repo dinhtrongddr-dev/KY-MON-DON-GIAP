@@ -1,4 +1,6 @@
 import {formatError} from '../../../reading-format.mjs';
+import {buildMenhNarrativeFromContext} from './narrative-contract.mjs';
+import {validateSurfaceReading,surfaceParagraphs,SurfaceValidationError,naturalSurfaceFallback} from '../../ai/surfaceReading.mjs';
 const SECTION_KEYS=['overview','self','family','marriage','career','wealth','luck','annual','birthTimeNote'];
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const text=value=>typeof value==='string'&&value.length<=8000;
@@ -17,19 +19,7 @@ function auditGlobalStructure(reading,context){
     reject('KM-MENH writer thiếu deterministic GLOBAL_STRUCTURE claim.');
   if(!reading.overview.claim_ids.includes(global.claimId))
     reject('overview phải gắn GLOBAL_STRUCTURE khi có cấu trúc toàn cục ưu tiên cao.');
-  const n=normalize(reading.overview.text);
-  for(const mechanism of global.mechanisms||[]){
-    if(mechanism==='FU_YIN'&&!/\b(phuc ngam|fu_yin)\b/.test(n))
-      reject('overview phải nêu Phục Ngâm khi GLOBAL_FU_YIN đang hoạt động.');
-    if(mechanism==='FAN_YIN'&&!/\b(phan ngam|fan_yin)\b/.test(n))
-      reject('overview phải nêu Phản Ngâm khi GLOBAL_FAN_YIN đang hoạt động.');
-  }
-  const hasPrecedence=/\b(xet truoc|doc truoc|uu tien|lop[^.!?]{0,50}truoc)\b/.test(n);
-  const hasCap=/\b(gioi han|han che|cap|kim|kho phat huy|phat huy[^.!?]{0,40}(cham|khong tron ven)|loi the[^.!?]{0,40}(cham|muon))\b/.test(n);
-  if(!hasPrecedence||!hasCap)
-    reject('overview phải thể hiện precedence/cap của GLOBAL_STRUCTURE trước tín hiệu cục bộ.');
-  if(!(/\bkhong\b[^.!?]{0,120}\b(tuyet doi|veto|quyet dinh|phan quyet|dong nghia|phu dinh)\b/.test(n)||/\btuyet doi\b[^.!?]{0,40}\bkhong\b/.test(n)))
-    reject('overview phải nói rõ GLOBAL_STRUCTURE không phải veto/phán quyết xấu tuyệt đối.');
+  // Historical v1 readings retain trace checks, never mandatory phrasing.
   const sections=new Set((global.affectedDomains||[]).map(domain=>GLOBAL_SECTION_BY_DOMAIN[domain]).filter(Boolean));
   for(const key of sections){
     if(reading[key]?.text?.trim()&&!reading[key].claim_ids.includes(global.claimId))
@@ -37,25 +27,7 @@ function auditGlobalStructure(reading,context){
   }
 }
 
-const LONGFORM_MIN=Object.freeze({overview:280,self:500,family:550,marriage:500,career:550,wealth:550,luck:350,annual:350});
-function auditLongForm(reading,context){
-  if(context.birthTimeMode!=='KNOWN'||context.outputMode!=='COMPREHENSIVE_ONE_SHOT')return;
-  const claims=new Set(context.allowedClaimIds||[]);
-  const expected={
-    overview:claims.size>0,self:claims.has('SELF_CORE'),
-    family:[...claims].some(id=>id.startsWith('FAMILY_')||id==='CHILDREN_CORE'),
-    marriage:claims.has('MARRIAGE_CORE'),career:claims.has('CAREER_CORE'),wealth:claims.has('WEALTH_CORE'),
-    luck:claims.has('LUCK_CURRENT'),annual:claims.has('ANNUAL_CURRENT'),
-  };
-  let expectedCount=0,actualTotal=0;
-  for(const [key,min] of Object.entries(LONGFORM_MIN)){
-    if(!expected[key])continue;
-    expectedCount++;const len=reading[key]?.text?.trim().length||0;actualTotal+=len;
-    if(len<min)reject(key+': bài luận production quá ngắn cho chế độ COMPREHENSIVE_ONE_SHOT ('+len+'/'+min+' ký tự sàn).');
-  }
-  const requiredTotal=Math.round(6800*(expectedCount/Object.keys(LONGFORM_MIN).length));
-  if(actualTotal<requiredTotal)reject('Bài luận production chưa đủ độ sâu long-form ('+actualTotal+'/'+requiredTotal+' ký tự tối thiểu toàn bài).');
-}
+// Length is a style concern. Required meanings and trace are checked structurally.
 
 function auditDangerousClaims(prose){
   const n=normalize(prose);
@@ -74,6 +46,7 @@ function auditDangerousClaims(prose){
 }
 
 export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
+  if(reading?.narrativeVersion)return validateNarrativeMenh(reading,context);
   const top=['status','specVersion','profileId',...SECTION_KEYS];
   if(!exact(reading,top)||reading.status!=='reading')reject('KM-MENH writer trả sai schema.');
   if(reading.specVersion!==context.specVersion||reading.profileId!==context.profileId)
@@ -107,6 +80,31 @@ export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
   }
   auditGlobalStructure(reading,context);
   auditDangerousClaims(allText.join(' '));
-  if(enforceLongForm)auditLongForm(reading,context);
   return reading;
+}
+
+export function validateNarrativeMenh(reading,context){
+  try{
+    const contract=buildMenhNarrativeFromContext(context);
+    validateSurfaceReading(reading,contract);
+    if(reading.status==='verified_fallback'){
+      if(JSON.stringify(reading)!==JSON.stringify(naturalSurfaceFallback(contract)))reject('Dự phòng không khớp nhận định đã kiểm chứng.');
+      return reading;
+    }
+    const paragraphs=surfaceParagraphs(reading),prose=paragraphs.map(p=>p.meaning).join(' ');
+    auditDangerousClaims(prose);
+    const n=normalize(prose);
+    // Certainty is checked against the contract by the mandatory fidelity
+    // reviewer; negated statements must not fail a keyword-presence gate.
+    if(/\b(?:da xay ra|chac chan da|ban da)\b/.test(n))
+      reject('Không tự nâng xu hướng thành sự kiện ngoài đời.');
+    if(context.birthTimeMode==='UNKNOWN'&&/\bgio sinh (?:dung|chinh xac|la)\b/.test(n))
+      reject('Không được tự chọn giờ sinh.');
+    if(/\b\d+(?:[.,]\d+)*\s*(?:trieu|ty|vnd|usd|dong)\b/.test(n))
+      reject('Không được tự tạo số tiền.');
+    return reading;
+  }catch(error){
+    if(error instanceof SurfaceValidationError){const failure=new MenhReadingValidationError(error.message);failure.violations=error.violations;throw failure;}
+    throw error;
+  }
 }

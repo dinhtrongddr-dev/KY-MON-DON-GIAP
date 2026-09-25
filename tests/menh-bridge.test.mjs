@@ -7,18 +7,8 @@ import {READING_PROTOCOL} from '../local/reading.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 
 const payload={birthDateLocal:'1990-01-01',birthTimeMode:'KNOWN',birthTimeLocal:'09:30',tzOffset:7,age:37,annualYear:2026,sexMetadata:'MALE'};
-const empty=()=>({text:'',claim_ids:[]});
-function readingFromContext(ctx){
-  const first=ctx.claims[0];
-  const globalLabel=(ctx.globalStructure?.mechanisms||[]).map(x=>x==='FU_YIN'?'Phục Ngâm':x==='FAN_YIN'?'Phản Ngâm':x).join(' + ');
-  const overview=ctx.globalStructure?.active
-    ?{text:`Toàn bàn có ${globalLabel}. Đây là cấu trúc ưu tiên phải xét trước và có thể giới hạn/cap tín hiệu thuận cục bộ, nhưng không phải veto xấu tuyệt đối.`,claim_ids:[ctx.globalStructure.claimId]}
-    :first?{text:'Tổng quan có điều kiện từ Mệnh bàn đã tính.',claim_ids:[first.claimId]}:empty();
-  const r={status:'reading',specVersion:ctx.specVersion,profileId:ctx.profileId,
-    overview,
-    self:empty(),family:empty(),marriage:empty(),career:empty(),wealth:empty(),luck:empty(),annual:empty(),birthTimeNote:empty()};
-  return r;
-}
+import {draftFor,acceptFidelity} from './surface-fixture.mjs';
+const readingFromContext=draftFor;
 const fetchLocal=(url,options={})=>new Promise((resolve,reject)=>{
   const req=httpRequest(url,options,res=>{const chunks=[];res.on('data',c=>chunks.push(c));res.on('end',()=>resolve(new Response(res.statusCode===204?null:Buffer.concat(chunks),{status:res.statusCode,headers:res.headers})));});
   req.on('error',reject);req.end(options.body);
@@ -26,7 +16,7 @@ const fetchLocal=(url,options={})=>new Promise((resolve,reject)=>{
 
 test('bridge recomputes KM-MENH, checks fingerprints and preserves existing service identity',async t=>{
   let calls=0;
-  const {server}=createBridge({token:'menh-test-token',runner:async(_instructions,ctx)=>{calls++;return readingFromContext(ctx);}});
+  const {server}=createBridge({token:'menh-test-token',reviewer:acceptFidelity,runner:async(_instructions,ctx)=>{calls++;return readingFromContext(ctx);}});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   t.after(()=>{server.closeAllConnections();server.close();});
   const url='http://127.0.0.1:'+server.address().port;

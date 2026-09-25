@@ -21,7 +21,8 @@ test('16 topics × 2 methods produce deterministic, resolved evidence without tr
     }
     assert.equal(p.context.selectedTopic,topic.id);assert.equal(p.chart.method,method);
     const sample=readingFixture(p);assert.equal(validateReading(sample,p.facts,topic.id,p.context),sample);
-    assert.deepEqual(readingSchema(p.facts,p.context).properties.summary.properties.claim_ids.items.enum,p.context.allInOne.reasoning.claims.map(c=>c.id));
+    const writerSection=readingSchema(p.facts,p.context).properties.sections.items.properties;
+    assert.deepEqual(Object.keys(writerSection).sort(),['id','text']);
   }
 });
 

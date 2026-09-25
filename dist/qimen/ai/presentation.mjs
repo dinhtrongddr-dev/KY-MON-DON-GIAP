@@ -1,6 +1,7 @@
 const normalized=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
+export const wantsDevelopment=question=>/\b(dien bien|tien trien|chuyen bien|tiep theo|qua trinh|cac buoc hinh thanh)\b/.test(normalized(question));
 
-export function buildPresentationProfile(context) {
+export function buildPresentationProfile(context,{structured=false}={}) {
   const c=context.allInOne,q=c.questionContext,g=c.reasoning,mode=c.classification.mode;
   const text=normalized(q.question);
   const asksDevelopment=/\b(dien bien|chuyen bien|tiep theo|qua trinh|se ra sao|sau do)\b/.test(text);
@@ -63,5 +64,13 @@ export function buildPresentationProfile(context) {
     profile.reasoningGoal='So sánh phương vị từ đúng điểm quy chiếu và mục tiêu hành động; không dựng diễn biến thời gian hoặc suy tọa độ ngoài dữ liệu.';
   }
 
+  // Archived v1 readings retain their layout. New readings use question facets;
+  // stages are an explicit request, never a requirement of a decision mode.
+  if(structured){
+    profile.showDevelopment=!['timing','direction'].includes(mode)&&wantsDevelopment(q.question);
+    profile.layout=profile.showDevelopment?'progression':'facets';
+    profile.showTiming=hasRealTiming||['timing','direction'].includes(mode);
+    profile.tabs=profile.tabs.filter(([id])=>(id!=='story'||profile.showDevelopment)&&(id!=='timing'||profile.showTiming));
+  }
   return Object.freeze(profile);
 }
