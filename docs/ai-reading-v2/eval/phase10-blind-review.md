@@ -1,0 +1,927 @@
+# Phase 10 — Phiếu chấm mù AI Reading v2
+
+Không mở phase9-blind-key.json trước khi chấm xong. Mỗi mẫu chấm 1–5 cho đủ bảy tiêu chí; không đoán provider.
+
+Thang điểm: 1 = không đạt; 2 = yếu; 3 = dùng được nhưng còn rõ vấn đề; 4 = tốt; 5 = rất tốt.
+
+- **focus** — Đúng trọng tâm
+- **clarity** — Dễ hiểu
+- **depth** — Chiều sâu
+- **specificity** — Cụ thể với câu hỏi
+- **repetition** — Không lặp
+- **certainty** — Mức chắc chắn phù hợp
+- **actionability** — Hành động hữu ích
+
+## R001 · Q01_CASE_B · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho việc nghỉ để chăm con, nhưng chưa nên chốt hoặc nộp đơn ngay khi những trở ngại chính vẫn còn nguyên. Trước hết, cần tháo gỡ các vấn đề ảnh hưởng trực tiếp đến quyết định này, nhất là khả năng duy trì cuộc sống trong thời gian nghỉ và sự thu xếp cho giai đoạn sau đó.
+
+### decision
+
+Mong muốn dành trọn thời gian chăm con là một hướng có ý nghĩa với bạn, nhưng cần tách mong muốn ấy khỏi mức độ sẵn sàng thực tế. Phương án nghỉ ít nhất một năm chỉ nên được chốt khi đã có nguồn lực, sự thu xếp và điều kiện giải quyết tương ứng.
+
+### approval_timing
+
+Việc được giải quyết vào gần cuối tháng 10 hiện mới là mục tiêu sắp xếp, chưa phải mốc đã được xác nhận. Gửi đơn và được chấp thuận cho nghỉ là hai việc riêng, vì vậy bạn chưa nên xây toàn bộ kế hoạch chăm con dựa trên mốc này trước khi nhận được thông tin rõ ràng.
+
+### financial_capacity
+
+Để biết mình có thể nghỉ ở nhà ít nhất một năm hay không, bạn cần đặt các nguồn thu có thể dựa vào cạnh toàn bộ chi phí phải gánh trong thời gian đó. Những dấu hiệu hỗ trợ hiện có không thay thế được việc tính số dư thực tế, nên đây là điều cần làm rõ trước khi quyết định.
+
+### career_return
+
+Việc tạm nghỉ chưa đủ để kết luận rằng bạn sẽ ù lì, tụt hậu hoặc mất đường quay lại nghề nghiệp. Trong thời gian chăm con, hãy duy trì liên hệ với công việc và dành một nhịp đều đặn cho việc học; sự chuẩn bị này sẽ giúp bạn giữ khả năng quay lại hoặc tìm công việc khác về sau.
+
+### action_2
+
+Trước khi nộp đơn, hãy kiểm tra xem điều đang thúc đẩy bạn bước tiếp có thật sự đi cùng đủ điều kiện để thực hiện hay mới chỉ là áp lực muốn quyết định sớm. Chỉ nên tiến tới bước chính thức khi các điều kiện thiết yếu đã có thể kiểm chứng.
+
+## R002 · Q01_CASE_B · question · lượt 1 · phương án Y
+
+### answer
+
+Hướng nghỉ việc để ở nhà chăm con có thể tiếp tục chuẩn bị, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Trước khi quyết định hẳn, điều cần làm là tháo những trở ngại ảnh hưởng trực tiếp đến việc nghỉ, đặc biệt là phần nguồn lực và sự sắp xếp thực tế để giai đoạn ở nhà không tạo thêm áp lực.
+
+### decision
+
+Việc muốn dành thời gian chăm con là một mong muốn có ý nghĩa, nhưng mức sẵn sàng thực hiện cần đi cùng với nguồn lực, sự thu xếp và điều kiện giải quyết phù hợp. Lúc này nên tách việc muốn nghỉ khỏi việc đã đủ nền tảng để nghỉ, tránh để cảm xúc thúc đẩy một bước thay đổi lớn khi các điều kiện hỗ trợ chưa rõ ràng.
+
+Điểm cần chú ý là phần nguồn lực chăm sóc và những thông tin còn chưa được làm rõ. Cách phù hợp là kiểm tra lại các khả năng thực tế, đồng thời lựa chọn cách trao đổi khéo léo với những nội dung nhạy cảm. Với các thỏa thuận và giấy tờ liên quan, nên đưa ra phương án có thể kiểm tra, làm rõ trách nhiệm và cam kết của từng phía.
+
+### approval_timing
+
+Mốc gần cuối tháng 10 hiện là thời điểm bạn dự tính sắp xếp, chưa phải là thời điểm đã được xác nhận giải quyết. Việc gửi đơn và việc được chấp thuận nghỉ là hai bước khác nhau, nên cần nhìn vào khả năng trao đổi và điều kiện thực tế thay vì chỉ dựa vào mốc thời gian mong muốn.
+
+Trong quá trình này, nên chú ý đến những phần có thể gây cản trở cho kế hoạch, nhất là các điều kiện liên quan đến việc chăm sóc con và sự sắp xếp giữa các bên. Khi những điểm này được làm rõ hơn, việc cân nhắc bước tiếp theo sẽ vững hơn.
+
+### financial_capacity
+
+Nguồn lực trong thời gian nghỉ cần được kiểm tra bằng những con số thực tế: các khoản thu có thể dựa vào đặt cạnh những chi phí phải gánh trong thời gian ở nhà. Những điểm hiện có chưa cho biết phần dư thực tế, vì vậy chưa thể chỉ dựa vào mong muốn nghỉ để kết luận phương án có đủ an toàn hay không.
+
+Điều nên ưu tiên là rà lại nền tảng tài chính và cách tổ chức cuộc sống trong thời gian nghỉ. Nếu phần này chưa ổn định, việc tiến quá nhanh có thể tạo thêm sức ép lên những điều kiện đang có.
+
+### career_return
+
+Việc nghỉ một thời gian để chăm con chưa cho phép kết luận rằng bạn sẽ tụt hậu hoặc mất hướng quay lại công việc. Khả năng trở lại sẽ phụ thuộc nhiều vào cách bạn duy trì sự kết nối và chuẩn bị trong thời gian nghỉ.
+
+Trong giai đoạn ở nhà, có thể giữ một nhịp nhỏ để cập nhật kiến thức, duy trì liên hệ với công việc và quan sát những thay đổi cần thiết. Việc chuẩn bị đều đặn sẽ giúp giảm cảm giác bị bỏ lại phía sau khi quay lại.
+
+### action_2
+
+Trước khi quyết định bước tiếp, nên kiểm tra xem phía có liên quan đã thực sự có đủ điều kiện để thực hiện hay chỉ đang chịu sức ép phải đi nhanh. Đồng thời, có thể giảm bớt những yêu cầu hoặc kỳ vọng chưa phù hợp với điều kiện hiện tại để tìm ra phương án khả thi hơn.
+
+## R003 · Q02_FAMILY_CHILDCARE · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị phương án để vợ ở nhà chăm con đến khi con 2 tuổi, nhưng chưa nên chốt khi các điểm cản hiện tại vẫn còn nguyên. Trước khi chuyển hẳn sang một nguồn thu nhập, cần giải phóng phần nguồn lực đang bị giữ trong các trách nhiệm hiện có, thay vì giao thêm việc khi sức gánh chưa thực sự thông thoáng.
+
+### decision
+
+Mong muốn dành thêm thời gian chăm con là một chuyện, còn mức sẵn sàng để thực hiện lại là chuyện khác. Phương án này chỉ phù hợp khi đi cùng nguồn lực đủ dùng, cách thu xếp rõ ràng và khả năng duy trì ổn định; nếu khó khăn cứ lặp lại thì nên thay cách tổ chức trước, không chỉ cố gắng nhiều hơn.
+
+### financial_capacity
+
+Chưa thể khẳng định chỉ từ thông tin hiện có rằng một mình bạn chắc chắn đủ khả năng kinh tế. Hãy đặt các khoản thu có thể dựa vào cạnh toàn bộ chi phí phải gánh khi gia đình chỉ còn một nguồn thu; những yếu tố thuận lợi hiện có không cho biết số dư thực tế hay chứng minh rằng kế hoạch sẽ được duy trì ổn định.
+
+### action_7
+
+Hai vợ chồng nên đối chiếu rõ mục tiêu của vai trò kiếm thu nhập và vai trò chăm con, gồm trách nhiệm, nhu cầu và giới hạn của mỗi bên. Việc cả hai có cách nhìn tương đồng về nguồn lực không tự chứng minh rằng đã có sự đồng thuận; chỉ nên quyết định sau khi phương án được trao đổi và kiểm tra bằng tình hình thực tế.
+
+## R004 · Q02_FAMILY_CHILDCARE · question · lượt 1 · phương án Y
+
+### answer
+
+Việc vợ ở nhà chăm con đến khi 2 tuổi có thể tiếp tục được chuẩn bị, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Điều quan trọng là giải phóng phần nguồn lực đang bị giữ ở vai trò hiện tại trước khi giao thêm một trách nhiệm lớn khác, để phương án này không tạo áp lực ngược cho gia đình.
+
+### decision
+
+Mong muốn dành thời gian chăm con là một lựa chọn có ý nghĩa, nhưng cần tách mong muốn thực hiện khỏi mức sẵn sàng để thực hiện. Một phương án phù hợp với gia đình vẫn cần đi cùng sự thu xếp về nguồn lực, cách tổ chức cuộc sống và khả năng duy trì ổn định trong thời gian dài.
+
+Điểm cần chú ý là việc trao đổi trong nhà nên dựa trên một phương án có thể kiểm tra được, thay vì chỉ dựa vào cảm giác đủ hay chưa đủ. Ví dụ minh họa: hai vợ chồng có thể cùng xem lại cách phân chia việc chăm con, các khoản cần duy trì và những phần nào có thể thay đổi trước khi quyết định. Khi điều kiện chưa thay đổi, việc cố ép tiến nhanh có thể khiến vấn đề quay lại theo cách cũ.
+
+### financial_capacity
+
+Khả năng tài chính chưa thể kết luận chỉ từ vai trò người đang làm trụ cột kinh tế. Để biết có đủ sức gánh phương án này hay không, cần đặt các khoản thu có thể dựa vào cạnh những chi phí phải chịu và xem phần dư thực tế có đủ để duy trì hay không.
+
+Ngoài tiền bạc, nguồn lực chăm sóc cũng là điểm cần chứng minh sự ổn định. Việc cần chú ý là cách giữ nhịp sinh hoạt, tổ chức việc nhà và chăm con, tránh để một người phải gánh quá nhiều phần việc mà không có sự chuẩn bị đi cùng.
+
+### action_7
+
+Nên đối chiếu mục tiêu của hai vai trò trong gia đình: mong muốn chăm con và khả năng duy trì đời sống chung cần được xem cùng nhau. Hãy tách khả năng hiện có khỏi những kết quả mà gia đình đang mong muốn đạt được, rồi kiểm tra từng điều kiện trước khi đưa ra quyết định cuối cùng.
+
+## R005 · Q03_GENERIC_STRATEGY · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho phương án này thêm một thời gian, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Hãy tận dụng những hỗ trợ mà tình hình hiện tại có thể mang lại, nhưng chỉ tiếp nhận phần thực sự dùng được.
+
+### decision
+
+Cần tách mong muốn theo đuổi phương án khỏi mức độ sẵn sàng để thực hiện. Dù hướng này có ý nghĩa với bạn, việc đi tiếp vẫn phải dựa trên nguồn lực hiện có, sự thu xếp phù hợp và khả năng xử lý các điều kiện liên quan.
+
+### bottleneck
+
+Trước khi nhận thêm việc hoặc mở rộng phương án, bạn nên giải phóng phần nguồn lực đang bị giữ ở vai trò hiện tại. Khi điểm nghẽn này chưa được xử lý, tiếp tục chuẩn bị sẽ phù hợp hơn là ép tiến tới quyết định cuối cùng.
+
+## R006 · Q03_GENERIC_STRATEGY · question · lượt 1 · phương án Y
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho hướng này thêm một thời gian, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Giai đoạn này phù hợp hơn với việc quan sát, hoàn thiện và giữ sự linh hoạt thay vì vội xem đây là kết quả đã chắc chắn. Nguồn hỗ trợ từ sự việc có thể giúp bạn tiến bước; nên chọn phần nào thực sự có thể tiếp nhận và sử dụng để phục vụ cho hướng đi của mình.
+
+### decision
+
+Điều cần phân biệt là mong muốn thực hiện một phương án với mức sẵn sàng để thực hiện nó. Một hướng đi có ý nghĩa với bạn vẫn cần đi cùng nguồn lực, sự thu xếp và các điều kiện giải quyết phù hợp. Vì vậy, thay vì chỉ cố đẩy nhanh tiến độ, nên tập trung chứng minh khả năng duy trì ổn định và tổ chức công việc rõ ràng hơn. Một phương án có thể tiếp tục được xem xét khi các điểm vướng được xử lý bằng thay đổi thực tế, không chỉ bằng việc tăng thêm nỗ lực.
+
+### bottleneck
+
+Trước khi giao thêm việc hoặc mở rộng phương án, cần giải phóng phần nguồn lực đang bị giữ lại ở vai trò hiện tại. Khi phần bị kẹt được sắp xếp lại, khả năng tiếp tục triển khai mới có thêm nền tảng vững hơn.
+
+## R007 · Q04_CONTRACT_OUTCOME · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có khả năng nhận được hợp đồng và có thể tiếp tục chuẩn bị theo hướng này, nhưng chưa nên xem là đã chắc chắn khi các điểm cản vẫn còn nguyên. Cần đối chiếu mục tiêu của hai bên; việc có nguồn lực tương đồng không tự chứng minh rằng phía còn lại đã đồng ý.
+
+### situation
+
+Cơ hội vẫn còn, nhưng hiện chưa đủ điều kiện để chuyển thành kết quả cụ thể. Những nội dung bên trong thỏa thuận, trách nhiệm của từng phía và người có quyền chấp thuận cần được làm rõ trước.
+
+### bottleneck
+
+Điểm vướng chính là vị thế của bạn ở khâu nhận kết quả chưa ổn định. Hãy xác định rõ nguồn lực mình đang có và bước chủ động nào bạn thực sự có thể thực hiện.
+
+### action_1
+
+Nên chọn một bước cụ thể để làm rõ phần còn vướng trong hợp đồng, chẳng hạn tập trung trao đổi thẳng vào nội dung đang được bàn luận hoặc còn tranh luận, thay vì cố chốt toàn bộ ngay.
+
+## R008 · Q04_CONTRACT_OUTCOME · question · lượt 1 · phương án Y
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho hướng nhận hợp đồng này, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Việc có được kết quả còn phụ thuộc vào quá trình làm rõ các điều kiện liên quan; sự tương đồng về mục tiêu hoặc nguồn lực giữa hai bên chưa tự chứng minh rằng thỏa thuận đã được đồng ý.
+
+### situation
+
+Với việc nhận hợp đồng, điểm đáng chú ý hiện tại nằm ở khả năng trao đổi và làm rõ nhu cầu. Hướng xử lý phù hợp là thể hiện năng lực, hồ sơ và cách làm một cách rõ ràng, đồng thời chia nhỏ từng bước để theo dõi các điều kiện còn đang giữ. Có những phần thông tin hoặc phương hướng chưa đủ sáng tỏ, vì vậy cần mở nút thắt trước khi đưa ra quyết định cuối cùng.
+
+Ở phần thỏa thuận và giấy tờ, nên chú ý đến những nội dung cần được làm rõ bên trong, đặc biệt là trách nhiệm và cam kết của từng phía. Cơ hội vẫn còn nhưng chưa đủ điều kiện để thành kết quả cụ thể; việc chuẩn bị cần tập trung vào những gì có thể kiểm tra và xác nhận thay vì chỉ dựa vào kỳ vọng.
+
+### bottleneck
+
+Điểm cần chuẩn bị trước là vị thế của bạn trong khâu nhận kết quả chưa thật sự ổn định. Cần xác định rõ phần nguồn lực mình có, những bước chủ động có thể thực hiện và điều gì cần bổ sung để tăng khả năng hoàn thành yêu cầu đang đặt ra.
+
+### action_1
+
+Nên chọn một bước cụ thể để làm rõ phần việc còn đang được trao đổi hoặc tranh luận. Khi tập trung vào một nội dung có thể kiểm chứng và giải quyết từng yêu cầu chưa đáp ứng, quá trình trao đổi sẽ dễ đi vào thực chất hơn.
+
+## R009 · Q05_CONTRACT_STRATEGY · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể tiếp tục theo đuổi hợp đồng, nhưng chưa nên chốt khi các điểm cản vẫn còn nguyên. Hãy đối chiếu mục tiêu của bạn với mục tiêu của phía bên kia; việc hai bên có nguồn lực tương đồng chưa đủ chứng minh rằng họ sẽ đồng ý.
+
+### situation
+
+Trọng tâm lúc này là trao đổi để làm rõ nhu cầu, đồng thời thể hiện năng lực, hồ sơ và cách thực hiện. Các điều kiện, trách nhiệm và cam kết còn mơ hồ cần được xác nhận trước khi thúc đẩy giao dịch.
+
+### bottleneck
+
+Điểm nghẽn là vị thế của bạn ở khâu nhận kết quả chưa ổn định. Bạn cần xác định rõ mình thực sự có nguồn lực nào và có thể chủ động thực hiện bước nào, thay vì dựa vào những điều chưa nằm trong khả năng kiểm soát.
+
+### action_1
+
+Việc nên làm ngay là chọn một nội dung còn chưa rõ trong thỏa thuận để xử lý dứt điểm: đưa vấn đề ra trao đổi, làm rõ chỗ hai bên đang hiểu khác hoặc còn tranh luận, rồi mới tiến tới bước cam kết tiếp theo.
+
+## R010 · Q05_CONTRACT_STRATEGY · question · lượt 1 · phương án Y
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho hướng giành hợp đồng này, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Sự tương đồng về nguồn lực giữa hai bên chưa tự chứng minh được sự đồng ý, vì vậy cần làm rõ hơn mục tiêu và điều kiện để đi đến thống nhất.
+
+### situation
+
+Điểm đáng chú ý hiện tại nằm ở khả năng trao đổi và làm rõ nhu cầu của đối tác. Hướng xử lý phù hợp là thể hiện năng lực, hồ sơ và cách làm một cách rõ ràng, đồng thời chia nhỏ từng bước để theo dõi các điều kiện còn đang giữ. Có thể vẫn còn cơ hội, nhưng chưa đủ điều kiện để xem đó là kết quả cụ thể.
+
+Trong quá trình làm việc, phần thỏa thuận và giấy tờ cần được chú ý kỹ, nhất là những nội dung còn đang được nói hoặc tranh luận. Việc xác nhận trách nhiệm và cam kết của từng phía sẽ giúp hạn chế vướng mắc. Với hồ sơ, phạm vi công việc hoặc báo giá, nên đưa ra phương án có thể kiểm tra và lựa chọn cách trao đổi phù hợp với những thông tin cần thận trọng.
+
+### bottleneck
+
+Điểm cần chuẩn bị trước là củng cố vị thế của mình ở khâu nhận kết quả. Bạn cần xác định rõ phần nguồn lực đang có và bước chủ động nào mình thực sự có thể thực hiện, thay vì chỉ dựa vào kỳ vọng hợp đồng sẽ được chấp thuận.
+
+### action_1
+
+Nên chọn một bước cụ thể để làm rõ phần việc còn đang tranh luận. Hãy tập trung vào việc giải thích, xác nhận nhu cầu và xử lý những điểm chưa đáp ứng, để giảm bớt các yêu cầu còn thiếu từ phía người hỏi trong quá trình trao đổi.
+
+## R011 · Q06_BUSINESS_MARGIN · question · lượt 1 · phương án X
+
+### answer
+
+Chưa đủ cơ sở để quyết định nhận toàn bộ hay từ chối ngay. Dự án hiện chưa thành hình đủ vững; cần làm rõ một đầu việc hoặc bước tiến cụ thể trước khi kết luận liệu biên lợi nhuận thấp có thể được cải thiện hay không.
+
+### situation
+
+Biến động về phạm vi, chi phí và lợi ích có thể dẫn đến giằng co giữa các bên. Hãy tách dữ kiện thực tế khỏi suy đoán, đồng thời làm rõ giới hạn công việc, trách nhiệm, cam kết và những điều kiện không thể nhượng.
+
+### action_7
+
+Dự án vẫn có thể đem lại nguồn hỗ trợ giúp bạn tiến bước, nhưng chỉ nên chọn phần giá trị hoặc nguồn lực mà bạn thực sự có thể tiếp nhận và sử dụng, thay vì xem cơ hội đó như một kết quả chắc chắn.
+
+### action_1
+
+Nên điều chỉnh cách triển khai theo phạm vi hiện có và thử một bước nhỏ trước khi tăng quy mô. Một phần việc cụ thể, có thể kiểm tra sẽ giúp bạn đánh giá sức ép chi phí và khả năng thực hiện trước khi nhận cam kết lớn hơn.
+
+## R012 · Q06_BUSINESS_MARGIN · question · lượt 1 · phương án Y
+
+### answer
+
+Với dự án này, chưa nên vội kết luận nhận hay từ chối chỉ dựa trên biên lợi nhuận hiện tại, vì phạm vi thành hình chưa có hỗ trợ đủ rõ để kết luận kết quả. Khả năng của sự việc còn ở dạng chưa vững; cần một đầu việc hoặc tiến triển cụ thể để thành hình, chẳng hạn như làm rõ phạm vi, điều kiện thực hiện hoặc phần giá trị thực sự có thể thu được trước khi quyết định.
+
+### situation
+
+Điểm đáng chú ý hiện nằm ở những thông tin cần làm rõ quanh lợi ích, chi phí và cách triển khai. Biến động dễ kéo theo tranh cãi về lợi ích hoặc chi phí; vì vậy cần tách dữ kiện thực tế khỏi suy đoán để nhìn đúng khả năng của dự án. Cơ hội vẫn còn, nhưng chưa đủ điều kiện để thành kết quả cụ thể, nên việc trao đổi cần tập trung vào những điểm có thể kiểm tra và xác nhận.
+
+### action_7
+
+Nên tận dụng những phần hỗ trợ mà dự án có thể mang lại, nhưng chọn lọc phần thực sự có thể tiếp nhận và sử dụng. Cần tách khả năng đang có khỏi kết quả đã sử dụng được, tránh xem một triển vọng ban đầu như một lợi ích đã chắc chắn.
+
+### action_1
+
+Cách làm phù hợp là điều chỉnh phạm vi cho sát với điều kiện thực tế và thử một bước nhỏ trước khi tăng quy mô. Việc tạo ra một dấu hiệu cụ thể cho bước tiếp theo sẽ giúp nhìn rõ hơn liệu dự án có đủ cơ sở để tiếp tục hay cần thay đổi phương án.
+
+## R013 · Q07_NEGOTIATION · question · lượt 1 · phương án X
+
+### answer
+
+Việc đàm phán mức giá mới lúc này có thể tiếp tục chuẩn bị, nhưng chưa thuận để chốt ngay khi những điểm cản trở vẫn còn nguyên. Khả năng đạt thỏa thuận chưa vững và cần một tiến triển cụ thể từ cuộc trao đổi để thành hình.
+
+### situation
+
+Điểm thuận nằm ở việc trao đổi, làm rõ nhu cầu và trình bày năng lực, hồ sơ hoặc cách làm. Tuy nhiên, phản hồi tích cực vẫn cần được xác nhận bằng hành động thực tế; cơ hội còn nhưng chưa đủ để xem là đã có kết quả. Khi trao đổi, nên chia từng bước chắc chắn, làm rõ giới hạn, tiêu chuẩn và trách nhiệm của mỗi phía, đồng thời tránh hứa vượt quá dữ kiện hiện có.
+
+### action_6
+
+Hãy thay đổi một điều kiện trong mục tiêu đàm phán để thử khả năng chuyển bước, rồi quan sát xem khách hàng có đưa ra phản hồi hoặc hành động cụ thể cho bước tiếp theo hay không.
+
+## R014 · Q07_NEGOTIATION · question · lượt 1 · phương án Y
+
+### answer
+
+Việc đàm phán mức giá mới với khách hàng lúc này có thể tiếp tục chuẩn bị, nhưng chưa nên vội chốt khi những điểm đang cản trở chưa được tháo gỡ. Khả năng của sự việc hiện vẫn chưa thật sự vững, vì cần có thêm một đầu việc rõ ràng hoặc một tiến triển cụ thể để biến trao đổi thành kết quả thực tế.
+
+### situation
+
+Điều đáng chú ý là cuộc trao đổi không chỉ nằm ở mức giá mà còn ở cách kết thúc, xử lý phần việc cũ và làm rõ giá trị mà bạn đang đưa ra. Hướng phù hợp là thể hiện năng lực, hồ sơ và cách làm một cách có cơ sở, đồng thời chia nhỏ từng bước để theo dõi điều kiện còn đang giữ lại.
+
+Có tín hiệu cho thấy việc trao đổi vẫn có điểm được hỗ trợ, nhưng cần được xác nhận bằng hành động thực tế. Vì vậy, nên làm rõ nhu cầu, giới hạn và phần nào có thể điều chỉnh thay vì kỳ vọng một bước tiến lớn ngay lập tức.
+
+### action_6
+
+Nên thử thay đổi một điều kiện trong mục tiêu đàm phán để xem khả năng chuyển bước. Có thể điều chỉnh cách đặt vấn đề, phạm vi trao đổi hoặc một yếu tố liên quan để tạo ra dấu hiệu cụ thể cho bước tiếp theo.
+
+## R015 · Q08_FINANCE · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể cân nhắc vay thêm để mở rộng, nhưng chưa nên chốt khoản vay ngay. Hướng đi này có điểm thuận, song khả năng thành công vẫn chưa vững; chỉ nên quyết định khi đã có một đầu việc hoặc tiến triển kinh doanh cụ thể làm cơ sở cho dòng tiền sáu tháng tới.
+
+### decision
+
+Hãy tách mong muốn mở rộng khỏi mức độ sẵn sàng thực tế. Kế hoạch dù có triển vọng vẫn cần đi cùng nguồn lực phù hợp, cách thu xếp dòng tiền và phương án xử lý nếu doanh thu chưa về như dự kiến.
+
+### bottleneck
+
+Điểm cần giải quyết trước là khả năng thực nhận kết quả chưa ổn định. Bạn nên xác định rõ phần nguồn lực hiện có và những bước chủ động mình thực sự kiểm soát được, thay vì dựa chủ yếu vào khoản thu còn chưa chắc chắn.
+
+### action_4
+
+Trước khi vay, hãy chọn một việc cụ thể để kiểm chứng nhu cầu và làm rõ cách triển khai. Chẳng hạn, dùng kế hoạch dòng tiền sáu tháng để xác định tiêu chuẩn tối thiểu cần đạt và trình bày rõ phương án mở rộng; kết quả của bước này sẽ tạo căn cứ cho quyết định tiếp theo.
+
+## R016 · Q08_FINANCE · question · lượt 1 · phương án Y
+
+### answer
+
+Việc vay thêm tiền để mở rộng kinh doanh có điểm thuận để cân nhắc, nhưng chỉ nên chốt khi các điều kiện cần thiết đã sẵn sàng. Khả năng của việc này hiện vẫn cần thêm một đầu việc hoặc tiến triển cụ thể để trở nên rõ ràng hơn, vì có hướng đi không đồng nghĩa kết quả đã hình thành.
+
+### decision
+
+Điều cần tách biệt là mong muốn mở rộng với mức sẵn sàng thực hiện. Một phương án có ý nghĩa với bạn vẫn cần đi cùng nguồn lực, sự thu xếp và cách giải quyết phù hợp để tránh tạo áp lực mới cho hoạt động đang có. Khi xem xét khoản vay, nên chú ý đến khả năng tạo ra nguồn thu từ kế hoạch thay vì chỉ nhìn vào kỳ vọng tăng trưởng.
+
+Hướng xử lý phù hợp là làm rõ những điểm còn thiếu, kiểm chứng các giả định và tránh cam kết vượt quá những gì hiện có thể chứng minh. Cơ hội vẫn còn, nhưng chưa đủ điều kiện để xem là kết quả cụ thể; việc mở rộng chỉ nên tiến hành khi đường đi và cách vận hành đã rõ hơn.
+
+### bottleneck
+
+Điểm cần chuẩn bị trước nằm ở khả năng nhận được kết quả thực tế từ kế hoạch. Bạn cần xác định rõ phần nguồn lực mình đang có, phần nào còn thiếu và những bước chủ động nào có thể tự thực hiện để làm cho kế hoạch vững hơn. Điều này đặc biệt quan trọng khi đang lo về dòng tiền trong sáu tháng tới, vì sự ổn định không chỉ đến từ ý tưởng mà còn từ cách thu xếp cụ thể.
+
+### action_4
+
+Nên chọn một bước cụ thể để làm rõ nhu cầu và khả năng thực hiện, chẳng hạn xác định tiêu chuẩn cần đạt, cách trình bày kế hoạch và điều kiện đi kèm trước khi đưa ra quyết định. Một bước chuẩn bị rõ ràng sẽ tạo dấu hiệu cụ thể cho hướng đi tiếp theo.
+
+## R017 · Q09_CAREER_SWITCH · question · lượt 1 · phương án X
+
+### answer
+
+Bạn chưa nên chốt chuyển việc ngay, nhưng có thể tiếp tục chuẩn bị cho hướng đi mới. Khả năng chuyển việc hiện chưa đủ vững; chỉ nên quyết định khi đã có một đầu việc hoặc tiến triển cụ thể và những điểm đang cản đã được xử lý.
+
+### situation
+
+Cơ hội mới vẫn còn nhưng chưa đủ điều kiện để trở thành kết quả chắc chắn. Bạn nên làm rõ nội dung công việc, tiêu chuẩn, giới hạn không thể nhượng và người thực sự có quyền chấp thuận; đồng thời kiểm tra những vấn đề dễ lặp lại hoặc gây gián đoạn, kể cả phần việc cũ cần hoàn tất hay bàn giao. Với thông tin nhạy cảm, hãy chọn cách trao đổi thận trọng và phù hợp.
+
+### action_2
+
+Hãy kiểm tra phía công việc mới có thực sự đủ điều kiện thực hiện những gì họ đưa ra hay chỉ đang thúc bạn sang bước tiếp theo. Hồ sơ, năng lực và cách làm của bạn cũng cần đáp ứng các yêu cầu thiết yếu trước khi quyết định.
+
+### action_8
+
+Giữ sẵn phương án điều chỉnh nếu nội dung thỏa thuận thay đổi. Chỉ chuyển bước khi thông tin về vai trò, điều kiện làm việc và cách triển khai vẫn nhất quán, đồng thời đã có dấu hiệu cụ thể cho bước tiếp theo.
+
+## R018 · Q09_CAREER_SWITCH · question · lượt 1 · phương án Y
+
+### answer
+
+Với việc chuyển sang công việc mới, bạn có thể tiếp tục chuẩn bị cho hướng này, nhưng chưa nên chốt ngay khi những điểm đang cản vẫn còn nguyên. Hiện tại khả năng của sự việc vẫn chưa thật sự vững, nên cần có một đầu việc rõ ràng hoặc một tiến triển cụ thể để hướng đi này trở thành lựa chọn có cơ sở hơn.
+
+### situation
+
+Điều đang tác động nhiều nhất nằm ở vai trò, cơ hội và nội dung công việc bạn đang cân nhắc. Bạn nên nhìn lại điểm nào cần sửa hoặc bổ sung, đồng thời chọn cách trao đổi phù hợp, nhất là với những thông tin cần sự thận trọng. Có thể vẫn còn cơ hội mở ra, nhưng chưa đủ điều kiện để xem đó là kết quả chắc chắn.
+
+Một điểm cần chú ý là những vướng mắc hiện tại có thể đến từ các vấn đề chưa được xử lý dứt điểm hoặc những yếu tố gây gián đoạn lặp lại. Khi cân nhắc thay đổi môi trường làm việc, nên kiểm tra kỹ nguồn gây cản trở và tránh để một cách làm mới tạo thêm áp lực lên những điều kiện vốn đang có. Việc chuyển hướng cũng cần đi cùng sự chuẩn bị về năng lực, hồ sơ, cách thể hiện bản thân và sự rõ ràng về những giới hạn, tiêu chuẩn mà bạn có thể chấp nhận.
+
+### action_2
+
+Bạn nên kiểm tra xem phía tác động đến cơ hội mới có thực sự đủ điều kiện để cùng bạn thực hiện bước tiếp theo hay chỉ đang tạo sức ép khiến bạn phải quyết định nhanh. Trước khi thay đổi, hãy làm rõ những điều còn thiếu ở phía mình để giảm phần yêu cầu chưa đáp ứng và giúp lựa chọn trở nên thực tế hơn.
+
+### action_8
+
+Bạn nên giữ phương án điều chỉnh khi các thỏa thuận làm việc thay đổi, chỉ chuyển bước khi những thông tin quan trọng vẫn còn nhất quán. Một bước tiến phù hợp nên đi kèm dấu hiệu cụ thể cho thấy hướng mới đang hình thành, thay vì chỉ dựa vào cảm giác hoặc kỳ vọng.
+
+## R019 · Q10_CHILD_SCHOOL · question · lượt 1 · phương án X
+
+### answer
+
+Hiện chưa đủ cơ sở rõ ràng để kết luận nên hay không nên cho con chuyển trường trong học kỳ này. Trước khi cam kết, bạn cần làm rõ các yêu cầu và điều kiện từ những bên liên quan.
+
+### decision
+
+Mong muốn chuyển trường cần được tách khỏi mức độ sẵn sàng thực hiện. Dù phương án này có ý nghĩa với gia đình, quyết định vẫn phụ thuộc vào nguồn lực, khả năng thu xếp và các điều kiện cần giải quyết.
+
+### bottleneck
+
+Điểm cần chuẩn bị trước là xác định những nguồn lực gia đình hiện có và các bước chủ động bạn thực sự làm được, vì khả năng đạt kết quả mong muốn lúc này chưa ổn định.
+
+## R020 · Q10_CHILD_SCHOOL · question · lượt 1 · phương án Y
+
+### answer
+
+Hiện tại chưa có đủ cơ sở rõ để kết luận việc cho con chuyển trường trong học kỳ này sẽ đạt kết quả như mong muốn. Vì vậy, nên làm rõ thêm các điều kiện quan trọng trước khi quyết định mở rộng cam kết, đặc biệt là những yêu cầu thực tế liên quan đến việc chuyển trường và khả năng đáp ứng của các bên.
+
+### decision
+
+Việc chuyển trường cần được nhìn như một phương án đang cân nhắc, trong đó mong muốn thay đổi và mức độ sẵn sàng thực hiện cần được tách riêng. Một lựa chọn có ý nghĩa với gia đình vẫn cần đi cùng nguồn lực, sự thu xếp và các điều kiện cần giải quyết trước khi tiến hành.
+
+Với việc đang hỏi, điểm cần chú ý không chỉ nằm ở ý định chuyển đổi mà còn ở cách xử lý những phần việc còn dang dở, giữ nhịp ổn định và tổ chức mọi bước cho phù hợp. Nếu có những yêu cầu, quy định hoặc vấn đề cần xác nhận, không nên chỉ dựa vào tốc độ để thúc đẩy mà cần làm rõ trách nhiệm và sự cam kết của từng phía. Các cơ hội hỗ trợ có thể vẫn tồn tại, nhưng hiện chưa đủ điều kiện để xem đó là kết quả cụ thể.
+
+### bottleneck
+
+Điểm cần chuẩn bị trước là sự ổn định trong quá trình nhận kết quả. Gia đình nên xác định rõ nguồn lực hiện có và những bước chủ động mình thực sự có thể thực hiện để việc cân nhắc chuyển trường được vững hơn. Việc chuẩn bị kỹ phần mình có thể kiểm soát sẽ giúp giảm sự bị động khi xử lý các điều kiện liên quan.
+
+## R021 · Q11_RELATIONSHIP · question · lượt 1 · phương án X
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho khả năng đi tiếp, nhưng chưa nên chốt gắn bó khi những điểm cản trở vẫn còn nguyên. Mối quan hệ hiện chưa đủ vững; cần có một tiến triển cụ thể thì hướng đi mới rõ ràng hơn.
+
+### decision
+
+Hãy tách mong muốn tiếp tục khỏi mức độ sẵn sàng thực sự. Dù mối quan hệ có ý nghĩa với bạn, quyết định đi tiếp vẫn cần đi cùng nguồn lực, sự thu xếp và những điều kiện thực tế để giải quyết vấn đề.
+
+### action_1
+
+Trước mắt, hãy chọn một cuộc trao đổi cụ thể để làm rõ điều đang được nói đến hoặc còn tranh luận. Kết quả của bước này sẽ cho bạn căn cứ để xem mối quan hệ có thể mở sang bước tiếp theo hay không.
+
+## R022 · Q11_RELATIONSHIP · question · lượt 1 · phương án Y
+
+### answer
+
+Bạn có thể tiếp tục chuẩn bị cho hướng này, nhưng chưa nên chốt khi những điểm đang cản vẫn còn nguyên. Mối quan hệ hiện chưa ở trạng thái đủ vững để đưa ra quyết định cuối cùng; điều quan trọng là cần có một tiến triển cụ thể hoặc một việc được làm rõ để biết hướng đi có thể thành hình hay không.
+
+### decision
+
+Khi cân nhắc tiếp tục hay dừng lại, nên tách điều bạn mong muốn khỏi mức độ sẵn sàng thực hiện. Một mối quan hệ có ý nghĩa vẫn cần sự thu xếp, nguồn lực và điều kiện phù hợp từ thực tế, chứ không chỉ dựa vào cảm xúc hoặc mong muốn giữ lại.
+
+Điểm cần chú ý là khả năng trao đổi và làm rõ nhu cầu giữa hai phía. Thay vì chỉ suy nghĩ về kết quả cuối cùng, có thể đưa ra những vấn đề cụ thể để cùng kiểm tra, xem điều gì có thể thay đổi và điều gì vẫn đang là rào cản. Khi chưa có sự rõ ràng, việc vội chốt quyết định có thể khiến bạn bỏ qua những điều cần được giải quyết trước.
+
+### action_1
+
+Điều nên làm lúc này là chọn một bước cụ thể để mở ra khả năng tiến triển tiếp theo. Hãy tập trung vào việc làm rõ điều đang được nói hoặc tranh luận, để từ đó có thêm dấu hiệu thực tế về hướng đi của mối quan hệ thay vì chỉ dựa vào suy đoán.
+
+## R023 · Q12_PROPERTY · question · lượt 1 · phương án X
+
+### answer
+
+Hiện chưa đủ cơ sở rõ ràng để kết luận bạn nên chốt hợp đồng trong tháng này. Khả năng ký kết vẫn chưa vững; chỉ nên tiến tới khi có một bước tiến cụ thể giúp các điều kiện cần thiết thành hình.
+
+### decision
+
+Hãy tách mong muốn thuê mặt bằng khỏi mức độ sẵn sàng thực tế. Dù mặt bằng có ý nghĩa với kế hoạch của bạn, quyết định ký vẫn cần đi cùng nguồn lực đáp ứng, sự thu xếp phù hợp và các điều kiện còn vướng được giải quyết.
+
+### action_6
+
+Trước khi tăng thêm nguồn lực hoặc nhận thêm cam kết, hãy ưu tiên xử lý những yêu cầu đang đặt trực tiếp lên bạn. Chỉ nên ký khi bạn đã đáp ứng được các phần thiết yếu của hợp đồng và việc vận hành sau đó.
+
+### timing
+
+Các mốc 24/09/2026, 25/09/2026 và 30/09/2026 đáng theo dõi để nhận biết sự thay đổi của tình hình. Đây là những thời điểm quan sát và rà soát lại điều kiện, không phải xác nhận rằng việc ký kết hay kết quả mong muốn chắc chắn xảy ra vào các ngày đó.
+
+## R024 · Q12_PROPERTY · question · lượt 1 · phương án Y
+
+### answer
+
+Hiện tại chưa có đủ dấu hiệu rõ để kết luận rằng việc ký hợp đồng thuê mặt bằng này sẽ đạt kết quả như mong muốn. Khả năng của sự việc vẫn còn ở trạng thái chưa vững, vì vậy cần thêm một đầu việc hoặc một tiến triển cụ thể để việc này có thể thành hình rõ hơn.
+
+### decision
+
+Việc cân nhắc ký hợp đồng cần tách giữa mong muốn thực hiện và mức sẵn sàng thực tế. Một phương án có ý nghĩa với bạn vẫn cần đi cùng sự thu xếp về nguồn lực, điều kiện thực hiện và khả năng giải quyết các phần còn chưa chắc chắn.
+
+Với thỏa thuận và giấy tờ, điều đáng chú ý nằm ở việc kiểm tra những phần cần tác động, sửa đổi hoặc làm rõ. Nên xác nhận trách nhiệm, cam kết của từng phía và kiểm chứng các giả định trước khi đưa ra quyết định, tránh đặt niềm tin vào những điều chưa có cơ sở đầy đủ.
+
+### action_6
+
+Điều nên làm lúc này là ưu tiên đáp ứng trực tiếp những phần việc mà sự việc đang yêu cầu ở bạn trước khi tăng thêm nguồn lực. Việc làm rõ các yêu cầu còn thiếu, chuẩn bị thông tin cần thiết và giảm những điểm chưa đáp ứng sẽ giúp quá trình cân nhắc trở nên chắc chắn hơn.
+
+### timing
+
+Các mốc 24/09/2026, 25/09/2026 và 30/09/2026 là những thời điểm đáng theo dõi sự thay đổi của tình hình. Những mốc này chỉ cho thấy khoảng thời gian cần chú ý, chưa xác nhận rằng kết quả cụ thể sẽ xảy ra vào đúng ngày đó.
+
+## R025 · Q13_USER_MILESTONE · question · lượt 1 · phương án X
+
+### answer
+
+Hiện chưa có đủ cơ sở rõ ràng để kết luận thủ tục sẽ hoàn tất trước ngày 30/10/2026. Khả năng đạt mốc này chưa vững và cần được củng cố bằng một đầu việc hoặc tiến triển cụ thể.
+
+### situation
+
+Ưu tiên làm rõ những thông tin còn gây sức ép hoặc đang có cách hiểu khác nhau, đồng thời đối chiếu trực tiếp với nguồn liên quan. Khi gặp ràng buộc về quy định hoặc trách nhiệm, nên đi đúng quy trình thay vì tìm cách đẩy nhanh bằng bước chưa được kiểm chứng.
+
+### bottleneck
+
+Hãy chọn một thay đổi mà bạn thực sự có thể chủ động, chẳng hạn hoàn thiện cách trình bày hoặc rà soát một phần hồ sơ, rồi theo dõi xem bước đó có giúp việc xử lý tiến lên hay không trước khi mở rộng sang phần khác.
+
+### action_3
+
+Điều chỉnh cách chuẩn bị sát với mục tiêu hoàn tất thủ tục, nhưng nên thử trước ở phạm vi nhỏ. Bạn có thể kiểm tra một hạng mục, cách nộp hoặc cách trao đổi để phát hiện điểm vướng rồi mới áp dụng cho toàn bộ quá trình.
+
+### action_7
+
+Trước khi tiếp tục, nên giảm mức cam kết với những phương án chưa chắc chắn và kiểm tra điều kiện thực tế của mục tiêu: yêu cầu nào đã rõ, phần nào còn thiếu và bước tiếp theo có thể thực hiện ngay là gì.
+
+## R026 · Q13_USER_MILESTONE · question · lượt 1 · phương án Y
+
+### answer
+
+Việc hoàn tất thủ tục trước ngày 30/10/2026 hiện chưa có đủ cơ sở để khẳng định sẽ đạt được kết quả như mong muốn. Khả năng của sự việc còn phụ thuộc vào một đầu việc hoặc tiến triển cụ thể được hình thành rõ ràng hơn, vì vậy nên tập trung tạo ra những bước xác nhận thực tế thay vì chỉ chờ đợi.
+
+### situation
+
+Điểm cần chú ý là những thông tin, yêu cầu hoặc phần việc cần được làm rõ trong quá trình xử lý. Cách tiếp cận phù hợp là kiểm tra lại nội dung, đối chiếu thông tin từ nguồn trực tiếp và tránh thực hiện theo suy đoán. Đồng thời, cần giữ đúng quy trình vì áp lực về trách nhiệm hoặc yêu cầu liên quan có thể khiến việc xử lý bị ảnh hưởng nếu đi quá giới hạn.
+
+### bottleneck
+
+Phần cần chuẩn bị trước là chọn một thay đổi nằm trong khả năng chủ động của bản thân và theo dõi tác dụng của bước thử trước khi mở rộng. Thay vì thay đổi quá nhiều cùng lúc, nên xác định một việc quan trọng để cải thiện khả năng xử lý, từ đó nhìn rõ điều gì đang giúp tiến trình tiến lên hoặc điều gì còn giữ lại.
+
+### action_3
+
+Nên điều chỉnh cách làm cho phù hợp với mục tiêu, bắt đầu bằng một bước nhỏ có thể kiểm tra trước khi tăng quy mô. Việc tạo ra dấu hiệu cụ thể cho bước tiếp theo, chẳng hạn như hoàn thiện một phần cần thiết hoặc xác nhận một điều kiện còn thiếu, sẽ giúp quá trình bớt mơ hồ hơn.
+
+### action_7
+
+Nên giảm mức cam kết khi các điều kiện thực tế chưa được kiểm tra đầy đủ và xem lại mục tiêu theo những gì có thể triển khai được. Khi từng điều kiện được xác nhận rõ hơn, việc tiếp tục thực hiện sẽ có cơ sở hơn thay vì đặt toàn bộ kỳ vọng vào một hướng chưa chắc chắn.
+
+## R027 · Q14_DIRECTION · question · lượt 1 · phương án X
+
+### answer
+
+Chưa có đủ cơ sở để chọn một hướng cụ thể đi gặp khách, vì nội dung giao dịch chưa thành hình rõ ràng. Khả năng của việc này còn chưa vững; cần xác định một đầu việc hoặc bước tiến cụ thể trước khi kỳ vọng kết quả.
+
+### situation
+
+Điểm cần tập trung là thông tin, hồ sơ, phạm vi công việc, báo giá và cách trình bày. Nên kiểm chứng các giả định, đồng thời tránh hứa những điều chưa có dữ kiện bảo đảm.
+
+### action_9
+
+Trước khi đi, hãy kiểm tra nguồn lực mà bên mình có thể cung cấp và dấu hiệu cho thấy khách thực sự sẽ sử dụng giải pháp. Việc bỏ nhiều công sức chưa đồng nghĩa cuộc gặp sẽ đạt mục tiêu.
+
+### action_7
+
+Hãy chọn một bước trao đổi cụ thể liên quan đến lợi ích và dòng tiền, rồi đưa ra phương án mà hai bên có thể kiểm tra được thay vì chỉ nói ở mức định hướng.
+
+## R028 · Q14_DIRECTION · question · lượt 1 · phương án Y
+
+### answer
+
+Hiện chưa có cơ sở rõ để xác định một hướng đi gặp khách sẽ đem lại kết quả như mong muốn. Việc này còn phụ thuộc vào một bước tiến triển cụ thể như mức độ tiếp nhận, sự trao đổi thực tế hoặc điều kiện để giao dịch được hình thành. Vì vậy, nên xem đây là giai đoạn cần tiếp tục làm rõ và tạo thêm tín hiệu thực tế thay vì vội kết luận một hướng là phù hợp tuyệt đối.
+
+### situation
+
+Điểm cần chú ý khi chuẩn bị gặp khách nằm ở thông tin, hồ sơ, phạm vi trao đổi và cách trình bày. Cách xử lý phù hợp là tạo một bước tiếp xúc có mục tiêu rõ ràng, đồng thời kiểm chứng các giả định trước khi đưa ra cam kết. Nếu còn vướng mắc về lợi ích riêng hoặc những điều chưa giải quyết, chúng có thể làm lệch mục tiêu chung và khiến việc trao đổi kém hiệu quả.
+
+### action_9
+
+Nên kiểm tra kỹ nguồn lực từ phía mình và dấu hiệu cho thấy phía khách thực sự có nhu cầu sử dụng hoặc tiếp nhận. Việc bỏ công chuẩn bị và gặp gỡ chưa đồng nghĩa với việc đã đạt được mục tiêu, vì vậy cần chú ý đến những dấu hiệu cụ thể sau buổi trao đổi để quyết định bước tiếp theo.
+
+### action_7
+
+Nên chọn một bước làm rõ lợi ích và phương án có thể kiểm tra được thay vì đưa ra quá nhiều yêu cầu cùng lúc. Khi trình bày, cần giảm những phần còn chưa đáp ứng và tập trung vào điều có thể thực hiện, để việc trao đổi có cơ sở tiến triển hơn.
+
+## R029 · M01_CASE_A · menh · lượt 1 · phương án X
+
+### overview
+
+Nhìn chung, bạn có xu hướng phân tích kỹ, tổ chức công việc và tìm giải pháp có tính toán. Điểm mạnh này phát huy tốt khi bạn biết dừng đúng lúc; nếu tính toán quá mức, bạn dễ muốn kiểm soát mọi chi tiết. Việc đời thường không tiến thẳng một mạch mà có thể cần đổi cách làm hoặc quay lại xử lý phần cũ.
+
+### self
+
+Bạn khá kín đáo, coi trọng ranh giới và thường thích chuẩn bị kỹ ở hậu trường hơn là phô bày ngay. Cách sống này thuận cho việc đi sâu chuyên môn, sắp xếp chi tiết và tích lũy nguồn lực lâu dài.
+
+### family
+
+Trong gia đình, bạn thiên về chủ động định hướng và gánh phần trách nhiệm tổ chức. Khi chăm sóc con cái, cách phù hợp với bạn là kiên trì nuôi dưỡng, nhận ra phần còn yếu và từng bước giúp hoàn thiện.
+
+### marriage
+
+Trong đời sống chung, bạn dễ đảm nhận vai trò sắp xếp và tìm cách giải quyết vấn đề. Quan hệ sẽ nhẹ nhàng hơn khi hai bên nói rõ điều cần được hiểu, đồng thời dành chỗ cho nghỉ ngơi, mềm hóa khác biệt và thích nghi với những điều chưa thể biết chắc.
+
+### career
+
+Trong công việc, bạn thiên về chủ động sắp xếp và giải quyết vấn đề, nhưng kế hoạch cần vừa với nguồn lực thực tế. Những hướng đòi hỏi đào sâu chuyên môn, học hỏi, hướng dẫn hoặc kết nối tri thức và tài liệu có thể phù hợp, nhất là khi được triển khai từng bước.
+
+### wealth
+
+Nguồn lực tài chính có phần nâng đỡ bạn, nhưng mức độ phát huy vẫn tùy vào cách thu xếp thực tế. Việc tạo dựng nền tảng bền thường hợp với cách tích lũy đều, chăm sóc phần còn yếu và tạo thêm giá trị; cơ hội cũng có thể đến từ môi trường ngoài nền quen thuộc.
+
+### luck
+
+Giai đoạn 31–45 tuổi chỉ là nền để hiểu các ưu tiên hiện tại, không phải lịch báo trước sự kiện. Trọng tâm phù hợp là biết đặt giới hạn, dừng lại để củng cố khi cần, hoàn tất phần đã đến cuối chu kỳ và duy trì nền tảng bằng sự bền bỉ.
+
+### annual
+
+Trong năm đang xét, nhịp sống có xu hướng chuyển từ tĩnh sang động, thúc đẩy việc khởi động và đẩy tiến độ. Khi biến động khiến bạn phải phản ứng nhanh, việc truyền đạt rõ ràng và dành thời gian phục hồi sẽ giúp giữ nhịp ổn định hơn.
+
+## R030 · M01_CASE_A · menh · lượt 1 · phương án Y
+
+### overview
+
+Tổng thể, bạn có xu hướng sống bằng cách phân tích, tổ chức và tìm giải pháp có tính toán. Bạn thường không chỉ nhìn vào bề mặt mà muốn hiểu nguyên nhân, sắp xếp lại vấn đề rồi mới đưa ra cách xử lý phù hợp. Điểm mạnh này giúp bạn làm việc có chuẩn bị, nhưng điều cần tự quản là tránh tính toán quá mức hoặc cố kiểm soát mọi yếu tố, vì đôi khi việc linh hoạt theo hoàn cảnh cũng rất quan trọng.
+
+Đường đời của bạn có xu hướng không phải lúc nào cũng đi thẳng một mạch; có những giai đoạn cần sửa cách làm, quay lại xử lý phần cũ hoặc hoàn thiện những điều còn dang dở. Đây không nhất thiết là trở ngại, mà có thể là cách để bạn tích lũy kinh nghiệm và làm nền tảng vững hơn cho bước tiếp theo. Ví dụ minh họa: trong công việc, một kế hoạch ban đầu có thể cần điều chỉnh nhiều lần trước khi đạt được cách vận hành phù hợp.
+
+### self
+
+Về bản thân, bạn có xu hướng kín đáo, giữ ranh giới riêng và thích đi sâu vào lĩnh vực mình quan tâm. Bạn có thể không phải là người luôn thể hiện mọi suy nghĩ ra bên ngoài, mà thường quan sát, chuẩn bị và tích lũy trước khi hành động. Khả năng sắp xếp hậu trường, chú ý chi tiết và xây dựng từng bước là một nguồn lực đáng chú ý.
+
+Điểm cần cân bằng là sự thận trọng không nên trở thành khép mình quá lâu. Khi cần, việc chia sẻ ý tưởng hoặc kết nối với người khác có thể giúp những gì bạn chuẩn bị được phát huy tốt hơn.
+
+### family
+
+Trong gia đình, xu hướng nổi bật là sự coi trọng nề nếp, trách nhiệm và cách tổ chức cuộc sống. Bạn có thể quan tâm đến việc giữ nền tảng ổn định, định hướng cho người thân và xử lý các việc cần sự sắp xếp rõ ràng.
+
+Trong việc chăm sóc con cái hoặc vun đắp thế hệ sau, xu hướng phù hợp là dùng sự bền bỉ để nuôi dưỡng, đồng thời chú ý nhận diện những điểm chưa hoàn thiện để hỗ trợ và điều chỉnh. Ví dụ minh họa: thay vì chỉ tập trung vào kết quả trước mắt, bạn có thể quan tâm nhiều hơn đến việc xây dựng thói quen và năng lực lâu dài cho người thân.
+
+### marriage
+
+Trong đời sống chung, điều đáng chú ý là bạn có xu hướng dùng sự phân tích, tổ chức và trách nhiệm để duy trì mối quan hệ. Bạn có thể mong muốn mọi việc có sự rõ ràng, có cách giải quyết cụ thể thay vì để vấn đề kéo dài.
+
+Điều cần lưu ý là sự chủ động sắp xếp cần đi cùng với sự lắng nghe và mềm hóa. Khi hai người có cách nhìn khác nhau, việc dành không gian cho cảm xúc và sự chia sẻ có thể giúp mối quan hệ cân bằng hơn.
+
+### career
+
+Trong công việc, hướng phù hợp là phát huy khả năng phân tích, tổ chức và tìm giải pháp có tính toán. Bạn thiên về chủ động sắp xếp công việc, nhưng cách làm hiệu quả cần phù hợp với nguồn lực thực tế đang có, tránh đặt ra yêu cầu vượt quá khả năng duy trì.
+
+Bạn cũng có xu hướng hợp với những môi trường cần sự chuẩn bị, chuyên môn, kết nối từng bước hoặc xử lý thông tin. Ví dụ minh họa: một công việc cần nghiên cứu, lập kế hoạch hoặc tối ưu quy trình có thể tạo điều kiện để bạn phát huy thế mạnh hơn so với công việc đòi hỏi phản ứng hoàn toàn ngẫu hứng.
+
+### wealth
+
+Về tài vận, nguồn lực tài chính có phần nâng đỡ bạn; tuy nhiên khả năng phát huy đến đâu còn phụ thuộc vào cách bạn thu xếp, quản lý và sử dụng nguồn lực trong thực tế. Xu hướng phù hợp là xây dựng từng bước, duy trì sự ổn định và biết chăm sóc những nguồn lực đang có.
+
+Bạn cũng có thể phát triển thông qua môi trường hoặc cơ hội ngoài nền quen thuộc. Điều quan trọng là khi mở rộng, vẫn cần giữ cách tổ chức và tính toán vốn là điểm mạnh của bạn.
+
+### luck
+
+Giai đoạn 31–45 tuổi là nền để nhìn vào những ưu tiên hiện tại, không phải là lịch sẵn của các sự kiện. Trong giai đoạn này, xu hướng phù hợp là chú ý đến việc củng cố nền tảng, xác định giới hạn và duy trì những điều thực sự cần thiết.
+
+Đây là thời điểm có thể phù hợp với việc rà soát lại cách vận hành cuộc sống, giữ những giá trị bền vững và hoàn thiện những phần còn thiếu thay vì chỉ chạy theo mở rộng liên tục.
+
+### annual
+
+Nhịp sống trong năm đang xét thiên về sự chuyển động và thay đổi trạng thái, khuyến khích việc đánh thức những việc đang trì hoãn hoặc đưa kế hoạch vào hành động. Điều này phù hợp với việc chủ động sắp xếp lại ưu tiên và tạo động lực cho những hướng đi mới.
+
+Tuy vậy, khi có nhiều chuyển động, việc giữ sự rõ ràng trong cách truyền đạt và điều chỉnh nhịp độ cũng quan trọng. Sự chủ động đi cùng chuẩn bị kỹ sẽ giúp bạn ứng phó tốt hơn với những thay đổi trong quá trình thực hiện.
+
+## R031 · M02_KNOWN_1990 · menh · lượt 1 · phương án X
+
+### overview
+
+Bạn có xu hướng gánh vác, duy trì và tích lũy một cách bền bỉ. Điểm cần tự quản là sự chậm trễ hoặc cố chấp khi hoàn cảnh đã thay đổi. Những mặt thuận vẫn có giá trị, nhưng thường phát huy chậm hơn và dễ đưa bạn trở lại vấn đề cũ nếu chưa xử lý dứt điểm.
+
+### self
+
+Bạn thường có sức bền để theo đuổi việc dài hạn, đồng thời có thể phản ứng nhanh khi nhận thấy dấu hiệu bất ổn. Khả năng mở rộng phạm vi và đẩy nhanh tiến độ sẽ hữu ích hơn khi được đặt trên một nền tảng đã chuẩn bị chắc chắn.
+
+### family
+
+Nề nếp gia đình có xu hướng thúc mọi người hành động thay vì để sự việc kéo dài trong trạng thái im lặng. Khi chăm sóc con, bạn phù hợp với cách chỉ rõ điều cần chú ý, truyền đạt minh bạch và cùng phân tích để tìm giải pháp, nhưng nên tránh biến sự thúc đẩy thành va chạm không cần thiết.
+
+### marriage
+
+Đời sống chung cần sự trao đổi, thương lượng và tiếp nhận phản hồi từ nhau. Bạn có thể vừa muốn gánh vác để giữ quan hệ bền, vừa phản ứng nhanh trước vấn đề; vì vậy, những khoảng nghỉ để hai bên mềm lại, học cách hiểu nhau và rồi mới xử lý sẽ giúp quan hệ dễ duy trì hơn.
+
+### career
+
+Công việc có sự tương hợp với bạn, thuận để phối hợp và duy trì nếu các bên cùng giữ cam kết. Bạn phù hợp với vai trò chủ động định hướng, gánh trách nhiệm tổ chức và theo đuổi kết quả bền vững; khi cần mở đường hoặc phá thế trì trệ, khả năng hành động nhanh cũng có thể trở thành lợi thế.
+
+### wealth
+
+Nguồn lực tài chính có phần nâng đỡ bạn, nhưng sức hỗ trợ ấy phát huy đến đâu còn tùy cách thu xếp thực tế. Việc tạo dựng nên kết hợp phát triển thêm giá trị với những lúc biết dừng để củng cố nền tảng; nguồn lực đang có cũng cần được chăm chút thay vì mặc nhiên cho rằng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 31–45 tuổi là nền để hiểu các ưu tiên hiện tại, không phải lịch báo trước những sự kiện sẽ xảy ra. Trọng tâm phù hợp là kiên trì tiếp nhận, nuôi dưỡng và duy trì nguồn lực, đồng thời linh hoạt trước biến số; những việc đã hết vai trò có thể được xem xét khép lại để dành chỗ cho hướng đi thích hợp hơn.
+
+### annual
+
+Nhịp sống trong năm có xu hướng đặt trọng tâm vào trao đổi, thương lượng và tiếp nhận phản hồi hoặc kết quả. Việc trình bày rõ ràng qua lời nói, hình ảnh hay văn bản, đi cùng khả năng phân tích và tổ chức, sẽ giúp bạn xử lý tốt hơn những thay đổi cần phản ứng nhanh.
+
+## R032 · M02_KNOWN_1990 · menh · lượt 1 · phương án Y
+
+### overview
+
+Tổng thể cho thấy bạn có xu hướng gánh vác, duy trì và tích lũy bền. Bạn thường phù hợp với cách làm chắc chắn, xây dựng từng bước và coi trọng những giá trị có thể giữ lâu dài. Tuy vậy, điều cần tự quản là sự chậm và cố chấp; khi đã quen một cách làm, bạn có thể mất thêm thời gian để thay đổi dù hoàn cảnh đã khác. Những điểm thuận vẫn có giá trị, nhưng thường phát huy chậm hơn và dễ quay lại vấn đề cũ, vì vậy sự linh hoạt và khả năng nhìn lại cách mình đang vận hành là điều quan trọng.
+
+### self
+
+Về bản thân, bạn có nét thiên về sự bền bỉ, biết gánh trách nhiệm và duy trì những điều đã xây dựng. Bạn cũng có thể có lúc phản ứng nhanh trước tình huống, muốn mở rộng phạm vi hoặc thúc đẩy tiến độ để tạo chuyển biến rõ ràng. Điều này giúp bạn không dễ đứng yên, nhưng cần cân bằng giữa mong muốn tiến nhanh và khả năng giữ nhịp ổn định. Ví dụ minh họa là khi bắt đầu một việc mới, bạn có thể vừa muốn làm lớn hơn ngay, vừa cần một kế hoạch đủ chắc để duy trì lâu dài.
+
+### family
+
+Trong gia đình, nề nếp có xu hướng đề cao việc đánh thức sự thay đổi, xử lý những điểm chưa ổn và giúp mọi việc chuyển động khi cần thiết. Việc chăm sóc con cái, nếu có, có thể chú trọng đến việc thể hiện rõ điều cần truyền đạt, nhận biết điểm cần cải thiện hoặc tìm cách tổ chức hợp lý. Cách quan tâm này cần đi cùng sự lắng nghe để việc hướng dẫn không chỉ dừng ở sửa chữa mà còn tạo cảm giác được đồng hành.
+
+### marriage
+
+Trong đời sống chung, điều đáng chú ý là xu hướng trao đổi, thương lượng và nhận phản hồi từ nhau. Mối quan hệ có thể cần sự rõ ràng trong giao tiếp, đồng thời cũng cần sự mềm hóa, thích nghi trước những điều chưa được nói ra hoặc những thay đổi bất ngờ. Khi mỗi bên cùng giữ cam kết và biết điều chỉnh cách phản ứng, sự khác biệt có thể trở thành cơ hội để hiểu nhau hơn.
+
+### career
+
+Trong công việc, hướng phù hợp là gánh vác, duy trì và tích lũy bền. Bạn có sự tương hợp với công việc khi có điều kiện phối hợp rõ ràng và cùng giữ cam kết, bởi khả năng xây dựng nền tảng và theo đuổi lâu dài là điểm đáng chú ý. Bạn cũng có thể phù hợp với những việc cần chủ động tổ chức, xử lý nhanh hoặc mở rộng phạm vi, nhưng nên tránh để sự thúc đẩy tốc độ làm giảm sự ổn định cần thiết.
+
+### wealth
+
+Về tài vận, nguồn lực tài chính có phần nâng đỡ bạn; sức hỗ trợ ấy phát huy đến đâu còn tùy cách thu xếp thực tế. Việc tạo dựng nguồn lực có thể phù hợp với hướng xây nền, tạo thêm giá trị và phát triển từng bước. Bên cạnh đó, việc giữ nguồn lực sẵn có cần được chăm chút, không nên mặc nhiên coi chúng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Đây là giai đoạn có thể chú trọng đến việc tiếp nhận, nuôi dưỡng và duy trì nguồn lực bằng sự bền bỉ. Đồng thời, khả năng ứng biến trước biến số cũng cần được chú ý để những thay đổi trong thực tế không làm mất đi nền tảng đã xây dựng.
+
+### annual
+
+Nhịp sống trong năm thiên về những hoạt động liên quan đến trao đổi, thương lượng và nhận phản hồi hoặc kết quả từ quá trình đã thực hiện. Đây là lúc nên chú ý cách truyền đạt, sắp xếp thông tin và nhìn nhận phản hồi một cách thực tế. Sự rõ ràng trong giao tiếp cùng khả năng phân tích, tổ chức sẽ giúp bạn xử lý công việc và các mối quan hệ thuận hơn.
+
+## R033 · M03_UNKNOWN_1990 · menh · lượt 1 · phương án X
+
+### overview
+
+Chưa rõ giờ sinh nên chưa đủ cơ sở để viết một bài luận mệnh riêng cho bạn. Các nhận định có thể thay đổi theo giờ sẽ được giữ lại để so sánh, chứ không tự chọn một giờ thay bạn.
+
+### birthTimeNote
+
+Khi không nhớ giờ sinh, chỉ nên giữ những điểm ổn định qua các khung giờ. Có thể dựa vào những chuyện bạn từng trải qua để thu hẹp hướng nghiên cứu, nhưng cách này chưa thể xác nhận giờ sinh thật.
+
+## R034 · M03_UNKNOWN_1990 · menh · lượt 1 · phương án Y
+
+### overview
+
+Hiện chưa thể viết một bài mệnh riêng cho bạn vì chưa rõ giờ sinh nên chưa đủ cơ sở để xác định những điểm thay đổi theo giờ. Những nhận định khác nhau giữa các giờ chỉ nên được giữ lại như những hướng tham khảo để so sánh, không chọn thay bạn một giờ sinh cụ thể.
+
+Ở giai đoạn này, việc nhìn nhận bản thân nên dựa trên những điều đã biết và tình hình thực tế trong cuộc sống, thay vì gán một đặc điểm cố định khi thông tin đầu vào còn chưa đầy đủ.
+
+### birthTimeNote
+
+Khi chưa nhớ giờ sinh, có thể chỉ giữ lại những điểm được xem là ổn định qua các khả năng khác nhau. Việc xem xét lại các trải nghiệm đã qua có thể giúp thu hẹp hướng nghiên cứu, nhưng đó vẫn là quá trình tìm hiểu chứ chưa phải xác nhận giờ sinh thật.
+
+Ví dụ minh họa: nếu một người muốn hiểu thêm về bản thân, họ có thể ghi nhận những nét tính cách hoặc cách ứng xử lặp lại trong đời sống để tham khảo, đồng thời vẫn cần đối chiếu với hoàn cảnh thực tế thay vì xem đó là kết luận cuối cùng.
+
+## R035 · M04_FUYIN_1970 · menh · lượt 1 · phương án X
+
+### overview
+
+Bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm mạnh này giúp xử lý vấn đề có trật tự, nhưng cũng dễ chuyển thành tính toán quá mức hoặc muốn kiểm soát mọi việc. Những mặt thuận vẫn có giá trị, song thường phát huy chậm hơn và có thể khiến bạn phải quay lại xử lý vấn đề cũ.
+
+### self
+
+Bạn thường cởi mở với hướng đi mới, có khả năng khởi sự và tìm cách đưa công việc qua các bước cần thiết. Khi có điều kiện phù hợp, bạn cũng có xu hướng đứng ra dẫn dắt, đồng thời biết tận dụng thông tin kín hoặc phương án mềm chưa dễ nhận thấy.
+
+### family
+
+Trong gia đình, bạn thiên về nuôi dưỡng và duy trì nền nếp bằng sự bền bỉ, đồng thời khá chú ý đến những phần còn yếu để chăm sóc hoặc sửa cho hoàn thiện hơn. Với con cái, bạn dễ đảm nhận vai trò chủ động định hướng và tổ chức; vì vậy, sự hướng dẫn sẽ phù hợp hơn khi vẫn chừa khoảng trống để mỗi người tự thích nghi.
+
+### marriage
+
+Trong đời sống chung, bạn có xu hướng chủ động sắp xếp, định hướng và gánh phần trách nhiệm tổ chức. Quan hệ sẽ dễ duy trì hơn khi việc phân tích và giải quyết vấn đề đi cùng khả năng nghỉ lại, mềm hóa cách trao đổi và thích nghi với những điều chưa thể nhìn rõ ngay.
+
+### career
+
+Công việc phù hợp với khả năng phân tích, tổ chức, tìm giải pháp và chủ động gánh trách nhiệm. Nhìn chung, công việc có sự tương hợp với bạn, thuận cho phối hợp và duy trì lâu dài nếu các bên cùng giữ cam kết.
+
+### wealth
+
+Nguồn lực tài chính có phần nâng đỡ bạn, nhưng mức độ hỗ trợ thực tế còn tùy cách thu xếp và quản lý. Hướng phù hợp là vừa tạo thêm giá trị, vừa duy trì tích lũy bền và chăm chút nguồn lực đang có, thay vì mặc nhiên cho rằng chúng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 46–60 tuổi là nền để hiểu các ưu tiên hiện tại, không phải lịch báo trước những sự kiện sẽ xảy ra. Trọng tâm phù hợp là biết giới hạn hoặc tạm dừng để củng cố nền tảng, sau đó duy trì và tích lũy theo hướng bền vững.
+
+### annual
+
+Nhịp sống trong năm thiên về làm rõ điều cần được nhận biết, tăng sự biểu đạt và chú trọng hình ảnh, truyền thông hoặc văn bản. Việc tạo thêm giá trị sẽ thuận hơn khi điều muốn truyền đạt được trình bày rõ ràng và nổi bật đúng mức.
+
+## R036 · M04_FUYIN_1970 · menh · lượt 1 · phương án Y
+
+### overview
+
+Tổng thể cho thấy bạn có xu hướng suy nghĩ kỹ, biết phân tích, sắp xếp và tìm cách giải quyết vấn đề theo hướng có tính toán. Điểm mạnh này giúp bạn nhìn sự việc có trình tự và tránh hành động vội vàng, nhưng điều cần tự quản là không để việc tính toán trở thành quá mức, khiến bản thân muốn kiểm soát mọi chi tiết. Những điều thuận lợi vẫn có giá trị, tuy nhiên thường cần thời gian để phát huy rõ hơn và có thể khiến bạn phải quay lại xử lý những vấn đề từng chưa giải quyết trọn vẹn.
+
+### self
+
+Về bản thân, bạn thường phát huy tốt khi được suy nghĩ, tổ chức và chuẩn bị phương án trước khi hành động. Bạn cũng có xu hướng chủ động mở đường, tiếp cận cơ hội mới và tìm cách đưa việc đang có thành kết quả cụ thể. Khi kết hợp sự chủ động với khả năng phân tích, bạn dễ tạo ra cách làm riêng, đồng thời có thể tận dụng những nguồn lực hoặc thông tin chưa được thể hiện rõ bên ngoài.
+
+### family
+
+Trong gia đình, nề nếp có xu hướng coi trọng việc tiếp nhận, nuôi dưỡng và duy trì nguồn lực bằng sự bền bỉ; đồng thời cũng có mặt của việc nhận diện điểm chưa hoàn thiện để chăm sóc và điều chỉnh. Việc chăm sóc con cái hoặc người thân có thể nghiêng về sự chủ động, định hướng và sắp xếp trách nhiệm, nhưng cũng cần giữ sự linh hoạt để không biến quan tâm thành áp lực. Ví dụ minh họa là khi gia đình có một việc cần giải quyết, bạn có thể là người muốn lên kế hoạch rõ ràng, nhưng vẫn nên dành khoảng trống để mọi người cùng tham gia.
+
+### marriage
+
+Trong đời sống chung, điều đáng chú ý là bạn có xu hướng vừa muốn tổ chức, định hướng và gánh trách nhiệm, vừa cần sự trao đổi mở để duy trì kết nối. Quan hệ có thể thuận hơn khi hai bên cùng chia sẻ cách nhìn, bởi khả năng phân tích và xử lý vấn đề của bạn là điểm hỗ trợ nhưng cũng cần đi cùng sự mềm mại, nghỉ ngơi và thích nghi với những điều chưa thể biết trước. Ví dụ minh họa là thay vì chỉ tìm cách giải quyết ngay một bất đồng, việc lắng nghe và để cảm xúc có thời gian ổn định cũng giúp quan hệ bền hơn.
+
+### career
+
+Trong công việc, bạn có xu hướng phù hợp với những việc cần phân tích, tổ chức và tìm giải pháp có tính toán. Khả năng tiếp cận, khởi sự và gánh trách nhiệm cũng có thể trở thành điểm hỗ trợ khi cần thúc đẩy công việc. Công việc có sự tương hợp với bạn, thuận để phối hợp và duy trì nếu các bên cùng giữ cam kết, vì sự ổn định lâu dài đến từ cách làm việc nhất quán chứ không chỉ từ năng lực cá nhân.
+
+### wealth
+
+Về tài vận, nguồn lực tài chính có phần nâng đỡ bạn; tuy nhiên mức độ phát huy còn tùy vào cách bạn thu xếp và sử dụng trong thực tế. Việc tạo dựng nguồn lực có thể gắn với khả năng duy trì, tích lũy bền hoặc tạo thêm giá trị theo từng bước. Dù có nền tảng hỗ trợ, việc giữ những nguồn lực đang có vẫn cần được chăm chút, không nên mặc nhiên xem chúng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 46–60 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Trong giai đoạn này, trọng tâm có thể hướng đến việc giữ nền, củng cố điều cần thiết, đồng thời tạo thêm giá trị hoặc duy trì những trách nhiệm quan trọng. Cách tiếp cận phù hợp là cân bằng giữa bảo toàn những gì đang có và nuôi dưỡng những hướng phát triển còn phù hợp.
+
+### annual
+
+Nhịp sống trong năm đang xét thiên về việc nhìn rõ điều cần củng cố, phát triển và thể hiện. Đây là thời điểm có thể chú ý đến việc tạo thêm giá trị, duy trì nền tảng và truyền đạt rõ những điều mình muốn xây dựng. Khi kết hợp sự chuẩn bị kỹ với khả năng biểu đạt, bạn có thể làm cho các ý tưởng và mục tiêu trở nên dễ được nhìn nhận hơn.
+
+## R037 · M05_FANYIN_1964 · menh · lượt 1 · phương án X
+
+### overview
+
+Bạn có xu hướng hành động nhanh, giỏi phá thế bế tắc và thúc đẩy công việc tiến lên. Mặt cần tự quản là sự bốc đồng hoặc bắt tay làm khi dữ liệu chưa đủ. Hoàn cảnh cũng dễ đổi chiều, vì vậy nên chừa khoảng linh hoạt để kiểm tra lại thông tin và điều chỉnh cách làm thay vì cố giữ một phương án đến cùng.
+
+### self
+
+Bạn thường thể hiện sức mạnh qua khả năng vào việc nhanh, xử lý trở ngại và sửa những điểm chưa ổn. Tuy nhiên, sự cứng rắn sẽ hiệu quả hơn khi đi cùng khả năng nghỉ ngơi, mềm hóa cách ứng xử và duy trì quan hệ; nhờ đó, tố chất dẫn dắt và sự hỗ trợ từ người có uy tín cũng dễ phát huy hơn.
+
+### family
+
+Trong gia đình, bạn thiên về làm rõ vấn đề và truyền đạt những điều cần được mọi người nhìn thấy. Khi có biến số, phản ứng có thể khá nhanh; vì vậy, việc trao đổi rõ ràng sẽ giúp sự ứng biến không trở thành căng thẳng.
+
+Trong cách chăm sóc con, bạn có xu hướng khuyến khích sự chủ động, khả năng thể hiện và tinh thần phản biện. Điều này phù hợp với việc thúc đẩy con chuyển từ thụ động sang hành động, đồng thời biết nhìn lại những khuôn mẫu cũ khi cần thay đổi.
+
+### marriage
+
+Trong đời sống chung, trao đổi, thương lượng và lắng nghe phản hồi là điểm quan trọng. Quan hệ được duy trì tốt hơn khi hai bên vừa phân tích vấn đề có tính toán, vừa biết mềm lại và dành khoảng nghỉ cần thiết, thay vì luôn thúc mọi chuyện phải có kết quả ngay.
+
+### career
+
+Trong công việc, bạn phù hợp với vai trò mở đường, khởi sự, xử lý điểm nghẽn và đẩy tiến độ. Để hiệu quả bền hơn, khả năng hành động nhanh nên đi cùng việc duy trì nguồn lực, gánh vác trách nhiệm và tích lũy từng bước.
+
+Công việc có phần nâng đỡ bạn, nhưng mức độ hỗ trợ thực tế còn tùy vào cách bạn sắp xếp nhiệm vụ, nguồn lực và các mối quan hệ liên quan.
+
+### wealth
+
+Nguồn lực tài chính có sự tương hợp với bạn, thuận cho việc phối hợp và duy trì nếu các bên cùng giữ cam kết. Cách tạo dựng phù hợp là chủ động định hướng, tổ chức nguồn lực và tạo thêm giá trị; nền tảng sẵn có từ địa phương hoặc gia đình cũng là phần hỗ trợ đáng giữ gìn.
+
+### luck
+
+Giai đoạn 61–75 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch báo trước các sự kiện. Trọng tâm phù hợp là chủ động định hướng, gánh trách nhiệm tổ chức, tiếp tục tạo giá trị và kết nối kinh nghiệm hoặc tri thức với người khác.
+
+### annual
+
+Nhịp sống trong năm thiên về khởi động và đưa những việc đang tĩnh sang trạng thái vận động. Các vấn đề liên quan đến thể hiện, truyền đạt, hình ảnh hoặc văn bản dễ được chú ý hơn; đồng thời, bạn cần linh hoạt trước biến số và sẵn sàng phản biện, cải tổ những cấu trúc không còn phù hợp.
+
+## R038 · M05_FANYIN_1964 · menh · lượt 1 · phương án Y
+
+### overview
+
+Tổng thể cho thấy bạn có xu hướng sống chủ động, thích thúc đẩy công việc tiến lên và không ngại phá bỏ cách làm cũ khi thấy cần thiết. Điểm mạnh này giúp bạn tạo chuyển biến, nhưng cũng đi kèm điều cần tự quản là dễ hành động quá nhanh khi thông tin chưa đầy đủ. Vì hoàn cảnh có thể đổi chiều, bạn nên giữ khoảng linh hoạt để kịp điều chỉnh cách làm thay vì chỉ dựa vào tốc độ ban đầu.
+
+### self
+
+Về bản thân, bạn có xu hướng phản ứng nhanh trước tình huống và thích tìm cách mở đường thay vì chờ đợi quá lâu. Bên cạnh sự quyết đoán, bạn cũng có khả năng mềm hóa, nghỉ ngơi và duy trì quan hệ khi cần, nhờ vậy cách ứng xử không nhất thiết chỉ theo một hướng cứng rắn. Điều quan trọng là cân bằng giữa lúc cần thúc đẩy và lúc cần lắng nghe, hồi phục hoặc tìm sự hỗ trợ phù hợp.
+
+### family
+
+Trong gia đình, xu hướng chung thiên về việc thể hiện rõ điều cần nói, nhận biết vấn đề và truyền đạt để mọi người cùng hiểu. Khi chăm sóc hoặc đồng hành với con cái, cách tiếp cận phù hợp có thể là khơi mở động lực, giúp sự việc chuyển từ trạng thái thụ động sang chủ động. Ví dụ minh họa là thay vì chỉ nhắc nhở, có thể cùng con đặt mục tiêu nhỏ và tạo cơ hội để con tự bắt đầu thực hiện.
+
+### marriage
+
+Trong đời sống chung, điều đáng chú ý là sự trao đổi và phản hồi giữa hai người có vai trò quan trọng. Bạn có xu hướng muốn sự việc tiến triển, nhưng quan hệ lâu dài cũng cần sự mềm hóa, duy trì kết nối và dành thời gian phục hồi. Khi có khác biệt, việc kết hợp trao đổi thẳng thắn với khả năng điều chỉnh nhịp độ sẽ giúp hai bên dễ tìm được cách đồng hành hơn.
+
+### career
+
+Trong công việc, bạn có xu hướng phù hợp với cách làm chủ động, biết mở hướng mới và thúc đẩy tiến độ. Đồng thời, công việc có phần nâng đỡ bạn; sức hỗ trợ ấy phát huy đến đâu còn tùy cách bạn sắp xếp nguồn lực, duy trì quan hệ và xử lý tình huống thực tế. Ví dụ minh họa là khi gặp trở ngại, thay vì chỉ tăng tốc, bạn có thể vừa tìm giải pháp mới vừa giữ những nền tảng đang giúp công việc vận hành ổn định.
+
+### wealth
+
+Về tài vận, nguồn lực có sự tương hợp với bạn, thuận để phối hợp và duy trì nếu cùng giữ cam kết. Cách tạo dựng nguồn lực có thể phát huy tốt khi đi cùng sự chủ động, khả năng tổ chức và việc biết nuôi dưỡng những giá trị đang có. Nếu nền tảng sẵn có từ gia đình hoặc địa phương là một phần hỗ trợ, việc giữ gìn và khai thác hợp lý sẽ giúp nguồn lực bền hơn.
+
+### luck
+
+Giai đoạn 61–75 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện cụ thể. Trọng tâm của giai đoạn này có thể hướng đến việc chủ động định hướng, gánh trách nhiệm tổ chức và tiếp tục tạo giá trị theo cách phù hợp với hoàn cảnh. Đây là lúc chú ý nhiều hơn đến cách sắp xếp nguồn lực và vai trò của bản thân trong các mối liên hệ xung quanh.
+
+### annual
+
+Nhịp sống trong năm thiên về những chuyển động cần được đánh thức và thúc đẩy từ trạng thái tĩnh sang động. Bạn có thể chú ý đến việc thể hiện rõ ý tưởng, truyền đạt điều cần thiết và sẵn sàng điều chỉnh những cách làm cũ khi không còn phù hợp. Cách vận dụng tốt là giữ sự chủ động nhưng vẫn quan sát biến số để lựa chọn bước đi phù hợp.
+
+## R039 · M06_KNOWN_1994 · menh · lượt 1 · phương án X
+
+### overview
+
+Nhìn tổng thể, bạn có xu hướng linh hoạt trước biến số, biết nhận ra cơ hội và xoay xở khi gặp rủi ro. Đi cùng khả năng này, điều cần tự quản là lòng tham, sự liều lĩnh và nguy cơ tổn thất.
+
+Những điểm thuận vẫn có giá trị, nhưng thường cần thời gian mới phát huy rõ; một số vấn đề cũ cũng dễ quay lại. Vì vậy, sự linh hoạt sẽ hữu ích nhất khi đi cùng giới hạn và khả năng rút kinh nghiệm.
+
+### self
+
+Bạn có chiều hướng sống kín đáo, không dễ bộc lộ toàn bộ suy nghĩ và thường muốn nắm đủ thông tin trước khi hành động. Bạn cũng có khả năng kết nối nhiều nguồn lực, mở rộng quan hệ hoặc thích nghi khi phải đi xa, đồng thời biết lúc nào nên khép lại một chu kỳ để chuyển sang trạng thái ổn định hơn.
+
+### family
+
+Trong gia đình, cách duy trì quan hệ phù hợp với bạn thường là mềm mỏng, kết nối từng bước và tạo khoảng nghỉ để mọi người phục hồi thay vì ép vấn đề phải được giải quyết ngay. Việc học hỏi, hướng dẫn và chia sẻ kiến thức cũng có thể trở thành sợi dây gắn kết.
+
+Nếu đảm nhận việc chăm sóc con, bạn thiên về nuôi dưỡng bền bỉ và duy trì nguồn lực cần thiết. Khi xuất hiện điểm yếu hoặc phần chưa hoàn thiện, hướng phù hợp là nhận diện để chăm sóc và sửa dần, tránh chỉ dùng hành động mạnh khiến đôi bên thêm hao tổn.
+
+### marriage
+
+Trong đời sống chung, bạn có khả năng thích nghi với thay đổi và những điều chưa được nói rõ, nhưng quan hệ sẽ thuận hơn khi hai bên kiên nhẫn tiếp cận nhau từng bước. Có lúc cần chủ động mở lời hoặc thúc đẩy việc đang trì trệ; có lúc lại nên giảm nhịp, khép một vấn đề cũ và dành chỗ cho sự phục hồi.
+
+### career
+
+Trong công việc, bạn hợp với những tình huống cần ứng biến, mở đường, khởi động việc mới hoặc hành động nhanh để phá thế trì trệ. Khả năng thu hồi, kết thúc và khép lại một chu kỳ cũng quan trọng không kém việc bắt đầu.
+
+Bạn cần dành khá nhiều sức cho công việc, vì vậy nên tính cả khả năng duy trì lâu dài. Tốc độ chỉ thực sự có lợi khi không làm cạn nguồn lực cần cho chặng tiếp theo.
+
+### wealth
+
+Với tài chính, bạn thiên về chủ động sắp xếp và tìm cách tạo thêm giá trị, nhưng cách làm cần vừa với nguồn lực đang có. Những gì đã tích lũy cũng cần được chăm chút và bảo toàn, không nên mặc nhiên cho rằng chúng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 31–45 tuổi là nền để hiểu các ưu tiên hiện tại, không phải lịch báo trước những sự kiện chắc chắn sẽ xảy ra. Trọng tâm phù hợp là biết đặt giới hạn, tạm dừng khi cần để củng cố nền tảng, đồng thời gánh vác và tích lũy theo hướng bền vững. Khi có cảnh báo hoặc biến động đáng chú ý, phản ứng nhanh là cần thiết nhưng vẫn nên giữ mục tiêu duy trì lâu dài.
+
+### annual
+
+Trong năm đang xét, nhịp sống có xu hướng nhấn vào trao đổi, thương lượng và tiếp nhận phản hồi hoặc kết quả. Song song với việc thể hiện rõ điều cần được nhìn thấy, bạn cũng có thể cần giữ ranh giới, đi sâu chuyên môn và xem xét cải tổ những cấu trúc đã không còn phù hợp, qua đó tạo thêm nguồn lực và giá trị.
+
+## R040 · M06_KNOWN_1994 · menh · lượt 1 · phương án Y
+
+### overview
+
+Tổng thể cho thấy bạn có xu hướng thích nghi với những thay đổi trong cuộc sống, biết quan sát biến số để tìm cách xử lý cơ hội và rủi ro. Điểm mạnh nằm ở khả năng xoay chuyển, nhưng cũng cần tự quản ở sự tham, liều hoặc những quyết định khiến nguồn lực bị tổn thất. Những điều thuận lợi vẫn có giá trị, tuy nhiên thường cần thời gian để phát huy và có thể xuất hiện lại những vấn đề quen thuộc cần tiếp tục điều chỉnh.
+
+### self
+
+Bạn có xu hướng ứng biến trước hoàn cảnh thay đổi, đồng thời có khả năng giữ lại những điều chưa cần bộc lộ ngay và lựa chọn cách tiếp cận kín đáo khi cần. Bên cạnh đó, bạn có khuynh hướng thu xếp, kết nối nguồn lực và mở rộng phạm vi hoạt động. Trong cách sống, điều này phù hợp với việc quan sát kỹ, linh hoạt thay đổi phương án và tránh để sự chủ quan làm ảnh hưởng đến quyết định.
+
+### family
+
+Trong gia đình, nề nếp có xu hướng được xây dựng qua sự kết nối từng bước, sự duy trì quan hệ và quá trình học hỏi lẫn nhau. Việc chăm sóc người thân có thể phát huy qua sự bền bỉ, tiếp nhận và nuôi dưỡng nguồn lực lâu dài. Minh họa: khi gia đình gặp thay đổi, cách tiếp cận phù hợp có thể là kiên trì giữ sự gắn kết thay vì chỉ xử lý bằng phản ứng tức thời.
+
+### marriage
+
+Trong đời sống chung, điều đáng chú ý là khả năng thích nghi với những phần chưa rõ ràng và các thay đổi phát sinh trong quá trình đồng hành. Mối quan hệ có thể cần sự linh hoạt, biết trao đổi, học hỏi và điều chỉnh cách kết nối theo từng hoàn cảnh. Minh họa: khi hai người có khác biệt trong cách nhìn nhận, việc cùng tìm giải pháp và duy trì đối thoại có thể giúp mối quan hệ ổn định hơn.
+
+### career
+
+Trong công việc, hướng phù hợp là biết ứng biến trước biến số, cơ hội và rủi ro, đồng thời có thể tận dụng những giai đoạn cần khởi động hoặc mở rộng. Tuy nhiên, bạn cần dành sức cho công việc và nên tính cả khả năng duy trì lâu dài, tránh chỉ tập trung vào bước tiến trước mắt mà bỏ qua nền tảng phía sau.
+
+### wealth
+
+Với nguồn lực tài chính, bạn thiên về chủ động sắp xếp và cần lựa chọn cách làm phù hợp với nguồn lực đang có. Việc tạo dựng giá trị có thể gắn với khả năng thể hiện, truyền đạt hoặc tạo thêm giá trị từ những điều mình phát triển được. Bên cạnh đó, nguồn lực sẵn có cần được chăm chút và quản lý đều đặn, không nên mặc nhiên coi chúng sẽ luôn còn nguyên.
+
+### luck
+
+Giai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Ưu tiên của giai đoạn này có thể hướng đến việc biết giới hạn, dừng lại đúng lúc để củng cố và giữ nền tảng. Đây là thời điểm chú trọng sự ổn định trong cách sắp xếp nguồn lực và trách nhiệm lâu dài.
+
+### annual
+
+Nhịp sống trong năm thiên về việc trao đổi, thương lượng và nhận phản hồi từ quá trình tương tác với bên ngoài. Đồng thời, đây cũng là lúc có thể cần nhìn lại những điều đang vận hành, giữ ranh giới phù hợp và điều chỉnh cách thể hiện để tạo thêm giá trị.

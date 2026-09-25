@@ -10,10 +10,10 @@ Status: **RC `a857633` is active on the VPS canary backend; frontend/main promot
 
 Verified in the isolated RC worktree:
 
-- 571/571 JavaScript tests passed.
+- 574/574 JavaScript tests passed.
 - Python regression: 1/1 passed.
 - `npm run verify`: 142 static assets, 362 local references, six protected core files, launcher pin, versions and module syntax passed.
-- Windows local package: 330 files; SHA-256 `b1b7a8ca445b98c6f925971307b7968ea96b9ae4ad4ce51c15510a679a316af9`.
+- Windows local package: 333 files; SHA-256 `643b4bda1aa86dade8f31688790ebd60f44669e827d61826ed5dc2fe27ee7f2a`.
 - The original `develop` worktree and the two Phase 9 evaluation files with local changes were not reset or overwritten.
 
 ## Phase 0 — repository/runtime baseline
@@ -134,6 +134,9 @@ Status: **backend canary deployed and smoke/rollback gates passed; observation i
 - Case A Mệnh completed through the HTTP job path in 22 seconds; client validation passed; eight sections; Writer provider `chatgpt2api`.
 - Actual RC → legacy → RC switch was rehearsed; both releases returned authenticated HTTP 200 and the service returned to the RC path.
 - Planner and semantic reviewer remain on the structured Sol → Gemini → Prism route; only the Surface Writer uses `chatgpt2api`.
+- The committed Phase 9 machine/blind artifacts now reference the successful 40/40 run (20 cases × two providers, one round), not the earlier environment-auth failure.
+- A 40-sample blind packet and seven-axis scorecard are prepared; provider identity is withheld until summarization.
+- Initial canary telemetry since `2026-09-25T10:50:00Z`: 2 controlled smoke readings completed and excluded from the acceptance denominator; 0/20 eligible observation readings, zero fallback, zero critical errors, six non-critical request-error metadata events, and one non-blocking style signal. Observation gate remains `INSUFFICIENT_SAMPLES`.
 
 ## Deliberately not done
 

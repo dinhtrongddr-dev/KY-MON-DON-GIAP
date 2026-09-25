@@ -17,6 +17,9 @@
     "verify:package": "python scripts/package-local.py --check",
     "package:local": "python scripts/package-local.py",
     "test:menh-rectification": "node scripts/menh-rectification-backtest.mjs",
-    "report:outcomes": "node scripts/outcome-report.mjs"
+    "report:outcomes": "node scripts/outcome-report.mjs",
+    "eval:blind:prepare": "node scripts/ai-reading-blind-review.mjs prepare",
+    "eval:blind:summarize": "node scripts/ai-reading-blind-review.mjs summarize",
+    "report:canary": "node scripts/canary-acceptance-report.mjs"
   }
 }

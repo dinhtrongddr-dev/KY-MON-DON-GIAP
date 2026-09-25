@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-09-25T16:32:01.352Z",
+  "since": "2026-09-25T10:50:00.000Z",
+  "minimumSamples": 20,
+  "samples": {
+    "readingEvents": 2,
+    "completed": 2,
+    "controlledSmoke": 2,
+    "eligibleCompleted": 0,
+    "fallback": 0,
+    "failed": 0,
+    "cancelled": 0
+  },
+  "rates": {
+    "fallback": 0
+  },
+  "latencyMs": {
+    "p50": 20537,
+    "p95": 147120,
+    "samples": 2
+  },
+  "routes": {
+    "chatgpt2api · local": 2
+  },
+  "models": {
+    "ChatGPT Web": 2
+  },
+  "errors": {
+    "total": 7,
+    "byCode": {
+      "SURFACE_STYLE": 1,
+      "AI_REQUEST_ERROR": 6
+    },
+    "byStage": {
+      "surface_style": 1,
+      "request": 4,
+      "async_job": 2
+    },
+    "critical": 0,
+    "repairSignals": 0,
+    "styleSignals": 1
+  },
+  "privacy": {
+    "rawQuestionsIncluded": false,
+    "errorMessagesIncluded": false
+  },
+  "pass": false,
+  "blockers": [
+    "INSUFFICIENT_SAMPLES"
+  ]
+}
