@@ -83,7 +83,7 @@ Status: **implemented in the feature worktree and covered by repository tests**.
 
 ## Phase 8 — chatgpt2api capability adapter
 
-Status: **adapter + pinned experimental deployment artifacts implemented; live account/model probe still separate**.
+Status: **adapter implemented; live capability probe completed successfully on VPS; production canary is the next step**.
 
 Upstream source pin:
 
@@ -99,15 +99,35 @@ Implemented:
 - auth/rate-limit/unavailable/network/malformed/cancel error mapping;
 - source-pinned Docker deployment bound to `127.0.0.1:3000:80`;
 - no credentials committed and no public provider/admin tunnel.
+- live probe service is bound to `127.0.0.1:3000`.
+- tested runtime image digest: `sha256:fbee934fd5363ef6ce5f7632df854f87c770e382bf0f874f8c59372eeded6aab`.
+- one existing local Codex OAuth account was imported at runtime without committing credentials.
+- `gpt-5-6` completed the real Case B Surface Writer payload and returned all six expected sections in parseable JSON.
+- first full Case B Writer call took about 78.8 s; a later equivalent call completed in about 9.9 s.
+
+## Phase 9 — focused A/B on locked regression packages
+
+Status: **focused Case A / Case B comparison completed; both providers passed deterministic validation**.
+
+Case B — Hỏi Việc:
+
+- current Writer route: `gpt-5.6-sol`, about 15.6 s, valid output, style report `REPEATED_VERIFICATION`;
+- chatgpt2api Writer route: `gpt-5-6`, about 9.9 s on the measured repeat, valid output, same style report.
+
+Case A — Mệnh:
+
+- current Writer route: `gpt-5.6-sol`, about 20.3 s, valid output, no style issue;
+- chatgpt2api Writer route: `gpt-5-6`, about 8.6 s, valid output, no style issue.
+
+These timings are observational, not a model-quality ranking. Cache/warm-state effects can materially change latency.
 
 ## Deliberately not done
 
-- no production merge or deploy;
-- no production provider switch;
+- no production merge yet;
 - no account token/cookie in GitHub;
-- no claim that a live ChatGPT account/model/effort has been proven through the proxy;
+- no claim that echoed/catalog model fields prove the hidden upstream implementation or effective reasoning effort;
 - no change to deterministic engine, Dụng Thần, Strength, Structure, Role, Timing, Kích Thần, đại vận or lưu niên.
 
 ## Next dependency
 
-Run the live Phase 8 capability probe only with runtime credentials already provisioned outside GitHub, then perform Phase 9 A/B evaluation. Writer-v2/current-provider and Writer-v2/chatgpt2api must be judged separately before any production canary.
+Deploy a Writer-only canary: Surface Writer uses `chatgpt2api/gpt-5-6`; Planner and semantic reviewer remain on the current structured route. Keep rollback as an environment-only switch.

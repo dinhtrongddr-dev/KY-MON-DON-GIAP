@@ -1,7 +1,7 @@
 const LOOPBACK_HOSTS=new Set(['127.0.0.1','localhost','::1']);
 
 export const CHATGPT_WEB_DEFAULT_BASE_URL='http://127.0.0.1:3000/v1';
-export const CHATGPT_WEB_DEFAULT_MODEL='gpt-5';
+export const CHATGPT_WEB_DEFAULT_MODEL='gpt-5-6';
 export const CHATGPT_WEB_DEFAULT_EFFORT='xhigh';
 
 function codedError(message,code,{fallbackAllowed=false,status=null}={}){
