@@ -1,0 +1,23 @@
+services:
+  chatgpt2api:
+    build:
+      context: https://github.com/basketikun/chatgpt2api.git#dc105e51bd486bd75c8ef4f74be4bc4724bdfc33
+    container_name: qimen-chatgpt2api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:80"
+    volumes:
+      - ./data:/app/data
+    environment:
+      STORAGE_BACKEND: json
+      CHATGPT2API_AUTH_KEY: ${CHATGPT2API_AUTH_KEY:?CHATGPT2API_AUTH_KEY is required}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:80/', timeout=5)"
+      interval: 30s
+      timeout: 6s
+      retries: 3
+      start_period: 30s
