@@ -97,7 +97,7 @@ function turnFailure(error,runtime){
  if(error?.codexErrorInfo==='usageLimitExceeded')return codedError(runtime.is9Router?'Route 9router của model này đã hết hạn mức.':'Tài khoản ChatGPT của Kỳ Môn đã hết hạn mức Codex.','AI_QUOTA_EXHAUSTED',{fallbackAllowed:true});
  return codedError(runtime.is9Router?'AI chưa hoàn tất lượt luận qua 9router. Kiểm tra 9router, combo/model và provider rồi thử lại.':'AI chưa hoàn tất lượt luận. Kiểm tra đăng nhập và kết nối Codex rồi thử lại.','AI_ROUTE_ERROR');
 }
-export async function runCodex(instructions,input,schema,{signal,model,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={}) {
+async function runCodexTurn(instructions,input,schema,{signal,model,effort,spawnProcess=spawn,runtime=runtimeFromEnv()}={},structured=true) {
  if(signal?.aborted)throw new Error('Đã hủy.');
  const requestedModel=String(model||runtime.model||'').trim();
  const requestedEffort=String(effort||runtime.effort||'auto').trim()||'auto';
@@ -168,15 +168,28 @@ export async function runCodex(instructions,input,schema,{signal,model,effort,sp
    const started=await request('thread/start',{model:effectiveRuntime.model,cwd,approvalPolicy:'never',ephemeral:true,baseInstructions:instructions});
    if((!effectiveRuntime.is9Router&&started.model!==effectiveRuntime.model)||started.sandbox?.type!=='readOnly'||started.sandbox?.networkAccess!==false)throw new Error('Codex không giữ đúng model hoặc sandbox chỉ đọc. Đã dừng lượt luận.');
    threadId=started.thread.id;
-   const turnParams={threadId,model:effectiveRuntime.model,approvalPolicy:'never',input:[{type:'text',text:JSON.stringify(input)}],outputSchema:schema};
+   const turnParams={threadId,model:effectiveRuntime.model,approvalPolicy:'never',input:[{type:'text',text:typeof input==='string'?input:JSON.stringify(input)}]};
+   if(structured)turnParams.outputSchema=schema;
    if(requestedEffort!=='auto')turnParams.effort=requestedEffort;
    const turn=await request('turn/start',turnParams);
    turnId=turn.turn.id;
    const text=await turnDone;
-   return parseStructuredText(text);
+   if(structured)return parseStructuredText(text);
+   const value=String(text??'').trim();
+   if(!value)throw codedError('AI không trả nội dung văn bản cho lượt luận.','AI_MALFORMED_OUTPUT');
+   return value;
  } finally {
    finished=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);
    await stopProcess(proc);
    try{await rm(cwd,{recursive:true,force:true,maxRetries:10,retryDelay:100});}catch{}
  }
+}
+
+
+export async function runCodex(instructions,input,schema,options={}){
+ return runCodexTurn(instructions,input,schema,options,true);
+}
+
+export async function runCodexText(instructions,input,options={}){
+ return runCodexTurn(instructions,input,null,options,false);
 }
