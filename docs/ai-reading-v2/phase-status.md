@@ -2,18 +2,19 @@
 
 Reference branch at start: `develop`  
 Reference SHA: `5a52c5eefec13201e28eb847797890490bef09ff`  
-Implementation branch: `feature/ai-reading-v2-chatgpt2api`
+Release branch: `release/ai-v2-rc`
 
 ## Current result
 
-Status: **implementation branch passes the complete repository gate; production is not switched or deployed**.
+Status: **RC `a857633` is active on the VPS canary backend; frontend/main promotion and the observation window are still pending**.
 
-Verified in an isolated VPS worktree:
+Verified in the isolated RC worktree:
 
-- `npm run check`: 566/566 JavaScript tests passed.
+- 571/571 JavaScript tests passed.
 - Python regression: 1/1 passed.
-- `npm run verify`: static assets, six protected core files, launcher pin, versions and module syntax passed.
-- The original `develop` worktree was not reset or overwritten.
+- `npm run verify`: 142 static assets, 362 local references, six protected core files, launcher pin, versions and module syntax passed.
+- Windows local package: 330 files; SHA-256 `b1b7a8ca445b98c6f925971307b7968ea96b9ae4ad4ce51c15510a679a316af9`.
+- The original `develop` worktree and the two Phase 9 evaluation files with local changes were not reset or overwritten.
 
 ## Phase 0 — repository/runtime baseline
 
@@ -83,7 +84,7 @@ Status: **implemented in the feature worktree and covered by repository tests**.
 
 ## Phase 8 — chatgpt2api capability adapter
 
-Status: **adapter implemented; live capability probe completed successfully on VPS; production canary is the next step**.
+Status: **adapter implemented, live capability probe completed and Writer-only VPS canary is active**.
 
 Upstream source pin:
 
@@ -121,13 +122,27 @@ Case A — Mệnh:
 
 These timings are observational, not a model-quality ranking. Cache/warm-state effects can materially change latency.
 
+## Phase 10 — RC canary deployment
+
+Status: **backend canary deployed and smoke/rollback gates passed; observation is in progress**.
+
+- RC source: `a857633e7536c3d6d04380160e93586981fae438`.
+- Merge parents: Phase 8–9 candidate `01aca56` and `origin/develop` `4214b99`.
+- Active release path: `/home/dinhtrongddr/releases/ai-v2-rc` through `/home/dinhtrongddr/releases/current`.
+- Local authenticated status and named Tunnel status both returned HTTP 200.
+- Case B Hỏi Việc completed through the HTTP job path in 148 seconds; client validation passed; seven sections; Writer provider `chatgpt2api`.
+- Case A Mệnh completed through the HTTP job path in 22 seconds; client validation passed; eight sections; Writer provider `chatgpt2api`.
+- Actual RC → legacy → RC switch was rehearsed; both releases returned authenticated HTTP 200 and the service returned to the RC path.
+- Planner and semantic reviewer remain on the structured Sol → Gemini → Prism route; only the Surface Writer uses `chatgpt2api`.
+
 ## Deliberately not done
 
-- no production merge yet;
+- no frontend/main production promotion yet;
+- no human blind readability verdict or completed observation window yet;
 - no account token/cookie in GitHub;
 - no claim that echoed/catalog model fields prove the hidden upstream implementation or effective reasoning effort;
 - no change to deterministic engine, Dụng Thần, Strength, Structure, Role, Timing, Kích Thần, đại vận or lưu niên.
 
 ## Next dependency
 
-Deploy a Writer-only canary: Surface Writer uses `chatgpt2api/gpt-5-6`; Planner and semantic reviewer remain on the current structured route. Keep rollback as an environment-only switch.
+Observe the RC with real canary traffic and complete the human blind readability review. Promote the exact tested RC to the frontend/main release only if factual, compatibility, timeout, repair/fallback and rollback criteria remain within the Phase 10 budget.

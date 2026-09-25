@@ -5,6 +5,7 @@
 - Deterministic engine and contract construction stay code-owned.
 - Structured Planner/reviewer route: existing Sol → Gemini → Prism quota-only chain.
 - Surface Writer can be selected independently with `QIMEN_WRITER_PROVIDER`.
+- Current RC path: `/home/dinhtrongddr/releases/ai-v2-rc`; source commit `a857633e7536c3d6d04380160e93586981fae438`.
 - Current canary Writer: `chatgpt2api`, requested model `gpt-5-6`, requested effort `xhigh`.
 - Live chatgpt2api maps requested `xhigh` to transmitted `extended`; effective upstream model/effort is not independently observable.
 
@@ -24,9 +25,11 @@ Release switch is filesystem/symlink based and does not delete data:
 
 `/home/dinhtrongddr/releases/switch-kymon-release.sh legacy`
 
-Return to canary:
+Return to the tested RC:
 
-`/home/dinhtrongddr/releases/switch-kymon-release.sh canary`
+`/home/dinhtrongddr/releases/switch-kymon-release.sh rc`
+
+`canary` is an alias for the same RC. `previous-canary` selects the older `46ecb0b` release only for diagnosis.
 
 After either switch, verify local status, named Tunnel status, saved/share read and one deterministic request fingerprint.
 

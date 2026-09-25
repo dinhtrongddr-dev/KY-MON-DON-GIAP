@@ -30,10 +30,17 @@ Existing integration coverage exercised by `npm run check` includes:
 - V2 static module served from active release: HTTP 200;
 - full Case B HTTP reading: HTTP 200, Writer provider `chatgpt2api`, model `gpt-5-6`.
 
-## Still required before Phase 10 is called fully observed
+## Phase 10 RC evidence
 
-- final RC deployment after current audit fixes;
-- full Hỏi Việc + Mệnh smoke against that exact RC;
-- actual legacy→RC rollback rehearsal and return;
+Completed on RC `a857633e7536c3d6d04380160e93586981fae438`:
+
+- final RC backend deployment;
+- full Hỏi Việc Case B and Mệnh Case A smoke against that exact RC;
+- actual RC → legacy → RC rollback rehearsal and return;
+- local and named Tunnel authenticated status checks.
+
+Still required before full production promotion:
+
 - human blind readability review;
-- observation window / enough real canary traffic.
+- observation window / enough real canary traffic;
+- frontend/main promotion of the exact tested artifact.
