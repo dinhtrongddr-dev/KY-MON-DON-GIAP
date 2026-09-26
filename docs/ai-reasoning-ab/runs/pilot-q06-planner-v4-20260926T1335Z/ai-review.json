@@ -1,0 +1,61 @@
+[
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 13986,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 4
+      },
+      "Y": {
+        "directness": 3,
+        "naturalness": 3,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 4,
+        "nonRepetition": 2,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "DIRECT_CONCLUSION",
+        "winner": "X",
+        "reason": "X trả lời rõ: không nhận nguyên trạng mà nên tái đàm phán; Y kéo dài trạng thái “chưa đủ cơ sở” và chỉ đưa ra kết luận có điều kiện."
+      },
+      {
+        "code": "CASE_GROUNDING",
+        "winner": "X",
+        "reason": "X liên hệ trực tiếp các nhận định với những yếu tố riêng của bàn đã cho; Y gần như có thể dùng nguyên văn cho bất kỳ dự án biên lợi nhuận thấp nào."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra các bước thương lượng cụ thể như giới hạn vòng sửa, tính phí phần phát sinh và xác định giá trị chiến lược; Y cũng có hành động hữu ích nhưng diễn đạt khái quát hơn."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Y lặp nhiều lần việc làm rõ phạm vi, chi phí, trách nhiệm và kiểm tra lợi nhuận; X dù dài vẫn phân chia các luận điểm tương đối rõ."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "TIE",
+        "reason": "Cả hai đều tránh khẳng định chắc chắn và yêu cầu đối chiếu số liệu thực; X đôi lúc suy từ biểu tượng sang các phát sinh cụ thể nhưng đã dùng ngôn ngữ xác suất."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X có giọng tư vấn mạch lạc hơn; Y mang sắc thái văn mẫu, lặp cấu trúc điều kiện và còn có ký tự lạc ngữ “投入”."
+      }
+    ]
+  }
+]

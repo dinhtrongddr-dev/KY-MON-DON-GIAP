@@ -1,0 +1,125 @@
+[
+  {
+    "caseId": "Q12_PROPERTY",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 15325,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 4,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 3
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám sát ca thuê mặt bằng bằng các điểm cụ thể như giá thuê, hoàn cọc, quyền cải tạo, chấm dứt trước hạn, lưu lượng khách và chỗ đậu xe; Y chủ yếu dùng các cụm khái quát có thể áp dụng cho nhiều loại hợp đồng."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X nối từng tượng với một rủi ro hoặc lợi thế rồi mới kết luận có điều kiện; Y đưa ra kết luận và khuyến nghị nhưng không thể hiện rõ chuỗi căn cứ riêng của bàn."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X cung cấp danh sách kiểm tra và mục tiêu đàm phán có thể thực hiện ngay trước khi ký; Y có hướng kiểm chứng nhưng các chỉ dẫn như “thử một bước nhỏ” hay “đề xuất một phương án cụ thể” chưa được định nghĩa."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Y lặp gần nguyên ý về phần cần sửa, nguồn lực, thông tin chưa công khai và trách nhiệm hai phía ở nhiều đoạn; X cũng nhắc lại yêu cầu khóa rủi ro nhưng ít trùng câu và có bổ sung nội dung."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X có giọng tư vấn liền mạch và kết luận dễ hiểu; Y mang cảm giác văn mẫu, nhiều câu danh từ hóa và các đoạn có cấu trúc lặp máy móc."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "X phân biệt rõ biểu tượng với sự kiện thật, không quy kết lừa gạt và đặt quyết định cuối vào hợp đồng, pháp lý, dòng tiền; Y cũng có cảnh báo giới hạn nhưng nêu ba ngày cụ thể mà không giải thích căn cứ, trong đó 24 và 25/09/2026 đã qua tại thời điểm đánh giá."
+      },
+      {
+        "code": "DIRECT_ANSWER",
+        "winner": "Y",
+        "reason": "Y trả lời “chưa nên ký ngay” ngay câu đầu; X phải qua nhiều mục luận giải mới chốt rằng có thể ký nếu đã khóa rủi ro."
+      }
+    ]
+  },
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 17008,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 3,
+        "naturalness": 2,
+        "reasoningCoherence": 2,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X gắn nhận định với các cung, môn, tinh và lớp vận/năm cụ thể; Y chủ yếu dùng các cụm khái quát như “xây nền”, “giữ ranh giới”, “phản ứng nhanh” mà ít chỉ rõ căn cứ riêng của ca."
+      },
+      {
+        "code": "COHERENCE",
+        "winner": "X",
+        "reason": "X triển khai theo trình tự tổng thể, tính cách, vận, năm, công việc, tài chính và hành động. Y đặt cạnh nhau hai mô tả gia đình khác hướng—“chủ động, định hướng” và “đóng, giữ kín”—nhưng không giải thích quan hệ giữa chúng."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra các bước tương đối rõ như xử lý tồn đọng, xây hồ sơ năng lực, ghi điều khoản hợp tác và kiểm chứng thông tin. Y có lời khuyên hữu ích về chốt tiêu chí và tách việc gấp khỏi việc cần dữ liệu, nhưng phần lớn vẫn chung chung."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Y lặp gần nguyên ý về khuynh hướng phân tích ở hai đoạn đầu và lặp hai câu mô tả gia đình/đời sống chung. X cũng nhắc lại việc kiểm chứng thông tin vài lần nhưng mức lặp nhẹ hơn và nằm trong các lĩnh vực khác nhau."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "TIE",
+        "reason": "Cả hai đều tránh biến biểu tượng thành sự kiện chắc chắn. X làm rõ giới hạn suy đoán nhiều lần; Y cũng nói vận không phải lịch sự kiện, dù cách diễn đạt ít cụ thể hơn."
+      },
+      {
+        "code": "CONCISION_TRADEOFF",
+        "winner": "Y",
+        "reason": "Y ngắn hơn, còn X hơi dài và có thể rút bớt các cảnh báo tương tự. Tuy nhiên lợi thế này không bù được sự lặp câu, độ mơ hồ và mạch nối yếu của Y."
+      }
+    ]
+  }
+]

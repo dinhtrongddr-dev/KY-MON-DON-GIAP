@@ -25,6 +25,31 @@ function lifeMeaning(value,claim){
   const prefix={SELF_CORE:'Bạn có xu hướng ',FAMILY_PARENTS:'Nề nếp gia đình thiên về ',CHILDREN_CORE:'Việc chăm sóc con nghiêng về ',MARRIAGE_CORE:'Trong đời sống chung, điều đáng chú ý là xu hướng ',CAREER_CORE:'Trong công việc, hướng phù hợp là ',WEALTH_CORE:'Việc tạo dựng nguồn lực thiên về ',LUCK_CURRENT:'Ưu tiên của giai đoạn này là ',ANNUAL_CURRENT:'Nhịp sống trong năm thiên về '}[claim.claimId]||'Xu hướng đáng chú ý là ';
   return prefix+phrase+'.';
 }
+function trimLifeLead(text){
+  return String(text||'').replace(/^(?:Bạn có xu hướng|Ưu tiên của giai đoạn này là|Nhịp sống trong năm thiên về)\s+/,'').replace(/[.!?]+$/,'').trim();
+}
+function lowerFirst(text){return text?text.charAt(0).toLowerCase()+text.slice(1):'';}
+function naturalRisk(text){return lowerFirst(text).replace(/\bkiểm soát\b/gi,'muốn kiểm soát mọi thứ').replace(/\bkhẩu thiệt\b/gi,'lời nói gây va chạm').replace(/\bnhiễu\b/gi,'quyết định bị nhiễu').replace(/\bhoảng\b/gi,'hoảng hốt').replace(/,\s*/g,' hoặc ');}
+function lifeSynthesisAtoms(c,atoms,ctx){
+  const ids=[c.claimId],sourceEvidenceIds=unique(atoms.flatMap(a=>a.sourceEvidenceIds||[]));
+  const byRole=role=>atoms.find(a=>a.role===role);
+  if(c.claimId==='SELF_CORE'){
+    const core=byRole('operatingStyle')||atoms[0];if(!core)return [];
+    const weak=/yếu/i.test(core.supportLevel||''),risk=naturalRisk(core.caution||'suy tính quá lâu');
+    return [atom('self_integrated_pattern','Bạn thiên về '+trimLifeLead(core.meaning)+(weak?', nhưng điểm mạnh này không phải lúc nào cũng tự chuyển thành kết quả':'')+'. Nếu '+risk+', việc tiếp tục phân tích có thể làm chậm quyết định. Cách cân bằng là chốt tiêu chí, làm một bước nhỏ rồi điều chỉnh theo phản hồi thực tế.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  if(c.claimId==='LUCK_CURRENT'&&ctx.luck){
+    const parts=['palaceContext','actionChannel','operatingStyle'].map(byRole).filter(Boolean),meanings=unique(parts.map(a=>trimLifeLead(a.meaning))).slice(0,3),risk=naturalRisk(parts.find(a=>a.caution)?.caution||'giữ trạng thái cũ quá lâu');
+    if(meanings.length<2)return [];
+    return [atom('luck_integrated_pattern','Trong giai đoạn '+ctx.luck.ageStart+'–'+ctx.luck.ageEnd+' tuổi, các ưu tiên nên đi cùng nhau: '+meanings.join('; ')+'. Điểm mạnh là xây nền bền hơn, nhưng cần đặt mốc xem lại để việc củng cố không biến thành '+risk+'.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  if(c.claimId==='ANNUAL_CURRENT'){
+    const context=byRole('palaceContext'),action=byRole('actionChannel'),style=byRole('operatingStyle');if(!context||!action)return [];
+    const risks=unique([context.caution,action.caution,style?.caution].filter(Boolean).map(naturalRisk)).slice(0,2);
+    return [atom('annual_integrated_pattern','Trong năm đang xét, xung lực '+trimLifeLead(context.meaning)+' đi cùng cách phản ứng '+trimLifeLead(action.meaning)+'. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu, rồi mới tăng tốc; cách này giúp giảm những mặt trái như '+(risks.join('; ')||'phản ứng quá nhanh')+'.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  return [];
+}
 function roleAtoms(c,ctx){
   const ids=[c.claimId],out=[];
   const semantic=ctx.semanticMatrix.claims.find(x=>x.claimId===c.claimId);
@@ -59,7 +84,7 @@ function roleAtoms(c,ctx){
     if(previous){previous.sourceEvidenceIds=unique([...previous.sourceEvidenceIds,...a.sourceEvidenceIds]);previous.required ||= a.required;}
     else merged.push(a);
   }
-  return merged;
+  return [...merged,...lifeSynthesisAtoms(c,merged,ctx)];
 }
 function evidenceText(c,ctx){
   if(c.claimId==='GLOBAL_STRUCTURE'){
@@ -103,14 +128,15 @@ export function buildMenhNarrativeFromContext(ctx){
     groups.set(section,row);
   }
   const self=groups.get('self'),overviewAtoms=[];
-  if(self?.atoms.length){
+  const selfSynthesis=self?.atoms.find(a=>a.kind==='life_synthesis'&&a.required);
+  if(self?.atoms.length&&!selfSynthesis){
     const first=self.atoms.find(a=>a.role==='operatingStyle')||self.atoms[0];
     overviewAtoms.push({...first,id:'overview_character',required:true});
     if(first.caution)overviewAtoms.push(atom('overview_balance','Điểm cần tự quản là '+first.caution.charAt(0).toLowerCase()+first.caution.slice(1).replace(/[.!?]$/,'')+'.',first.claimIds,{required:true}));
   }
   if(global.active)overviewAtoms.push(atom('global_pace',
     global.mechanisms.includes('FU_YIN')&&global.mechanisms.includes('FAN_YIN')
-      ?'Việc thường không đi thẳng một mạch; dễ phải sửa cách làm hoặc quay lại xử lý phần cũ.'
+      ?'Nhịp chung không đi thẳng một mạch: các điểm thuận cần thời gian tích lũy, và cách làm thường phải được sửa lại khi hoàn cảnh đổi chiều.'
       :global.mechanisms.includes('FU_YIN')
         ?'Những điểm thuận vẫn có giá trị, nhưng thường phát huy chậm hơn và dễ quay lại vấn đề cũ.'
         :'Hoàn cảnh dễ đổi chiều; nên chừa khoảng linh hoạt để điều chỉnh cách làm.',

@@ -23,12 +23,13 @@ export function auditSurfaceStyle(draft){
   const issues=[],paragraphs=Array.isArray(draft?.sections)
     ?draft.sections.map((s,index)=>({meaning:s.text,unitId:s.id,index}))
     :surfaceParagraphs(draft);
-  const seen=new Set(),sentences=new Set();
+  const seen=new Set(),sentences=new Set(),themes=new Map();
   const internal=/\b(?:deterministic|resolver|claims?|evidence|pipeline|corroborator|cap|veto|global_structure|profile|precedence|activation)\b|\bKM-/i;
   let verification=0,globalMentions=0;
   for(const p of paragraphs){
     const n=normalizeNarrative(p.meaning||'').replace(/\*\*/g,'').trim();
     if(internal.test(p.meaning||''))issues.push({code:'INTERNAL_LANGUAGE',unitId:p.unitId,sentence:p.meaning,reason:'Đưa ý nghĩa sang tiếng Việt đời thường; mã và thuật ngữ nội bộ chỉ thuộc dữ liệu.'});
+    if(/[\u3400-\u9fff]/u.test(p.meaning||''))issues.push({code:'NON_VIETNAMESE_SCRIPT',unitId:p.unitId,sentence:p.meaning,reason:'Bỏ chữ Hán hoặc ký tự lạc ngữ khỏi phần diễn giải tiếng Việt.'});
     if(n&&seen.has(n))issues.push({code:'REPETITION',unitId:p.unitId,sentence:p.meaning,reason:'Đoạn này lặp nguyên ý đã viết.'});
     seen.add(n);
     for(const sentence of n.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>45)){
@@ -37,8 +38,11 @@ export function auditSurfaceStyle(draft){
     }
     if(/\b(can|phai|hay|nen)\b[^.!?]{0,45}\b(xac minh|kiem tra|lam ro)\b/.test(n))verification++;
     if(/\b(phuc ngam|phan ngam)\b/.test(n))globalMentions++;
+    for(const [theme,pattern] of [['decision_gate',/\b(?:truoc khi|khi) (?:chot|dua ra) (?:quyet dinh|cam ket)|dua ra quyet dinh cuoi cung\b/],['agency_split',/\bchu dong\b[^.!?]{0,90}\bphu thuoc\b|\bphu thuoc\b[^.!?]{0,90}\bchu dong\b/]])
+      if(pattern.test(n))themes.set(theme,(themes.get(theme)||0)+1);
   }
   if(verification>2)issues.push({code:'REPEATED_VERIFICATION',unitId:'',sentence:'',reason:'Gộp lời nhắc kiểm tra, dành phần còn lại cho các ý riêng.'});
+  if([...themes.values()].some(count=>count>1))issues.push({code:'REPEATED_IDEA_FRAME',unitId:'',sentence:'',reason:'Cùng một khung ý về chốt quyết định hoặc chủ động/phụ thuộc đang được diễn đạt lặp lại ở nhiều mục.'});
   if(globalMentions>1)issues.push({code:'REPEATED_GLOBAL',unitId:'',sentence:'',reason:'Giữ giải thích toàn bàn một lần, không lặp tên ở mỗi chủ đề.'});
   return issues;
 }
@@ -66,7 +70,7 @@ export function hydrateSurfaceReading(draft,contract,{status='reading',planning=
   const sections=Object.fromEntries(contract.units.map(u=>{
     const ids=unique([...u.claimIds,...(u.modifierIds?.length?['GLOBAL_STRUCTURE'].filter(id=>contract.claims.some(c=>c.id===id)):[])]);
     const paragraph={
-      meaning:draftText(draft,u.id).trim(),
+      meaning:draftText(draft,u.id).trim().replace(/\s*\n+\s*/g,' '),
       claim_ids:ids,
       atom_ids:u.atoms.map(a=>a.id),
       certainty:u.certainty,
@@ -111,7 +115,7 @@ export function fallbackDraft(contract){
   const sections=[],used=new Set();
   for(const u of contract.units){
     const required=u.atoms.filter(a=>a.required),fresh=u.atoms.filter(a=>!used.has(a.meaning));
-    const selected=unique([...required,...fresh.slice(0,2)]),chosen=selected.length?selected:u.atoms.slice(0,1);
+    const selected=required.length?required:fresh.slice(0,2),chosen=selected.length?selected:u.atoms.slice(0,1);
     chosen.forEach(a=>used.add(a.meaning));
     const clauses=unique(chosen.map(a=>a.meaning.replace(/[.!?]$/,'')+'.'));
     const text=clauses.join(' '),meaning=/^[a-zà-ỹ]/u.test(text)?u.label+': '+text:text;

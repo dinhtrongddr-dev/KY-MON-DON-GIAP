@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 17341,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 4,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "case_specificity",
+        "winner": "X",
+        "reason": "X bám rõ các dữ kiện riêng của ca như Kỷ Thổ, Mệnh và vận tại Cấn, Thiên Nhậm–Tử Môn–Bạch Hổ cùng lớp năm 2026; Y hầu hết dùng mô tả tính cách và quản trị công việc có thể áp cho nhiều người."
+      },
+      {
+        "code": "reasoning_trace",
+        "winner": "X",
+        "reason": "X cho thấy chuỗi luận từ từng cung, môn, tinh và thần đến kết luận tổng hợp; Y nêu nhiều nhận định nhưng ít chỉ ra chúng bắt nguồn từ cấu trúc nào của bàn."
+      },
+      {
+        "code": "repetition",
+        "winner": "X",
+        "reason": "Hai đoạn đầu của Y gần như lặp nguyên ý “phân tích, tổ chức, tính toán quá mức và muốn kiểm soát”; X cũng nhắc lại chủ đề xây nền và đóng chu kỳ nhưng có phát triển thêm ngữ cảnh."
+      },
+      {
+        "code": "actionability",
+        "winner": "X",
+        "reason": "X chuyển phần luận thành các việc tương đối cụ thể như nâng hồ sơ, chọn lọc hợp tác, kiểm tra giấy tờ và dọn việc cũ; Y có mẹo chốt tiêu chí và tách việc theo mức thiếu dữ liệu nhưng phần còn lại khá khái quát."
+      },
+      {
+        "code": "calibration",
+        "winner": "X",
+        "reason": "X nói rõ đây là cách đọc biểu tượng, dùng các cụm “có xu hướng”, “có thể” và tránh biến tín hiệu thành sự kiện chắc chắn. Y cũng dè dặt, nhưng một số câu về gia đình và chăm sóc con xuất hiện đột ngột, thiếu cầu nối nên dễ tạo cảm giác gán thực tế từ biểu tượng."
+      },
+      {
+        "code": "conversational_quality",
+        "winner": "X",
+        "reason": "X có giọng giải thích tự nhiên, bố cục dễ theo dõi và trả lời được câu hỏi ngầm về vận phát triển; Y mang dáng văn mẫu, nhiều câu danh từ hóa và liệt kê trừu tượng nên kém tự nhiên hơn."
+      },
+      {
+        "code": "conciseness",
+        "winner": "Y",
+        "reason": "Y ngắn hơn đáng kể, còn X triển khai hơi dài so với một yêu cầu chỉ nêu lá số và lặp nhẹ cảnh báo về tái cấu trúc; tuy vậy lợi thế ngắn gọn của Y không bù được tính chung chung và trùng ý."
+      }
+    ]
+  }
+]

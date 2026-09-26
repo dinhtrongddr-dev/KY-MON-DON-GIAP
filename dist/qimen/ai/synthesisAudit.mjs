@@ -90,7 +90,9 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
       if(!conditionalPrefix(q,match.index)&&!deniedEvent&&!source.includes(match[0].replace(/[,.]$/,'')))issues.push('Bài luận tự khẳng định sự kiện ngoài điều người dùng đã kể.');
     }
     for(const match of q.matchAll(/\b(?:ban da dat muc tieu|(?:thoa thuan|hop dong|du an|cong viec) da (?:hoan tat|hoan thanh|thanh cong)|moi dieu kien da (?:duoc )?dap ung|(?:ban |su viec |du an )?chac chan (?:dat|thanh cong|hoan tat|hoan thanh))[^.!?;]*/g)){
-      if(!conditionalPrefix(q,match.index)&&!source.includes(match[0]))issues.push('Tự nâng giai đoạn thành đạt mục tiêu/hoàn tất, trái nhận định có điều kiện của planner.');
+      const stagePrefix=q.slice(0,match.index).split(/[.!?;]/).at(-1);
+      const negatedStage=/\b(?:tranh|dung|khong (?:nen|duoc)|chua the)\s+(?:voi|xem|coi|hieu|ket luan)[^.!?;]{0,100}$/.test(stagePrefix);
+      if(!conditionalPrefix(q,match.index)&&!negatedStage&&!source.includes(match[0]))issues.push('Tự nâng giai đoạn thành đạt mục tiêu/hoàn tất, trái nhận định có điều kiện của planner.');
     }
     if(qc.domain==='finance'&&g.primaryJudgment.answerClass==='conditional_positive'){
       for(const match of q.matchAll(/\b(?:khong (?:co |biet (?:co )?)?(?:tien|khoan thu|phat sinh)|chac chan (?:tien|co tien|nhan tien))\b/g))

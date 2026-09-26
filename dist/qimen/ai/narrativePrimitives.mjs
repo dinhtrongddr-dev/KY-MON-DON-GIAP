@@ -40,6 +40,13 @@ export function plainEngineMeaning(value){
     .replace(/\bveto\b/g,'phủ định')
     .replace(/\bclaim\b/g,'nhận định')
     .replace(/\bevidence\b/g,'căn cứ')
+    .replace(/go\/no-go/gi,'nhận hoặc từ chối')
+    .replace(/đưa phương án có thể kiểm tra/gi,'đề xuất một phương án cụ thể để các bên phản hồi')
+    .replace(/tạo một bước tiếp xúc hoặc thực hiện/gi,'thử một bước nhỏ có kết quả quan sát được')
+    .replace(/khâu giữ nhịp và tổ chức sự việc/gi,'cách duy trì kế hoạch đều đặn')
+    .replace(/chọn cách trao đổi phù hợp với thông tin nhạy cảm/gi,'trao đổi rõ phần quan trọng và giữ giới hạn riêng tư cần thiết')
+    .replace(/thông tin gây sức ép hoặc cần làm rõ/gi,'điểm đang tạo áp lực và dữ kiện còn thiếu')
+    .replace(/khâu cần tác động, sửa hoặc cạnh tranh/gi,'phần cần sửa hoặc phải xử lý quyết liệt')
     .replace(/\s+/g,' ').trim();
 }
 export function semanticMeaning(role){
@@ -85,6 +92,23 @@ export function validateNarrativeContract(contract){
   }
   return contract;
 }
+function surfaceWriterAtoms(contract,atoms){
+  if(contract.kind!=='menh')return atoms;
+  const required=atoms.filter(a=>a.required);
+  if(required.length)return required;
+  const selected=[],seenClaims=new Set();
+  for(const a of atoms){
+    const key=unique(a.claimIds).filter(id=>id!=='GLOBAL_STRUCTURE').sort().join('|')||a.id;
+    if(seenClaims.has(key))continue;
+    seenClaims.add(key);selected.push(a);
+    if(selected.length===2)return selected;
+  }
+  for(const a of atoms){
+    if(!selected.includes(a))selected.push(a);
+    if(selected.length===2)break;
+  }
+  return selected;
+}
 export function surfacePayload(contract){
   validateNarrativeContract(contract);
   return {
@@ -96,7 +120,7 @@ export function surfacePayload(contract){
     },
     units:contract.units.map(({id,label,conclusion,certainty,atoms,stage})=>({
       id,label,conclusion,certainty,
-      allowedMeaning:atoms.map(({meaning,kind,required})=>({meaning,kind,required})),
+      allowedMeaning:surfaceWriterAtoms(contract,atoms).map(({meaning,kind,required})=>({meaning,kind,required})),
       ...(stage?{stage}:{})
     })),
     allowedFacts:contract.userFacts,

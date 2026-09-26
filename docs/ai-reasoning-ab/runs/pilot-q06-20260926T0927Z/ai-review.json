@@ -1,0 +1,61 @@
+[
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 230838,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 3
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 2,
+        "specificity": 1,
+        "actionability": 2,
+        "nonRepetition": 1,
+        "calibration": 3
+      }
+    },
+    "findings": [
+      {
+        "code": "DIRECTNESS",
+        "winner": "X",
+        "reason": "X đưa ra kết luận rõ: nên nhận có điều kiện và đàm phán lại; Y không chốt hướng nhận hay từ chối."
+      },
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám trực tiếp vào biên lợi nhuận, cấu trúc dự án, điều khoản, phạm vi và nghiệm thu; Y chủ yếu dùng lời khuyên chung."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X nêu ba việc cụ thể: tính lại biên sau rủi ro, đàm phán phạm vi/giai đoạn, và xác định mục tiêu chiến lược; Y chỉ yêu cầu làm rõ hoặc kiểm tra một cách khái quát."
+      },
+      {
+        "code": "REASONING_COHERENCE",
+        "winner": "X",
+        "reason": "X có chuỗi lập luận theo từng yếu tố rồi nối sang kết luận; Y lặp lại cùng một ý về điều kiện và thông tin cần kiểm tra mà không phát triển luận cứ riêng."
+      },
+      {
+        "code": "NON_REPETITION",
+        "winner": "X",
+        "reason": "Y lặp rõ các cụm ý như 'thu xếp trước khi chốt quyết định' và phân biệt phần chủ động với phần phụ thuộc phối hợp; X cũng nhắc rủi ro nhưng không lặp nguyên ý nhiều lần."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "TIE",
+        "reason": "X có cảnh báo giới hạn và kết luận có điều kiện, nhưng đôi lúc chuyển biểu tượng thành các rủi ro thực tế khá cụ thể; Y tránh khẳng định quá mức nhưng lại mơ hồ và thiếu cơ sở cho sự dè dặt."
+      }
+    ]
+  }
+]

@@ -20,6 +20,7 @@
     "report:outcomes": "node scripts/outcome-report.mjs",
     "eval:blind:prepare": "node scripts/ai-reading-blind-review.mjs prepare",
     "eval:blind:summarize": "node scripts/ai-reading-blind-review.mjs summarize",
+    "eval:reasoning:ab": "node scripts/ai-reasoning-web-ab.mjs",
     "report:canary": "node scripts/canary-acceptance-report.mjs"
   }
 }

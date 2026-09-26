@@ -1,0 +1,258 @@
+[
+  {
+    "caseId": "Q01_CASE_B",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 22261,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 2,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "direct_answer",
+        "winner": "X",
+        "reason": "X trả lời rõ cả hai ý: đơn nghỉ có cửa thuận nhưng phụ thuộc chuẩn bị, và việc ở nhà một năm tương đối hợp nhưng nên duy trì kết nối nghề nghiệp. Y chủ yếu nói chưa chắc chắn và còn phụ thuộc điều kiện, nên kết luận khá mờ."
+      },
+      {
+        "code": "case_grounding",
+        "winner": "X",
+        "reason": "X bám riêng ca bằng Nhật can Kỷ, các cung, môn, sao và thần cụ thể rồi liên hệ lần lượt với tâm thế, hồ sơ nghỉ, gia đình và tài chính. Y gần như không dẫn chi tiết nào từ bàn, nên phần lớn có thể dùng cho nhiều tình huống nghỉ việc khác."
+      },
+      {
+        "code": "reasoning_coherence",
+        "winner": "X",
+        "reason": "X tách từng lớp vấn đề và giải thích giới hạn của mỗi tượng, đặc biệt phân biệt Sinh Môn thuận với việc đơn chắc chắn được duyệt. Y có mạch hợp lý nhưng không cho thấy căn cứ Kỳ Môn dẫn đến các nhận định."
+      },
+      {
+        "code": "actionability",
+        "winner": "X",
+        "reason": "X đưa ra việc làm cụ thể: tính chi phí và quỹ dự phòng, xác định người hỗ trợ, chuẩn bị bàn giao, giữ quan hệ công ty và duy trì một cửa nghề nghiệp. Y cũng có lời khuyên thực tế nhưng thường dừng ở các cụm chung như “làm rõ”, “kiểm tra nguồn lực” và “có mốc rà soát”."
+      },
+      {
+        "code": "repetition",
+        "winner": "X",
+        "reason": "Y lặp nhiều lần các ý xác minh điều kiện, làm rõ trách nhiệm, kiểm tra nguồn lực và chuẩn bị trước khi chốt. X cũng nhắc lại tài chính và nghề nghiệp nhưng các lần nhắc được gắn với những phần luận khác nhau."
+      },
+      {
+        "code": "naturalness",
+        "winner": "X",
+        "reason": "X hơi dài và mang dáng báo cáo, nhưng ngôn ngữ vẫn rõ và gần với câu hỏi của người dùng. Y dùng nhiều câu trừu tượng, hành chính như “đưa phương án có thể kiểm tra” và “khâu giữ nhịp, tổ chức sự việc”, làm hội thoại kém tự nhiên."
+      },
+      {
+        "code": "calibration",
+        "winner": "TIE",
+        "reason": "Cả hai đều tránh cam kết rằng đơn chắc chắn được duyệt hoặc tài chính chắc chắn ổn. X nhỉnh hơn về việc nói rõ tượng chỉ là góc tham khảo, còn Y thận trọng nhưng đôi lúc thận trọng đến mức né kết luận."
+      }
+    ]
+  },
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 15967,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 5,
+        "naturalness": 3,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 4,
+        "nonRepetition": 4,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám sát các dấu riêng của bàn như Nhật can Ất, Khai Môn, Không Vong, Sinh Môn và Kinh Môn; Y gần như chỉ đưa ra khuyến nghị quản trị dự án có thể áp dụng cho nhiều ca khác."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X nối từng nhóm dấu với các rủi ro cụ thể rồi mới kết luận nhận có điều kiện. Y đưa ra kết luận hợp lý nhưng thiếu căn cứ Kỳ Môn quan sát được, khiến câu “tín hiệu thuận” không có phần luận giải tương ứng."
+      },
+      {
+        "code": "DIRECT_ANSWER",
+        "winner": "Y",
+        "reason": "Y trả lời ngay ở câu đầu rằng không nên nhận theo điều kiện hiện tại và nêu rõ ngưỡng chuyển sang từ chối; X mất khá nhiều phần luận bàn mới đi đến quyết định."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X chuyển kết luận thành các việc rõ ràng: tính lại chi phí họp và sửa đổi, tăng giá hoặc giảm phạm vi, chia giai đoạn, thu phí phát sinh và đặt điều kiện rút lui."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X nhìn chung diễn đạt gần với một cuộc tư vấn. Y có nhiều cụm hành chính và mơ hồ như “người có quyền chấp thuận”, “thông tin nhạy cảm” và “bước tiếp xúc hoặc thực hiện phù hợp” nên kém tự nhiên."
+      },
+      {
+        "code": "NON_REPETITION",
+        "winner": "Y",
+        "reason": "X lặp nhiều lần cùng một cảnh báo rằng cơ hội tốt không đồng nghĩa với lợi nhuận tốt và cần khóa điều khoản; Y gọn hơn, dù vẫn nhắc lại việc chỉ nhận khi bảo đảm biên lợi nhuận."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "X phân biệt rõ biểu tượng với số liệu kinh doanh, không biến Sinh Môn hay Không Vong thành khẳng định chắc chắn về lãi lỗ và giữ kết luận ở dạng có điều kiện."
+      }
+    ]
+  },
+  {
+    "caseId": "Q12_PROPERTY",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 18258,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 4,
+        "naturalness": 2,
+        "reasoningCoherence": 2,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 2,
+        "calibration": 2
+      }
+    },
+    "findings": [
+      {
+        "code": "case_specificity",
+        "winner": "X",
+        "reason": "X bám sát việc thuê mặt bằng bằng các điểm kiểm tra riêng như tiền cọc, hoàn cọc, quyền cải tạo, biển hiệu, gia hạn và điều khoản thoát; Y chủ yếu dùng các cụm khái quát như “điều khoản, hồ sơ, trách nhiệm”."
+      },
+      {
+        "code": "reasoning_chain",
+        "winner": "X",
+        "reason": "X nối từng tín hiệu được nêu với kết luận có điều kiện và liên tục nhắc rằng đó là giả thuyết cần kiểm chứng; Y đưa khuyến nghị nhưng ít cho thấy vì sao từng khuyến nghị xuất phát từ ca này."
+      },
+      {
+        "code": "actionability",
+        "winner": "X",
+        "reason": "X cung cấp danh sách kiểm tra cụ thể trước khi ký và một ngưỡng quyết định rõ: chỉ ký sau khi điểm chưa rõ được chốt bằng văn bản. Y có hướng rà soát nhưng khó chuyển thành checklist thực hiện ngay."
+      },
+      {
+        "code": "repetition",
+        "winner": "X",
+        "reason": "Y lặp nhiều lần cùng ý phải làm rõ điều khoản, hồ sơ, trách nhiệm và khả năng tài chính mà không bổ sung đáng kể; X cũng nhắc lại cảnh báo nhưng mỗi phần thường phát triển một khía cạnh khác."
+      },
+      {
+        "code": "naturalness",
+        "winner": "X",
+        "reason": "X có giọng tư vấn mạch lạc và dùng từ gắn với giao dịch thực tế; Y có nhiều câu trừu tượng, nặng văn mẫu như “tạo một bước tiếp xúc hoặc thực hiện” và “khóa cam kết”."
+      },
+      {
+        "code": "calibration",
+        "winner": "X",
+        "reason": "X phân biệt rõ biểu tượng với sự kiện thực tế bằng các từ “gợi”, “có thể”, “không có nghĩa chắc chắn” và yêu cầu đối chiếu pháp lý, dòng tiền. Y có dè dặt nhưng lại nêu ba ngày cụ thể là “phù hợp” mà không giải thích cơ sở, tạo cảm giác chính xác quá mức."
+      },
+      {
+        "code": "direct_answer",
+        "winner": "TIE",
+        "reason": "Y nêu “chưa nên ký ngay” ngay câu đầu; X đưa kết luận muộn hơn nhưng cuối cùng trả lời rõ rằng có thể tiến hành trong tháng, chỉ ký sau khi các điểm chưa rõ được chốt."
+      }
+    ]
+  },
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 30626,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 2,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 3
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám các yếu tố riêng được nêu trong bài như Kỷ Thổ, Cấn 8, Thiên Nhậm, Tử Môn, Bạch Hổ và các cung hỗ trợ; Y chủ yếu dùng các mô tả tính cách rộng, ít chỉ rõ căn cứ của từng kết luận."
+      },
+      {
+        "code": "REASONING_CHAIN",
+        "winner": "X",
+        "reason": "X thường đi theo chuỗi tổ hợp biểu tượng → ý nghĩa → hệ quả thực tế và có phân biệt giữa dấu hiệu biểu tượng với sự kiện; Y xếp nhiều mệnh đề cạnh nhau nhưng ít giải thích quan hệ giữa chúng."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra các việc khá cụ thể cho năm 2026 như chọn năng lực lõi, chuẩn hóa hồ sơ, xây hợp tác chọn lọc và kiểm tra dữ kiện trước quyết định lớn; Y chỉ có một vài chỉ dẫn hữu ích như chốt tiêu chí và tách việc gấp khỏi việc cần thêm dữ liệu."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Y lặp gần nguyên văn nhiều cụm về phân tích–tổ chức, đóng–giữ kín, nề nếp gia đình, đời sống chung và nhịp sống trong năm. X cũng nhắc lại chủ đề xây nền và tránh nóng vội, nhưng mức lặp thấp hơn và thường phục vụ từng lĩnh vực khác nhau."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X có giọng giải thích liền mạch và chuyển mục tự nhiên hơn. Y tạo cảm giác ghép câu, đặc biệt ở các cặp câu liên tiếp cùng mở đầu nhưng đưa ra hai mô tả khác nhau."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "X liên tục giới hạn mức kết luận, chẳng hạn không coi Tử Môn là bằng chứng mất mát và không gán ý định cho một người cụ thể. Y có cảnh báo rằng đại vận không phải lịch sự kiện, nhưng nhiều nhận định tính cách và gia đình vẫn được phát biểu khá trực tiếp mà thiếu căn cứ nối."
+      },
+      {
+        "code": "INTERNAL_CLARITY",
+        "winner": "X",
+        "reason": "X nhìn chung nhất quán giữa luận điểm 'xây nền' và khuyến nghị đường dài, dù đoạn năm 2026 nêu Bính ở hai cung mà chưa giải thích rõ hai lớp đang dùng. Y có nhiều mô tả song song dễ gây mâu thuẫn hoặc khó xác định trọng tâm."
+      }
+    ]
+  }
+]

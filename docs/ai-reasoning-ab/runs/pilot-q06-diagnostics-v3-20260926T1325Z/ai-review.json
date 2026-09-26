@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 17302,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 2,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "DIRECT_CONCLUSION",
+        "winner": "X",
+        "reason": "X trả lời rõ: không nhận theo điều kiện hiện tại, ưu tiên đàm phán lại và từ chối nếu biên vẫn quá mỏng. Y nhiều lần hoãn quyết định vì “chưa đủ cơ sở” mà không đưa ra ngưỡng chốt tương đương."
+      },
+      {
+        "code": "CASE_SPECIFIC_REASONING",
+        "winner": "X",
+        "reason": "X liên kết trực tiếp biên lợi nhuận thấp với chi phí ẩn, phạm vi dễ phình, số vòng sửa, nghiệm thu và thanh toán. Y chủ yếu dùng các cụm khái quát như lợi ích, nguồn lực, giới hạn thực tế."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra chuỗi hành động cụ thể: khóa phạm vi, giới hạn sửa đổi, điều chỉnh giá hoặc chia giai đoạn, định lượng giá trị mở đường và đặt điều kiện rút lui. Y có đề nghị rà soát và xác minh thẩm quyền nhưng thiếu tiêu chí quyết định cuối."
+      },
+      {
+        "code": "COHERENCE",
+        "winner": "X",
+        "reason": "X đi từ cơ hội, rủi ro lợi nhuận, khả năng sinh tiền và điều khoản hợp tác đến kết luận nhất quán. Đoạn cuối của Y về “khâu kết thúc, giữ lại hoặc xử lý việc cũ” khó nối với câu hỏi và làm mạch suy luận kém rõ."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X có giọng tư vấn tương đối tự nhiên và diễn đạt dễ hiểu bằng hình ảnh “cửa có thể mở nhưng phải khóa chặt điều khoản”. Y có nhiều câu hành chính, trừu tượng và gượng như “phần yêu cầu còn chưa được đáp ứng”."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Cả hai đều lặp cảnh báo phải làm rõ chi phí và điều khoản; tuy nhiên Y nhắc lại cùng ý kiểm tra dữ kiện, nguồn lực và phần chưa chắc chắn qua nhiều đoạn mà ít bổ sung thông tin mới."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "X phân biệt rõ tín hiệu tham khảo với kết quả tài chính thực tế và không khẳng định phát sinh chắc chắn xảy ra. Y cũng thận trọng, nhưng mức dè dặt quá cao khiến khuyến nghị mất độ hữu dụng."
+      }
+    ]
+  }
+]

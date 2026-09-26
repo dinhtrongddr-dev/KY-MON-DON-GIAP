@@ -1,0 +1,26 @@
+[
+  {
+    "caseId": "Q01_CASE_B",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  },
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  },
+  {
+    "caseId": "Q12_PROPERTY",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  },
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  }
+]

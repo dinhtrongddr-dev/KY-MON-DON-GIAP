@@ -34,6 +34,20 @@ test('Cao Thị Thảo Trang fixture retains the exact supplied placements and a
   assert.match(mc.claims.find(c=>c.id==='LUCK_CURRENT').technicalEvidence,/31–45 tại Cấn 8/);
   assert.deepEqual(new Set(mc.globalModifier.mechanisms),new Set(['FU_YIN','FAN_YIN']));
 });
+test('Mệnh gives the Writer required integrated patterns for self, current luck and annual action',()=>{
+  const required=id=>mc.units.find(u=>u.id===id).atoms.filter(a=>a.required&&a.kind==='life_synthesis');
+  const self=required('self'),luck=required('luck'),annual=required('annual');
+  assert.equal(self.length,1);assert.equal(luck.length,1);assert.equal(annual.length,1);
+  assert.match(self[0].meaning,/phân tích.*không phải lúc nào cũng tự chuyển thành kết quả/i);
+  const overview=mc.units.find(u=>u.id==='overview');
+  assert.equal(overview.atoms.some(a=>a.meaning===self[0].meaning),false);
+  assert.deepEqual(overview.atoms.map(a=>a.id),['global_pace']);
+  assert.match(luck[0].meaning,/31–45.*củng cố.*mốc xem lại/i);
+  assert.match(annual[0].meaning,/việc cần làm ngay.*thêm dữ liệu.*tăng tốc/i);
+  for(const a of [...self,...luck,...annual]){
+    assert.ok(a.sourceEvidenceIds.length);assert.doesNotMatch(a.meaning,/Không Vong|Phục Ngâm|Phản Ngâm|Càn 6|Cấn 8|Thiên bàn/);
+  }
+});
 test('global effects cap affected units before narration and preserve GLOBAL_STRUCTURE trace',()=>{
   assert.equal(mc.globalModifier.effects.local_positive_signal_cap,true);
   assert.ok(mc.globalModifier.appliedTo.length>=6);
@@ -62,6 +76,37 @@ test('multi-facet coverage cannot be removed and Writer cannot forge trace metad
   const bad=fallbackDraft(qc);section(bad,'financial_capacity').claim_ids=['invented'];
   assert.throws(()=>validateSurfaceDraft(bad,qc),/SECTION_SCHEMA/);
 });
+test('business choice keeps the asked alternatives, margin and domain meaning in the contract',()=>{
+  const prepared=prepareReading({...fixtures.question,question:'Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?',topic:'contract',mode:'business'});
+  const contract=buildQuestionNarrativeContract(prepared.context);
+  assert.deepEqual(contract.facets.map(f=>f.id),['decision','financial_capacity']);
+  assert.match(contract.primaryConclusion.meaning,/nhận dự án này hay từ chối/i);
+  assert.match(contract.units.find(u=>u.id==='financial_capacity').atoms.map(a=>a.meaning).join(' '),/Biên lợi nhuận.*toàn bộ chi phí/i);
+  assert.ok(contract.units.flatMap(u=>u.atoms).some(a=>a.kind==='domain_translation'));
+});
+test('planner answer and decision steps survive as traced synthesis without changing the verdict',()=>{
+  const prepared=prepareReading({...fixtures.question,question:'Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?',topic:'contract',mode:'business'}),g=prepared.context.allInOne.reasoning,ids=g.primaryJudgment.claimIds;
+  const planning={answer_class:g.primaryJudgment.answerClass,decisive_claim_ids:ids,counter_claim_ids:[],bottleneck_claim_id:'',recommendation_ids:[],semantic_frame:{related_considerations:[]},stage_logic:[
+    {slot:'answer',claim_ids:ids.slice(0,2),note:'Chưa đủ căn cứ để nhận vô điều kiện.'},
+    {slot:'action',claim_ids:ids.slice(0,2),note:'Đặt ngưỡng go/no-go trước khi cam kết.'},
+    {slot:'alternative',claim_ids:ids.slice(0,2),note:'Nếu không đạt ngưỡng thì đàm phán lại hoặc từ chối.'}
+  ]};
+  const contract=buildQuestionNarrativeContract(prepared.context,{deliberation:planning}),answer=contract.units.find(u=>u.id==='answer'),decision=contract.units.find(u=>u.id==='decision');
+  assert.equal(answer.atoms.filter(a=>a.kind==='planner_synthesis').length,2);
+  assert.equal(answer.atoms.filter(a=>a.kind==='planner_synthesis'&&a.required).length,1);
+  assert.equal(decision.atoms.filter(a=>a.kind==='planner_synthesis'&&a.required).length,1);
+  assert.doesNotMatch(decision.atoms.map(a=>a.meaning).join(' '),/go\/no-go/i);
+  assert.equal(contract.primaryConclusion.conclusion,g.primaryJudgment.answerClass);
+});
+test('planner check-only considerations add depth without becoming observed facts',()=>{
+  const g=event.context.allInOne.reasoning,id=g.primaryJudgment.claimIds[0];
+  const planning={answer_class:g.primaryJudgment.answerClass,decisive_claim_ids:[id],counter_claim_ids:[],stage_logic:[],recommendation_ids:[],semantic_frame:{related_considerations:[
+    {label:'Phương án dự phòng',why_relevant:'quyết định đang hỏi có thể cần một lối lùi nếu điều kiện chính không đạt',source:'check_only',source_quote:'',claim_ids:[id]}
+  ]}};
+  const contract=buildQuestionNarrativeContract(event.context,{deliberation:planning}),facet=contract.facets.find(f=>f.source==='check_only');
+  assert.ok(facet);assert.equal(facet.sourceQuote,'');
+  assert.match(contract.units.find(u=>u.id===facet.id).atoms[0].meaning,/dữ liệu còn cần xác minh/i);
+});
 test('decision facets outside childcare do not acquire an invented career break',()=>{
   const investment=prepareReading({...fixtures.question,question:'Tôi có nên đầu tư thêm vốn khi nguồn lực tài chính hạn chế?'});
   const c=buildQuestionNarrativeContract(investment.context),finance=c.units.find(u=>u.id==='financial_capacity');
@@ -70,16 +115,28 @@ test('decision facets outside childcare do not acquire an invented career break'
   const career=buildQuestionNarrativeContract(job.context).units.find(u=>u.id==='career_return');
   assert.ok(career);assert.doesNotMatch(career.label+' '+career.atoms.map(a=>a.meaning).join(' '),/nghỉ một thời gian|quay lại công việc/);
 });
-test('overlapping explicit long-term considerations merge their trace into one facet',()=>{
+test('overlapping childcare considerations enrich the four asked facets instead of creating duplicate sections',()=>{
   const g=event.context.allInOne.reasoning,ids=g.primaryJudgment.claimIds;
-  const planning={answer_class:g.primaryJudgment.answerClass,decisive_claim_ids:ids,counter_claim_ids:[],stage_logic:[],semantic_frame:{related_considerations:[
-    {source:'explicit',source_quote:'ở nhà chăm con hoàn toàn',claim_ids:[ids[0]]},
-    {source:'explicit',source_quote:'thuận trong việc nghỉ ở nhà ít nhất 1 năm không?',claim_ids:[ids[1]]}
+  const planning={answer_class:g.primaryJudgment.answerClass,decisive_claim_ids:ids,counter_claim_ids:[],stage_logic:[],recommendation_ids:[],semantic_frame:{related_considerations:[
+    {label:'Khả năng chăm con toàn thời gian',why_relevant:'đây là mục tiêu trực tiếp của quyết định nghỉ',source:'explicit',source_quote:'ở nhà chăm con hoàn toàn',claim_ids:[ids[0]]},
+    {label:'Độ bền của kế hoạch một năm',why_relevant:'việc được duyệt nghỉ chỉ là bước đầu của kế hoạch dài hạn',source:'explicit',source_quote:'thuận trong việc nghỉ ở nhà ít nhất 1 năm không?',claim_ids:[ids[1]]},
+    {label:'Duy trì năng lực nghề nghiệp',why_relevant:'giúp khoảng nghỉ không đồng nghĩa với mất sự chủ động nghề nghiệp',source:'explicit',source_quote:'lo bản thân ù lì tụt hậu không?',claim_ids:[ids[0]]}
   ]}};
-  const c=buildQuestionNarrativeContract(event.context,{deliberation:planning});
-  const facets=c.facets.filter(f=>f.label==='Duy trì việc ở nhà lâu dài');
-  assert.equal(facets.length,1);assert.deepEqual(new Set(facets[0].claimIds),new Set(ids.slice(0,2)));
+  const c=buildQuestionNarrativeContract(event.context,{deliberation:planning}),decision=c.facets.find(f=>f.id==='decision'),career=c.facets.find(f=>f.id==='career_return');
+  assert.deepEqual(c.facets.map(f=>f.id),['decision','approval_timing','financial_capacity','career_return']);
+  assert.ok(decision.plannerNotes.length>=2);assert.ok(career.plannerNotes.length>=1);
   assert.equal(auditSurfaceStyle(naturalSurfaceFallback(c)).some(x=>x.code==='REPEATED_SENTENCE'),false);
+});
+test('planner caps side considerations so a focused question does not become a checklist of sections',()=>{
+  const prepared=prepareReading({input:{year:2026,month:9,day:21,hour:10,minute:25,tzOffset:7},question:'Tôi có nên ký hợp đồng thuê mặt bằng này trong tháng này không?',topic:'general',mode:'auto',method:'chaibu'}),g=prepared.context.allInOne.reasoning,id=g.primaryJudgment.claimIds[0];
+  const related_considerations=[
+    {label:'Khung ký trong tháng này',why_relevant:'quyết định phải nằm trong cửa sổ thời gian người hỏi đã nêu',source:'explicit',source_quote:'trong tháng này',claim_ids:[id]},
+    ...['Mức độ phù hợp của mặt bằng','Thẩm quyền của người ký','Điều khoản bàn giao','Phương án thoát hợp đồng'].map(label=>({label,why_relevant:'đây là dữ liệu thực tế cần kiểm tra trước khi cam kết',source:'check_only',source_quote:'',claim_ids:[id]}))
+  ];
+  const c=buildQuestionNarrativeContract(prepared.context,{deliberation:{answer_class:g.primaryJudgment.answerClass,decisive_claim_ids:[id],counter_claim_ids:[],stage_logic:[],recommendation_ids:[],semantic_frame:{related_considerations}}}),decision=c.facets.find(f=>f.id==='decision');
+  assert.equal(c.facets.filter(f=>f.id.startsWith('consideration_')).length,2);
+  assert.ok(decision.plannerNotes.some(note=>/khung ký trong tháng này/i.test(note)));
+  assert.ok(c.facets.length<=3);
 });
 test('Writer output is limited to section id and natural text',()=>{
   for(const [key,value] of [['claim_ids',['invented']],['certainty','observed'],['conclusion','positive'],['technicalEvidence','forged']]){
@@ -99,6 +156,17 @@ test('writer payload excludes raw engine data and provenance ids',()=>{
     assert.equal(serialized.includes('evidenceIds'),false);
     assert.ok(serialized.length<JSON.stringify(c).length);
   }
+});
+test('Mệnh Writer sees only required synthesis or two diverse optional meanings',()=>{
+  const payload=surfacePayload(mc);
+  for(const row of payload.units){
+    const source=mc.units.find(u=>u.id===row.id),required=source.atoms.filter(a=>a.required);
+    if(required.length){
+      assert.deepEqual(row.allowedMeaning.map(x=>x.meaning),required.map(x=>x.meaning));
+    }else assert.ok(row.allowedMeaning.length<=2,row.id);
+  }
+  const family=payload.units.find(u=>u.id==='family').allowedMeaning.map(x=>x.meaning).join(' ');
+  assert.match(family,/Nề nếp gia đình/i);assert.match(family,/Việc chăm sóc con/i);
 });
 test('technical evidence and provenance are reattached by the app and cannot be forged',()=>{
   for(const c of [qc,mc]){
@@ -155,8 +223,8 @@ test('editorial repetition alone does not trigger another LLM call',async()=>{
   },reviewer:async()=>{reviews++;return {violations:[]};}});
   assert.equal(writes,1);assert.equal(reviews,1);assert.equal(result.status,'reading');
 });
-test('a negated certainty sentence is not rejected by legacy keyword scanning',()=>{
-  const draft=append(fallbackDraft(qc),'answer',' Chưa đủ cơ sở để nói việc xin nghỉ chắc chắn sẽ được giải quyết đúng mong muốn.');
+test('negated certainty and stage warnings are not treated as positive claims',()=>{
+  const draft=append(fallbackDraft(qc),'answer',' Chưa đủ cơ sở để nói việc xin nghỉ chắc chắn sẽ được giải quyết đúng mong muốn. Tránh xem dự án chắc chắn thành công khi điều kiện chưa sẵn sàng.');
   assert.doesNotThrow(()=>validateReading(hydrateSurfaceReading(draft,qc),event.facts,'general',event.context));
   const m=append(fallbackDraft(mc),'overview',' Điều này không có nghĩa bạn chắc chắn sẽ thành công.');
   assert.doesNotThrow(()=>validateMenhReading(hydrateSurfaceReading(m,mc),ctx));
@@ -165,6 +233,7 @@ test('paragraph breaks inside natural section text do not create a prose quota g
   const draft=fallbackDraft(qc),row=section(draft,'answer');
   row.text=Array.from({length:6},(_,i)=>'Ý diễn đạt '+i+': '+row.text).join('\n\n');
   assert.doesNotThrow(()=>validateSurfaceDraft(draft,qc));
+  assert.doesNotMatch(hydrateSurfaceReading(draft,qc).sections.answer.paragraphs[0].meaning,/\n/);
 });
 test('controlled condition adapters translate the complete message before replacing terms',()=>{
   const meaning=plainEngineMeaning('Xử lý điều kiện cản tại Dụng Thần chính trước khi nâng mức kết luận hoặc mở rộng cam kết.');
@@ -178,8 +247,11 @@ test('surface style flags internal words, repeated sentences and repeated verifi
   assert.equal(auditSurfaceStyle(draft).some(x=>x.code==='INTERNAL_LANGUAGE'),false);
   section(draft,'answer').text+=' GLOBAL_STRUCTURE cap veto KM-FAKE profile deterministic resolver claim evidence pipeline corroborator.';
   assert.ok(auditSurfaceStyle(draft).some(x=>x.code==='INTERNAL_LANGUAGE'));
+  section(draft,'answer').text+=' 投入';assert.ok(auditSurfaceStyle(draft).some(x=>x.code==='NON_VIETNAMESE_SCRIPT'));
   for(const s of draft.sections)s.text+=' Bạn cần xác minh lại các điều kiện trước khi tự chốt quyết định này.';
   const codes=auditSurfaceStyle(draft).map(x=>x.code);assert.ok(codes.includes('REPEATED_SENTENCE'));assert.ok(codes.includes('REPEATED_VERIFICATION'));
+  const semantic=fallbackDraft(qc);semantic.sections[0].text+=' Hãy tách phần có thể chủ động với phần còn phụ thuộc bên khác trước khi chốt quyết định.';semantic.sections[1].text+=' Khi chốt quyết định, cần biết điều mình chủ động và điều vẫn phụ thuộc phối hợp.';
+  assert.ok(auditSurfaceStyle(semantic).some(x=>x.code==='REPEATED_IDEA_FRAME'));
 });
 test('both real fixtures produce readable fallback meanings without internal English',()=>{
   for(const c of [qc,mc]){

@@ -1,0 +1,14 @@
+[
+  {
+    "caseId": "Q12_PROPERTY",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  },
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "X": "A",
+    "Y": "B"
+  }
+]

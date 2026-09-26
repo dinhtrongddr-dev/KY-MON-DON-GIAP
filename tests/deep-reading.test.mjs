@@ -116,10 +116,13 @@ test('mixed family and money question keeps family primary and finance secondary
   assert.equal(p.context.allInOne.resolvedTopic,'family');
 });
 
-test('structured parser accepts schema JSON and one fenced JSON block, but not prose around it',()=>{
+test('structured parser accepts schema JSON, repairs literal string controls, and rejects wrapper prose',()=>{
   assert.deepEqual(parseStructuredText('{\"answer\":\"ok\"}'),{answer:'ok'});
   assert.deepEqual(parseStructuredText('```json\n{\"answer\":\"ok\"}\n```'),{answer:'ok'});
+  assert.deepEqual(parseStructuredText('{\"answer\":\"dòng một\ndòng hai\"}'),{answer:'dòng một\ndòng hai'});
+  assert.deepEqual(parseStructuredText('```json\n{\"answer\":\"dòng một\ndòng hai\"}\n```'),{answer:'dòng một\ndòng hai'});
   assert.throws(()=>parseStructuredText('Kết quả: {\"answer\":\"ok\"}'),/chưa hợp lệ/);
+  assert.throws(()=>parseStructuredText('{\"answer\":\"ok\"} trailing'),/chưa hợp lệ/);
 });
 
 test('timing audit keeps valid prose, accepts deterministic response dates, and does not mistake ordinal thứ năm for Thursday',()=>{

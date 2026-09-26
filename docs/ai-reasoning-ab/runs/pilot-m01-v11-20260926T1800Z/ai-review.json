@@ -1,0 +1,61 @@
+[
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 22197,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 4
+      },
+      "Y": {
+        "directness": 3,
+        "naturalness": 3,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 2,
+        "nonRepetition": 3,
+        "calibration": 5
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám các thành phần riêng của bàn như Kỷ Thổ, Cấn, Thiên Nhậm, Tử Môn, Bạch Hổ và lớp năm 2026; Y chủ yếu dùng các mô tả tính cách và nguồn lực có thể áp cho nhiều ca."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X cho thấy đường nối từ từng tổ hợp biểu tượng đến kết luận rồi tổng hợp thành chủ đề tái cấu trúc. Y nhìn chung mạch lạc nhưng các đoạn gia đình, con cái, sự nghiệp và tài vận xuất hiện rời nhau, ít chỉ ra căn cứ riêng."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X chuyển nhận định thành các bước cụ thể như chọn một hướng 2–3 năm, tạo hồ sơ hoặc sản phẩm đo được, lập cam kết bằng văn bản và thử nhỏ trước khi mở rộng. Lời khuyên của Y như điều chỉnh theo nguồn lực hay thu thập thêm dữ liệu còn chung chung."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "Y",
+        "reason": "Y nhất quán trình bày đây là xu hướng, không phải lịch trình sự kiện cố định. X cũng có cảnh báo giới hạn ngay đầu bài, nhưng đôi lúc chuyển sang khẳng định khá gần sự kiện thật như có quý nhân, có cửa mở hoặc sẽ phải đóng một cánh cửa."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "X có lặp nhẹ các ý bỏ cái cũ, đi chậm và kiểm chứng, nhưng mỗi lần thường gắn với một cấu phần hoặc hành động khác. Y lặp nhiều biến thể của các ý tổ chức, điều chỉnh theo thực tế, duy trì nguồn lực mà không bổ sung nhiều thông tin."
+      },
+      {
+        "code": "CONVERSATIONAL_QUALITY",
+        "winner": "X",
+        "reason": "X dùng tiêu đề, diễn giải thuật ngữ và câu chốt dễ theo dõi hơn. Y đọc tự nhiên nhưng giọng văn trừu tượng, nhiều câu cân bằng hai vế và cụm từ văn mẫu nên tạo khoảng cách với người hỏi."
+      }
+    ]
+  }
+]

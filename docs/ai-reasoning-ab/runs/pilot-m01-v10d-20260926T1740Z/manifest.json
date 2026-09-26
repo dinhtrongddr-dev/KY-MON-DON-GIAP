@@ -1,0 +1,17 @@
+{
+  "runId": "pilot-m01-v10d-20260926T1740Z",
+  "cases": [
+    "M01_CASE_A"
+  ],
+  "rounds": 1,
+  "dimensions": [
+    "directness",
+    "naturalness",
+    "reasoningCoherence",
+    "specificity",
+    "actionability",
+    "nonRepetition",
+    "calibration"
+  ],
+  "instructionHash": "bd1158c30a17041d2c01c0460d89315fdd70d0845e853c5fa0aece3af94419a5"
+}

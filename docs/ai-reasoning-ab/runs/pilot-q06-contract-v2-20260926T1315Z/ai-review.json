@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "Q06_BUSINESS_MARGIN",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 15647,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 2,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "clear_recommendation",
+        "winner": "X",
+        "reason": "X trả lời thẳng: không nên nhận vô điều kiện ở giá hiện tại, ưu tiên đàm phán hoặc nhận có điều kiện. Y mở đầu bằng việc chưa đủ cơ sở và không chốt rõ nên nhận hay từ chối."
+      },
+      {
+        "code": "case_specific_reasoning",
+        "winner": "X",
+        "reason": "X liên kết các dấu hiệu cụ thể của bàn với đúng vấn đề biên lợi nhuận, chi phí ẩn, phạm vi và hợp đồng. Y chủ yếu dùng các câu khái quát có thể áp cho nhiều quyết định kinh doanh khác."
+      },
+      {
+        "code": "actionability",
+        "winner": "X",
+        "reason": "X đưa ra các bước kiểm tra rõ ràng như giới hạn vòng sửa, phí phát sinh, hỗ trợ sau bàn giao, chia giai đoạn và định giá lợi ích chiến lược. Y có hướng kiểm tra giá, phạm vi và trách nhiệm nhưng diễn đạt rời rạc, ít tiêu chí chốt quyết định."
+      },
+      {
+        "code": "coherence",
+        "winner": "X",
+        "reason": "X đi theo tuyến người hỏi, dự án, tài lợi, hợp đồng rồi kết luận. Y chuyển giữa các ý về sức ép, thông tin nhạy cảm, biến động và hậu trường mà quan hệ với quyết định chính không luôn rõ."
+      },
+      {
+        "code": "repetition",
+        "winner": "X",
+        "reason": "Y lặp nhiều lần cấu trúc “cần cân nhắc”, “đây là khía cạnh cần kiểm tra” và cảnh báo chưa xác nhận. X cũng nhắc lại điều kiện nhận dự án nhưng chủ yếu để củng cố một kết luận nhất quán."
+      },
+      {
+        "code": "calibration",
+        "winner": "X",
+        "reason": "X phân biệt tín hiệu tượng bàn với lợi nhuận thực tế và không biến biểu tượng thành sự kiện chắc chắn. Y cũng thận trọng, nhưng mức dè dặt quá cao làm giảm giá trị tư vấn."
+      },
+      {
+        "code": "conversational_quality",
+        "winner": "X",
+        "reason": "X có giọng tư vấn tự nhiên và dễ theo dõi hơn. Y chứa nhiều câu gượng hoặc thiếu chủ thể rõ, chẳng hạn “Kênh cảnh báo, phản ứng nhanh và biến động gây chú ý”, tạo cảm giác văn mẫu."
+      }
+    ]
+  }
+]

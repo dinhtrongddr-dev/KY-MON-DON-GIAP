@@ -1,0 +1,303 @@
+{
+  "summary": {
+    "runId": "pilot-q06-diagnostics-v3-20260926T1325Z",
+    "generatedAt": "2026-09-26T06:20:49.553Z",
+    "caseCount": 1,
+    "rounds": 1,
+    "samples": 2,
+    "transportNote": "A uses the local chatgpt2api account transport; it is a direct neutral prompt, not a claim of ChatGPT web UI parity.",
+    "completed": 2,
+    "failed": 0,
+    "verifiedFallbacks": 0,
+    "wins": {
+      "A": 1,
+      "B": 0,
+      "TIE": 0
+    },
+    "aggregate": {
+      "A": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 5
+      },
+      "B": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 2,
+        "calibration": 4
+      }
+    },
+    "diagnosticCounts": {}
+  },
+  "rows": [
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Mình luận theo **Thời Gia Kỳ Môn** như một góc nhìn tham khảo để soi thế việc, không xem đây là bằng chứng chắc chắn rằng dự án sẽ lời hay lỗ. Quyết định cuối vẫn cần đối chiếu số liệu: chi phí thật, công sức, khả năng tăng giá, điều khoản hợp đồng.\n\nCâu hỏi: **“Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?”**\n\n## 1. Xác định chủ – việc\n\n- **Người hỏi (Nhật can Ất)** ở cung **Đoài (Kim)**, có **Khai Môn** nhưng gặp **Tuần Không**.\n- Dụng thần cho việc kinh doanh:\n  - **Khai Môn**: cơ hội mở việc, dự án mới.\n  - **Sinh Môn**: tài lộc, lợi ích kinh doanh.\n  - **Lục Hợp**: hợp tác, thỏa thuận.\n  - **Cảnh Môn**: hồ sơ, báo giá, trình bày.\n\nĐiểm nổi bật là cung người hỏi đồng cung với **Khai Môn**, cho thấy bản thân đang đứng trước một cửa mở: có yếu tố cơ hội, tiếp xúc, mở rộng quan hệ. Nhưng **Khai Môn gặp Đằng Xà và lại bị Không Vong**, nên tín hiệu này không nên hiểu đơn giản là “nhận là thắng”. Nó giống trạng thái: **có cửa, nhưng có phần mơ hồ hoặc cần làm rõ**.\n\n## 2. Xét vấn đề biên lợi nhuận thấp\n\n“Sự việc” theo bàn ở cung **Khôn (Thổ)**, có:\n\n- **Kinh Môn**: lo lắng, tranh luận, vấn đề cần cân nhắc.\n- **Thiên Tâm**: tính toán, quản trị, xử lý.\n- **Thái Âm**: phần ẩn, chi tiết chưa lộ hết.\n- Cung này lại **Không Vong**.\n\nTín hiệu này khá phù hợp với câu hỏi: vấn đề không nằm ở việc “có dự án hay không”, mà nằm ở **những phần chưa tính hết trong bài toán lợi nhuận**. Có thể là chi phí ẩn, phạm vi công việc dễ phình ra, yêu cầu phát sinh, hoặc điều khoản chưa rõ. Nhưng Kỳ Môn chỉ cho thấy “cần kiểm tra phần ẩn”, không khẳng định chắc chắn sẽ có phát sinh.\n\n## 3. Xét khả năng tạo tiền\n\n**Sinh Môn** nằm ở cung Khảm:\n\n- Sinh Môn là dấu hiệu tốt cho tài lộc.\n- Có **Thiên Xung** và **Cửu Thiên**: tính nhanh, mở rộng, đẩy mạnh.\n- Cung này không bị Không.\n\nĐây là điểm sáng: dự án có thể không chỉ nhìn ở lợi nhuận trên một hợp đồng đơn lẻ. Nó có thể có giá trị ở chỗ:\n- mở quan hệ mới,\n- tạo cơ hội tiếp theo,\n- tạo danh tiếng hoặc thị trường mới.\n\nNhưng cần phân biệt: **Sinh Môn tốt không đồng nghĩa biên lợi nhuận hiện tại tự nhiên tốt lên**. Nó chỉ nói về tiềm năng sinh lợi nếu vận hành đúng.\n\n## 4. Xét hợp tác và thỏa thuận\n\nLục Hợp ở cung Ly:\n\n- Có **Tử Môn** đi cùng **Thiên Trụ**.\n- Lục Hợp vốn chủ hợp tác, nhưng đi cùng Tử Môn thì dễ có cảm giác “hợp tác nhưng bị bó”, khó xoay xở.\n\nĐiều này nhắc rằng nếu nhận, phần quan trọng không phải chỉ là giá ban đầu mà là:\n- phạm vi bàn giao,\n- số vòng sửa,\n- điều kiện nghiệm thu,\n- thời hạn thanh toán,\n- quyền tính thêm phí khi phát sinh.\n\n## 5. Kết luận theo thế bàn\n\nBàn không cho tín hiệu mạnh kiểu “nên bỏ ngay”. Ngược lại, có dấu hiệu **có cửa làm**, nhưng điểm yếu nằm ở **giá trị thực thu và điều khoản kiểm soát lợi nhuận**.\n\nNếu hỏi “nhận hay từ chối”, mình nghiêng về hướng:\n\n**Không nên nhận theo đúng điều kiện hiện tại nếu biên lợi nhuận thấp và không có khả năng điều chỉnh. Nên thử đàm phán lại để biến nó thành dự án đáng nhận hơn.**\n\nCách làm hợp với thế bàn:\n\n1. **Rà lại phạm vi công việc**: cái gì nằm trong giá, cái gì tính thêm.\n2. **Đặt giới hạn sửa đổi/thời gian hỗ trợ**.\n3. **Đề xuất điều chỉnh giá hoặc chia giai đoạn**.\n4. Nếu dự án có giá trị mở đường (khách hàng chiến lược, quan hệ dài hạn), hãy định lượng lợi ích đó thay vì chỉ cảm tính.\n5. Nếu sau khi tính đủ mà lợi nhuận vẫn quá mỏng, nên giữ nguồn lực cho việc khác.\n\nTóm lại: thế bàn giống “**cửa có thể mở nhưng phải khóa chặt điều khoản**”, không phải “một cơ hội ngon cứ nhận ngay”.",
+      "status": "completed",
+      "latencyMs": 8983,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 10168,
+        "palaces": 9,
+        "sha256": "7379e7fa01dc869a8d976132638f0fa79fcc9bca5368fc3d04a5b39c80a7ad7c"
+      }
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Với việc nhận dự án này hay từ chối, hiện chưa đủ cơ sở để chốt ngay một phương án. Việc lựa chọn còn cần một đầu việc hoặc tiến triển cụ thể hơn để hình thành kết quả rõ ràng, thay vì chỉ dựa vào cảm giác về mức biên lợi nhuận hiện tại.\n\nNên đặt hai phương án nhận hoặc từ chối lên cùng các tiêu chí về lợi ích, nguồn lực phải bỏ ra và những điều kiện bạn có thể kiểm soát. Phương án chỉ nên được chốt khi phù hợp với giới hạn thực tế của bạn, chẳng hạn như khả năng triển khai, mức độ cam kết cần bỏ ra và phần giá trị thực sự nhận lại.\n\nTrong quá trình trao đổi, nên chú ý làm rõ những thông tin đang gây sức ép hoặc còn chưa chắc chắn. Những vấn đề liên quan đến lợi ích và chi phí dễ dẫn đến tranh luận, vì vậy cần tách dữ kiện đã rõ khỏi các suy đoán để tránh quyết định dựa trên giả định.\n\nBiên lợi nhuận cần được tính sau toàn bộ chi phí, phần việc có thể phát sinh và nguồn lực phải bỏ ra. Một mức biên thấp có thể trở nên kém hiệu quả nếu phạm vi công việc hoặc tiêu chuẩn thực hiện chưa được khóa rõ, vì các phần phát sinh có thể làm thay đổi lợi nhuận sau cùng.\n\nVì vậy, tín hiệu thuận lợi từ cơ hội này không thay thế cho việc kiểm tra con số thực tế. Cần xác định rõ những gì dự án yêu cầu, nguồn lực cần dùng và giới hạn nào không nên vượt qua trước khi quyết định.\n\nTrước khi chốt, nên kiểm tra khả năng được duyệt điều chỉnh giá hoặc phạm vi công việc. Cần xác minh liệu đầu mối có thẩm quyền có chấp thuận thay đổi hay không; hiện chưa có dữ kiện cho thấy việc điều chỉnh chắc chắn sẽ được duyệt.\n\nNếu có trao đổi về thay đổi điều khoản, nên làm rõ nội dung đang được bàn luận, trách nhiệm của từng phía và phần nào có thể cam kết. Việc xác nhận này giúp giảm rủi ro khi bước vào giai đoạn thực hiện.\n\nĐiều nên làm là chọn một bước cụ thể để khâu kết thúc, giữ lại hoặc xử lý việc cũ, đồng thời dùng bước đó để làm rõ điều đang được nói hoặc tranh luận trước khi đi đến quyết định cuối cùng. Có thể bắt đầu bằng việc rà soát lại phạm vi, chi phí và các điều kiện cần thiết để giảm phần yêu cầu còn chưa được đáp ứng.",
+      "status": "reading",
+      "latencyMs": 127582,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với việc nhận dự án này hay từ chối, hiện chưa đủ cơ sở để chốt ngay một phương án. Việc lựa chọn còn cần một đầu việc hoặc tiến triển cụ thể hơn để hình thành kết quả rõ ràng, thay vì chỉ dựa vào cảm giác về mức biên lợi nhuận hiện tại."
+            },
+            {
+              "id": "decision",
+              "text": "Nên đặt hai phương án nhận hoặc từ chối lên cùng các tiêu chí về lợi ích, nguồn lực phải bỏ ra và những điều kiện bạn có thể kiểm soát. Phương án chỉ nên được chốt khi phù hợp với giới hạn thực tế của bạn, chẳng hạn như khả năng triển khai, mức độ cam kết cần bỏ ra và phần giá trị thực sự nhận lại.\n\nTrong quá trình trao đổi, nên chú ý làm rõ những thông tin đang gây sức ép hoặc còn chưa chắc chắn. Những vấn đề liên quan đến lợi ích và chi phí dễ dẫn đến tranh luận, vì vậy cần tách dữ kiện đã rõ khỏi các suy đoán để tránh quyết định dựa trên giả định."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Biên lợi nhuận cần được tính sau toàn bộ chi phí, phần việc có thể phát sinh và nguồn lực phải bỏ ra. Một mức biên thấp có thể trở nên kém hiệu quả nếu phạm vi công việc hoặc tiêu chuẩn thực hiện chưa được khóa rõ, vì các phần phát sinh có thể làm thay đổi lợi nhuận sau cùng.\n\nVì vậy, tín hiệu thuận lợi từ cơ hội này không thay thế cho việc kiểm tra con số thực tế. Cần xác định rõ những gì dự án yêu cầu, nguồn lực cần dùng và giới hạn nào không nên vượt qua trước khi quyết định."
+            },
+            {
+              "id": "consideration_2",
+              "text": "Trước khi chốt, nên kiểm tra khả năng được duyệt điều chỉnh giá hoặc phạm vi công việc. Cần xác minh liệu đầu mối có thẩm quyền có chấp thuận thay đổi hay không; hiện chưa có dữ kiện cho thấy việc điều chỉnh chắc chắn sẽ được duyệt.\n\nNếu có trao đổi về thay đổi điều khoản, nên làm rõ nội dung đang được bàn luận, trách nhiệm của từng phía và phần nào có thể cam kết. Việc xác nhận này giúp giảm rủi ro khi bước vào giai đoạn thực hiện."
+            },
+            {
+              "id": "action_9",
+              "text": "Điều nên làm là chọn một bước cụ thể để xử lý phần đang vướng, đặc biệt là làm rõ những điều đang được nói hoặc tranh luận trước khi đi đến quyết định cuối cùng. Có thể bắt đầu bằng việc rà soát lại phạm vi, chi phí và các điều kiện cần thiết để giảm phần yêu cầu còn chưa được đáp ứng."
+            }
+          ]
+        },
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với việc nhận dự án này hay từ chối, hiện chưa đủ cơ sở để chốt ngay một phương án. Việc lựa chọn còn cần một đầu việc hoặc tiến triển cụ thể hơn để hình thành kết quả rõ ràng, thay vì chỉ dựa vào cảm giác về mức biên lợi nhuận hiện tại."
+            },
+            {
+              "id": "decision",
+              "text": "Nên đặt hai phương án nhận hoặc từ chối lên cùng các tiêu chí về lợi ích, nguồn lực phải bỏ ra và những điều kiện bạn có thể kiểm soát. Phương án chỉ nên được chốt khi phù hợp với giới hạn thực tế của bạn, chẳng hạn như khả năng triển khai, mức độ cam kết cần bỏ ra và phần giá trị thực sự nhận lại.\n\nTrong quá trình trao đổi, nên chú ý làm rõ những thông tin đang gây sức ép hoặc còn chưa chắc chắn. Những vấn đề liên quan đến lợi ích và chi phí dễ dẫn đến tranh luận, vì vậy cần tách dữ kiện đã rõ khỏi các suy đoán để tránh quyết định dựa trên giả định."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Biên lợi nhuận cần được tính sau toàn bộ chi phí, phần việc có thể phát sinh và nguồn lực phải bỏ ra. Một mức biên thấp có thể trở nên kém hiệu quả nếu phạm vi công việc hoặc tiêu chuẩn thực hiện chưa được khóa rõ, vì các phần phát sinh có thể làm thay đổi lợi nhuận sau cùng.\n\nVì vậy, tín hiệu thuận lợi từ cơ hội này không thay thế cho việc kiểm tra con số thực tế. Cần xác định rõ những gì dự án yêu cầu, nguồn lực cần dùng và giới hạn nào không nên vượt qua trước khi quyết định."
+            },
+            {
+              "id": "consideration_2",
+              "text": "Trước khi chốt, nên kiểm tra khả năng được duyệt điều chỉnh giá hoặc phạm vi công việc. Cần xác minh liệu đầu mối có thẩm quyền có chấp thuận thay đổi hay không; hiện chưa có dữ kiện cho thấy việc điều chỉnh chắc chắn sẽ được duyệt.\n\nNếu có trao đổi về thay đổi điều khoản, nên làm rõ nội dung đang được bàn luận, trách nhiệm của từng phía và phần nào có thể cam kết. Việc xác nhận này giúp giảm rủi ro khi bước vào giai đoạn thực hiện."
+            },
+            {
+              "id": "action_9",
+              "text": "Điều nên làm là chọn một bước cụ thể để khâu kết thúc, giữ lại hoặc xử lý việc cũ, đồng thời dùng bước đó để làm rõ điều đang được nói hoặc tranh luận trước khi đi đến quyết định cuối cùng. Có thể bắt đầu bằng việc rà soát lại phạm vi, chi phí và các điều kiện cần thiết để giảm phần yêu cầu còn chưa được đáp ứng."
+            }
+          ]
+        }
+      ],
+      "planningUsed": true,
+      "planning": {
+        "semantic_frame": {
+          "core_decision": "Quyết định có nên nhận hay từ chối dự án khi người dùng đánh giá biên lợi nhuận hiện thấp, hoặc chỉ nhận sau khi các điều kiện thương mại bảo vệ được lợi nhuận thực.",
+          "explicit_points": [
+            "Người dùng đang cân nhắc giữa nhận và từ chối dự án.",
+            "Lý do do dự được nêu rõ là biên lợi nhuận đang thấp."
+          ],
+          "implied_tradeoffs": [
+            "Cơ hội có thêm dự án và doanh thu đối lập với lợi nhuận thực sau chi phí triển khai.",
+            "Nhận sớm để giữ cơ hội đối lập với nguy cơ cam kết khi phạm vi và điều khoản chưa đủ rõ.",
+            "Từ chối để bảo vệ nguồn lực đối lập với khả năng bỏ qua một dự án có thể cải thiện nếu thương lượng lại."
+          ],
+          "related_considerations": [
+            {
+              "label": "Biên lợi nhuận hiện tại",
+              "why_relevant": "Đây là lý do trực tiếp làm phát sinh quyết định nhận hay từ chối, nhưng planner không xác minh mức biên hoặc cách tính.",
+              "source": "explicit",
+              "source_quote": "biên lợi nhuận đang thấp",
+              "claim_ids": [
+                "claim_2",
+                "claim_1"
+              ]
+            },
+            {
+              "label": "Phạm vi, báo giá và tiêu chuẩn bàn giao",
+              "why_relevant": "Khi biên thấp, phần việc hoặc tiêu chuẩn chưa khóa có thể làm thay đổi chi phí và lợi nhuận sau cùng.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_2",
+                "claim_4",
+                "claim_9"
+              ]
+            },
+            {
+              "label": "Quy mô và nguồn lực triển khai",
+              "why_relevant": "Quyết định chỉ hợp lý nếu khối lượng thực hiện phù hợp với nguồn lực và không tạo thêm áp lực chi phí ngoài giả định.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_1",
+                "claim_2"
+              ]
+            },
+            {
+              "label": "Trách nhiệm, thay đổi phạm vi và nghiệm thu",
+              "why_relevant": "Các điều khoản này quyết định khả năng kiểm soát phát sinh và bảo vệ biên lợi nhuận trong quá trình thực hiện.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_9",
+                "claim_2"
+              ]
+            },
+            {
+              "label": "Khả năng được duyệt điều chỉnh giá hoặc phạm vi",
+              "why_relevant": "Cần kiểm tra liệu đầu mối có thẩm quyền có chấp thuận điều chỉnh hay không; chưa có dữ kiện rằng việc đó sẽ được duyệt.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_6",
+                "claim_9"
+              ]
+            },
+            {
+              "label": "Mốc thanh toán và lợi nhuận sau toàn bộ chi phí",
+              "why_relevant": "Doanh thu hoặc khả năng triển khai không tự chứng minh dự án sinh lợi hoặc tiền đã về.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_1",
+                "claim_9"
+              ]
+            }
+          ],
+          "scope_guard": [
+            "Không coi nhận định biên lợi nhuận thấp là số liệu đã được định lượng hoặc kiểm toán.",
+            "Không tự thêm giá trị hợp đồng, chi phí, ngưỡng lợi nhuận hoặc xác suất thành công.",
+            "Không suy rằng khách hàng hay người có thẩm quyền sẽ đồng ý điều chỉnh giá, phạm vi hoặc điều khoản.",
+            "Không coi cơ hội mở việc hoặc khả năng triển khai là bằng chứng dự án chắc chắn có lợi nhuận hay tiền đã về.",
+            "Không biến các mục check_only thành sự kiện đã xảy ra và không tự gán tâm ý, quyền hạn thực tế hoặc vị trí cung cho người chưa được xác nhận.",
+            "Không đưa ra ngày hoặc thời điểm quyết định vì câu hỏi chưa nêu phạm vi thời gian."
+          ]
+        },
+        "answer_class": "unresolved",
+        "decisive_claim_ids": [
+          "claim_2",
+          "claim_1",
+          "claim_9"
+        ],
+        "counter_claim_ids": [
+          "claim_7",
+          "claim_6"
+        ],
+        "bottleneck_claim_id": "claim_2",
+        "mode_focus": "Luận theo pipeline thương vụ ở tầng hình thành: phân biệt cửa mở dự án với việc phạm vi, giá và hợp đồng đã đủ bảo vệ lợi nhuận sau chi phí hay chưa.",
+        "stage_logic": [
+          {
+            "slot": "answer",
+            "claim_ids": [
+              "claim_2",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Chưa đủ căn cứ để nhận hoặc từ chối dứt khoát, nên không nhận vô điều kiện khi phạm vi và lợi nhuận thực chưa được khóa."
+          },
+          {
+            "slot": "current",
+            "claim_ids": [
+              "claim_2",
+              "claim_7"
+            ],
+            "note": "Có cửa mở dự án nhưng cơ hội và phạm vi thương mại vẫn chưa thành hình chắc."
+          },
+          {
+            "slot": "next",
+            "claim_ids": [
+              "claim_4",
+              "claim_6",
+              "claim_9"
+            ],
+            "note": "Cần chốt lại phạm vi và báo giá, xác minh đầu mối duyệt, rồi khóa trách nhiệm, thay đổi và nghiệm thu."
+          },
+          {
+            "slot": "risk",
+            "claim_ids": [
+              "claim_2",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Rủi ro chính là triển khai tạo thêm áp lực nguồn lực hoặc tranh chấp điều kiện khiến biên lợi nhuận tiếp tục bị bào mòn."
+          },
+          {
+            "slot": "action",
+            "claim_ids": [
+              "claim_2",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Đặt cổng go/no-go và chỉ nhận khi lợi nhuận sau chi phí, phạm vi cùng điều khoản đạt ngưỡng thực tế do người dùng xác định."
+          },
+          {
+            "slot": "alternative",
+            "claim_ids": [
+              "claim_2",
+              "claim_6",
+              "claim_9"
+            ],
+            "note": "Nếu không xác nhận được các điều kiện hoặc điều chỉnh không được chấp thuận, giữ thế để thương lượng lại hoặc từ chối thay vì tăng cam kết."
+          },
+          {
+            "slot": "outcome",
+            "claim_ids": [
+              "claim_7",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Ngay cả khi dự án triển khai được, vẫn phải tách tiến độ thực hiện khỏi lợi nhuận và dòng tiền thực nhận."
+          }
+        ],
+        "recommendation_ids": [
+          "action_2",
+          "action_9",
+          "action_1",
+          "action_7"
+        ],
+        "timing_policy": "scope_only"
+      },
+      "sectionCount": 5
+    }
+  ],
+  "diagnostics": []
+}

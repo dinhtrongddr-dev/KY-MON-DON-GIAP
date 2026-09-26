@@ -1,0 +1,929 @@
+{
+  "summary": {
+    "runId": "pilot-four-v8-20260926T1145Z",
+    "generatedAt": "2026-09-26T11:54:17.441Z",
+    "caseCount": 4,
+    "rounds": 1,
+    "samples": 8,
+    "transportNote": "A uses the local chatgpt2api account transport; it is a direct neutral prompt, not a claim of ChatGPT web UI parity.",
+    "completed": 8,
+    "failed": 0,
+    "verifiedFallbacks": 1,
+    "wins": {
+      "A": 4,
+      "B": 0,
+      "TIE": 0
+    },
+    "aggregate": {
+      "A": {
+        "directness": 4.25,
+        "naturalness": 4,
+        "reasoningCoherence": 4.75,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3.75,
+        "calibration": 5
+      },
+      "B": {
+        "directness": 3.25,
+        "naturalness": 2.25,
+        "reasoningCoherence": 2.5,
+        "specificity": 2,
+        "actionability": 3.25,
+        "nonRepetition": 2.25,
+        "calibration": 3.25
+      }
+    },
+    "diagnosticCounts": {}
+  },
+  "rows": [
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi đang phân vân việc viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ để nghỉ ở nhà chăm con hoàn toàn (bé nay đã gần 7 tháng rồi), nhưng tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ và việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con, và lo bản thân ù lì tụt hậu không? Hãy cho tôi biết việc tôi quyết định nghỉ việc có thuận lợi được giải quyết không và thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Tôi sẽ luận theo bàn Kỳ Môn đã cho như một góc nhìn tham khảo để soi thế việc, không xem đây là sự bảo đảm chắc chắn rằng đơn sẽ được duyệt hay tài chính sau nghỉ sẽ thế nào. Việc nghỉ việc, chăm con và kế hoạch kinh tế vẫn cần đối chiếu với hợp đồng lao động, khoản dự phòng, khả năng hỗ trợ gia đình và kế hoạch quay lại nghề nghiệp.\n\n**Câu hỏi trọng tâm:** có nên viết đơn nghỉ ngay để hướng tới nghỉ hẳn ở nhà chăm con ít nhất 1 năm, và việc giải quyết nghỉ có thuận không?\n\n### 1. Xem người hỏi (Nhật can Kỷ) và thế bản thân\n\nNgười hỏi lấy Nhật can **Kỷ** ở cung **Tốn (Mộc)** làm đại diện. Cung này có:\n\n- **Thiên Nhuế**: dấu hiệu của việc đang có vấn đề cần chữa chỉnh, cân nhắc lại, không phải trạng thái “đã thông suốt”.\n- **Kinh Môn**: nhiều suy nghĩ, lo lắng, giấy tờ, lời qua tiếng lại.\n- **Huyền Vũ**: có phần bất an, lo những điều chưa nhìn thấy (đúng với tâm thế bạn nêu: sợ thiếu tiền, sợ tụt hậu, sợ khó quay lại).\n\nTín hiệu này cho thấy tâm thế hiện tại không phải là muốn nghỉ vì chán nhất thời, mà là đang đứng trước một thay đổi lớn và có nhiều phần chưa kiểm soát được. Điểm cần lưu ý là **lo lắng nhiều không đồng nghĩa chắc chắn sẽ thất bại**, nhưng nó nhắc rằng cần chuẩn bị kỹ trước khi chuyển trạng thái.\n\n### 2. Xem việc xin nghỉ (Thời can Canh, cung Đoài)\n\nSự việc nằm ở cung **Đoài**, có:\n\n- **Sinh Môn**: đây là dấu hiệu khá tốt cho việc tìm một hướng sinh trưởng mới, tái tạo nguồn lực, chăm sóc và hồi phục.\n- **Thái Âm**: thiên về kế hoạch kín, sắp xếp âm thầm, chuẩn bị phía sau.\n- **Thiên Bồng**: có tính mưu tính, cần tính đường dài.\n\nĐây là một tổ hợp cho thấy việc nghỉ để chuyển sang một giai đoạn khác **không phải thế bế tắc**. Nó hợp với việc lui về chăm sóc, xây lại nhịp sống, chuẩn bị một hướng mới.\n\nNhưng cần tách rõ:\n\n- **Sinh Môn thuận** = có cửa để tạo ra trạng thái mới.\n- Không có nghĩa = đơn nghỉ chắc chắn được duyệt ngay hoặc mọi khó khăn tài chính tự giải quyết.\n\n### 3. Việc duyệt nghỉ, giấy tờ, trao đổi với nơi làm việc\n\nPhần hồ sơ có thể nhìn qua **Cảnh Môn** (văn thư, trình bày) ở cung Cấn:\n\n- Có **Thiên Phụ**: có yếu tố hỗ trợ, giấy tờ, cách trình bày.\n- Có **Cửu Thiên**: cần chủ động, nói rõ kế hoạch.\n- Cảnh Môn không phải Khai/Hưu/Sinh, nên không phải kiểu “mọi thứ tự mở”.\n\nTượng này thiên về: **cách bạn trình bày và thời điểm trao đổi rất quan trọng**. Nếu đơn nghỉ chỉ thể hiện “xin nghỉ vì muốn nghỉ”, thế chưa mạnh bằng việc có lý do rõ ràng, kế hoạch bàn giao, thái độ hợp tác.\n\n### 4. Khả năng nghỉ ở nhà chăm con ít nhất 1 năm\n\nPhần gia đình, nhịp nghỉ ngơi dùng Hưu Môn ở cung Khôn:\n\n- **Hưu Môn + Lục Hợp + Thiên Tâm** là một thế khá phù hợp với nghỉ ngơi, gia đình, chăm sóc, sắp xếp lại cuộc sống.\n- Có **ngựa ở cung này**: nghĩa là dù nghỉ, trạng thái vẫn không hoàn toàn đứng yên; có thể vẫn cần xoay xở, học thêm, làm việc linh hoạt hoặc duy trì kết nối nghề nghiệp.\n\nVì vậy tượng bàn nghiêng về:\n\n- Có khả năng tạo được một giai đoạn ở nhà chăm con.\n- Nhưng “ở nhà hoàn toàn, không nghĩ gì tới nghề nghiệp trong 1 năm” thì không phải tín hiệu mạnh nhất. Bàn cho thấy nên có một sợi dây nối với bên ngoài: học lại, cập nhật kỹ năng, giữ quan hệ nghề nghiệp.\n\n### 5. Lo về tiền bạc sau nghỉ\n\nNguồn lực tiền bạc lấy Sinh Môn cũng ở cung Đoài:\n\nĐiểm tốt:\n- Sinh Môn đi cùng Thái Âm thường hợp với kiểu tích lũy, tính toán, làm nền.\n- Không phải tượng mất trắng.\n\nĐiểm cần chú ý:\n- Thiên Bồng có tính biến động, nên không nên dựa vào suy nghĩ “nghỉ rồi tính sau”.\n- Cần tính trước một khoảng đệm tài chính.\n\nBàn không cho thấy một dấu hiệu rõ về “nghỉ xong sẽ lập tức có nguồn thu mới”. Nó giống một giai đoạn chuyển tiếp hơn.\n\n### Kết luận theo bàn\n\nNếu hỏi **“viết đơn nghỉ có thuận để được giải quyết không?”**:\n\n→ Tượng có cửa thuận, nhưng thuận nhờ **chuẩn bị và cách xử lý**, không phải kiểu nộp đơn là mọi việc tự xong.\n\nNếu hỏi **“có thuận để nghỉ ở nhà chăm con ít nhất 1 năm không?”**:\n\n→ Thế bàn khá hợp với việc lui về chăm sóc gia đình, nghỉ dưỡng sức và tái sắp xếp. Tuy nhiên, nên giữ một kế hoạch duy trì năng lực nghề nghiệp, vì bàn không ủng hộ trạng thái hoàn toàn tách khỏi xã hội quá lâu.\n\n### Việc nên làm theo tượng bàn\n\n1. **Chưa nên quyết định chỉ dựa trên cảm xúc mệt mỏi.** Trước khi nộp đơn, hãy chốt:\n   - chi phí gia đình mỗi tháng sau nghỉ,\n   - khoản dự phòng đủ bao lâu,\n   - ai hỗ trợ khi có biến cố.\n\n2. **Khi viết đơn hoặc trao đổi, đi theo thế Cảnh Môn + Thiên Phụ:**\n   - lý do rõ ràng,\n   - bàn giao công việc tốt,\n   - giữ quan hệ tốt với công ty.\n\n3. **Trong thời gian ở nhà:**\n   - dành phần lớn thời gian cho con,\n   - nhưng giữ một “cửa nghề nghiệp”: học lại, cập nhật chuyên môn, duy trì liên hệ.\n\n4. Với nỗi lo “ù lì, tụt hậu”: bàn không cho thấy đó là kết quả bắt buộc. Nó chỉ nhắc rằng nếu đóng hoàn toàn mọi kết nối thì dễ sinh cảm giác trì trệ.\n\nTổng thể: **đây là thế chuyển hướng có thể làm được, thiên về nghỉ để tái tạo hơn là bỏ cuộc. Nhưng muốn thuận lâu dài thì cần chuẩn bị nền tài chính và giữ nhịp phát triển bản thân trong năm nghỉ.**",
+      "status": "completed",
+      "latencyMs": 13048,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 10857,
+        "palaces": 9,
+        "sha256": "90ccb3298c9192bc3857204413937ae4aab4eb800c806e388b2489f839e4dd3f"
+      }
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi đang phân vân việc viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ để nghỉ ở nhà chăm con hoàn toàn (bé nay đã gần 7 tháng rồi), nhưng tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ và việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con, và lo bản thân ù lì tụt hậu không? Hãy cho tôi biết việc tôi quyết định nghỉ việc có thuận lợi được giải quyết không và thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Với quyết định nghỉ việc đang cân nhắc, việc này có khả năng đưa vào tiến trình nhưng chưa phải dấu hiệu thuận trọn ngay từ đầu. Điều quan trọng không nằm ở việc chỉ viết đơn, mà là cần xử lý được những điều kiện then chốt trước khi chốt nghỉ, đặc biệt là nguồn lực duy trì cuộc sống và sự sắp xếp cho giai đoạn ở nhà chăm con. Nếu các điều kiện này chưa rõ, nên giữ khả năng điều chỉnh thay vì xem kế hoạch nghỉ một năm đã chắc chắn đạt được.\n\nPhương án phù hợp là ưu tiên xác minh điều kiện nghỉ, kiểm tra nguồn lực, thống nhất hỗ trợ và thử một bước nhỏ trước khi chốt nghỉ trọn một năm. Việc đặt các lựa chọn lên cùng tiêu chí về lợi ích, phần phải bỏ ra và mức độ có thể kiểm soát sẽ giúp bạn biết khi nào phương án được chọn phù hợp với giới hạn thực tế của mình. Với việc ở nhà chăm con ít nhất một năm, đây là mục tiêu dài hạn cần được xây dựng bằng sự chuẩn bị chứ không chỉ phụ thuộc vào việc đơn nghỉ có được tiếp nhận. Điểm cần chú ý là khả năng trao đổi, làm rõ nhu cầu và trách nhiệm của các bên liên quan; đồng thời nên kiểm tra nguồn lực và những phần thông tin chưa được làm rõ, chọn cách trao đổi phù hợp với những nội dung nhạy cảm.\n\nKhả năng được giải quyết nghỉ gần cuối tháng 10 là một mục tiêu sắp xếp từ việc nộp đơn hiện tại, nhưng việc gửi đơn và việc được chấp thuận là hai bước khác nhau, còn phụ thuộc vào điều kiện xử lý và xác nhận thực tế. Vì vậy, chưa nên xem mốc này là điều đã chắc chắn. Trước khi đi đến bước đó, nên chú ý cách trao đổi và làm rõ phương án để các bên có thể hiểu được nhu cầu, trách nhiệm và những điều cần thống nhất. Việc đưa ra phương án có thể kiểm tra sẽ giúp quá trình trao đổi có cơ sở hơn.\n\nKhả năng duy trì việc nghỉ chăm con trong một năm phụ thuộc nhiều vào sức bền của nguồn lực kinh tế và mức độ phối hợp trong gia đình. Trước khi nghỉ, nên đặt các khoản thu có thể dựa vào cạnh những chi phí phải gánh để biết phương án này có thể duy trì đến đâu; những điểm thuận lợi hiện tại chưa thay thế được việc kiểm tra thực tế này. Điều cần làm rõ không chỉ là có đủ hay thiếu ở thời điểm bắt đầu, mà còn là cách giữ nhịp và tổ chức cuộc sống trong suốt thời gian nghỉ. Việc kiểm tra khâu giữ nhịp, tổ chức sự việc và có mốc rà soát lại kế hoạch sẽ giúp bạn chủ động hơn nếu hoàn cảnh thay đổi.\n\nNguy cơ mất nhịp và tụt hậu nghề nghiệp là một chi phí cá nhân cần được tách khỏi kết luận về việc đơn nghỉ có được giải quyết hay không. Việc nghỉ một thời gian chưa cho phép kết luận bạn sẽ tụt hậu hay mất đường nghề; điều cần làm là chuẩn bị để giảm khoảng trống khi quay lại. Nếu lựa chọn nghỉ, việc giữ liên hệ công việc và dành một nhịp đều cho việc học là cách chuẩn bị cho lúc trở lại. Đồng thời, nên xác định những điểm gây sức ép hoặc cần làm rõ, đối chiếu thông tin từ nguồn trực tiếp để có hướng điều chỉnh phù hợp.",
+      "status": "reading",
+      "latencyMs": 184887,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với quyết định nghỉ việc đang cân nhắc, việc này có khả năng đưa vào tiến trình nhưng chưa phải dấu hiệu thuận trọn ngay từ đầu. Điều quan trọng không nằm ở việc chỉ viết đơn, mà là cần xử lý được những điều kiện then chốt trước khi chốt nghỉ, đặc biệt là nguồn lực duy trì cuộc sống và sự sắp xếp cho giai đoạn ở nhà chăm con. Nếu các điều kiện này chưa rõ, nên giữ khả năng điều chỉnh thay vì xem kế hoạch nghỉ một năm đã chắc chắn đạt được."
+            },
+            {
+              "id": "decision",
+              "text": "Phương án phù hợp hơn là kiểm tra kỹ trước khi quyết định nghỉ hoàn toàn: xem nguồn lực hiện có, sự hỗ trợ trong việc chăm con và những điều kiện thực tế có thể kiểm soát. Việc đặt các lựa chọn lên cùng tiêu chí về lợi ích, phần phải bỏ ra và mức độ chủ động sẽ giúp bạn biết lúc nào nên chốt nghỉ hoặc cần thay đổi cách đi.\n\nVới việc ở nhà chăm con ít nhất một năm, đây là mục tiêu dài hạn cần được xây dựng bằng sự chuẩn bị chứ không chỉ phụ thuộc vào việc đơn nghỉ có được tiếp nhận. Điểm cần chú ý là khả năng trao đổi, làm rõ nhu cầu và trách nhiệm của các bên liên quan để tránh khi bắt đầu nghỉ mới phát sinh áp lực."
+            },
+            {
+              "id": "approval_timing",
+              "text": "Khả năng được giải quyết nghỉ gần cuối tháng 10 là một mục tiêu sắp xếp từ việc nộp đơn hiện tại, nhưng việc gửi đơn và việc được chấp thuận là hai bước khác nhau, còn phụ thuộc vào điều kiện xử lý và xác nhận thực tế. Vì vậy, chưa nên xem mốc này là điều đã chắc chắn.\n\nTrước khi đi đến bước đó, nên chú ý cách trao đổi và làm rõ phương án để các bên có thể hiểu được nhu cầu cũng như trách nhiệm cần thống nhất. Cách chuẩn bị thông tin rõ ràng sẽ giúp việc xử lý có cơ sở hơn."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Khả năng duy trì việc nghỉ chăm con trong một năm phụ thuộc nhiều vào sức bền của nguồn lực kinh tế và mức độ phối hợp trong gia đình. Trước khi nghỉ, nên đặt các khoản thu có thể dựa vào cạnh những chi phí phải gánh để biết phương án này có thể duy trì đến đâu; những điểm thuận lợi hiện tại chưa thay thế được việc kiểm tra thực tế này.\n\nĐiều cần làm rõ không chỉ là có đủ hay thiếu ở thời điểm bắt đầu, mà còn là cách giữ nhịp và tổ chức cuộc sống trong suốt thời gian nghỉ. Một kế hoạch có mốc rà soát lại sẽ giúp bạn chủ động hơn nếu hoàn cảnh thay đổi."
+            },
+            {
+              "id": "career_return",
+              "text": "Nỗi lo sau khi ở nhà chăm con là bị mất nhịp nghề nghiệp cần được xem như một điều cần chuẩn bị, không phải kết luận rằng bạn sẽ chắc chắn tụt hậu. Thời gian nghỉ có thể được cân bằng bằng việc giữ liên hệ với công việc và duy trì một nhịp học hỏi phù hợp để khi quay lại không bị đứt quãng quá nhiều.\n\nNếu lựa chọn nghỉ, điều quan trọng là đừng chỉ chuẩn bị cho việc rời công việc hiện tại mà cũng chuẩn bị cho ngày trở lại. Việc xác định trước cách giữ năng lực và kết nối nghề nghiệp sẽ giúp giảm áp lực khi tìm hướng đi tiếp theo."
+            }
+          ]
+        },
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với quyết định nghỉ việc đang cân nhắc, việc này có khả năng đưa vào tiến trình nhưng chưa phải dấu hiệu thuận trọn ngay từ đầu. Điều quan trọng không nằm ở việc chỉ viết đơn, mà là cần xử lý được những điều kiện then chốt trước khi chốt nghỉ, đặc biệt là nguồn lực duy trì cuộc sống và sự sắp xếp cho giai đoạn ở nhà chăm con. Nếu các điều kiện này chưa rõ, nên giữ khả năng điều chỉnh thay vì xem kế hoạch nghỉ một năm đã chắc chắn đạt được."
+            },
+            {
+              "id": "decision",
+              "text": "Phương án phù hợp là ưu tiên xác minh điều kiện nghỉ, kiểm tra nguồn lực, thống nhất hỗ trợ và thử một bước nhỏ trước khi chốt nghỉ trọn một năm. Việc đặt các lựa chọn lên cùng tiêu chí về lợi ích, phần phải bỏ ra và mức độ có thể kiểm soát sẽ giúp bạn biết khi nào phương án được chọn phù hợp với giới hạn thực tế của mình.\n\nVới việc ở nhà chăm con ít nhất một năm, đây là mục tiêu dài hạn cần được xây dựng bằng sự chuẩn bị chứ không chỉ phụ thuộc vào việc đơn nghỉ có được tiếp nhận. Điểm cần chú ý là khả năng trao đổi, làm rõ nhu cầu và trách nhiệm của các bên liên quan; đồng thời nên kiểm tra nguồn lực và những phần thông tin chưa được làm rõ, chọn cách trao đổi phù hợp với những nội dung nhạy cảm."
+            },
+            {
+              "id": "approval_timing",
+              "text": "Khả năng được giải quyết nghỉ gần cuối tháng 10 là một mục tiêu sắp xếp từ việc nộp đơn hiện tại, nhưng việc gửi đơn và việc được chấp thuận là hai bước khác nhau, còn phụ thuộc vào điều kiện xử lý và xác nhận thực tế. Vì vậy, chưa nên xem mốc này là điều đã chắc chắn.\n\nTrước khi đi đến bước đó, nên chú ý cách trao đổi và làm rõ phương án để các bên có thể hiểu được nhu cầu, trách nhiệm và những điều cần thống nhất. Việc đưa ra phương án có thể kiểm tra sẽ giúp quá trình trao đổi có cơ sở hơn."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Khả năng duy trì việc nghỉ chăm con trong một năm phụ thuộc nhiều vào sức bền của nguồn lực kinh tế và mức độ phối hợp trong gia đình. Trước khi nghỉ, nên đặt các khoản thu có thể dựa vào cạnh những chi phí phải gánh để biết phương án này có thể duy trì đến đâu; những điểm thuận lợi hiện tại chưa thay thế được việc kiểm tra thực tế này.\n\nĐiều cần làm rõ không chỉ là có đủ hay thiếu ở thời điểm bắt đầu, mà còn là cách giữ nhịp và tổ chức cuộc sống trong suốt thời gian nghỉ. Việc kiểm tra khâu giữ nhịp, tổ chức sự việc và có mốc rà soát lại kế hoạch sẽ giúp bạn chủ động hơn nếu hoàn cảnh thay đổi."
+            },
+            {
+              "id": "career_return",
+              "text": "Nguy cơ mất nhịp và tụt hậu nghề nghiệp là một chi phí cá nhân cần được tách khỏi kết luận về việc đơn nghỉ có được giải quyết hay không. Việc nghỉ một thời gian chưa cho phép kết luận bạn sẽ tụt hậu hay mất đường nghề; điều cần làm là chuẩn bị để giảm khoảng trống khi quay lại.\n\nNếu lựa chọn nghỉ, việc giữ liên hệ công việc và dành một nhịp đều cho việc học là cách chuẩn bị cho lúc trở lại. Đồng thời, nên xác định những điểm gây sức ép hoặc cần làm rõ, đối chiếu thông tin từ nguồn trực tiếp để có hướng điều chỉnh phù hợp."
+            }
+          ]
+        }
+      ],
+      "planningUsed": true,
+      "planning": {
+        "semantic_frame": {
+          "core_decision": "Đánh giá liệu nên nộp đơn nghỉ việc ngay để hướng tới được giải quyết nghỉ gần cuối tháng 10, đồng thời liệu phương án ở nhà chăm con toàn thời gian ít nhất một năm có đủ thuận lợi và bền vững hay không.",
+          "explicit_points": [
+            "Người hỏi đang cân nhắc viết đơn xin nghỉ việc ngay và mong được giải quyết nghỉ gần cuối tháng 10.",
+            "Mục đích nghỉ việc là ở nhà chăm con hoàn toàn; bé hiện gần 7 tháng tuổi.",
+            "Người hỏi lo nguồn lực kinh tế sau khi nghỉ.",
+            "Người hỏi lo khó tìm công việc khác trong và sau thời gian chăm con, đồng thời sợ trở nên ù lì, tụt hậu.",
+            "Người hỏi cần dự báo cả khả năng được giải quyết nghỉ và khả năng duy trì việc ở nhà ít nhất một năm."
+          ],
+          "implied_tradeoffs": [
+            "Thời gian trực tiếp chăm con đổi lấy việc mất hoặc giảm nguồn thu và độ ổn định nghề nghiệp.",
+            "Lợi ích của việc nghỉ dài hạn cho gia đình đổi lấy rủi ro khó quay lại thị trường lao động và phải duy trì năng lực nghề nghiệp.",
+            "Nộp đơn sớm để đạt mốc mong muốn đổi lấy yêu cầu phải làm rõ thủ tục, nguồn lực và phương án vận hành trước khi cam kết."
+          ],
+          "related_considerations": [
+            {
+              "label": "Khả năng được giải quyết nghỉ gần cuối tháng 10",
+              "why_relevant": "Đây là kết quả thực hiện trực tiếp của quyết định nộp đơn ngay, nhưng còn phụ thuộc điều kiện xử lý và bước xác nhận thực tế.",
+              "source": "explicit",
+              "source_quote": "viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ",
+              "claim_ids": [
+                "claim_7",
+                "claim_4",
+                "claim_6"
+              ]
+            },
+            {
+              "label": "Sức bền nguồn lực kinh tế sau khi nghỉ",
+              "why_relevant": "Nguồn lực thực tế quyết định phương án nghỉ dài hạn có duy trì được hay phải điều chỉnh giữa chừng.",
+              "source": "explicit",
+              "source_quote": "nguồn lực kinh tế sau khi nghỉ",
+              "claim_ids": [
+                "claim_7",
+                "claim_1"
+              ]
+            },
+            {
+              "label": "Khả năng ở nhà chăm con ít nhất một năm",
+              "why_relevant": "Đây là kết quả dài hạn người hỏi muốn kiểm tra, khác với việc đơn nghỉ chỉ được tiếp nhận hoặc xử lý ban đầu.",
+              "source": "explicit",
+              "source_quote": "thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+              "claim_ids": [
+                "claim_7",
+                "claim_2",
+                "claim_6"
+              ]
+            },
+            {
+              "label": "Khả năng tìm công việc khác sau thời gian nghỉ",
+              "why_relevant": "Khả năng quay lại công việc ảnh hưởng trực tiếp đến mức rủi ro của quyết định nghỉ dài hạn, nhưng chưa thể coi khó khăn đó đã chắc chắn xảy ra.",
+              "source": "explicit",
+              "source_quote": "việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con",
+              "claim_ids": [
+                "claim_4",
+                "claim_6"
+              ]
+            },
+            {
+              "label": "Nguy cơ mất nhịp và tụt hậu nghề nghiệp",
+              "why_relevant": "Đây là chi phí cá nhân được người hỏi nêu rõ và cần tách khỏi kết luận về việc đơn nghỉ có được giải quyết hay không.",
+              "source": "explicit",
+              "source_quote": "lo bản thân ù lì tụt hậu không?",
+              "claim_ids": [
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Mức hỗ trợ gia đình và mốc rà soát kế hoạch",
+              "why_relevant": "Kế hoạch chăm con toàn thời gian trong một năm nên kiểm tra mức phối hợp, trách nhiệm và thời điểm đánh giá lại, nhưng chưa có dữ kiện xác nhận các điều kiện này.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_2",
+                "claim_6"
+              ]
+            }
+          ],
+          "scope_guard": [
+            "Không suy rằng đơn đã được nộp, đã được chấp thuận hoặc chắc chắn được duyệt gần cuối tháng 10.",
+            "Không gán cung, quyền phê duyệt hay tâm ý cho cấp trên, doanh nghiệp hoặc người thân chưa được planner xác nhận.",
+            "Không tạo ngày duyệt, xác suất thành công, số tiền cần có hoặc kết luận nguồn lực hiện tại đã đủ cho một năm.",
+            "Không viết nỗi lo tìm việc khó, ù lì hoặc tụt hậu như sự kiện chắc chắn sẽ xảy ra.",
+            "Không mặc định gia đình đã có người hỗ trợ, đã phân công trách nhiệm hoặc đã thống nhất kế hoạch."
+          ]
+        },
+        "answer_class": "conditional",
+        "decisive_claim_ids": [
+          "claim_7",
+          "claim_2",
+          "claim_6"
+        ],
+        "counter_claim_ids": [
+          "claim_7",
+          "claim_4",
+          "claim_6",
+          "claim_1"
+        ],
+        "bottleneck_claim_id": "claim_7",
+        "mode_focus": "Trả lời trước rằng việc xin nghỉ có cửa triển khai nhưng không thuận trọn và chưa thể coi chắc được duyệt; phương án ở nhà một năm chỉ thuận có điều kiện khi nút nguồn lực, phối hợp và khâu thực hiện được xác nhận.",
+        "stage_logic": [
+          {
+            "slot": "answer",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_6"
+            ],
+            "note": "Có khả năng đưa phương án vào xử lý, nhưng chưa đủ căn cứ coi việc duyệt nghỉ hoặc kế hoạch một năm đã chắc chắn thuận lợi."
+          },
+          {
+            "slot": "outcome",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_6",
+              "claim_1"
+            ],
+            "note": "Kết quả có thể nghiêng thuận hơn nếu điều kiện cản chính, nguồn lực thực và sự phối hợp được làm rõ trước khi cam kết dài hạn."
+          },
+          {
+            "slot": "risk",
+            "claim_ids": [
+              "claim_7",
+              "claim_4",
+              "claim_6",
+              "claim_1"
+            ],
+            "note": "Rủi ro chính là quyết định khi thông tin còn thiếu, khâu thực hiện chưa thành hình và nền nguồn lực chưa ổn định."
+          },
+          {
+            "slot": "action",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_4",
+              "claim_6"
+            ],
+            "note": "Ưu tiên xác minh điều kiện nghỉ, kiểm tra nguồn lực, thống nhất hỗ trợ và thử một bước nhỏ trước khi chốt nghỉ trọn một năm."
+          },
+          {
+            "slot": "alternative",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_6",
+              "claim_1"
+            ],
+            "note": "Nếu các điều kiện chưa được xác nhận, giữ phương án điều chỉnh hoặc rà soát lại thay vì coi mục tiêu nghỉ một năm đã đạt."
+          },
+          {
+            "slot": "timing",
+            "claim_ids": [],
+            "note": "Chỉ giữ gần cuối tháng 10 và ít nhất một năm làm phạm vi người hỏi nêu, không tự dự báo ngày duyệt cụ thể."
+          }
+        ],
+        "recommendation_ids": [
+          "action_7",
+          "action_2",
+          "action_4",
+          "action_6"
+        ],
+        "timing_policy": "scope_only"
+      },
+      "sectionCount": 5
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Mình luận theo **Thời Gia Kỳ Môn** từ bàn đã cho, xem đây là một cách chiêm nghiệm biểu tượng để hỗ trợ suy nghĩ, không thay thế việc tính toán chi phí, dòng tiền và điều khoản dự án thực tế.\n\n**Câu hỏi:** “Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?”\n\n## 1. Xác định chủ – việc\n\n- **Nhật can Ất (người hỏi)** đóng tại **Cung Đoài (7)**, có:\n  - **Khai Môn**: mở việc, cơ hội, giao dịch.\n  - **Thiên Bồng**: mưu lược, tính toán, xử lý việc phức tạp.\n  - **Đằng Xà**: biến động, phần chưa rõ, dễ có kỳ vọng hoặc lo nghĩ quá mức.\n  - Cung này lại **Không Vong**.\n\nVới quy ước hỏi việc của chính mình, đây là hình tượng người hỏi đang đứng trước một cơ hội có tính mở, nhưng có phần “chưa chắc chắn”. Không Vong không nhất thiết là xấu; nó thường nhắc rằng **cái nhìn ban đầu có thể chưa đủ dữ kiện để kết luận**.\n\nĐiểm đáng chú ý: Nhật can gặp **Khai Môn** là tín hiệu có cửa để mở việc, nhưng đi cùng Đằng Xà và Không Vong thì không nên chỉ nhìn vào chữ “có cơ hội” mà bỏ qua phần ẩn.\n\n---\n\n## 2. Xem bản thân dự án\n\n“Sự việc” theo bàn quy ước đặt ở **Cung Khôn (2)**:\n\n- **Kinh Môn**: lo lắng, biến động, tranh luận, giấy tờ.\n- **Thiên Tâm**: tính toán, quản trị, khả năng xử lý.\n- **Thái Âm**: phần âm thầm, cần tinh tế, cần tính kỹ.\n- Cung này **Không Vong**.\n\nHình tượng này khá sát với câu hỏi về **biên lợi nhuận thấp**: vấn đề không nằm ở việc có làm được hay không, mà nằm ở những phần chưa nhìn thấy như:\n- phạm vi công việc bị nới rộng,\n- thời gian phát sinh,\n- chi phí ẩn,\n- sửa đổi nhiều vòng,\n- điều khoản thanh toán.\n\nKhông Vong ở đây cho thấy phần “lợi nhuận kỳ vọng” có thể chưa phản ánh đúng thực tế. Nó không kết luận chắc chắn rằng dự án lỗ, nhưng báo hiệu cần rà lại.\n\n---\n\n## 3. Xem tiền và khả năng sinh lợi\n\nDụng thần kinh doanh xét **Sinh Môn**:\n\nSinh Môn nằm ở **Cung Khảm (1)**:\n\n- **Sinh Môn đại cát**.\n- **Thiên Xung**: nhanh, chủ động, khai phá.\n- **Cửu Thiên**: mở rộng, nâng tầm, quy mô lớn.\n\nĐây là điểm sáng của bàn. Nó cho thấy dự án có thể có giá trị ở khía cạnh:\n- mở thêm cơ hội,\n- tạo đà phát triển,\n- đem lại mối quan hệ hoặc bước tiến mới.\n\nNhưng cần phân biệt: **Sinh Môn tốt không đồng nghĩa với biên lợi nhuận hiện tại đã tốt**. Nó giống tín hiệu “có nguồn sinh trưởng”, không phải bằng chứng “lãi ngay”.\n\n---\n\n## 4. Xem báo giá và hợp đồng\n\n- Hồ sơ/báo giá quy ước ở **Cung Tốn (4)**:\n  - **Cảnh Môn**: hình ảnh, trình bày, văn thư.\n  - **Thiên Nhuế**: vấn đề cũ, điểm cần chỉnh sửa.\n  - **Bạch Hổ**: áp lực, tính quyết liệt.\n\nĐiều này gợi ý: điểm cần xử lý nằm ở **cách đóng gói giá trị và điều khoản**, không chỉ ở con số báo giá.\n\nCó thể cần:\n- tách phần bắt buộc và phần phát sinh,\n- giới hạn số vòng sửa,\n- ghi rõ phạm vi bàn giao,\n- điều chỉnh lịch thanh toán.\n\n---\n\n## 5. Tổng hợp tín hiệu\n\nCác dấu chính:\n\n**Thuận:**\n- Nhật can gặp Khai Môn → có cửa nhận việc, có cơ hội mở.\n- Sinh Môn mạnh → có khả năng tạo giá trị lâu dài.\n- Thiên Nhậm + Hưu Môn ở Càn → có yếu tố ổn định, cần xây quan hệ bền.\n\n**Cần dè chừng:**\n- Cơ hội và dự án đều có yếu tố Không Vong → thông tin ban đầu chưa đầy đủ.\n- Đằng Xà tại cung bản thân → dễ có phần mơ hồ hoặc kỳ vọng chưa khóa.\n- Kinh Môn ở dự án → dễ phát sinh tranh luận, chỉnh sửa, yêu cầu thêm.\n\n## Kết luận luận bàn\n\nBàn này **không nghiêng mạnh về việc từ chối ngay**. Tín hiệu giống kiểu: **có thể nhận, nhưng không nên nhận theo cấu trúc hiện tại nếu biên lợi nhuận đang quá mỏng**.\n\nNói theo ngôn ngữ công việc: vấn đề không phải “dự án có đáng làm hay không”, mà là “cách nhận dự án có bảo vệ được lợi nhuận hay không”.\n\n## Việc nên làm cụ thể\n\nTrước khi chốt, nên làm 4 bước:\n\n1. **Tính lại biên lợi nhuận sau rủi ro**\n   - thêm thời gian họp,\n   - sửa đổi,\n   - quản lý khách hàng,\n   - chi phí cơ hội.\n\n2. **Đàm phán lại cấu trúc**\n   - tăng giá,\n   - giảm phạm vi,\n   - chia giai đoạn,\n   - thêm phí phát sinh.\n\n3. **Không nhận lời chỉ vì “mở được cửa”**\n   - Khai Môn + Sinh Môn tốt cho việc mở đường,\n   - nhưng Không Vong nhắc cần biến cơ hội thành điều khoản rõ ràng.\n\n4. **Nếu đối tác không chấp nhận bất kỳ điều chỉnh nào**, khi đó tín hiệu Kinh Môn/Kinh động có thể ứng vào việc tranh luận và hao tổn.\n\nTóm lại theo bàn: **ưu tiên thương lượng để nhận, không nên nhận nguyên trạng nếu lợi nhuận thấp và rủi ro chưa khóa.** Kết quả cuối cùng vẫn phụ thuộc vào số liệu thật của dự án.",
+      "status": "completed",
+      "latencyMs": 11377,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 10168,
+        "palaces": 9,
+        "sha256": "7379e7fa01dc869a8d976132638f0fa79fcc9bca5368fc3d04a5b39c80a7ad7c"
+      }
+    },
+    {
+      "caseId": "Q06_BUSINESS_MARGIN",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Với dự án này, hiện chưa nên nhận theo điều kiện đang có; chỉ nên nhận khi biên lợi nhuận thực tế đạt mức có thể chấp nhận và được bảo vệ rõ ràng. Nếu chưa giữ được phần lợi nhuận cần thiết, nên thu hẹp phạm vi, thử ở quy mô nhỏ hơn hoặc điều chỉnh điều kiện trước khi quyết định tiếp tục; nếu sau đó vẫn không bảo đảm thì nên từ chối.\n\nQuyết định nhận hay từ chối cần dựa trên việc làm rõ báo giá, phạm vi công việc, cách nghiệm thu, trách nhiệm của các bên và người có quyền chấp thuận. Điểm cần chú ý là những thông tin gây sức ép về lợi ích hoặc chi phí cần được tách khỏi suy đoán; cách xử lý phù hợp là đưa ra phương án có thể kiểm tra và chọn cách trao đổi phù hợp với những thông tin nhạy cảm trước khi chỉ cam kết trong giới hạn đã xác nhận.\n\nBiên lợi nhuận thấp khiến chi phí phát sinh và nguồn lực triển khai trở thành yếu tố quyết định, vì có doanh thu chưa đồng nghĩa với việc dự án còn tạo giá trị sau cùng. Cần tính biên lợi nhuận dựa trên toàn bộ chi phí, phần việc phát sinh và nguồn lực phải bỏ ra; tín hiệu thuận không thay thế cho con số lợi nhuận thực tế. Với việc triển khai, nên tạo một bước tiếp xúc hoặc thực hiện phù hợp và kiểm tra quy mô trước khi mở rộng để tránh tạo thêm sức ép lên các điều kiện hiện có.",
+      "status": "reading",
+      "latencyMs": 135812,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với dự án này, hiện chưa nên nhận theo điều kiện đang có; chỉ nên nhận khi biên lợi nhuận thực tế đạt mức có thể chấp nhận và được bảo vệ rõ ràng. Nếu chưa giữ được phần lợi nhuận cần thiết, nên thu hẹp phạm vi, thử ở quy mô nhỏ hơn hoặc điều chỉnh điều kiện trước khi quyết định tiếp tục; nếu sau đó vẫn không bảo đảm thì nên từ chối."
+            },
+            {
+              "id": "decision",
+              "text": "Quyết định nhận hay từ chối cần dựa trên việc làm rõ báo giá, phạm vi công việc, cách nghiệm thu, trách nhiệm của các bên và người có quyền chấp thuận. Điểm cần chú ý là những thông tin gây sức ép về lợi ích hoặc chi phí cần được tách khỏi suy đoán; cách xử lý phù hợp là đưa ra phương án có thể kiểm tra và chỉ cam kết trong giới hạn đã xác nhận."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Biên lợi nhuận thấp khiến chi phí phát sinh và nguồn lực triển khai trở thành yếu tố quyết định, vì có doanh thu chưa đồng nghĩa với việc dự án còn tạo giá trị sau cùng. Cần tính biên lợi nhuận dựa trên toàn bộ chi phí, phần việc có thể phát sinh và công sức phải bỏ ra, đồng thời kiểm tra quy mô thực hiện trước khi mở rộng để tránh tạo thêm sức ép lên điều kiện hiện có."
+            }
+          ]
+        },
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với dự án này, hiện chưa nên nhận theo điều kiện đang có; chỉ nên nhận khi biên lợi nhuận thực tế đạt mức có thể chấp nhận và được bảo vệ rõ ràng. Nếu chưa giữ được phần lợi nhuận cần thiết, nên thu hẹp phạm vi, thử ở quy mô nhỏ hơn hoặc điều chỉnh điều kiện trước khi quyết định tiếp tục; nếu sau đó vẫn không bảo đảm thì nên từ chối."
+            },
+            {
+              "id": "decision",
+              "text": "Quyết định nhận hay từ chối cần dựa trên việc làm rõ báo giá, phạm vi công việc, cách nghiệm thu, trách nhiệm của các bên và người có quyền chấp thuận. Điểm cần chú ý là những thông tin gây sức ép về lợi ích hoặc chi phí cần được tách khỏi suy đoán; cách xử lý phù hợp là đưa ra phương án có thể kiểm tra và chọn cách trao đổi phù hợp với những thông tin nhạy cảm trước khi chỉ cam kết trong giới hạn đã xác nhận."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Biên lợi nhuận thấp khiến chi phí phát sinh và nguồn lực triển khai trở thành yếu tố quyết định, vì có doanh thu chưa đồng nghĩa với việc dự án còn tạo giá trị sau cùng. Cần tính biên lợi nhuận dựa trên toàn bộ chi phí, phần việc phát sinh và nguồn lực phải bỏ ra; tín hiệu thuận không thay thế cho con số lợi nhuận thực tế. Với việc triển khai, nên tạo một bước tiếp xúc hoặc thực hiện phù hợp và kiểm tra quy mô trước khi mở rộng để tránh tạo thêm sức ép lên các điều kiện hiện có."
+            }
+          ]
+        }
+      ],
+      "planningUsed": true,
+      "planning": {
+        "semantic_frame": {
+          "core_decision": "Quyết định nhận hay từ chối dự án khi biên lợi nhuận được báo là thấp, dựa trên khả năng bảo vệ lợi nhuận sau toàn bộ chi phí chứ không chỉ tạo doanh thu.",
+          "explicit_points": [
+            "Người dùng đang cân nhắc nhận dự án hoặc từ chối.",
+            "Người dùng cho biết biên lợi nhuận hiện đang thấp."
+          ],
+          "implied_tradeoffs": [
+            "Doanh thu và cơ hội mở việc đối lập với lợi nhuận thực sau chi phí.",
+            "Nhận thêm việc đối lập với nguy cơ hao nguồn lực và phát sinh vượt phần lời.",
+            "Quyết định ngay đối lập với việc đàm phán lại hoặc giảm quy mô cam kết trước khi chốt."
+          ],
+          "related_considerations": [
+            {
+              "label": "Lựa chọn nhận hoặc từ chối",
+              "why_relevant": "Đây là quyết định trung tâm cần được chốt theo điều kiện thương mại của dự án.",
+              "source": "explicit",
+              "source_quote": "nhận dự án này hay từ chối",
+              "claim_ids": [
+                "claim_2",
+                "claim_7",
+                "claim_9"
+              ]
+            },
+            {
+              "label": "Biên lợi nhuận thấp",
+              "why_relevant": "Biên thấp làm cho chi phí và áp lực triển khai trở thành yếu tố quyết định.",
+              "source": "explicit",
+              "source_quote": "biên lợi nhuận đang thấp",
+              "claim_ids": [
+                "claim_2",
+                "claim_1"
+              ]
+            },
+            {
+              "label": "Doanh thu so với lợi nhuận sau chi phí",
+              "why_relevant": "Việc có cơ hội hoặc doanh thu không tự bảo đảm dự án còn lời sau khi thực hiện.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_7",
+                "claim_1",
+                "claim_2"
+              ]
+            },
+            {
+              "label": "Dư địa hấp thụ phát sinh",
+              "why_relevant": "Khi biên thấp, thay đổi phạm vi hoặc tăng nguồn lực có thể làm mất phần lợi nhuận dự kiến.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_1",
+                "claim_2"
+              ]
+            },
+            {
+              "label": "Phạm vi, nghiệm thu và trách nhiệm hợp đồng",
+              "why_relevant": "Các điều kiện này cần được kiểm tra để biết chi phí và nghĩa vụ có thể được khóa hay không.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_9",
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Khả năng điều chỉnh giá hoặc thử quy mô nhỏ",
+              "why_relevant": "Đây là phương án kiểm tra tính sinh lời trước khi nhận toàn bộ cam kết.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_1",
+                "claim_7",
+                "claim_4"
+              ]
+            }
+          ],
+          "scope_guard": [
+            "Chỉ biên lợi nhuận thấp và lựa chọn nhận hoặc từ chối là dữ kiện người dùng đã nêu.",
+            "Không coi chi phí phát sinh, thay đổi phạm vi, chậm thanh toán hoặc tranh chấp là sự kiện đã xảy ra.",
+            "Không tự đặt số tiền, ngưỡng lợi nhuận, xác suất hoặc thời hạn cụ thể.",
+            "Không suy danh tính, ý chí hoặc quyền phê duyệt thực tế của bất kỳ bên nào.",
+            "Không đồng nhất cơ hội mở việc hay doanh thu với lợi nhuận đã thực hiện hoặc dự án đã hoàn tất."
+          ]
+        },
+        "answer_class": "unresolved",
+        "decisive_claim_ids": [
+          "claim_2",
+          "claim_1",
+          "claim_9"
+        ],
+        "counter_claim_ids": [
+          "claim_7",
+          "claim_6"
+        ],
+        "bottleneck_claim_id": "claim_2",
+        "mode_focus": "Ưu tiên kết luận nhận hay từ chối ở tầng phạm vi đang thành hình, sau đó kiểm tra pipeline phạm vi và báo giá, quyền duyệt, hợp đồng và triển khai để phân biệt doanh thu với lợi nhuận sau chi phí.",
+        "stage_logic": [
+          {
+            "slot": "answer",
+            "claim_ids": [
+              "claim_2",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Chưa đủ căn cứ để nhận hoặc từ chối dứt khoát trước khi lợi nhuận được bảo vệ bằng phạm vi và điều khoản rõ."
+          },
+          {
+            "slot": "current",
+            "claim_ids": [
+              "claim_7",
+              "claim_2"
+            ],
+            "note": "Có cửa mở việc nhưng phạm vi và khả năng chuyển thành kết quả có lợi vẫn chưa vững."
+          },
+          {
+            "slot": "risk",
+            "claim_ids": [
+              "claim_2",
+              "claim_1",
+              "claim_9"
+            ],
+            "note": "Biên thấp có thể bị bào mòn bởi áp lực triển khai và nghĩa vụ hợp đồng chưa khóa."
+          },
+          {
+            "slot": "action",
+            "claim_ids": [
+              "claim_4",
+              "claim_9",
+              "claim_6"
+            ],
+            "note": "Cần xác nhận báo giá, phạm vi, nghiệm thu, trách nhiệm và đầu mối có quyền duyệt trước khi cam kết."
+          },
+          {
+            "slot": "outcome",
+            "claim_ids": [
+              "claim_7",
+              "claim_1",
+              "claim_2"
+            ],
+            "note": "Kết quả cần đánh giá là lợi nhuận sau chi phí, không phải riêng doanh thu hoặc việc mở được dự án."
+          },
+          {
+            "slot": "alternative",
+            "claim_ids": [
+              "claim_1",
+              "claim_7",
+              "claim_9"
+            ],
+            "note": "Nếu chưa bảo vệ được lợi nhuận thì thu hẹp hoặc thử nhỏ, còn nếu điều kiện vẫn không đạt thì từ chối."
+          }
+        ],
+        "recommendation_ids": [
+          "action_2",
+          "action_7",
+          "action_1",
+          "action_9"
+        ],
+        "timing_policy": "scope_only"
+      },
+      "sectionCount": 3
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi có nên ký hợp đồng thuê mặt bằng này trong tháng này không?",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Tôi luận theo bàn Kỳ Môn được cung cấp như một **góc nhìn tham khảo**, không xem đây là bằng chứng chắc chắn rằng hợp đồng sẽ thành hay không thành. Với câu hỏi “có nên ký hợp đồng thuê mặt bằng này trong tháng này không?”, trọng tâm là xem **tín hiệu về cơ hội, hồ sơ, tiền bạc, thỏa thuận**, rồi đối chiếu với thực tế.\n\n## 1. Xác định các vai trong việc\n\n- **Ta (người hỏi):** Nhật can Mậu, đóng tại **cung Tốn (số 4)**.  \n  Tín hiệu chính: Thiên Anh + Kinh Môn + Cửu Thiên.\n\n- **Sự việc (mặt bằng/hợp đồng đang xét):** Thời can Đinh, quy về **cung Cấn (số 8)**.  \n  Tín hiệu: Thiên Xung + Cảnh Môn + Đằng Xà + **Không Vong**.\n\n- **Cơ hội mở việc:** Khai Môn tại **cung Ly (số 9)**.  \n  Đây là điểm sáng của bàn.\n\n- **Tiền bạc/lợi ích:** Sinh Môn tại **cung Đoài (số 7)**.  \n  Cũng là một vị trí khá đáng chú ý.\n\n- **Thỏa thuận/hợp đồng:** lấy Lục Hợp tại cung Càn (số 6) làm biểu tượng phối hợp.\n\n---\n\n## 2. Luận về cơ hội ký kết\n\n**Khai Môn ở Ly cung có Thiên Nhuế + Cửu Địa**\n\nKhai Môn vốn là cửa mở việc, cơ hội, kinh doanh. Với câu hỏi thuê mặt bằng, đây là tín hiệu cho thấy **có cửa để triển khai**, không phải thế bế tắc hoàn toàn.\n\nNhưng đi cùng Thiên Nhuế và Cửu Địa:\n\n- Thiên Nhuế thường gợi chuyện phải **kiểm tra, sửa chữa, xử lý vấn đề tồn đọng**.\n- Cửu Địa thiên về chậm, chắc, tích lũy.\n\nNghĩa là: cơ hội có, nhưng không phải kiểu “ký nhanh là xong”. Nó hợp với cách làm kỹ: xem lại điều khoản, kiểm tra hiện trạng, tính đường dài.\n\n---\n\n## 3. Luận về chính mặt bằng và hợp đồng\n\nSự việc nằm ở **Cấn cung gặp Không Vong**, có:\n\n- **Cảnh Môn:** giấy tờ, hình ảnh, quảng bá, mặt tiền, danh tiếng.\n- **Thiên Xung:** nhanh, muốn thúc đẩy.\n- **Đằng Xà:** dễ có phần vòng vèo, thông tin chưa rõ, kỳ vọng có thể bị phóng đại.\n\nĐây là điểm cần chú ý nhất.\n\nKhông Vong không có nghĩa chắc chắn xấu hay không ký được, nhưng trong cách luận tượng nó thường nhắc rằng: **một phần thông tin chưa đủ “đóng khung” hoặc chưa hiện rõ**.\n\nVới thuê mặt bằng, biểu hiện thực tế có thể là những việc như:\n\n- điều khoản thuê chưa thật rõ;\n- chi phí phụ chưa tính hết;\n- tình trạng bàn giao chưa đầy đủ;\n- quyền sửa chữa, cải tạo, biển hiệu chưa chốt;\n- thời hạn thuê hoặc điều kiện gia hạn còn mơ hồ.\n\nKhông nên hiểu là chắc chắn có vấn đề, mà là chỗ cần kiểm chứng.\n\n---\n\n## 4. Luận về tiền và khả năng sinh lợi\n\n**Sinh Môn tại Đoài cung**, đi cùng:\n\n- Thiên Tâm: tính toán, quản trị.\n- Bạch Hổ: áp lực, chi phí, sự quyết liệt.\n\nTượng này cho thấy mặt bằng có thể gắn với mục tiêu tạo dòng tiền, nhưng đi kèm áp lực vận hành.\n\nNói cách khác: vấn đề không chỉ là “thuê được hay không”, mà là:\n\n- tiền thuê có phù hợp doanh thu dự kiến không;\n- chi phí đầu tư ban đầu có bị đội lên không;\n- thời gian hòa vốn có chịu được không.\n\nSinh Môn là dấu hiệu tốt cho việc kinh doanh, nhưng Bạch Hổ nhắc rằng cần tính kỹ phần nặng.\n\n---\n\n## 5. Xét việc ký trong tháng này\n\nBàn cho thấy:\n\n- Có **Khai Môn + Sinh Môn**: có động lực để mở việc, có khả năng phát triển.\n- Nhưng **Sự việc gặp Không Vong + Đằng Xà**: chưa nên coi là đã hoàn chỉnh, còn phần cần làm rõ.\n\nVì vậy, nếu hỏi “ký ngay không?”, tượng bàn nghiêng về:\n\n**Có thể tiến hành đàm phán và hoàn thiện hợp đồng trong tháng này, nhưng không nên ký chỉ vì sợ mất cơ hội. Nên ký sau khi các điểm chưa rõ được chốt bằng văn bản.**\n\n---\n\n## 6. Việc nên làm cụ thể trước khi đặt bút ký\n\nTheo tượng bàn, nên ưu tiên 5 việc:\n\n1. **Kiểm tra toàn bộ chi phí ngoài tiền thuê**\n   - phí quản lý;\n   - điện nước;\n   - phí sửa chữa;\n   - tiền đặt cọc;\n   - điều kiện hoàn cọc.\n\n2. **Ghi rõ quyền sử dụng mặt bằng**\n   - được sửa gì;\n   - được treo biển hiệu thế nào;\n   - có bị hạn chế ngành nghề không.\n\n3. **Đừng chỉ nhìn hình ảnh/mặt tiền**\n   - Cảnh Môn + Đằng Xà nhắc phải kiểm tra thực địa.\n\n4. **Đàm phán điều khoản thoát**\n   - nếu doanh thu không đạt;\n   - nếu chủ nhà thay đổi điều kiện;\n   - nếu có tranh chấp.\n\n5. **Nếu có thể, giữ một khoảng thời gian rà soát trước ký chính thức**\n   - hợp với tượng Cửu Địa: chậm mà chắc.\n\n**Kết luận theo bàn:** đây không phải thế “không nên làm”, nhưng là thế **có cơ hội song cần làm rõ trước khi ràng buộc dài hạn**. Tín hiệu tốt nằm ở khả năng mở việc và dòng tiền; điểm yếu nằm ở phần giấy tờ, điều kiện ẩn và kỳ vọng chưa kiểm chứng. Hãy xem bàn như lời nhắc kiểm tra kỹ hợp đồng, còn quyết định cuối cùng nên dựa vào dòng tiền thật, pháp lý mặt bằng và điều khoản thuê.",
+      "status": "completed",
+      "latencyMs": 10597,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 10267,
+        "palaces": 9,
+        "sha256": "ec25c67b6550140ce36b0d7ee56adea93c7121ea059ab073b3dc64348d5c8c76"
+      }
+    },
+    {
+      "caseId": "Q12_PROPERTY",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi có nên ký hợp đồng thuê mặt bằng này trong tháng này không?",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Với việc ký hợp đồng thuê mặt bằng này trong tháng này, chưa nên ký ngay; chỉ nên ký khi điều khoản, hồ sơ và sức chịu tài chính đã đạt ngưỡng phù hợp với bạn. Hiện tại chưa đủ căn cứ để chốt hoàn toàn có hoặc không, vì cơ hội vẫn có nhưng phần xác nhận hợp đồng còn chưa vững. Nếu các điều kiện chưa đạt hoặc thông tin thực tế khác với dự tính, nên trì hoãn hoặc đàm phán lại thay vì tăng thêm cam kết.\n\nQuyết định trung tâm lúc này là xác định mức sẵn sàng để chốt hợp đồng, phân biệt giữa một cơ hội giao dịch và việc hợp đồng đã đủ điều kiện để ký. Bạn nên rà lại điều khoản, trách nhiệm, điều kiện mặt bằng và giới hạn tài chính bằng một bước xác minh trước khi khóa cam kết. Đồng thời cần chú ý thông tin, hồ sơ hoặc cách trình bày của sự việc; hướng xử lý là tạo một bước tiếp xúc hoặc thực hiện để làm rõ, kiểm chứng các giả định và tránh hứa vượt quá những dữ kiện đang có. Chỉ chuyển sang ký khi có phản hồi cụ thể về các điều kiện cần chốt và phương án tài chính có thể kiểm tra được.\n\nTrong tháng này, đây là điểm cần kiểm tra riêng trước khi chốt. Hãy xác định rõ tiêu chí thực tế của bạn và dấu hiệu nào sẽ khiến bạn giữ nguyên hoặc thay đổi quyết định, thay vì chỉ dựa vào cảm giác về cơ hội.\n\nĐiều khoản, hồ sơ và trách nhiệm hai phía cần được làm rõ vì việc ký hợp đồng sẽ tạo ra nghĩa vụ trực tiếp. Bạn nên kiểm tra nội dung, giới hạn trách nhiệm và các phần cần sửa hoặc bổ sung trước khi cam kết; khía cạnh này chỉ dùng để đánh giá phương án, không nên xem như điều đã hoàn tất. Việc xác nhận trách nhiệm và cam kết của từng phía là phần cần đặc biệt chú ý.\n\nNhịp của việc này thiên về chậm. Trong phạm vi đang hỏi, 24/09/2026, 25/09/2026 và 30/09/2026 là các mốc phù hợp để chủ động rà lại tiến triển và điều chỉnh cách xử lý, không phải những ngày bảo đảm kết quả.",
+      "status": "reading",
+      "latencyMs": 110704,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với việc ký hợp đồng thuê mặt bằng này trong tháng này, chưa nên ký ngay; chỉ nên ký khi điều khoản, hồ sơ và sức chịu tài chính đã đạt ngưỡng phù hợp với bạn. Hiện tại chưa đủ căn cứ để chốt hoàn toàn có hoặc không, vì cơ hội vẫn có nhưng phần xác nhận hợp đồng còn chưa vững. Nếu các điều kiện chưa đạt hoặc thông tin thực tế khác với dự tính, nên trì hoãn hoặc đàm phán lại thay vì tăng thêm cam kết."
+            },
+            {
+              "id": "decision",
+              "text": "Quyết định trung tâm lúc này là xác định mức sẵn sàng để chốt hợp đồng, phân biệt giữa một cơ hội giao dịch và việc hợp đồng đã đủ điều kiện để ký. Bạn nên rà lại điều khoản, trách nhiệm, điều kiện mặt bằng và giới hạn tài chính bằng một bước xác minh trước khi khóa cam kết. Chỉ chuyển sang ký khi có phản hồi cụ thể về các điều kiện cần chốt và phương án tài chính có thể kiểm tra được."
+            },
+            {
+              "id": "consideration_1",
+              "text": "Trong tháng này, đây là điểm cần kiểm tra riêng trước khi chốt. Hãy xác định rõ tiêu chí thực tế của bạn và dấu hiệu nào sẽ khiến bạn giữ nguyên hoặc thay đổi quyết định, thay vì chỉ dựa vào cảm giác về cơ hội."
+            },
+            {
+              "id": "consideration_2",
+              "text": "Điều khoản, hồ sơ và trách nhiệm hai phía cần được làm rõ vì việc ký hợp đồng sẽ tạo ra nghĩa vụ trực tiếp. Bạn nên kiểm tra nội dung, giới hạn trách nhiệm và các phần cần sửa hoặc bổ sung trước khi cam kết; khía cạnh này chỉ dùng để đánh giá phương án, không nên xem như điều đã hoàn tất. Việc xác nhận trách nhiệm và cam kết của từng phía là phần cần đặc biệt chú ý."
+            },
+            {
+              "id": "timing",
+              "text": "Nhịp của việc này thiên về chậm. Trong phạm vi đang hỏi, 24/09/2026, 25/09/2026 và 30/09/2026 là các mốc phù hợp để chủ động rà lại tiến triển và điều chỉnh cách xử lý, không phải những ngày bảo đảm kết quả."
+            }
+          ]
+        },
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Với việc ký hợp đồng thuê mặt bằng này trong tháng này, chưa nên ký ngay; chỉ nên ký khi điều khoản, hồ sơ và sức chịu tài chính đã đạt ngưỡng phù hợp với bạn. Hiện tại chưa đủ căn cứ để chốt hoàn toàn có hoặc không, vì cơ hội vẫn có nhưng phần xác nhận hợp đồng còn chưa vững. Nếu các điều kiện chưa đạt hoặc thông tin thực tế khác với dự tính, nên trì hoãn hoặc đàm phán lại thay vì tăng thêm cam kết."
+            },
+            {
+              "id": "decision",
+              "text": "Quyết định trung tâm lúc này là xác định mức sẵn sàng để chốt hợp đồng, phân biệt giữa một cơ hội giao dịch và việc hợp đồng đã đủ điều kiện để ký. Bạn nên rà lại điều khoản, trách nhiệm, điều kiện mặt bằng và giới hạn tài chính bằng một bước xác minh trước khi khóa cam kết. Đồng thời cần chú ý thông tin, hồ sơ hoặc cách trình bày của sự việc; hướng xử lý là tạo một bước tiếp xúc hoặc thực hiện để làm rõ, kiểm chứng các giả định và tránh hứa vượt quá những dữ kiện đang có. Chỉ chuyển sang ký khi có phản hồi cụ thể về các điều kiện cần chốt và phương án tài chính có thể kiểm tra được."
+            },
+            {
+              "id": "consideration_1",
+              "text": "Trong tháng này, đây là điểm cần kiểm tra riêng trước khi chốt. Hãy xác định rõ tiêu chí thực tế của bạn và dấu hiệu nào sẽ khiến bạn giữ nguyên hoặc thay đổi quyết định, thay vì chỉ dựa vào cảm giác về cơ hội."
+            },
+            {
+              "id": "consideration_2",
+              "text": "Điều khoản, hồ sơ và trách nhiệm hai phía cần được làm rõ vì việc ký hợp đồng sẽ tạo ra nghĩa vụ trực tiếp. Bạn nên kiểm tra nội dung, giới hạn trách nhiệm và các phần cần sửa hoặc bổ sung trước khi cam kết; khía cạnh này chỉ dùng để đánh giá phương án, không nên xem như điều đã hoàn tất. Việc xác nhận trách nhiệm và cam kết của từng phía là phần cần đặc biệt chú ý."
+            },
+            {
+              "id": "timing",
+              "text": "Nhịp của việc này thiên về chậm. Trong phạm vi đang hỏi, 24/09/2026, 25/09/2026 và 30/09/2026 là các mốc phù hợp để chủ động rà lại tiến triển và điều chỉnh cách xử lý, không phải những ngày bảo đảm kết quả."
+            }
+          ]
+        }
+      ],
+      "planningUsed": true,
+      "planning": {
+        "semantic_frame": {
+          "core_decision": "Có nên ký ngay hợp đồng thuê mặt bằng này trong tháng này, hay chỉ tiếp tục xác minh và đàm phán cho đến khi các điều kiện chốt đủ rõ?",
+          "explicit_points": [
+            "Người hỏi đang cân nhắc việc ký một hợp đồng thuê mặt bằng cụ thể.",
+            "Khung thời gian ra quyết định là trong tháng này."
+          ],
+          "implied_tradeoffs": [
+            "Nắm cơ hội mặt bằng sớm hay tránh cam kết khi hồ sơ và điều kiện hợp đồng chưa chắc.",
+            "Lợi ích kinh doanh tiềm năng hay sức ép lên vốn, dòng tiền và nghĩa vụ thuê.",
+            "Chủ động thúc đẩy giao dịch hay giữ bước đi có thể đảo ngược cho đến khi nhận đủ xác nhận."
+          ],
+          "related_considerations": [
+            {
+              "label": "Mức sẵn sàng để chốt hợp đồng",
+              "why_relevant": "Đây là chính quyết định trung tâm, cần phân biệt cơ hội giao dịch với việc hợp đồng đã đủ điều kiện để ký.",
+              "source": "explicit",
+              "source_quote": "ký hợp đồng thuê mặt bằng này",
+              "claim_ids": [
+                "claim_6",
+                "claim_8",
+                "claim_9"
+              ]
+            },
+            {
+              "label": "Khung ký trong tháng này",
+              "why_relevant": "Quyết định phải được đặt trong cửa sổ thời gian người hỏi đã giới hạn.",
+              "source": "explicit",
+              "source_quote": "trong tháng này",
+              "claim_ids": [
+                "claim_8"
+              ]
+            },
+            {
+              "label": "Điều khoản, hồ sơ và trách nhiệm hai phía",
+              "why_relevant": "Ký hợp đồng trực tiếp tạo nghĩa vụ, nên nội dung, giới hạn và trách nhiệm phải thành hình rõ trước khi cam kết.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_8",
+                "claim_6"
+              ]
+            },
+            {
+              "label": "Khả năng chịu cam kết vốn và dòng tiền",
+              "why_relevant": "Thuê mặt bằng kéo theo nguồn lực phải bỏ ra; lợi ích kỳ vọng cần được đối chiếu với sức chịu đựng tài chính.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_7",
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Điều kiện thực tế của mặt bằng và bàn giao",
+              "why_relevant": "Đây là dữ kiện cần kiểm tra để biết phương án thuê có triển khai được như dự tính hay không.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_9",
+                "claim_6"
+              ]
+            },
+            {
+              "label": "Thẩm quyền ký và cơ chế phê duyệt",
+              "why_relevant": "Hợp đồng chỉ nên chuyển bước khi đúng đầu mối và trách nhiệm ký kết được xác minh ngoài thực tế.",
+              "source": "check_only",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_3",
+                "claim_6"
+              ]
+            }
+          ],
+          "scope_guard": [
+            "Không suy rằng mặt bằng, hồ sơ hoặc pháp lý thực tế đang có lỗi; đây chỉ là các mục cần xác minh.",
+            "Không suy giá thuê, lợi nhuận, doanh thu, số vốn hoặc khả năng chi trả cụ thể.",
+            "Không gán cung, sức, tâm ý hoặc động cơ cho chủ nhà hay đối tác chưa có đại diện hợp lệ.",
+            "Không coi cơ hội giao dịch hoặc lợi ích biểu tượng là bằng chứng rằng nên ký ngay.",
+            "Không coi các mốc thời gian được phép nêu là ngày bảo đảm ký kết hoặc thành công.",
+            "Không suy danh tính hay quyền phê duyệt thực tế từ biểu tượng thẩm quyền."
+          ]
+        },
+        "answer_class": "unresolved",
+        "decisive_claim_ids": [
+          "claim_8",
+          "claim_6",
+          "claim_4"
+        ],
+        "counter_claim_ids": [
+          "claim_9",
+          "claim_7"
+        ],
+        "bottleneck_claim_id": "claim_8",
+        "mode_focus": "Ưu tiên chuỗi quyết định có điều kiện: xác định thế hiện tại, dùng bước thử có thể đảo ngược để phá nút hồ sơ và điều kiện hợp đồng, đo phản hồi, rồi mới ký hoặc dừng.",
+        "stage_logic": [
+          {
+            "slot": "answer",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_9",
+              "claim_7",
+              "claim_4"
+            ],
+            "note": "Chưa đủ căn cứ chốt có hoặc không; cơ hội và lợi ích hiện diện nhưng tầng xác nhận hợp đồng còn chưa vững."
+          },
+          {
+            "slot": "current",
+            "claim_ids": [
+              "claim_9",
+              "claim_7",
+              "claim_8",
+              "claim_4"
+            ],
+            "note": "Có cơ sở để tiếp tục khảo sát, nhưng hồ sơ sự việc chưa thành hình chắc và khả năng cam kết của người hỏi đang chịu sức ép."
+          },
+          {
+            "slot": "next",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_9",
+              "claim_7"
+            ],
+            "note": "Rà điều khoản, trách nhiệm, điều kiện mặt bằng và ngưỡng tài chính bằng một bước xác minh chưa khóa cam kết."
+          },
+          {
+            "slot": "risk",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_4",
+              "claim_3"
+            ],
+            "note": "Rủi ro chính là ký dưới áp lực khi văn bản, nghĩa vụ, nguồn lực hoặc thẩm quyền chưa được xác nhận."
+          },
+          {
+            "slot": "action",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_9",
+              "claim_7"
+            ],
+            "note": "Chỉ chuyển sang ký khi có phản hồi cụ thể về điều kiện chốt và phương án tài chính kiểm tra được."
+          },
+          {
+            "slot": "outcome",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_9",
+              "claim_7"
+            ],
+            "note": "Đầu ra cần là quyết định ký có điều kiện hoặc dừng rõ ràng, không đồng nhất tiến triển với hợp đồng đã chốt."
+          },
+          {
+            "slot": "alternative",
+            "claim_ids": [
+              "claim_8",
+              "claim_6",
+              "claim_4"
+            ],
+            "note": "Nếu điều kiện chưa đạt hoặc dữ kiện thực tế trái giả thuyết, trì hoãn hoặc đàm phán lại thay vì tăng cam kết."
+          },
+          {
+            "slot": "timing",
+            "claim_ids": [
+              "claim_8"
+            ],
+            "note": "Có thể dùng 24, 25 và 30/09/2026 làm cửa sổ kiểm tra hoặc kích hoạt, không phải ngày bảo đảm ký."
+          }
+        ],
+        "recommendation_ids": [
+          "action_8",
+          "action_6",
+          "action_9",
+          "action_7"
+        ],
+        "timing_policy": "allowed_prediction"
+      },
+      "sectionCount": 5
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "question": "Lá số Mệnh 1994-04-23",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Mình sẽ luận theo hướng **Mệnh trong Kỳ Môn Thời Gia**, lấy các lớp bạn cung cấp: **Nhật can (Kỷ) làm chủ thể**, cung Mệnh an tại **Cấn 8**, vận hiện tại 31–45 tuổi cũng kích hoạt **Cấn 8**, và xem thêm năm 2026. Đây là cách đọc biểu tượng để tham khảo định hướng, không phải khẳng định chắc chắn sự kiện đã xảy ra hay tương lai bắt buộc.\n\n## 1. Tổng khí Mệnh: Kỷ Thổ nhập Cấn — giai đoạn dựng nền, gánh việc\n\nNhật can là **Kỷ Thổ**: hình tượng người làm việc bằng sự bền bỉ, thực tế, thích xây dựng thứ có cấu trúc. Cung Mệnh an tại:\n\n- **Cấn (Đông Bắc) – Thổ**\n- **Thiên Nhậm**\n- **Tử Môn**\n- **Bạch Hổ**\n- Có **Sinh Môn liên hệ theo phép ký gửi**\n\nTổ hợp này có hai mặt.\n\n### Mặt mạnh:\n**Cấn + Thiên Nhậm** là khí của người chịu trách nhiệm, có khả năng gánh việc dài hạn. Không phải kiểu phát triển nhờ may mắn nhất thời mà thiên về:\n\n- tích lũy chuyên môn,\n- xây tài sản/nền tảng,\n- làm việc cần sự kiên trì,\n- càng về sau càng ổn hơn.\n\nKỷ Thổ gặp Thổ cung cũng là hình tượng “đứng trên đất của mình”: dễ có ý thức kiểm soát, muốn tự chủ, muốn mọi thứ rõ ràng.\n\n### Mặt khó:\nCó **Tử Môn + Bạch Hổ** ở Mệnh.\n\nĐây không nên hiểu đơn giản là xấu, mà thường chỉ:\n\n- áp lực trách nhiệm lớn,\n- hay phải xử lý việc khó, việc tồn đọng,\n- có xu hướng tự ép bản thân,\n- đôi lúc quá tập trung vào vấn đề mà quên sự linh hoạt.\n\nBạch Hổ cũng cho thấy khí quyết liệt: khi đã quyết thì làm mạnh, nhưng cần tránh kiểu “cố chịu một mình”.\n\n**Tổng kết Mệnh:** Đây là cách cục thiên về người trưởng thành qua thử thách. Thành quả thường đến từ năng lực chịu tải hơn là đường đi nhẹ nhàng.\n\n---\n\n## 2. Vận 31–45 tuổi: Cấn 8 kích hoạt — thời kỳ củng cố vị trí\n\nHiện tại tuổi 33 nằm trong đại vận Cấn 8.\n\nĐiểm đáng chú ý là **vận trùng cung Mệnh**. Khi vận quay về đúng cung Mệnh, thường luận là giai đoạn:\n\n- bản thân trở thành trung tâm của biến chuyển,\n- phải tự quyết nhiều hơn,\n- thay đổi cách nhìn về mình,\n- xây lại nền tảng cá nhân.\n\nKhông phải dấu hiệu “mọi thứ tự đến”, mà là dấu hiệu **phải tự đứng ra gánh vai trò chính**.\n\nThiên Nhậm trong vận này nhấn mạnh:\n\n- nghề nghiệp cần độ bền,\n- vị trí cần tích lũy uy tín,\n- không hợp kiểu thay đổi liên tục chỉ vì cảm xúc.\n\nNhưng Tử Môn nhắc rằng có thể có một chu kỳ đóng/mở:\n\n- bỏ một cách làm cũ,\n- kết thúc một hướng không còn phù hợp,\n- thanh lọc các mối quan hệ hoặc công việc.\n\nCần phân biệt: **Tử Môn báo khí “đóng/kết thúc”, không tự chứng minh có một mất mát cụ thể.**\n\n---\n\n## 3. Năng lực và con đường phát triển\n\nXem các cung hỗ trợ:\n\n### Cung Tốn: Thiên Phụ + Khai Môn + Cửu Địa\n\nĐây là một tổ hợp khá đẹp cho đường phát triển.\n\n- Thiên Phụ: học hỏi, văn thư, chuyên môn, người hỗ trợ.\n- Khai Môn: mở cửa công việc, cơ hội.\n- Cửu Địa: chậm nhưng chắc.\n\nÝ nghĩa thực tế:\n\nBạn hợp với hướng:\n\n- xây chuyên môn sâu,\n- làm thứ cần quy trình,\n- phát triển qua uy tín,\n- dùng kiến thức để mở đường.\n\nKhông thiên về kiểu “đánh nhanh thắng nhanh”.\n\n### Cung Khảm: Thiên Bồng + Cảnh Môn + Lục Hợp\n\nCho thấy khả năng liên quan:\n\n- thông tin,\n- giao tiếp,\n- thương lượng,\n- kết nối nhiều bên.\n\nNhưng Thiên Bồng có tính linh hoạt, Cảnh Môn thiên về hình ảnh, nên cần chú ý:\n\n- thông tin phải kiểm chứng,\n- tránh hứa quá nhiều,\n- tránh bị cuốn vào quá nhiều mối quan hệ cùng lúc.\n\n---\n\n## 4. Năm 2026: khí mở rộng nhưng cần kiểm soát\n\nNăm 2026 có:\n\n- Thiên can năm Bính vào **Ly 9**\n- Bính năm vào **Chấn 3**\n\nXét biểu tượng:\n\n### Ly 9: Thiên Anh + Hưu Môn + Cửu Thiên\n\nCó khí:\n\n- được nhìn thấy,\n- nâng hình ảnh cá nhân,\n- mở rộng giao tiếp,\n- dễ có việc cần xuất hiện, trình bày, thể hiện năng lực.\n\nĐây là lúc nên chú trọng:\n\n- hồ sơ,\n- thương hiệu cá nhân,\n- cách trình bày năng lực.\n\n### Nhưng Chấn 3: Thiên Xung + Kinh Môn + Huyền Vũ\n\nLại nhắc:\n\n- tốc độ tăng,\n- thông tin biến động,\n- dễ có lo lắng hoặc hiểu nhầm.\n\nNói cách khác:\n\n**Có cửa để mở rộng, nhưng không nên mở rộng bằng sự nóng vội.**\n\n---\n\n## 5. Điểm cần chú ý trong giai đoạn này\n\n### Công việc\nDấu hiệu tốt nằm ở Khai Môn + Thiên Phụ:\n\nNên:\n\n- nâng cấp kỹ năng,\n- lấy chứng nhận/chuyên môn nếu phù hợp,\n- xây quan hệ với người có kinh nghiệm,\n- làm việc có hệ thống.\n\nKhông nên:\n\n- bỏ nền tảng đang có chỉ vì thấy một cơ hội hấp dẫn ngắn hạn,\n- quyết định khi thông tin chưa đủ.\n\n### Tài chính\nSinh Môn xuất hiện trong hệ Mệnh nhưng Mệnh lại có Tử Môn.\n\nCách hiểu:\n\n- có khả năng tạo nguồn lực,\n- nhưng tiền đến tốt hơn qua tích lũy và quản trị,\n- cần tránh các quyết định tài chính dựa trên áp lực hoặc kỳ vọng quá nhanh.\n\n### Quan hệ\nLục Hợp ở Khảm cho thấy vai trò hợp tác quan trọng.\n\nNhưng bàn chưa đủ để gán cho một người cụ thể hay kết luận ý định của ai. Chỉ có thể nói:\n\n- quan hệ hợp tác là một kênh tạo cơ hội,\n- cần rõ ràng thỏa thuận.\n\n---\n\n## 6. Kết luận ngắn\n\nLá Mệnh này nổi bật ở chữ **“xây nền”**:\n\n- 31–45 tuổi là giai đoạn tự định hình vị trí.\n- Có dấu hiệu mở cửa về công việc, học hỏi, danh tiếng.\n- Thành công hợp với đường dài: chuyên môn + uy tín + quan hệ chất lượng.\n- Trở ngại lớn không phải thiếu khả năng mà là áp lực tự thân, ôm việc, hoặc quyết nhanh khi thông tin chưa đủ.\n\nViệc nên làm trong 2026:\n1. Chọn một năng lực lõi để đào sâu.\n2. Chuẩn hóa hồ sơ, hình ảnh, cách trình bày năng lực.\n3. Xây ít nhưng chắc các mối hợp tác.\n4. Với quyết định lớn (tiền bạc, nghề nghiệp), đối chiếu thêm dữ kiện thực tế thay vì chỉ dựa vào dấu hiệu bàn.",
+      "status": "completed",
+      "latencyMs": 12978,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 7406,
+        "palaces": 9,
+        "sha256": "a909eac0f0706b855567feab4a8b4e70292c576f5e1eb54dc66471332eeafc8e"
+      }
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "question": "Lá số Mệnh 1994-04-23",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm cần tự quản là tính toán quá mức, kiểm soát. Việc thường không đi thẳng một mạch; dễ phải sửa cách làm hoặc quay lại xử lý phần cũ.\n\nBạn thiên về phân tích, tổ chức và tìm giải pháp có tính toán, nhưng điểm mạnh này không phải lúc nào cũng tự chuyển thành kết quả. Nếu tính toán quá mức hoặc muốn kiểm soát mọi thứ, việc tiếp tục phân tích có thể làm chậm quyết định. Cách cân bằng là chốt tiêu chí, làm một bước nhỏ rồi điều chỉnh theo phản hồi thực tế. Bạn có xu hướng đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn. Bạn có xu hướng kín đáo, tinh tế và chuẩn bị ở hậu trường.\n\nNề nếp gia đình thiên về chủ động, định hướng và gánh trách nhiệm tổ chức. Nề nếp gia đình thiên về đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn.\n\nTrong đời sống chung, điều đáng chú ý là xu hướng chủ động, định hướng và gánh trách nhiệm tổ chức. Trong đời sống chung, điều đáng chú ý là xu hướng đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn.\n\nVới công việc, bạn thiên về chủ động sắp xếp; cách làm cần vừa với nguồn lực đang có. Trong công việc, hướng phù hợp là phân tích, tổ chức và tìm giải pháp có tính toán. Trong công việc, hướng phù hợp là đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn.\n\nNguồn lực tài chính có phần nâng đỡ bạn; sức hỗ trợ ấy phát huy đến đâu còn tùy cách thu xếp thực tế. Việc tạo dựng nguồn lực thiên về tiếp nhận, nuôi dưỡng và duy trì nguồn lực bằng sự bền bỉ. Việc tạo dựng nguồn lực thiên về sinh trưởng, tạo nguồn lực và tạo thêm giá trị.\n\nGiai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Trong giai đoạn 31–45 tuổi, các ưu tiên nên đi cùng nhau: giới hạn, dừng để củng cố và giữ nền; kết thúc, đóng chu kỳ, thu hồi hoặc chuyển sang trạng thái tĩnh; gánh vác, duy trì và tích lũy bền. Điểm mạnh là xây nền bền hơn, nhưng cần đặt mốc xem lại để việc củng cố không biến thành trì trệ hoặc khó đổi hướng. Ưu tiên của giai đoạn này là giới hạn, dừng để củng cố và giữ nền.\n\nTrong năm đang xét, xung lực khởi động, đánh thức và thúc sự việc chuyển từ tĩnh sang động đi cùng cách phản ứng cảnh báo, phản ứng nhanh và biến động gây chú ý. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu, rồi mới tăng tốc; cách này giúp giảm những mặt trái như vội hoặc dễ phản ứng quá mức; hoảng hốt hoặc lời nói gây va chạm hoặc quyết định bị nhiễu. Nhịp sống trong năm thiên về khởi động, đánh thức và thúc sự việc chuyển từ tĩnh sang động. Nhịp sống trong năm thiên về cảnh báo, phản ứng nhanh và biến động gây chú ý.",
+      "status": "verified_fallback",
+      "latencyMs": 101555,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "overview",
+              "text": "Tổng thể cho thấy bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm mạnh này giúp bạn nhìn vấn đề có hệ thống, nhưng cũng cần tự quản ở chỗ không để việc tính toán quá mức hoặc mong muốn kiểm soát mọi thứ làm chậm bước tiến. Đường đi thường không hoàn toàn thẳng một mạch, vì vậy có thể cần sửa cách làm hoặc quay lại xử lý những phần còn dang dở trước khi tiến tiếp."
+            },
+            {
+              "id": "self",
+              "text": "Bạn là người thiên về suy nghĩ kỹ, sắp xếp thông tin và tìm cách giải quyết có cơ sở. Bạn có thể hợp với cách làm kín đáo, chuẩn bị kỹ phía sau và đi sâu vào lĩnh vực mình quan tâm, nhưng điểm cần lưu ý là sự cẩn trọng đôi khi khiến quyết định bị kéo dài. Cách cân bằng là xác định rõ điều kiện cần thiết, bắt đầu bằng một bước phù hợp rồi tiếp tục điều chỉnh qua thực tế; ví dụ minh họa là thay vì chờ một kế hoạch hoàn hảo, bạn có thể thử một phiên bản nhỏ để xem điều gì cần cải thiện."
+            },
+            {
+              "id": "family",
+              "text": "Trong gia đình, xu hướng nổi bật là sự chủ động trong việc sắp xếp, định hướng và gánh trách nhiệm tổ chức. Khi chăm sóc người thân, bạn có thể phát huy sự bền bỉ, khả năng duy trì nền nếp và chú ý đến những điểm cần cải thiện, nhưng cũng nên để các thành viên có không gian riêng thay vì tự mình gánh hết mọi phần việc."
+            },
+            {
+              "id": "marriage",
+              "text": "Trong đời sống chung, sự quan tâm đến tổ chức, định hướng và tìm giải pháp có thể giúp bạn xây dựng sự ổn định. Tuy nhiên, mối quan hệ cũng cần sự mềm mại trong giao tiếp, khả năng thể hiện cảm xúc và đón nhận những điều chưa được sắp xếp hoàn toàn. Khi có khác biệt, việc trao đổi rõ ràng nhưng không cố kiểm soát toàn bộ tình huống sẽ giúp duy trì sự cân bằng."
+            },
+            {
+              "id": "career",
+              "text": "Trong công việc, bạn thiên về chủ động sắp xếp, phân tích và tìm giải pháp có tính toán. Những hướng cần nghiên cứu, tổ chức, quản lý thông tin hoặc xử lý vấn đề theo từng bước có thể phù hợp với cách làm của bạn. Dù vậy, kế hoạch nên vừa với nguồn lực đang có để tránh đặt ra quá nhiều yêu cầu khiến tiến độ bị chậm lại."
+            },
+            {
+              "id": "wealth",
+              "text": "Về nguồn lực tài chính, bạn có xu hướng nhận được sự nâng đỡ từ cách tích lũy, duy trì và chăm chút những gì đang có; khả năng phát huy đến đâu còn phụ thuộc vào cách thu xếp thực tế. Việc tạo dựng nguồn lực có thể thuận lợi hơn khi bạn biết nuôi dưỡng giá trị lâu dài và mở rộng tiếp cận những môi trường hoặc cơ hội ngoài nền quen thuộc."
+            },
+            {
+              "id": "luck",
+              "text": "Trong giai đoạn 31–45 tuổi, trọng tâm là xây dựng nền vững hơn thông qua việc giới hạn điều không cần thiết, củng cố phần quan trọng, kết thúc những chu kỳ đã đến lúc khép lại và duy trì sự tích lũy bền. Điểm mạnh của giai đoạn này là khả năng tạo sự ổn định, nhưng cần đặt những mốc xem lại để việc giữ nền không trở thành quá khó thay đổi khi hoàn cảnh đã khác."
+            },
+            {
+              "id": "annual",
+              "text": "Trong năm đang xét, nhịp sống có xu hướng thúc đẩy việc chuyển từ trạng thái tĩnh sang chủ động hơn, đồng thời đi cùng những tình huống dễ tạo cảm giác cần phản ứng nhanh. Vì vậy, nên phân biệt việc nào cần xử lý ngay và việc nào cần thêm thông tin trước khi quyết định; cách làm này giúp hạn chế sự vội vàng, phản ứng quá mức hoặc những lựa chọn bị ảnh hưởng bởi nhiễu động nhất thời."
+            }
+          ]
+        },
+        {
+          "sections": [
+            {
+              "id": "overview",
+              "text": "Tổng thể cho thấy bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm mạnh này giúp bạn nhìn vấn đề có hệ thống, nhưng cũng cần tự quản ở chỗ không để việc tính toán quá mức hoặc mong muốn kiểm soát mọi thứ làm chậm bước tiến. Đường đi thường không hoàn toàn thẳng một mạch, vì vậy có thể cần sửa cách làm hoặc quay lại xử lý những phần còn dang dở trước khi tiến tiếp."
+            },
+            {
+              "id": "self",
+              "text": "Bạn là người thiên về suy nghĩ kỹ, sắp xếp thông tin và tìm cách giải quyết có cơ sở. Bạn có thể hợp với cách làm kín đáo, chuẩn bị kỹ phía sau và đi sâu vào lĩnh vực mình quan tâm, nhưng điểm cần lưu ý là sự cẩn trọng đôi khi khiến quyết định bị kéo dài. Cách cân bằng là xác định rõ điều kiện cần thiết, bắt đầu bằng một bước phù hợp rồi tiếp tục điều chỉnh qua thực tế; ví dụ minh họa là thay vì chờ một kế hoạch hoàn hảo, bạn có thể thử một phiên bản nhỏ để xem điều gì cần cải thiện."
+            },
+            {
+              "id": "family",
+              "text": "Trong gia đình, xu hướng nổi bật là sự chủ động trong việc sắp xếp, định hướng và gánh trách nhiệm tổ chức. Khi chăm sóc người thân, bạn có thể phát huy sự bền bỉ, khả năng duy trì nền nếp và chú ý đến những điểm cần cải thiện, nhưng cũng nên để các thành viên có không gian riêng thay vì tự mình gánh hết mọi phần việc."
+            },
+            {
+              "id": "marriage",
+              "text": "Trong đời sống chung, sự quan tâm đến tổ chức, định hướng và tìm giải pháp có thể giúp bạn xây dựng sự ổn định. Tuy nhiên, mối quan hệ cũng cần sự mềm mại trong giao tiếp, khả năng thể hiện cảm xúc và đón nhận những điều chưa được sắp xếp hoàn toàn. Khi có khác biệt, việc trao đổi rõ ràng nhưng không cố kiểm soát toàn bộ tình huống sẽ giúp duy trì sự cân bằng."
+            },
+            {
+              "id": "career",
+              "text": "Trong công việc, bạn thiên về chủ động sắp xếp, phân tích và tìm giải pháp có tính toán. Những hướng cần nghiên cứu, tổ chức, quản lý thông tin hoặc xử lý vấn đề theo từng bước có thể phù hợp với cách làm của bạn. Dù vậy, kế hoạch nên vừa với nguồn lực đang có để tránh đặt ra quá nhiều yêu cầu khiến tiến độ bị chậm lại."
+            },
+            {
+              "id": "wealth",
+              "text": "Về nguồn lực tài chính, bạn có xu hướng nhận được sự nâng đỡ từ cách tích lũy, duy trì và chăm chút những gì đang có; khả năng phát huy đến đâu còn phụ thuộc vào cách thu xếp thực tế. Việc tạo dựng nguồn lực có thể thuận lợi hơn khi bạn biết nuôi dưỡng giá trị lâu dài và mở rộng tiếp cận những môi trường hoặc cơ hội ngoài nền quen thuộc."
+            },
+            {
+              "id": "luck",
+              "text": "Giai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Trong giai đoạn này, các ưu tiên nên đi cùng nhau: giới hạn điều không cần thiết, dừng để củng cố và giữ nền; kết thúc những chu kỳ đã đến lúc khép lại, thu hồi hoặc chuyển sang trạng thái tĩnh; đồng thời gánh vác, duy trì và tích lũy bền. Điểm mạnh là khả năng xây nền vững hơn, nhưng cần đặt mốc xem lại để việc củng cố không biến thành trì trệ hoặc khó đổi hướng."
+            },
+            {
+              "id": "annual",
+              "text": "Trong năm đang xét, nhịp sống có xu hướng thúc đẩy việc chuyển từ trạng thái tĩnh sang chủ động hơn, đồng thời đi cùng những tình huống dễ tạo cảm giác cần phản ứng nhanh và biến động gây chú ý. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu rồi mới tăng tốc; cách làm này giúp giảm những mặt trái như sự vội vàng, phản ứng quá mức, hoảng hốt, lời nói gây va chạm hoặc quyết định bị nhiễu."
+            }
+          ]
+        }
+      ],
+      "planningUsed": false,
+      "planning": null,
+      "sectionCount": 8
+    }
+  ],
+  "diagnostics": []
+}

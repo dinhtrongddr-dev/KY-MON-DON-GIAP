@@ -1,0 +1,129 @@
+{
+  "summary": {
+    "runId": "pilot-m01-v10d-20260926T1740Z",
+    "generatedAt": "2026-09-26T16:48:08.889Z",
+    "caseCount": 1,
+    "rounds": 1,
+    "samples": 2,
+    "transportNote": "A uses the local chatgpt2api account transport; it is a direct neutral prompt, not a claim of ChatGPT web UI parity.",
+    "completed": 2,
+    "failed": 0,
+    "verifiedFallbacks": 0,
+    "wins": {
+      "A": 1,
+      "B": 0,
+      "TIE": 0
+    },
+    "aggregate": {
+      "A": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 4,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "B": {
+        "directness": 2,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 1,
+        "calibration": 4
+      }
+    },
+    "diagnosticCounts": {}
+  },
+  "rows": [
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "question": "Lá số Mệnh 1994-04-23",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Mình sẽ luận theo quy ước Kỳ Môn bạn đưa: lấy **Nhật can Kỷ Thổ** làm người hỏi, xét **Mệnh cung theo phép ký cư** và **vận hiện tại 31–45 tuổi tại Cấn cung**, đồng thời xem lớp năm 2026 như tín hiệu bổ trợ. Đây là cách đọc biểu tượng để tham khảo định hướng, không phải khẳng định chắc chắn sự kiện sẽ xảy ra.\n\n## 1. Mệnh cung: Cấn cung – Thiên Nhậm + Tử Môn + Bạch Hổ\n\nTheo phép ký cư trong bàn này, Mệnh rơi vào **Cấn (Đông Bắc)**:\n\n- **Thiên Nhậm**: tính chất gánh vác, chịu trách nhiệm, làm việc lâu dài, thích xây nền tảng. Đây thường là hình tượng của người không quá thích đường tắt, hợp với việc tích lũy năng lực, tài sản, chuyên môn hoặc vị trí.\n- **Tử Môn**: không nên hiểu đơn giản là xấu. Trong Mệnh, nó thường chỉ một đời sống có nhiều giai đoạn “đóng lại để tái cấu trúc”: bỏ cái cũ, kết thúc chu kỳ, thay đổi cách làm.\n- **Bạch Hổ**: tăng tính quyết liệt, chịu áp lực, có xu hướng tự ép mình, khi đã quyết thì làm mạnh. Mặt trái là dễ căng thẳng, ôm việc, phản ứng nhanh khi bị thúc ép.\n\nTổ hợp này cho thấy một mẫu người thiên về **chịu khó xây dựng, trưởng thành qua áp lực**, nhưng bài học lớn là biết lúc nào cần giữ, lúc nào cần bỏ.\n\nKhông thấy đây là cách cục “ăn may nhanh”; nó nghiêng về kiểu **lấy kỷ luật, năng lực và kinh nghiệm để tạo thành quả**.\n\n---\n\n## 2. Nhật can Kỷ Thổ: bản thân trong bàn\n\nNhật can là **Kỷ Thổ**.\n\nKỷ Thổ giống hình tượng đất ruộng: cần môi trường tốt, cần thời gian vun bồi. Đi cùng tháng Thìn, chi Mão nhiều Mộc, giờ Đinh Hỏa:\n\n- Có **Hỏa sinh Thổ** (Đinh Hỏa ở giờ): có nguồn học hỏi, tư duy, khả năng tiếp nhận hoặc được người khác hỗ trợ về kiến thức.\n- Có **Mộc khắc Thổ** (Giáp, Mão): dễ gặp áp lực từ trách nhiệm, quy tắc, người có quyền, mục tiêu cao hơn bản thân.\n- Thổ nhiều yếu tố: thiên về ổn định, thực tế, nhưng dễ lo chuyện lâu dài.\n\nĐiểm mạnh: bền, có khả năng chịu trận.  \nĐiểm cần cân bằng: tránh biến sự trách nhiệm thành gánh nặng quá mức.\n\n---\n\n## 3. Đại vận hiện tại 31–45 tuổi: Cấn cung, lớp Cửu Tinh\n\nBạn đang ở vận:\n\n**Cấn cung – Thiên Nhậm + Tử Môn + Bạch Hổ**, lại có lớp vận dùng **Cửu Tinh**.\n\nĐây là vận mang màu sắc:\n\n- Xây nền móng.\n- Tái cấu trúc.\n- Chịu trách nhiệm lớn hơn.\n- Xử lý những việc tồn đọng từ trước.\n\nTử Môn trong vận thường không phải thời kỳ “mọi thứ tự mở ra”, mà là lúc phải hỏi:\n\n> Cái gì đã hết vòng đời? Cái gì cần đóng lại để dành lực cho cái mới?\n\nVí dụ biểu tượng có thể ứng vào:\n- đổi hướng nghề nghiệp,\n- bỏ một cách làm cũ,\n- thay đổi môi trường,\n- xử lý khoản việc tồn đọng.\n\nNhưng vì đi cùng Thiên Nhậm nên “đóng” không có nghĩa là mất hết; nó giống quá trình chỉnh sửa nền móng.\n\n---\n\n## 4. Năm 2026: Bính Ngọ – lớp truyền dẫn\n\nNăm 2026 có:\n\n- Can năm **Bính** vào Chấn cung.\n- Chi Ngọ vào Ly cung.\n\nXét tín hiệu:\n\n### Bính tại Chấn:\nChấn có:\n- Thiên Xung,\n- Kinh Môn,\n- Huyền Vũ.\n\nTín hiệu này thiên về:\n- tin tức,\n- thay đổi nhanh,\n- cạnh tranh,\n- cần kiểm tra thông tin kỹ.\n\nHuyền Vũ đi cùng Kinh Môn thường nhắc:\n- không nên quyết định chỉ vì nghe một nguồn tin,\n- cẩn thận giấy tờ, cam kết miệng, thông tin chưa xác minh.\n\n### Ngọ tại Ly:\nLy có:\n- Thiên Anh,\n- Hưu Môn,\n- Cửu Thiên.\n\nĐây là lớp sáng hơn:\n- chú ý hình ảnh,\n- giao tiếp,\n- mở rộng quan hệ,\n- đưa năng lực ra bên ngoài.\n\nGhép hai lớp lại: 2026 có xu hướng **đẩy bạn ra khỏi trạng thái chỉ âm thầm làm**, cần thể hiện, kết nối, truyền đạt nhiều hơn; nhưng phải lọc thông tin.\n\n---\n\n## 5. Tương quan với các cung cơ hội\n\nNếu xét công việc, hợp tác, phát triển:\n\n### Khai Môn ở Tốn + Thiên Phụ + Cửu Địa\n\nĐây là một điểm đáng chú ý.\n\nKhai Môn chủ mở việc, cơ hội. Đi cùng:\n- Thiên Phụ: học thuật, văn thư, người hỗ trợ, danh tiếng mềm.\n- Cửu Địa: chậm mà chắc.\n\nÝ nghĩa biểu tượng:\n- Cơ hội tốt có thể đến từ năng lực chuyên môn, hồ sơ, chứng chỉ, kiến thức, uy tín tích lũy.\n- Không thiên về kiểu bùng nổ trong thời gian ngắn.\n\n### Sinh Môn ở Khôn + Thiên Nhuế + Trực Phù\n\nSinh Môn là nguồn lực, tài lộc.\n\nCó:\n- Trực Phù: chính danh, người có vị trí, sự công nhận.\n- Thiên Nhuế: chỉnh sửa, chữa vấn đề cũ.\n\nGợi ý:\n- Tài chính có thể liên quan đến việc giải quyết vấn đề, cải tiến, sửa chữa, tối ưu một thứ đã có.\n- Không nên bỏ qua việc rà soát những điểm yếu trong hệ thống hiện tại.\n\n---\n\n## 6. Điểm cần chú ý nhất của bàn\n\nBàn có **Phục Ngâm và Phản Ngâm cùng hiện**.\n\nĐây là dấu hiệu thường đọc là:\n- việc có tính lặp lại,\n- dễ quay lại vấn đề cũ,\n- có sự giằng co giữa giữ và đổi.\n\nKhông nên vội hiểu là “xấu”. Nó nhắc rằng một vấn đề chưa xử lý tận gốc có thể quay lại.\n\nVới Mệnh Cấn Tử Môn, chủ đề lớn là:\n\n> Không phải tìm thêm quá nhiều thứ mới, mà trước hết cần đóng những vòng cũ đang tiêu hao năng lượng.\n\n---\n\n## 7. Kết luận theo hướng thực tế\n\nTừ toàn bộ bàn:\n\n- Giai đoạn 33 tuổi không phải hình tượng “nhàn”, mà là giai đoạn củng cố vị trí.\n- Có tín hiệu mở về công việc, học tập, danh tiếng hoặc quan hệ, nhưng thiên về **tích lũy chậm và chắc**.\n- Năm 2026 nên chú trọng:\n  1. **Nâng cấp hồ sơ/năng lực trình bày** (Cảnh–Thiên Phụ–Khai Môn).\n  2. **Mở rộng quan hệ hợp tác có chọn lọc** (Lục Hợp ở Khảm).\n  3. **Kiểm tra kỹ thông tin và giấy tờ trước cam kết** (Kinh Môn + Huyền Vũ).\n  4. **Dọn việc cũ, bỏ phần không còn sinh lợi** (Tử Môn vận).\n\nNếu hỏi “đây có phải vận phát triển không?” thì bàn cho thấy **có cửa phát triển nhưng thông qua tái cấu trúc và tích lũy**, không phải dấu hiệu của một cú đổi đời tức thời.\n\nMuốn luận sâu hơn có thể tách riêng một vấn đề cụ thể (ví dụ: **công việc, tiền bạc, kinh doanh, tình cảm, chuyển nơi ở**) vì khi đó cần đổi dụng thần và không nên dùng nguyên bàn Mệnh để trả lời tất cả.",
+      "status": "completed",
+      "latencyMs": 14843,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 7406,
+        "palaces": 9,
+        "sha256": "a909eac0f0706b855567feab4a8b4e70292c576f5e1eb54dc66471332eeafc8e"
+      }
+    },
+    {
+      "caseId": "M01_CASE_A",
+      "kind": "menh",
+      "round": 1,
+      "question": "Lá số Mệnh 1994-04-23",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm cần tự quản là việc tính toán quá mức hoặc muốn kiểm soát mọi thứ, vì điều này có thể làm quá trình xử lý trở nên nặng nề hơn. Trong cách vận hành chung, việc thường không đi thẳng một mạch mà dễ phải sửa cách làm hoặc quay lại xử lý phần cũ.\n\nBạn thiên về phân tích, tổ chức và tìm giải pháp có tính toán, nhưng điểm mạnh này không phải lúc nào cũng tự chuyển thành kết quả. Nếu tính toán quá mức hoặc muốn kiểm soát mọi thứ, việc tiếp tục phân tích có thể làm chậm quyết định. Cách cân bằng là chốt tiêu chí, làm một bước nhỏ rồi điều chỉnh theo phản hồi thực tế.\n\nTrong gia đình, nề nếp có xu hướng thiên về chủ động, định hướng và gánh trách nhiệm tổ chức. Việc chăm sóc con nghiêng về tiếp nhận, nuôi dưỡng và duy trì nguồn lực bằng sự bền bỉ.\n\nTrong đời sống chung, điều đáng chú ý là xu hướng chủ động, định hướng và gánh trách nhiệm tổ chức. Đồng thời, cũng có xu hướng đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn.\n\nVới công việc, bạn thiên về chủ động sắp xếp; cách làm cần vừa với nguồn lực đang có để sự chủ động phát huy hiệu quả.\n\nNguồn lực tài chính có phần nâng đỡ bạn; sức hỗ trợ ấy phát huy đến đâu còn tùy cách thu xếp thực tế.\n\nGiai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Trong giai đoạn này, các ưu tiên nên đi cùng nhau: giới hạn, dừng để củng cố và giữ nền; kết thúc, đóng chu kỳ, thu hồi hoặc chuyển sang trạng thái tĩnh; gánh vác, duy trì và tích lũy bền. Điểm mạnh là xây nền bền hơn, nhưng cần đặt mốc xem lại để việc củng cố không biến thành trì trệ hoặc khó đổi hướng.\n\nTrong năm đang xét, xung lực khởi động, đánh thức và thúc sự việc chuyển từ tĩnh sang động đi cùng cách phản ứng cảnh báo, phản ứng nhanh và biến động gây chú ý. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu, rồi mới tăng tốc; cách này giúp giảm những mặt trái như vội hoặc dễ phản ứng quá mức; hoảng hốt hoặc lời nói gây va chạm hoặc quyết định bị nhiễu.",
+      "status": "reading",
+      "latencyMs": 12587,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "overview",
+              "text": "Bạn có xu hướng phân tích, tổ chức và tìm giải pháp có tính toán. Điểm cần tự quản là việc tính toán quá mức hoặc muốn kiểm soát mọi thứ, vì điều này có thể làm quá trình xử lý trở nên nặng nề hơn. Trong cách vận hành chung, việc thường không đi thẳng một mạch mà dễ phải sửa cách làm hoặc quay lại xử lý phần cũ."
+            },
+            {
+              "id": "self",
+              "text": "Bạn thiên về phân tích, tổ chức và tìm giải pháp có tính toán, nhưng điểm mạnh này không phải lúc nào cũng tự chuyển thành kết quả. Nếu tính toán quá mức hoặc muốn kiểm soát mọi thứ, việc tiếp tục phân tích có thể làm chậm quyết định. Cách cân bằng là chốt tiêu chí, làm một bước nhỏ rồi điều chỉnh theo phản hồi thực tế."
+            },
+            {
+              "id": "family",
+              "text": "Trong gia đình, nề nếp có xu hướng thiên về chủ động, định hướng và gánh trách nhiệm tổ chức. Việc chăm sóc con nghiêng về tiếp nhận, nuôi dưỡng và duy trì nguồn lực bằng sự bền bỉ."
+            },
+            {
+              "id": "marriage",
+              "text": "Trong đời sống chung, điều đáng chú ý là xu hướng chủ động, định hướng và gánh trách nhiệm tổ chức. Đồng thời, cũng có xu hướng đóng, giữ kín, giữ ranh giới và đi sâu chuyên môn."
+            },
+            {
+              "id": "career",
+              "text": "Với công việc, bạn thiên về chủ động sắp xếp; cách làm cần vừa với nguồn lực đang có để sự chủ động phát huy hiệu quả."
+            },
+            {
+              "id": "wealth",
+              "text": "Nguồn lực tài chính có phần nâng đỡ bạn; sức hỗ trợ ấy phát huy đến đâu còn tùy cách thu xếp thực tế."
+            },
+            {
+              "id": "luck",
+              "text": "Giai đoạn 31–45 tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện. Trong giai đoạn này, các ưu tiên nên đi cùng nhau: giới hạn, dừng để củng cố và giữ nền; kết thúc, đóng chu kỳ, thu hồi hoặc chuyển sang trạng thái tĩnh; gánh vác, duy trì và tích lũy bền. Điểm mạnh là xây nền bền hơn, nhưng cần đặt mốc xem lại để việc củng cố không biến thành trì trệ hoặc khó đổi hướng."
+            },
+            {
+              "id": "annual",
+              "text": "Trong năm đang xét, xung lực khởi động, đánh thức và thúc sự việc chuyển từ tĩnh sang động đi cùng cách phản ứng cảnh báo, phản ứng nhanh và biến động gây chú ý. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu, rồi mới tăng tốc; cách này giúp giảm những mặt trái như vội hoặc dễ phản ứng quá mức; hoảng hốt hoặc lời nói gây va chạm hoặc quyết định bị nhiễu."
+            }
+          ]
+        }
+      ],
+      "fidelityReviews": [
+        {
+          "violations": []
+        }
+      ],
+      "planningUsed": false,
+      "planning": null,
+      "sectionCount": 8
+    }
+  ],
+  "diagnostics": []
+}
