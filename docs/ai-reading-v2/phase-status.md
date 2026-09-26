@@ -6,14 +6,14 @@ Release branch: `release/ai-v2-rc`
 
 ## Current result
 
-Status: **RC `a857633` is active on the VPS canary backend; frontend/main promotion and the observation window are still pending**.
+Status: **the `release/ai-v2-rc` worktree is active on the VPS canary backend; frontend/main promotion and completion of the clean observation window are still pending**.
 
 Verified in the isolated RC worktree:
 
 - 574/574 JavaScript tests passed.
 - Python regression: 1/1 passed.
 - `npm run verify`: 142 static assets, 362 local references, six protected core files, launcher pin, versions and module syntax passed.
-- Windows local package: 333 files; SHA-256 `643b4bda1aa86dade8f31688790ebd60f44669e827d61826ed5dc2fe27ee7f2a`.
+- Windows local package: 333 files; SHA-256 `6e0ac48e59c34a9ddefe3ce509e9d520d469eab9a9430719b46a4847fff20740`.
 - The original `develop` worktree and the two Phase 9 evaluation files with local changes were not reset or overwritten.
 
 ## Phase 0 — repository/runtime baseline
@@ -136,7 +136,8 @@ Status: **backend canary deployed and smoke/rollback gates passed; observation i
 - Planner and semantic reviewer remain on the structured Sol → Gemini → Prism route; only the Surface Writer uses `chatgpt2api`.
 - The committed Phase 9 machine/blind artifacts now reference the successful 40/40 run (20 cases × two providers, one round), not the earlier environment-auth failure.
 - A 40-sample blind packet and seven-axis scorecard are prepared; provider identity is withheld until summarization.
-- Initial canary telemetry since `2026-09-25T10:50:00Z`: 2 controlled smoke readings completed and excluded from the acceptance denominator; 0/20 eligible observation readings, zero fallback, zero critical errors, six non-critical request-error metadata events, and one non-blocking style signal. Observation gate remains `INSUFFICIENT_SAMPLES`.
+- Bridge integration diagnostics are now injectable, so automated provider-error and cancellation tests no longer write synthetic failures into the production canary log; the full 574-test run left the log unchanged at 543 rows.
+- A clean observation window started at `2026-09-26T01:00:20Z` (`08:00:20` UTC+7): 0/20 eligible readings, zero fallback, zero failed/cancelled readings, and zero diagnostic errors. The only blocker is `INSUFFICIENT_SAMPLES`.
 
 ## Deliberately not done
 

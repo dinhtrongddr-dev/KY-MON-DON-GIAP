@@ -16,7 +16,7 @@ const relay='https://ky-mon-codex-relay.dinhtrongddr.workers.dev';
 const payload={question:'Trong 30 ngay toi toi co nhan duoc hop dong A khong?',topic:'contract',mode:'prediction',method:'chaibu',input:{year:2026,month:9,day:14,hour:9,minute:0,tzOffset:7}};
 
 async function start(t,options={}) {
-  const {server}=createBridge({token:'integration-token',reviewer:acceptFidelity,...options});
+  const {server}=createBridge({token:'integration-token',reviewer:acceptFidelity,diagnostics:()=>{},...options});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   t.after(()=>{server.closeAllConnections();server.close();});
   return (path,{headers={},body,onData,method}={})=>new Promise((resolve,reject)=>{
@@ -133,9 +133,9 @@ test('slow tunnel readings preserve one complete validated current-protocol JSON
 
 test('a provider error after tunnel keepalive completes as JSON and releases the next reading',async t=>{
   const prepared=await buildReadingRequest(payload);
-  let release,calls=0;
+  let release,calls=0;const diagnostics=[];
   const keepaliveReceived=new Promise(resolve=>release=resolve);
-  const call=await start(t,{keepAliveAfterMs:5,keepAliveEveryMs:5,runner:async()=>{
+  const call=await start(t,{keepAliveAfterMs:5,keepAliveEveryMs:5,diagnostics:event=>diagnostics.push(event),runner:async()=>{
     calls++;
     await keepaliveReceived;
     throw new Error('Provider usage limit reached.');
@@ -152,6 +152,8 @@ test('a provider error after tunnel keepalive completes as JSON and releases the
   assert.equal(next.status,502);
   assert.deepEqual(JSON.parse(next.text),{error:'Provider usage limit reached.'});
   assert.equal(calls,2);
+  assert.equal(diagnostics.length,2);
+  assert.ok(diagnostics.every(event=>event.stage==='request'&&event.code==='AI_REQUEST_ERROR'));
 });
 
 test('local preview serves every browser-imported Case Engine module as JavaScript',async t=>{

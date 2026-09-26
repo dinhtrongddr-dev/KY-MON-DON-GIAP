@@ -56,7 +56,7 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=runAI,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=runAI,diagnostics=recordAiDiagnostic,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
  let busy=false,activeJob=null;
  const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
@@ -96,7 +96,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        job.result=data;job.status='completed';
      }catch(e){
        const cancelled=job.controller.signal.aborted;
-       recordAiDiagnostic({type:'request_failure',flow:kind,stage:'async_job',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
+       diagnostics?.({type:'request_failure',flow:kind,stage:'async_job',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
        if(activityReadingId){track('finishReading',activityReadingId,{status:cancelled?'cancelled':'error'});activityReadingId=null;}
        job.error=cancelled?'Đã hủy lượt luận.':(e?.message||'Không kết nối được AI.');
        job.status=cancelled?'cancelled':'error';
@@ -275,7 +275,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
           }
         }finally{stopKeepAlive();busy=false;}
       }catch(e){
-        recordAiDiagnostic({type:'request_failure',flow:isMenhRead?'menh':'question',stage:'request',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
+        diagnostics?.({type:'request_failure',flow:isMenhRead?'menh':'question',stage:'request',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
         if(activityReadingId){track('finishReading',activityReadingId,{status:controller.signal.aborted?'cancelled':'error'});activityReadingId=null;}
         if(!res.destroyed){
           const data={error:e.message||'Không kết nối được AI.'};
