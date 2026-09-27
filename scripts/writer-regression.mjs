@@ -5,6 +5,7 @@ import {prepareMenhReading} from '../local/menh-reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {interpretMenhReading} from '../local/menh-interpret.mjs';
 import {aiRouteOf,runAI} from '../local/ai-client.mjs';
+import {runSurfaceText} from '../local/surface-writer.mjs';
 import {buildQuestionNarrativeContract} from '../dist/qimen/ai/narrativeContract.mjs';
 import {buildMenhNarrativeContract} from '../dist/qimen/menh/ai/narrative-contract.mjs';
 import {naturalSurfaceFallback,auditSurfaceStyle,surfaceParagraphs} from '../dist/qimen/ai/surfaceReading.mjs';
@@ -19,7 +20,7 @@ for(const kind of ['menh','question']){
   const attempts=[],reviews=[];
   const runner=async(instructions,payload,schema,options)=>{
     if(payload.revision)attempts.at(-1).violations=payload.revision.violations;
-    const result=await runAI(instructions,payload,schema,options);
+    const result=await runSurfaceText(instructions,payload,schema,options);
     attempts.push({model:aiRouteOf(result),paragraphs:surfaceParagraphs(result).length});
     return result;
   };

@@ -92,72 +92,45 @@ export function validateNarrativeContract(contract){
   }
   return contract;
 }
-function surfaceAtomGroup(a){
-  return unique(a.sourceEvidenceIds||[]).sort().join('|')||unique(a.claimIds).filter(id=>id!=='GLOBAL_STRUCTURE').sort().join('|')||a.id;
+const HARD_LOCK_KINDS=new Set(['hard_verdict','hard_constraint','constraint','scope','timing_window','comparison','instruction','recommendation']);
+const ALWAYS_LOCK_KINDS=new Set(['scope','timing_window','comparison','instruction']);
+function hardLocksFor(unit){
+  return unit.atoms.filter(a=>HARD_LOCK_KINDS.has(a.kind)&&(a.required||ALWAYS_LOCK_KINDS.has(a.kind)))
+    .map(({meaning,kind})=>({meaning,kind}));
 }
-function rankedSurfaceAtoms(unitId,atoms){
-  const roles={
-    self:['actionChannel','hiddenFactor','heavenStemExpression','operatingStyle','palaceContext'],
-    family:['palaceContext','actionChannel','operatingStyle'],marriage:['palaceContext','actionChannel','operatingStyle'],
-    career:['operatingStyle','actionChannel','palaceContext'],wealth:['operatingStyle','actionChannel','palaceContext'],
-    annual:['operatingStyle','palaceContext','actionChannel']
-  }[unitId]||['palaceContext','operatingStyle','actionChannel','hiddenFactor','heavenStemExpression'];
-  return atoms.map((a,index)=>({a,index,rank:roles.indexOf(a.role)})).sort((x,y)=>(x.rank<0?99:x.rank)-(y.rank<0?99:y.rank)||x.index-y.index).map(x=>x.a);
-}
-function diverseSurfaceAtoms(unitId,atoms,limit,seed=[]){
-  const selected=[...seed],buckets=new Map();
-  for(const a of rankedSurfaceAtoms(unitId,atoms)){
-    const key=surfaceAtomGroup(a),rows=buckets.get(key)||[];rows.push(a);buckets.set(key,rows);
-  }
-  while(selected.length<limit){
-    let added=false;
-    for(const rows of buckets.values()){
-      const next=rows.find(a=>!selected.includes(a));
-      if(!next)continue;
-      selected.push(next);added=true;
-      if(selected.length===limit)break;
-    }
-    if(!added)break;
-  }
-  return selected;
-}
-function distinctSurfaceAtoms(atoms){
-  const rows=[],seen=new Set();
-  for(const a of [...atoms.filter(x=>x.required),...atoms.filter(x=>!x.required)]){
-    const key=normalizeNarrative(a.meaning).replace(/[^a-z0-9]+/g,' ').trim();if(!key||seen.has(key))continue;
-    seen.add(key);rows.push(a);
-  }
+function technicalGroundingFor(unit,contract){
+  const rows=unique(unit.claimIds).map(id=>contract.claims.find(c=>c.id===id)).filter(Boolean).map(c=>({
+    domain:c.domain||null,
+    actors:c.actorIds||[],
+    status:c.status||null,
+    certainty:c.certainty||unit.certainty,
+    facts:c.technicalEvidence||''
+  })).filter(row=>row.facts);
+  if(unit.technicalEvidence&&!rows.some(row=>row.facts===unit.technicalEvidence))rows.push({
+    domain:'comparison',actors:[],status:null,certainty:unit.certainty,facts:unit.technicalEvidence
+  });
   return rows;
 }
-function questionSurfaceAtoms(unitId,atoms){
-  const distinct=distinctSurfaceAtoms(atoms),required=distinct.filter(a=>a.required);
-  const priority={facet_synthesis:0,planner_synthesis:1,practical_consideration:2,scope:3,recommendation:4,constraint:5,interpretation:6,domain_translation:7};
-  const optional=distinct.filter(a=>!a.required).map((a,index)=>({a,index,rank:priority[a.kind]??8}))
-    .sort((x,y)=>x.rank-y.rank||x.index-y.index).map(x=>x.a);
-  const limit={answer:3,decision:4,approval_timing:3,financial_capacity:4,career_return:3,bottleneck:3,timing:2}[unitId]
-    ||(unitId.startsWith('consideration_')?4:unitId.startsWith('development_')?2:4);
-  return diverseSurfaceAtoms(unitId,optional,Math.max(limit,required.length),required);
-}
-function surfaceWriterAtoms(contract,unitId,atoms){
-  if(contract.kind==='question')return questionSurfaceAtoms(unitId,atoms);
-  if(contract.kind!=='menh')return atoms;
-  const required=atoms.filter(a=>a.required),optional=atoms.filter(a=>!a.required);
-  const limit={overview:2,self:3,family:4,marriage:4,career:3,wealth:3,luck:2,annual:2,birthTimeNote:2}[unitId]||4;
-  return diverseSurfaceAtoms(unitId,optional,Math.max(limit,required.length),required);
+function synthesisTaskFor(unit,contract){
+  const mode=contract.kind==='menh'?'một nhận xét đời sống có chiều sâu':'một mắt xích rõ trong câu trả lời cho việc đang hỏi';
+  return 'Tự giải nghĩa và phối hợp các căn cứ kỹ thuật bên dưới thành '+mode+' về “'+unit.label+'”. Không dịch từng ký hiệu thành từng câu; hãy chỉ ra mối liên hệ, điểm mạnh, điểm vướng và hệ quả thực hành khi căn cứ đủ để nói.';
 }
 export function surfacePayload(contract){
   validateNarrativeContract(contract);
   return {
     version:contract.version,kind:contract.kind,question:contract.question,
+    interpretationMode:'TECHNICAL_GROUNDED_FREE_SYNTHESIS',
     primaryConclusion:{
       conclusion:contract.primaryConclusion.conclusion,
       certainty:contract.primaryConclusion.certainty,
       meaning:contract.primaryConclusion.meaning||''
     },
-    units:contract.units.map(({id,label,conclusion,certainty,atoms,stage})=>({
-      id,label,conclusion,certainty,
-      allowedMeaning:surfaceWriterAtoms(contract,id,atoms).map(({meaning,kind,required})=>({meaning,kind,required})),
-      ...(stage?{stage}:{})
+    units:contract.units.map(unit=>({
+      id:unit.id,label:unit.label,conclusion:unit.conclusion,certainty:unit.certainty,
+      synthesisTask:synthesisTaskFor(unit,contract),
+      hardLocks:hardLocksFor(unit),
+      technicalGrounding:technicalGroundingFor(unit,contract),
+      ...(unit.stage?{stage:unit.stage}:{})
     })),
     allowedFacts:contract.userFacts,
     allowedImplications:contract.allowedImplications,

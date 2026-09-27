@@ -6,9 +6,10 @@ export const acceptFidelity=async()=>({violations:[]});
 export const draftFor=payload=>{
   if(payload?.units?.[0]?.atoms)return fallbackDraft(payload);
   return {sections:(payload?.units||[]).map(u=>{
-    const allowed=Array.isArray(u.allowedMeaning)?u.allowedMeaning:[];
-    const required=allowed.filter(x=>x.required),chosen=required.length?required:allowed.slice(0,2);
-    return {id:u.id,text:chosen.map(x=>String(x.meaning||'').trim()).filter(Boolean).join(' ')||u.label||u.id};
+    const locks=Array.isArray(u.hardLocks)?u.hardLocks:[];
+    const text=locks.map(x=>String(x.meaning||'').trim()).filter(Boolean).join(' ')
+      ||u.label+': các căn cứ kỹ thuật cần được tổng hợp theo kết luận và mức chắc chắn của bàn.';
+    return {id:u.id,text};
   })};
 };
 export const questionContract=p=>buildQuestionNarrativeContract(p.context);

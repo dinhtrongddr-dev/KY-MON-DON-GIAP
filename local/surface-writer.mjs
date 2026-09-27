@@ -49,7 +49,7 @@ export async function writeSurface(contract,{runner=runSurfaceText,reviewer=runA
       }
       if(runner===runSurfaceText&&Number.isInteger(lastRoute?.fallbackIndex))routeStartIndex=lastRoute.fallbackIndex;
       revision={violations,previousReading:draft,
-        instruction:'Sửa đúng section bị vi phạm chỉ bằng allowedMeaning đã cấp. Giữ phần đúng; không thêm dữ kiện hoặc metadata. Nếu chỉ sai độ chắc chắn, sửa tối thiểu trong câu gốc. Trả lại đầy đủ mảng sections với đúng id.'};
+        instruction:'Sửa đúng lỗi kỹ thuật hoặc mức chắc chắn đã nêu trong section liên quan. Giữ các tổng hợp đang có căn cứ; không thu bài về câu mẫu, không thêm dữ kiện hoặc metadata. Nếu chỉ sai độ chắc chắn, sửa tối thiểu trong câu gốc. Trả lại đầy đủ mảng sections với đúng id.'};
     }
   }
 }

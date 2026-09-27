@@ -37,19 +37,19 @@ test('P9 writer context contains only prepared deterministic claims and locks mu
   assert.equal(ctx.restrictions.rebuildChart,false);
   assert.equal(ctx.restrictions.alterProfile,false);
   assert.equal(ctx.restrictions.probability,false);
-  assert.equal(ctx.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.1');
-  assert.ok(ctx.semanticMatrix.claims.some(x=>x.claimId==='CAREER_1'&&x.domainId==='career'));
-  assert.equal(ctx.semanticMatrix.domains.career.id,'career');
+  assert.equal(ctx.semanticMatrix,undefined);
+  assert.ok(ctx.claims.some(x=>x.claimId==='CAREER_1'));
+  assert.ok(ctx.claimSupport.some(x=>x.claimId==='CAREER_1'));
   assert.ok(Object.isFrozen(ctx));
 });
-test('surface prompt is compact and confines narration to approved ideas',()=>{
+test('surface prompt is compact and confines free synthesis to technical grounding and hard locks',()=>{
   const p=menhWriterInstructions();
-  assert.ok(p.length<3500);assert.match(p,/Không thêm người, dữ kiện, sự kiện, ngày, số tiền hoặc xác suất/);
-  assert.doesNotMatch(p,/usefulGodProfile|strengthProfile|COMPREHENSIVE_ONE_SHOT/);
+  assert.ok(p.length<5000);assert.match(p,/technicalGrounding/);assert.match(p,/Không thêm người.*sự kiện đã xảy ra.*ngày.*số tiền.*xác suất/s);
+  assert.doesNotMatch(p,/usefulGodProfile|strengthProfile|COMPREHENSIVE_ONE_SHOT|allowedMeaning/);
 });
-test('Mệnh surface contract permits synthesis and natural examples without a character quota',()=>{
+test('Mệnh surface contract permits grounded holistic synthesis and natural examples without a character quota',()=>{
   const p=menhWriterInstructions();
-  assert.match(p,/nối nhiều ý/);assert.match(p,/ví dụ đời thường/);
+  assert.match(p,/phối hợp chúng thành nhận xét toàn thể/);assert.match(p,/Ví dụ mới/);
   assert.doesNotMatch(p,/8.000–14.000|ký tự sàn|boardFacts|không double-count/);
 });
 test('P9 reading audit accepts claim-bound prose and rejects fabricated claim ids',()=>{

@@ -104,16 +104,16 @@ test('materially missing input is clarified before any writer call',async()=>{
   assert.equal(count,0);assert.deepEqual(r.development,[]);assert.equal(r.status,'needs_clarification');
 });
 
-test('v6 request fingerprint binds the planner, mode, Nian Ming-ready contract and shared semantic matrix',async()=>{
+test('v6 request fingerprint binds the planner, mode and Nian Ming-ready technical contract without Semantic Matrix prose',async()=>{
   const p=await buildReadingRequest(body);assert.equal(p.request.protocol,6);assert.equal(READING_PROTOCOL,6);assert.equal(RULE_VERSION,'TG-CB-6.3');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);assert.equal(p.request.nianmingRules,'KM-NIANMING-1.0');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
-  const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix.version,'KM-SEMANTIC-MATRIX-1.1');assert.equal(writer.semanticMatrix.domain.id,'business');assert.ok(writer.semanticMatrix.palaces.length>0);
+  const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix,undefined);assert.ok(writer.readingGraph.usefulGodProfile);assert.ok(writer.readingGraph.evidenceBundles.length>0);
 });
 
-test('mixed family and money question keeps family primary and finance secondary only in semantic translation',()=>{
+test('mixed family and money question keeps family primary while Writer receives technical roles without semantic vocabulary',()=>{
   const p=prepareReading({...body,question:'Vợ tôi có nên ở nhà chăm con, tôi có đủ tiền và thu nhập không?',topic:'family'}),writer=buildWriterContext(p.context);
-  assert.equal(writer.semanticMatrix.domain.id,'children_parenting');assert.equal(writer.semanticMatrix.secondaryDomain.id,'investment_finance');
-  assert.equal(p.context.allInOne.resolvedTopic,'family');
+  assert.equal(writer.semanticMatrix,undefined);assert.equal(p.context.allInOne.resolvedTopic,'family');
+  assert.ok(writer.readingGraph.nodes.some(n=>['money','capital'].includes(n.actorId)));
 });
 
 test('structured parser accepts schema JSON, repairs literal string controls, and rejects wrapper prose',()=>{
@@ -177,7 +177,7 @@ test('a completed event invented in a negotiation answer is blocked before accep
 test('certainty rewrite preserves the subject and condition instead of inserting boilerplate',async()=>{
   const p=prepareReading(body);let count=0;
   const base='Nếu người duyệt xác nhận điều khoản cuối, hợp đồng ';
-  const reviewer=async(_i,{draft})=>({violations:count===1?[{code:'CERTAINTY_ESCALATION',unitId:'answer',sentence:firstParagraph(draft).meaning,reason:'Điều kiện chưa đủ để bảo đảm thành công.',allowedMeaning:['Kết luận và điều kiện đã duyệt.']}]:[]});
+  const reviewer=async(_i,{draft})=>({violations:count===1?[{code:'CERTAINTY_ESCALATION',unitId:'answer',sentence:firstParagraph(draft).meaning,reason:'Điều kiện chưa đủ để bảo đảm thành công.',grounding:['Kết luận và điều kiện đã duyệt.']}]:[]});
   const result=await interpretReading(p,{reviewer,runner:async(_i,payload)=>{
     count++;const r=draftFor(payload);
     firstParagraph(r).meaning+=' '+base+(count===1?'chắc chắn sẽ thành công.':'nghiêng về khả năng tiến thêm một bước.');

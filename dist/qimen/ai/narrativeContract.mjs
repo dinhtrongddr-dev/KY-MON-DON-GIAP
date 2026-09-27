@@ -1,5 +1,5 @@
 import {buildWriterContext} from './writerContext.mjs';
-import {NARRATIVE_VERSION,freezeNarrative,unique,normalizeNarrative,atom,unit,plainEngineMeaning,semanticMeaning,GENERAL_NOTE,validateNarrativeContract} from './narrativePrimitives.mjs';
+import {NARRATIVE_VERSION,freezeNarrative,unique,normalizeNarrative,atom,unit,plainEngineMeaning,GENERAL_NOTE,validateNarrativeContract} from './narrativePrimitives.mjs';
 import {eventClaimEvidence,comparisonEvidence,ACTOR_LABELS} from './narrativeEvidence.mjs';
 import {wantsDevelopment} from './presentation.mjs';
 const FACET_RULES=[
@@ -156,10 +156,7 @@ function claimAtoms(claim,writer){
     (i.opening?'Với '+(subject||'việc đang hỏi')+', điểm đáng chú ý nằm ở '+i.opening+'. ':'')+
     (i.means?'Hướng xử lý là '+i.means+'. ':'')+
     (i.counterpartCondition?'Việc cần chú ý thêm là '+i.counterpartCondition+'.':''),ids,{actorIds:claim.actorIds}));
-  const palace=Number(/^claim_(\d+)$/.exec(claim.id)?.[1]||0),semantic=writer.semanticMatrix?.palaces?.find(p=>p.palace===palace);
-  for(const [key,role] of [['action',semantic?.actionChannel],['hidden',semantic?.hiddenFactor]]){
-    const meaning=semanticMeaning(role);if(meaning)out.push(atom(claim.id+'_domain_'+key,meaning,ids,{kind:'domain_translation'}));
-  }
+  // Domain prose is synthesized later from the selected technical evidence; no Semantic Matrix vocabulary is injected here.
   const bundle=writer.readingGraph.evidenceBundles.find(b=>b.id===claim.bundleId);
   if(bundle){
     for(const [index,x] of (bundle.stemResponses||[]).entries())if(x.actorIds?.some(id=>claim.actorIds.includes(id)))
@@ -277,7 +274,7 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
     version:NARRATIVE_VERSION,kind:'question',identity:{topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:g.questionContext.questionType},
     question:context.question,claims,units,facets,showDevelopment:asksDevelopment,
     primaryConclusion:{conclusion,certainty:'conditional',stage:g.primaryJudgment.stageAsked,meaning:opening,claimIds:primaryIds},
-    userFacts:g.questionContext.userStatements||[],allowedImplications:['Nối những ý đã được cấp vào đúng hoàn cảnh câu hỏi.','Các việc chuẩn bị là khuyến nghị, không phải sự kiện đã xảy ra.'],
+    userFacts:g.questionContext.userStatements||[],allowedImplications:['Được tự giải nghĩa và nối nhiều căn cứ kỹ thuật trong cùng chủ đề thành một nhận xét toàn thể có căn cứ.','Các việc chuẩn bị là khuyến nghị, không phải sự kiện đã xảy ra.'],
     forbiddenImplications:[...g.primaryJudgment.forbiddenClaims,'Không đổi thứ hạng, đại diện, hướng thực hành hoặc ngày từ dữ liệu đã tính.','Không tự nâng giai đoạn; có thuận lợi không có nghĩa đã đạt kết quả.'],
     note:GENERAL_NOTE
   };

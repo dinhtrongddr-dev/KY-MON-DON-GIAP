@@ -34,23 +34,18 @@ test('Cao Thị Thảo Trang fixture retains the exact supplied placements and a
   assert.match(mc.claims.find(c=>c.id==='LUCK_CURRENT').technicalEvidence,/31–45 tại Cấn 8/);
   assert.deepEqual(new Set(mc.globalModifier.mechanisms),new Set(['FU_YIN','FAN_YIN']));
 });
-test('Mệnh gives the Writer required integrated patterns across life domains and time periods',()=>{
-  const required=id=>mc.units.find(u=>u.id===id).atoms.filter(a=>a.required&&a.kind==='life_synthesis');
-  const self=required('self'),family=required('family'),marriage=required('marriage'),career=required('career'),wealth=required('wealth'),luck=required('luck'),annual=required('annual');
-  for(const rows of [self,family,marriage,career,wealth,luck,annual])assert.equal(rows.length,1);
-  assert.match(self[0].meaning,/phân tích.*không phải lúc nào cũng tự chuyển thành kết quả/i);
-  assert.match(family[0].meaning,/nề nếp.*chăm sóc con.*nuôi dưỡng/i);
-  assert.match(marriage[0].meaning,/đời sống chung.*kết nối mềm/i);
-  assert.match(career[0].meaning,/công việc.*phân tích.*học hỏi/i);
-  assert.match(wealth[0].meaning,/tài chính.*nguồn lực.*ngoài nền quen thuộc/i);
-  const overview=mc.units.find(u=>u.id==='overview');
-  assert.equal(overview.atoms.some(a=>a.meaning===self[0].meaning),false);
-  assert.deepEqual(overview.atoms.map(a=>a.id),['global_pace']);
-  assert.match(luck[0].meaning,/31–45.*củng cố.*mốc xem lại/i);
-  assert.match(annual[0].meaning,/việc cần làm ngay.*thêm dữ liệu.*tăng tốc/i);
-  for(const a of [...self,...family,...marriage,...career,...wealth,...luck,...annual]){
-    assert.ok(a.sourceEvidenceIds.length);assert.doesNotMatch(a.meaning,/Không Vong|Phục Ngâm|Phản Ngâm|Càn 6|Cấn 8|Thiên bàn/);
+test('Mệnh gives the Writer technical grounding across life domains without preset life-synthesis prose',()=>{
+  const payload=surfacePayload(mc),ids=['overview','self','family','marriage','career','wealth','luck','annual'];
+  assert.equal(payload.interpretationMode,'TECHNICAL_GROUNDED_FREE_SYNTHESIS');
+  for(const id of ids){
+    const row=payload.units.find(u=>u.id===id);assert.ok(row,id);assert.ok(row.technicalGrounding.length,id);
+    assert.match(row.synthesisTask,/Tự giải nghĩa và phối hợp các căn cứ kỹ thuật/);
+    assert.equal(Object.hasOwn(row,'allowedMeaning'),false);
   }
+  assert.match(payload.units.find(u=>u.id==='self').technicalGrounding.map(x=>x.facts).join(' '),/Càn 6.*Thiên Tâm.*Đỗ Môn/i);
+  assert.match(payload.units.find(u=>u.id==='luck').technicalGrounding.map(x=>x.facts).join(' '),/31–45.*Cấn 8/i);
+  const overview=payload.units.find(u=>u.id==='overview');
+  assert.ok(overview.hardLocks.some(x=>x.kind==='constraint'));
 });
 test('global effects cap affected units before narration and preserve GLOBAL_STRUCTURE trace',()=>{
   assert.equal(mc.globalModifier.effects.local_positive_signal_cap,true);
@@ -83,12 +78,13 @@ test('childcare decision facets are integrated around the explicit timeline, bud
   assert.match(timing[0].meaning,/nộp đơn bây giờ.*cuối tháng 10.*không đủ cơ sở bảo đảm/i);
   assert.match(finance[0].meaning,/ngân sách cho ít nhất một năm.*chi phí chăm con.*hỗ trợ gia đình/i);
   assert.match(career[0].meaning,/lịch cố định hằng tuần.*học.*hồ sơ.*liên hệ nghề nghiệp/i);
-  const payload=surfacePayload(qc),limits={answer:3,decision:4,approval_timing:3,financial_capacity:4,career_return:3};
-  for(const [id,limit] of Object.entries(limits)){
-    const row=payload.units.find(u=>u.id===id),source=qc.units.find(u=>u.id===id);
-    assert.ok(row.allowedMeaning.length<=limit,id);
-    for(const meaning of source.atoms.filter(a=>a.required).map(a=>a.meaning))assert.ok(row.allowedMeaning.some(a=>a.meaning===meaning),id);
+  const payload=surfacePayload(qc);
+  for(const id of ['answer','decision','approval_timing','financial_capacity','career_return']){
+    const row=payload.units.find(u=>u.id===id);assert.ok(row.technicalGrounding.length,id);
+    assert.equal(Object.hasOwn(row,'allowedMeaning'),false);
+    assert.ok(Array.isArray(row.hardLocks));
   }
+  assert.ok(payload.units.find(u=>u.id==='approval_timing').hardLocks.some(x=>x.kind==='scope'));
 });
 test('multi-facet coverage cannot be removed and Writer cannot forge trace metadata',()=>{
   const draft=fallbackDraft(qc);draft.sections=draft.sections.filter(s=>s.id!=='career_return');
@@ -102,7 +98,8 @@ test('business choice keeps the asked alternatives, margin and domain meaning in
   assert.deepEqual(contract.facets.map(f=>f.id),['decision','financial_capacity']);
   assert.match(contract.primaryConclusion.meaning,/nhận dự án này hay từ chối/i);
   assert.match(contract.units.find(u=>u.id==='financial_capacity').atoms.map(a=>a.meaning).join(' '),/Biên lợi nhuận.*toàn bộ chi phí/i);
-  assert.ok(contract.units.flatMap(u=>u.atoms).some(a=>a.kind==='domain_translation'));
+  assert.equal(contract.units.flatMap(u=>u.atoms).some(a=>a.kind==='domain_translation'),false);
+  assert.ok(surfacePayload(contract).units.every(u=>u.technicalGrounding.length));
 });
 test('planner answer and decision steps survive as traced synthesis without changing the verdict',()=>{
   const prepared=prepareReading({...fixtures.question,question:'Tôi nên nhận dự án này hay từ chối vì biên lợi nhuận đang thấp?',topic:'contract',mode:'business'}),g=prepared.context.allInOne.reasoning,ids=g.primaryJudgment.claimIds;
@@ -166,30 +163,31 @@ test('Writer output is limited to section id and natural text',()=>{
   const draft=fallbackDraft(qc);section(draft,'answer').id='invented';
   assert.throws(()=>validateSurfaceDraft(draft,qc),/UNKNOWN_SECTION|MISSING_SECTION/);
 });
-test('writer payload excludes raw engine data and provenance ids',()=>{
+test('writer payload exposes bounded technical grounding and hard locks without raw engine data or provenance ids',()=>{
   for(const c of [qc,mc]){
     const p=surfacePayload(c),serialized=JSON.stringify(p);
     for(const key of ['board','allInOne','readingGraph','usefulGodProfile','strengthProfile','structureProfile','semanticMatrix'])assert.equal(p[key],undefined);
-    assert.ok(p.units.every(u=>u.allowedMeaning.length));
+    assert.equal(p.interpretationMode,'TECHNICAL_GROUNDED_FREE_SYNTHESIS');
+    assert.ok(p.units.every(u=>u.technicalGrounding.length||u.hardLocks.length));
+    assert.ok(p.units.every(u=>!Object.hasOwn(u,'allowedMeaning')));
     assert.equal(serialized.includes('claimIds'),false);
     assert.equal(serialized.includes('atom_ids'),false);
     assert.equal(serialized.includes('evidenceIds'),false);
-    assert.ok(serialized.length<JSON.stringify(c).length);
+    assert.ok(serialized.length<120000);
   }
 });
-test('Mệnh Writer keeps every required core plus bounded, diverse supporting meanings',()=>{
-  const payload=surfacePayload(mc),limits={overview:2,self:3,family:4,marriage:4,career:3,wealth:3,luck:2,annual:2};
+test('Mệnh Writer receives all selected technical claims and only deterministic locks',()=>{
+  const payload=surfacePayload(mc);
   for(const row of payload.units){
-    const source=mc.units.find(u=>u.id===row.id),required=source.atoms.filter(a=>a.required).map(a=>a.meaning),visible=row.allowedMeaning.map(x=>x.meaning);
-    for(const meaning of required)assert.ok(visible.includes(meaning),row.id);
-    assert.ok(row.allowedMeaning.length<=limits[row.id],row.id);
+    assert.equal(Object.hasOwn(row,'allowedMeaning'),false,row.id);
+    assert.ok(row.synthesisTask.length>40,row.id);
+    assert.ok(row.technicalGrounding.length||row.hardLocks.length,row.id);
+    assert.ok(row.hardLocks.every(x=>['hard_verdict','hard_constraint','constraint','scope','timing_window','comparison','instruction','recommendation'].includes(x.kind)),row.id);
   }
-  assert.equal(payload.units.find(u=>u.id==='self').allowedMeaning.length,3);
-  assert.equal(payload.units.find(u=>u.id==='marriage').allowedMeaning.length,4);
-  const family=payload.units.find(u=>u.id==='family').allowedMeaning.map(x=>x.meaning).join(' ');
-  assert.match(family,/Nề nếp gia đình/i);assert.match(family,/Việc chăm sóc con/i);
-  const career=payload.units.find(u=>u.id==='career').allowedMeaning.map(x=>x.meaning).join(' ');
-  assert.match(career,/chủ động sắp xếp/i);assert.match(career,/học hỏi|tri thức|tài liệu/i);
+  const family=payload.units.find(u=>u.id==='family').technicalGrounding.map(x=>x.facts).join(' ');
+  assert.match(family,/Đại diện gia đình|Đại diện con cái/i);
+  const career=payload.units.find(u=>u.id==='career').technicalGrounding.map(x=>x.facts).join(' ');
+  assert.match(career,/Tính chất công việc|Cơ hội/i);
 });
 test('technical evidence and provenance are reattached by the app and cannot be forged',()=>{
   for(const c of [qc,mc]){
@@ -221,7 +219,7 @@ test('Mệnh safety gates reject medical, death, exact children and marriage cla
 });
 test('independent semantic review blocks contradictory prose without relying on Writer ids',async()=>{
   let writes=0,reviews=0;
-  const r=await writeSurface(qc,{runner:async()=>{writes++;const draft=fallbackDraft(qc);section(draft,'answer').text='Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.';return draft;},reviewer:async()=>{reviews++;return {violations:[{code:'VERDICT_CHANGED',unitId:'answer',sentence:'Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.',reason:'Đảo kết luận có điều kiện.',allowedMeaning:['Kết luận và điều kiện đã duyệt.']}]};}});
+  const r=await writeSurface(qc,{runner:async()=>{writes++;const draft=fallbackDraft(qc);section(draft,'answer').text='Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.';return draft;},reviewer:async()=>{reviews++;return {violations:[{code:'VERDICT_CHANGED',unitId:'answer',sentence:'Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.',reason:'Đảo kết luận có điều kiện.',grounding:['Kết luận và điều kiện đã duyệt.']}]};}});
   assert.equal(writes,2);assert.equal(reviews,2);assert.equal(r.status,'verified_fallback');
   assert.doesNotMatch(meaningOf(r),/Mọi điều kiện đều đã sẵn sàng/);
 });

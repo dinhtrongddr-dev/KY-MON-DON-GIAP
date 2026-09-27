@@ -1,6 +1,5 @@
 import {validateMenhResult} from '../audit.mjs';
 import {MENH_RULE_VERSION,MENH_PROTOCOL} from '../../../menh-core.mjs';
-import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForMenh,semanticDomainVocabulary,semanticGuideForBoard} from '../../semantic/matrix.mjs';
 import {natalCaseTarget,retrieveCases,writerCaseGuidance} from '../../case/engine.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
@@ -107,23 +106,7 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     }
     return {claimId:c.claimId,palaces:[...palaces],evidenceIds:[...c.evidenceIds]};
   });
-  const natalBoard=result.natal?.baseBoard||null;
-  const palaceNumber=value=>typeof value==='number'?value:Number(String(value||'').match(/(\d+)$/)?.[1]||0);
-  const compactSemanticRole=x=>x?{name:x.name,meaning:x.meaning,light:x.light,shadow:x.shadow,strength:x.strength}:null;
-  const semanticClaims=claims.map(claim=>{
-    const support=claimSupport.find(x=>x.claimId===claim.claimId),domainId=semanticDomainForMenh(claim.domain);
-    const palaceNumbers=[...new Set((support?.palaces||[]).map(palaceNumber).filter(Boolean))];
-    const palaces=natalBoard?semanticGuideForBoard(natalBoard,{mode:'destiny',domainId,palaceNumbers,analysisPalaces:result.analysisLayers?.byPalace||{}}).map(p=>({
-      palace:p.palace,keywords:p.keywords,summary:p.summary,states:p.states.map(s=>({id:s.id,rule:s.rule})),strengthExpression:p.strength_expression,
-      palaceContext:compactSemanticRole(p.palace_context),actionChannel:compactSemanticRole(p.action_channel),operatingStyle:compactSemanticRole(p.operating_style),hiddenFactor:compactSemanticRole(p.hidden_factor),
-      heavenStemExpression:{primary:compactSemanticRole(p.heaven_stem_expression.primary),secondary:p.heaven_stem_expression.secondary.map(compactSemanticRole)},
-      earthStemFoundation:compactSemanticRole(p.earth_stem_foundation),domainTranslation:p.domain_translation,associations:p.associations,
-      items:p.items.map(i=>({layer:i.layer,role:i.role,name:i.name,meaning:i.meaning,primary:i.primary}))
-    })):[];
-    return {claimId:claim.claimId,domainId,palaces};
-  });
-  const domainIds=[...new Set(semanticClaims.map(x=>x.domainId))],semanticDomains=Object.fromEntries(domainIds.map(id=>[id,semanticDomainVocabulary(id)]));
-  const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'destiny',assemblyRules:semanticAssemblyRules(),domains:semanticDomains,claims:semanticClaims};
+  // Semantic Matrix is reserved for UI/reference display. The Writer receives resolver-selected technical grounding instead of a closed vocabulary.
   const caseProfile=retrieveCases(natalCaseTarget(result),{limit:4});
   return freeze({
     protocol:MENH_PROTOCOL,
@@ -147,7 +130,6 @@ export function buildMenhWriterContext(result,{birthTimeMode='KNOWN',stability=n
     analysisLayers:birthTimeMode==='KNOWN'?compactAnalysisLayers(result,claimSupport):null,
     timePlace:compactTimePlace(timePlace),
     rectification:birthTimeMode==='UNKNOWN'?compactRectification(rectification):null,
-    semanticMatrix,
     caseGuidance:writerCaseGuidance(caseProfile),
     evidence:visibleEvidence.map(e=>({
       evidenceId:e.evidenceId,ruleId:e.ruleId,domain:e.domain,palace:e.palace,mechanism:e.mechanism,effectTag:e.effectTag,

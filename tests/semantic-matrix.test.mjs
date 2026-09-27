@@ -85,13 +85,16 @@ test('actual strength and all supported structural states are applied after doma
   assert.ok(weakValue.states.some(x=>x.id==='weak_trapped'));assert.equal(weakValue.strength_expression.description,'khó phát huy trọn vẹn');
 });
 
-test('UI remains concise and does not render internal state ids while AI contexts bind structured 1.1 semantics',()=>{
+test('Semantic Matrix remains concise UI reference and is absent from AI Writer contexts',()=>{
   const app=readFileSync(new URL('../dist/app.mjs',import.meta.url),'utf8'),menhView=readFileSync(new URL('../dist/menh-view.mjs',import.meta.url),'utf8');
   const eventWriter=readFileSync(new URL('../dist/qimen/ai/writerContext.mjs',import.meta.url),'utf8'),menhWriter=readFileSync(new URL('../dist/qimen/menh/ai/writer-context.mjs',import.meta.url),'utf8');
   const eventPrompt=readFileSync(new URL('../dist/qimen/ai/prompts.mjs',import.meta.url),'utf8'),menhPrompt=readFileSync(new URL('../dist/qimen/menh/ai/prompts.mjs',import.meta.url),'utf8');
   assert.match(app,/keywords\.slice\(0,3\)/);assert.match(menhView,/keywords\.slice\(0,3\)/);
   for(const ui of [app,menhView]){assert.doesNotMatch(ui,/semantic\.states\.map\(x=>x\.id/);assert.doesNotMatch(ui,/ZHANG_ADVANCED_CLASS_LIFETIME/);}
-  for(const writer of [eventWriter,menhWriter]){assert.match(writer,/palaceContext/);assert.match(writer,/heavenStemExpression/);assert.match(writer,/strengthExpression/);}
+  for(const writer of [eventWriter,menhWriter]){
+    assert.match(writer,/Semantic Matrix is reserved for UI\/reference display/);
+    assert.doesNotMatch(writer,/semanticGuideForBoard|semanticDomainVocabulary|palaceContext|heavenStemExpression|strengthExpression/);
+  }
   for(const prompt of [eventPrompt,menhPrompt]){assert.match(prompt,/SURFACE_WRITER_INSTRUCTIONS/);assert.doesNotMatch(prompt,/palaceContext|strengthProfile|semanticMatrix/);}
 });
 

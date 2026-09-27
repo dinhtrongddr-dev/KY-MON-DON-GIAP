@@ -1,6 +1,4 @@
 import {buildPresentationProfile} from './presentation.mjs';
-import {SEMANTIC_MATRIX_VERSION,semanticAssemblyRules,semanticDomainForTopic,semanticDomainVocabulary,semanticGuideForBoard} from '../semantic/matrix.mjs';
-import {classifyTopics} from './classifier.mjs';
 import {writerCaseGuidance} from '../case/engine.mjs';
 
 export function buildWriterContext(context) {
@@ -92,16 +90,7 @@ export function buildWriterContext(context) {
     direction:'300–650'
   };
   const deepTarget={prediction:'600–1100',strategy:'700–1250',business:'750–1350',negotiation:'650–1200',timing:'450–850',direction:'450–850'};
-  const semanticDomainId=semanticDomainForTopic(c.resolvedTopic),secondaryDomainId=classifyTopics(context.question).map(semanticDomainForTopic).find(id=>id!==semanticDomainId)||null;
-  const compactSemanticRole=x=>x?{name:x.name,meaning:x.meaning,light:x.light,shadow:x.shadow,strength:x.strength}:null;
-  const semanticPalaces=semanticGuideForBoard(c.board,{mode:'event',domainId:semanticDomainId,secondaryDomainId,palaceNumbers:[...new Set(g.evidenceBundles.map(b=>b.palace))],analysisPalaces:c.analysis?.palaces||[]}).map(p=>({
-    palace:p.palace,keywords:p.keywords,summary:p.summary,states:p.states.map(s=>({id:s.id,rule:s.rule})),strengthExpression:p.strength_expression,
-    palaceContext:compactSemanticRole(p.palace_context),actionChannel:compactSemanticRole(p.action_channel),operatingStyle:compactSemanticRole(p.operating_style),hiddenFactor:compactSemanticRole(p.hidden_factor),
-    heavenStemExpression:{primary:compactSemanticRole(p.heaven_stem_expression.primary),secondary:p.heaven_stem_expression.secondary.map(compactSemanticRole)},
-    earthStemFoundation:compactSemanticRole(p.earth_stem_foundation),domainTranslation:p.domain_translation,associations:p.associations,
-    items:p.items.map(i=>({layer:i.layer,role:i.role,name:i.name,meaning:i.meaning,primary:i.primary}))
-  }));
-  const semanticMatrix={version:SEMANTIC_MATRIX_VERSION,mode:'event',domain:semanticDomainVocabulary(semanticDomainId),secondaryDomain:secondaryDomainId?semanticDomainVocabulary(secondaryDomainId):null,assemblyRules:semanticAssemblyRules(),palaces:semanticPalaces};
+  // Semantic Matrix is reserved for UI/reference display. The Writer receives resolver-selected technical grounding instead of a closed vocabulary.
   const coverageByMode={
     prediction:['answer_stage','decisive_evidence','counterevidence','outcome_condition'],
     strategy:['current_position','bottleneck','reversible_step','response_signal','stop_or_escalate'],
@@ -112,7 +101,7 @@ export function buildWriterContext(context) {
   };
   return {rules:context.rules,question:context.question,topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:q.questionType,
     readingGraph,evidence,comparisons,comparisonConvention:c.comparison?.convention||c.plan.computed.convention||null,
-    semanticMatrix,caseGuidance:writerCaseGuidance(g.caseProfile),warnings:context.warnings,unsupported:context.unsupported,presentation,
+    caseGuidance:writerCaseGuidance(g.caseProfile),warnings:context.warnings,unsupported:context.unsupported,presentation,
     layout:concise?'concise':'full',
     coverage:{required:[...(coverageByMode[c.classification.mode]||[]),...(deep?['role_specific_modifiers','directed_relationships','counterfactual_check','action_provenance']:[])]},
     length:{depth:q.depth,target:deep?deepTarget[c.classification.mode]||'600–1100':targetByMode[c.classification.mode]||'350–750',

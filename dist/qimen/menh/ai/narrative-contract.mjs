@@ -155,17 +155,16 @@ export function buildMenhNarrativeFromContext(ctx){
   for(const c of ctx.claims){
     const section=claimSection(c);if(!section||c.claimId==='FAMILY_PARENT_PAIR_ROLE')continue;
     const row=groups.get(section)||{ids:[],atoms:[],modifiers:[]};
-    row.ids.push(c.claimId);row.atoms.push(...roleAtoms(c,ctx));
+    row.ids.push(c.claimId);row.atoms.push(atom(c.claimId+'_grounded_synthesis',
+      'Luận chủ đề này trực tiếp từ các đại diện, vị trí cung, Tinh–Môn–Thần–Can, vượng suy, quan hệ và trạng thái đặc biệt trong căn cứ kỹ thuật; tổng hợp thành một mạch thay vì dịch từng ký hiệu.',
+      [c.claimId],{kind:'grounded_synthesis'}));
     if(affected(c)){row.ids.push(global.claimId);row.modifiers.push(...global.evidenceIds);}
     groups.set(section,row);
   }
   const self=groups.get('self'),overviewAtoms=[];
-  const selfSynthesis=self?.atoms.find(a=>a.kind==='life_synthesis'&&a.required);
-  if(self?.atoms.length&&!selfSynthesis){
-    const first=self.atoms.find(a=>a.role==='operatingStyle')||self.atoms[0];
-    overviewAtoms.push({...first,id:'overview_character',required:true});
-    if(first.caution)overviewAtoms.push(atom('overview_balance','Điểm cần tự quản là '+first.caution.charAt(0).toLowerCase()+first.caution.slice(1).replace(/[.!?]$/,'')+'.',first.claimIds,{required:true}));
-  }
+  if(self?.ids.length)overviewAtoms.push(atom('overview_grounded_synthesis',
+    'Mở mạch tổng thể từ các căn cứ kỹ thuật của cung bản thân: nêu khí chất chủ đạo, cách vận hành, điểm mạnh và mặt cần cân bằng trong cùng một câu chuyện.',
+    unique(self.ids.filter(id=>id!=='GLOBAL_STRUCTURE')),{kind:'grounded_synthesis'}));
   if(global.active)overviewAtoms.push(atom('global_pace',
     global.mechanisms.includes('FU_YIN')&&global.mechanisms.includes('FAN_YIN')
       ?'Nhịp chung không đi thẳng một mạch: các điểm thuận cần thời gian tích lũy, và cách làm thường phải được sửa lại khi hoàn cảnh đổi chiều.'
@@ -182,17 +181,6 @@ export function buildMenhNarrativeFromContext(ctx){
     if(id==='luck'&&ctx.luck)row.atoms.unshift(atom('luck_period',
       'Giai đoạn '+ctx.luck.ageStart+'–'+ctx.luck.ageEnd+' tuổi là nền để hiểu những ưu tiên hiện tại, không phải lịch sự kiện.',
       ['LUCK_CURRENT'],{required:true,kind:'scope'}));
-    if(id==='wealth'){
-      const e=ctx.evidence.find(e=>e.evidenceId==='WEALTH_INNER_OUTER');
-      const meaning={
-        DEVELOPMENT_OR_ENTERPRISE_AWAY_FROM_ORIGIN:'Có thể phát triển qua môi trường hoặc nguồn cơ hội ngoài nền quen thuộc.',
-        DEVELOPMENT_AWAY_FROM_ORIGIN:'Mở rộng ra ngoài môi trường quen thuộc là một hướng đáng cân nhắc.',
-        LOCAL_OR_ANCESTRAL_BASE_MORE_SUPPORTIVE:'Nền sẵn có ở địa phương hoặc gia đình là một phần hỗ trợ đáng giữ.',
-        ANCESTRAL_LOCAL_ASSETS_HARDER_TO_RETAIN:'Việc giữ nguồn lực sẵn có cần được chăm chút, không nên mặc nhiên coi chúng sẽ luôn còn nguyên.'
-      }[e?.effectTag];
-      if(meaning)row.atoms.push(atom('wealth_environment',meaning,['WEALTH_CORE'],{sourceEvidenceIds:[e.evidenceId]}));
-    }
-    row.atoms.push(...sectionSynthesisAtoms(id,row));
     const scopedIds=unique(row.ids),modifiers=unique(row.modifiers);
     units.push(unit(id,LABELS[id],scopedIds,row.atoms,{
       certainty:modifiers.length?'conditional':'tendency',conclusion:id==='luck'||id==='annual'?'period_tendency':'natal_tendency',modifierIds:modifiers
@@ -214,7 +202,7 @@ export function buildMenhNarrativeFromContext(ctx){
       realization:global.active?'requires_adjustment':'subject_to_local_conditions',
       local_positive_signal_cap:global.active
     },appliedTo:units.filter(u=>u.modifierIds?.length).map(u=>u.id),evidenceIds:global.evidenceIds},
-    allowedImplications:['Tổng hợp các ý được cấp thành nhận xét đời sống; ví dụ phải rõ là minh họa.','Điểm mạnh và điểm cần tự quản có thể cùng tồn tại.'],
+    allowedImplications:['Được tự giải nghĩa và nối nhiều căn cứ kỹ thuật trong cùng chủ đề thành nhận xét đời sống có chiều sâu.','Điểm mạnh và điểm cần tự quản có thể cùng tồn tại; ví dụ phải rõ là minh họa.'],
     forbiddenImplications:['Không đổi xu hướng thành sự kiện đã xảy ra.','Không dự báo bệnh, tử vong, số con, số lần kết hôn, xác suất hoặc số tiền.','Không đoán giờ sinh.'],
     note:GENERAL_NOTE
   };
