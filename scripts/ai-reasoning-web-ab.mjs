@@ -6,12 +6,13 @@ import {prepareMenhReading} from '../local/menh-reading.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {interpretMenhReading} from '../local/menh-interpret.mjs';
 import {runSurfaceText} from '../local/surface-writer.mjs';
-import {runAIText,runAI,aiRouteOf} from '../local/ai-client.mjs';
+import {runAIText,runAI,aiRouteOf,READING_TIMEOUT_MS} from '../local/ai-client.mjs';
 import {surfaceParagraphs} from '../dist/qimen/ai/surfaceReading.mjs';
 import {buildNeutralBaselineInput,inspectNeutralBaselineInput,NEUTRAL_BASELINE_INSTRUCTIONS} from '../local/neutral-baseline.mjs';
 
 const fixture=JSON.parse(await readFile(new URL('../tests/fixtures/ai-reading-v2-eval.json',import.meta.url)));
 const rounds=Math.max(1,Number(process.env.EVAL_ROUNDS||1));
+const sampleTimeoutMs=Math.max(30_000,Number(process.env.EVAL_TIMEOUT_MS||READING_TIMEOUT_MS));
 const selected=new Set(String(process.env.EVAL_CASES||'').split(',').map(x=>x.trim()).filter(Boolean));
 const cases=selected.size?fixture.cases.filter(c=>selected.has(c.id)):fixture.cases;
 if(!cases.length)throw new Error('Không tìm thấy case được chọn.');
@@ -35,7 +36,7 @@ function routeInfo(value){
 }
 async function runDirect(c,prepared){
  const input=buildNeutralBaselineInput(c,prepared),audit=inspectNeutralBaselineInput(input),started=Date.now();
- const result=await runAIText(NEUTRAL_BASELINE_INSTRUCTIONS,input,{env:writerEnv,diagnostics:recordDiagnostic});
+ const result=await runAIText(NEUTRAL_BASELINE_INSTRUCTIONS,input,{env:writerEnv,signal:AbortSignal.timeout(sampleTimeoutMs),diagnostics:recordDiagnostic});
  return {variant:'A',label:'chatweb-direct-neutral',text:result.text,status:'completed',
   latencyMs:Date.now()-started,route:routeInfo(result),inputAudit:{...audit,sha256:sha(input)}};
 }

@@ -1,0 +1,287 @@
+{
+  "summary": {
+    "runId": "pilot-q01-story-v16-20260927T0650Z",
+    "generatedAt": "2026-09-27T04:51:55.433Z",
+    "caseCount": 1,
+    "rounds": 1,
+    "samples": 2,
+    "transportNote": "A uses the local chatgpt2api account transport; it is a direct neutral prompt, not a claim of ChatGPT web UI parity.",
+    "completed": 2,
+    "failed": 0,
+    "verifiedFallbacks": 0,
+    "wins": {
+      "A": 1,
+      "B": 0,
+      "TIE": 0
+    },
+    "aggregate": {
+      "A": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 5
+      },
+      "B": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 2,
+        "actionability": 4,
+        "nonRepetition": 4,
+        "calibration": 5
+      }
+    },
+    "diagnosticCounts": {}
+  },
+  "rows": [
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi đang phân vân việc viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ để nghỉ ở nhà chăm con hoàn toàn (bé nay đã gần 7 tháng rồi), nhưng tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ và việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con, và lo bản thân ù lì tụt hậu không? Hãy cho tôi biết việc tôi quyết định nghỉ việc có thuận lợi được giải quyết không và thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+      "variant": "A",
+      "label": "chatweb-direct-neutral",
+      "text": "Tôi sẽ luận theo bàn Kỳ Môn như một góc nhìn tham khảo để soi thế việc, không xem đây là sự khẳng định chắc chắn rằng đơn nghỉ sẽ được duyệt hay tương lai tài chính sẽ xảy ra đúng như vậy. Việc nghỉ việc, chăm con và dòng tiền vẫn cần đối chiếu bằng kế hoạch thực tế.\n\n**Câu hỏi chính:** có nên viết đơn nghỉ ở thời điểm hiện tại, để gần cuối tháng 10 được giải quyết nghỉ, và việc ở nhà chăm con ít nhất 1 năm có thuận không?\n\n### 1. Thế của người hỏi (Nhật can Kỷ ở cung Tốn)\n\nNgười hỏi lấy **Kỷ** làm bản thân, nằm tại cung Tốn:\n\n- **Thiên Nhuế**: có tính chất của vấn đề cần chữa chỉnh, sự lo lắng, việc cũ cần sắp xếp lại. Nó khá khớp với tâm trạng hiện tại: không chỉ là “muốn nghỉ”, mà còn là nỗi lo sau nghỉ có bị tụt hậu, mất nhịp nghề nghiệp, kinh tế có đủ hay không.\n- **Kinh Môn**: dễ suy nghĩ nhiều, lo về lời nói, thủ tục, đánh giá của người khác. Việc xin nghỉ có thể khiến bản thân phải cân nhắc cách trình bày, thời điểm nói, quan hệ với nơi làm việc.\n- **Huyền Vũ**: có yếu tố chưa nhìn hết, nhất là phần thông tin và nguồn lực. Điểm này nhắc rằng trước khi quyết, cần làm rõ những thứ đang “mơ hồ”: khoản dự phòng, khả năng quay lại nghề, phương án nếu tìm việc lâu hơn dự kiến.\n\nTín hiệu chính: **ý định nghỉ không phải là ý nghĩ nhất thời hoàn toàn, nhưng đang bị bao quanh bởi nhiều nỗi lo chưa được giải quyết.**\n\n---\n\n### 2. Xét việc xin nghỉ và thủ tục (Sự việc – Canh ở cung Đoài)\n\nSự việc lấy Canh, ở cung Đoài:\n\n- Có **Sinh Môn**: đây là dấu hiệu khá tốt khi xét về nguồn lực, sự chuyển đổi để tạo một trạng thái sống mới, có hướng “sinh trưởng”.\n- Có **Thiên Bồng + Thái Âm**: thiên về tính toán phía sau, chuẩn bị âm thầm, tìm phương án kín, không nên làm theo cảm xúc bộc phát.\n\nĐiểm thuận ở đây là: việc nghỉ để chăm con không hiện lên như một hướng “đóng hết mọi cửa”. Nó có dấu hiệu của việc tái sắp xếp cuộc sống và tìm một cách vận hành khác.\n\nNhưng cần phân biệt:\n\n- **Dấu hiệu thuận:** có khả năng mở ra một giai đoạn mới.\n- **Không đồng nghĩa:** đơn nghỉ chắc chắn được duyệt hoặc mọi việc tự nhiên thuận lợi.\n\nVì trong cung sự việc không thấy thế quá mạnh của “đã thành”, nên phần quyết định vẫn nằm nhiều ở cách chuẩn bị và trao đổi thực tế.\n\n---\n\n### 3. Khả năng duyệt nghỉ, thỏa thuận với nơi làm việc (Lục Hợp – cung Khôn)\n\nCung Khôn có:\n\n- **Hưu Môn**\n- **Lục Hợp**\n- **Thiên Tâm**\n\nĐây là một tổ hợp khá phù hợp với chuyện xin nghỉ, thương lượng, giữ hòa khí.\n\nTín hiệu này cho thấy cách đi phù hợp không phải là đối đầu hay đưa quyết định đột ngột, mà là:\n\n- trao đổi sớm,\n- trình bày lý do rõ ràng,\n- giữ quan hệ tốt,\n- để đôi bên có thời gian sắp xếp.\n\nNếu hỏi “có thuận để giải quyết nghỉ không?” thì bàn nghiêng về **có cửa thuận hơn khi làm theo hướng mềm và có chuẩn bị**, chứ không phải kiểu nộp đơn rồi chờ mọi thứ tự chạy.\n\n---\n\n### 4. Việc ở nhà chăm con 1 năm và lo kinh tế\n\nPhần tài lực lấy **Sinh Môn tại cung Đoài**:\n\nĐây là điểm sáng của bàn. Nó không cho thấy ý “nghỉ là mất hết nguồn sống”, nhưng đi cùng Thiên Bồng và Thái Âm lại nói rằng:\n\n- cần tính toán kỹ,\n- cần có phương án dự phòng,\n- có thể phải duy trì một nguồn lực âm thầm nào đó (học thêm, giữ nghề, làm việc linh hoạt, kết nối nghề nghiệp).\n\nNỗi lo “ở nhà lâu rồi ù lì, tụt hậu” được phản ánh bởi cung bản thân có Nhuế + Kinh. Bàn không cho thấy đó là kết quả tất yếu, mà giống một cảnh báo: **nếu nghỉ hoàn toàn không có kế hoạch duy trì năng lực, cảm giác tụt lại dễ xuất hiện.**\n\n---\n\n### 5. Về thời điểm gần cuối tháng 10\n\nBàn hiện tại chỉ cho thấy xu hướng của việc, không đủ căn cứ để khẳng định chính xác một mốc ngày “đến cuối tháng 10 chắc chắn xong”.\n\nCó thể hiểu theo hướng:\n\n- Giai đoạn hiện tại phù hợp để **chuẩn bị hồ sơ, trao đổi, dò phản ứng**.\n- Không nên chờ đến sát lúc cần nghỉ mới bắt đầu xử lý.\n\n---\n\n### Kết luận luận bàn\n\nNếu chỉ nhìn theo Kỳ Môn:\n\n- **Ý định nghỉ để chăm con có thế thuận**, đặc biệt ở phần cần nghỉ ngơi, sắp xếp gia đình và chuyển sang nhịp sống mới.\n- **Việc xin nghỉ có dấu hiệu có thể thương lượng được**, nhưng thuận nhờ cách giao tiếp và chuẩn bị, không phải dấu hiệu “chắc chắn tự thành”.\n- **Ở nhà 1 năm có thể đi được**, nhưng điều kiện quan trọng là phải giữ một sợi dây với nghề nghiệp và tài chính; nếu hoàn toàn buông bỏ bản thân thì nỗi lo tụt hậu dễ thành vấn đề.\n\nViệc nên làm theo thế bàn:\n\n1. Trước khi nộp đơn, hãy tính một “mốc an toàn”:\n   - gia đình có thể duy trì bao lâu nếu chưa có thu nhập mới,\n   - khoản dự phòng tối thiểu,\n   - các chi phí cố định sau khi nghỉ.\n\n2. Khi trao đổi nghỉ:\n   - trình bày theo hướng kế hoạch chăm con và sắp xếp công việc,\n   - tránh để người nghe chỉ thấy đây là quyết định bộc phát.\n\n3. Trong 1 năm ở nhà:\n   - giữ một nhịp nhỏ với nghề (học, cập nhật, duy trì quan hệ nghề nghiệp),\n   - không nhất thiết phải làm nhiều, nhưng nên tránh “đứt kết nối” hoàn toàn.\n\nLá này không nghiêng về “nghỉ là sai”, mà nghiêng về **nghỉ được nếu biến khoảng nghỉ thành một giai đoạn có kế hoạch, chứ không phải một khoảng trống.**",
+      "status": "completed",
+      "latencyMs": 12407,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "inputAudit": {
+        "bytes": 10857,
+        "palaces": 9,
+        "sha256": "90ccb3298c9192bc3857204413937ae4aab4eb800c806e388b2489f839e4dd3f"
+      }
+    },
+    {
+      "caseId": "Q01_CASE_B",
+      "kind": "question",
+      "round": 1,
+      "question": "Tôi đang phân vân việc viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ để nghỉ ở nhà chăm con hoàn toàn (bé nay đã gần 7 tháng rồi), nhưng tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ và việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con, và lo bản thân ù lì tụt hậu không? Hãy cho tôi biết việc tôi quyết định nghỉ việc có thuận lợi được giải quyết không và thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+      "variant": "B",
+      "label": "app-full-pipeline",
+      "text": "Bạn có thể xúc tiến việc viết đơn, nhưng chưa nên xem đây là bước chắc chắn sẽ được duyệt đúng vào gần cuối tháng 10 hoặc chắc chắn có thể nghỉ ở nhà ít nhất 1 năm một cách ổn định. Phương án này có thể triển khai, nhưng độ thuận lợi phụ thuộc vào việc bạn chuẩn bị được nguồn lực tài chính và giữ được khả năng quay lại công việc sau thời gian chăm con.\n\nViệc nghỉ việc lúc này là một quyết định đổi lấy thời gian chăm con hoàn toàn khi bé đã gần 7 tháng, đồng thời chấp nhận việc tạm dừng nguồn thu hiện tại và có một khoảng ngắt trong quá trình nghề nghiệp. Quyết định sẽ phù hợp hơn khi bạn xác định rõ gia đình có thể gánh được những thay đổi này trong ít nhất 1 năm và việc ở bên con mang lại giá trị đủ lớn để bạn chấp nhận sự đánh đổi. Trước khi chốt, nên ưu tiên xác minh các điều kiện thực tế, trao đổi sự phối hợp trong gia đình và hoàn tất từng bước xử lý thay vì chỉ dựa vào mong muốn nghỉ. Việc thử chuẩn bị trước rồi mới mở rộng cam kết sẽ giúp phương án này vững hơn.\n\nViết hoặc nộp đơn bây giờ và việc được giải quyết duyệt vào gần cuối tháng 10 là hai mốc khác nhau. Bạn có thể bắt đầu xúc tiến, nhưng chưa có cơ sở để bảo đảm kết quả xử lý sẽ đúng theo thời điểm mong muốn. Điều quan trọng là cần theo dõi phản hồi thực tế từ nơi làm việc và hoàn tất các điều kiện liên quan trước khi xem đây là một kế hoạch đã chắc chắn.\n\nTrước khi nghỉ, bạn nên lập một kế hoạch tài chính cho ít nhất một năm, bao gồm nguồn thu còn lại, chi phí chăm con, khoản dự phòng và phần hỗ trợ gia đình có thể cam kết. Việc dừng nguồn thu hiện tại chỉ nên được quyết định khi kế hoạch này cho thấy gia đình có khả năng duy trì nhịp sống ổn định trong thời gian nghỉ. Nếu nguồn lực chưa rõ hoặc còn phụ thuộc nhiều vào những điều chưa xác nhận, đó sẽ là điểm cần tháo gỡ trước khi chốt quyết định.\n\nKhoảng thời gian nghỉ để chăm con không đồng nghĩa với việc bạn chắc chắn sẽ bị tụt hậu. Tuy nhiên, để giữ đường quay lại nghề nghiệp sau này, bạn nên duy trì một nhịp nhỏ phù hợp như cập nhật kiến thức, giữ liên hệ nghề nghiệp hoặc chăm chút hồ sơ khi có thể. Việc có một lịch duy trì đều đặn sẽ giúp bạn vừa chăm con vừa giữ cảm giác kết nối với công việc, thay vì để khoảng nghỉ trở thành thời gian hoàn toàn tách khỏi sự phát triển của bản thân.",
+      "status": "reading",
+      "latencyMs": 118786,
+      "route": {
+        "id": "chatgpt-web",
+        "provider": "chatgpt2api",
+        "model": "gpt-5-6",
+        "effort": "xhigh",
+        "fallbackIndex": 0
+      },
+      "rawDrafts": [
+        {
+          "sections": [
+            {
+              "id": "answer",
+              "text": "Bạn có thể xúc tiến việc viết đơn, nhưng chưa nên xem đây là bước chắc chắn sẽ được duyệt đúng vào gần cuối tháng 10 hoặc chắc chắn có thể nghỉ ở nhà ít nhất 1 năm một cách ổn định. Phương án này có thể triển khai, nhưng độ thuận lợi phụ thuộc vào việc bạn chuẩn bị được nguồn lực tài chính và giữ được khả năng quay lại công việc sau thời gian chăm con."
+            },
+            {
+              "id": "decision",
+              "text": "Việc nghỉ việc lúc này là một quyết định đổi lấy thời gian chăm con hoàn toàn khi bé đã gần 7 tháng, đồng thời chấp nhận việc tạm dừng nguồn thu hiện tại và có một khoảng ngắt trong quá trình nghề nghiệp. Quyết định sẽ phù hợp hơn khi bạn xác định rõ gia đình có thể gánh được những thay đổi này trong ít nhất 1 năm và việc ở bên con mang lại giá trị đủ lớn để bạn chấp nhận sự đánh đổi.\n\nTrước khi chốt, nên ưu tiên xác minh các điều kiện thực tế, trao đổi sự phối hợp trong gia đình và hoàn tất từng bước xử lý thay vì chỉ dựa vào mong muốn nghỉ. Việc thử chuẩn bị trước rồi mới mở rộng cam kết sẽ giúp phương án này vững hơn."
+            },
+            {
+              "id": "approval_timing",
+              "text": "Viết hoặc nộp đơn bây giờ và việc được giải quyết duyệt vào gần cuối tháng 10 là hai mốc khác nhau. Bạn có thể bắt đầu xúc tiến, nhưng chưa có cơ sở để bảo đảm kết quả xử lý sẽ đúng theo thời điểm mong muốn.\n\nĐiều quan trọng là cần theo dõi phản hồi thực tế từ nơi làm việc và hoàn tất các điều kiện liên quan trước khi xem đây là một kế hoạch đã chắc chắn."
+            },
+            {
+              "id": "financial_capacity",
+              "text": "Trước khi nghỉ, bạn nên lập một kế hoạch tài chính cho ít nhất một năm, bao gồm nguồn thu còn lại, chi phí chăm con, khoản dự phòng và phần hỗ trợ gia đình có thể cam kết. Việc dừng nguồn thu hiện tại chỉ nên được quyết định khi kế hoạch này cho thấy gia đình có khả năng duy trì nhịp sống ổn định trong thời gian nghỉ.\n\nNếu nguồn lực chưa rõ hoặc còn phụ thuộc nhiều vào những điều chưa xác nhận, đó sẽ là điểm cần tháo gỡ trước khi chốt quyết định."
+            },
+            {
+              "id": "career_return",
+              "text": "Khoảng thời gian nghỉ để chăm con không đồng nghĩa với việc bạn chắc chắn sẽ bị tụt hậu. Tuy nhiên, để giữ đường quay lại nghề nghiệp sau này, bạn nên duy trì một nhịp nhỏ phù hợp như cập nhật kiến thức, giữ liên hệ nghề nghiệp hoặc chăm chút hồ sơ khi có thể.\n\nViệc có một lịch duy trì đều đặn sẽ giúp bạn vừa chăm con vừa giữ cảm giác kết nối với công việc, thay vì để khoảng nghỉ trở thành thời gian hoàn toàn tách khỏi sự phát triển của bản thân."
+            }
+          ]
+        }
+      ],
+      "fidelityReviews": [
+        {
+          "violations": []
+        }
+      ],
+      "planningUsed": true,
+      "planning": {
+        "semantic_frame": {
+          "core_decision": "Đánh giá liệu nộp đơn nghỉ việc ngay để hướng tới nghỉ gần cuối tháng 10 có được giải quyết thuận lợi, và liệu phương án ở nhà chăm con ít nhất một năm có đủ bền vững hay không.",
+          "explicit_points": [
+            "Muốn nộp đơn nghỉ việc ngay và hướng tới được duyệt nghỉ gần cuối tháng 10.",
+            "Muốn ở nhà chăm con hoàn toàn ít nhất một năm; bé hiện gần bảy tháng.",
+            "Lo nguồn lực kinh tế sau khi nghỉ.",
+            "Lo khó tìm công việc khác trong và sau thời gian chăm con.",
+            "Lo bản thân trở nên ù lì và tụt hậu."
+          ],
+          "implied_tradeoffs": [
+            "Thời gian trực tiếp chăm con đổi lấy việc tạm dừng thu nhập và đà nghề nghiệp.",
+            "Nghỉ ngay giúp chuyển sang chăm con sớm nhưng làm tăng yêu cầu phải chuẩn bị nguồn lực trước khi cam kết.",
+            "Một năm ở nhà có thể tạo nhịp sinh hoạt ổn định hơn nhưng cần duy trì khả năng quay lại công việc và học hỏi."
+          ],
+          "related_considerations": [
+            {
+              "label": "Khả năng đơn nghỉ được xử lý theo kế hoạch",
+              "why_relevant": "Đây là bước chuyển trực tiếp từ ý định sang thực hiện, nhưng kết quả xử lý vẫn chưa được xác nhận.",
+              "source": "explicit",
+              "source_quote": "viết đơn xin nghỉ việc tại thời điểm hiện tại luôn, để sang gần cuối tháng 10 được giải quyết duyệt cho nghỉ",
+              "claim_ids": [
+                "claim_7",
+                "claim_6",
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Độ bền của phương án ở nhà ít nhất một năm",
+              "why_relevant": "Thời gian nghỉ dài chỉ thuận khi nguồn lực chăm sóc, nhịp sinh hoạt và khâu tổ chức duy trì được.",
+              "source": "explicit",
+              "source_quote": "thuận trong việc nghỉ ở nhà ít nhất 1 năm không?",
+              "claim_ids": [
+                "claim_7",
+                "claim_2",
+                "claim_1"
+              ]
+            },
+            {
+              "label": "Nguồn lực kinh tế sau khi nghỉ",
+              "why_relevant": "Mất hoặc giảm nguồn thu có thể quyết định khả năng duy trì phương án chăm con dài hạn.",
+              "source": "explicit",
+              "source_quote": "tôi vẫn còn lo lắng về nguồn lực kinh tế sau khi nghỉ",
+              "claim_ids": [
+                "claim_7",
+                "claim_1"
+              ]
+            },
+            {
+              "label": "Khả năng tìm việc và quay lại thị trường lao động",
+              "why_relevant": "Đây là hệ quả nghề nghiệp trực tiếp cần cân nhắc trước khi chọn thời gian nghỉ dài.",
+              "source": "explicit",
+              "source_quote": "việc khó khăn trong tìm công việc khác trong và sau khi ở nhà chăm con",
+              "claim_ids": [
+                "claim_7",
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Duy trì kỹ năng và nhịp phát triển cá nhân",
+              "why_relevant": "Việc nghỉ dài cần có cách giữ kết nối với học tập và nghề nghiệp để hạn chế cảm giác trì trệ.",
+              "source": "explicit",
+              "source_quote": "lo bản thân ù lì tụt hậu không?",
+              "claim_ids": [
+                "claim_4"
+              ]
+            },
+            {
+              "label": "Phối hợp và cam kết trách nhiệm trong gia đình",
+              "why_relevant": "Phương án chăm con toàn thời gian kéo dài đòi hỏi trách nhiệm và nguồn lực giữa các bên được làm rõ, nhưng chưa thể coi sự hỗ trợ này đã có.",
+              "source": "entailed",
+              "source_quote": "",
+              "claim_ids": [
+                "claim_2"
+              ]
+            }
+          ],
+          "scope_guard": [
+            "Không suy người sử dụng lao động đã đồng ý, ai có quyền duyệt hoặc đơn chắc chắn được duyệt.",
+            "Không biến gần cuối tháng 10 thành ứng kỳ dự báo; đây chỉ là mốc kế hoạch người dùng nêu.",
+            "Không khẳng định phương án nghỉ một năm chắc chắn thuận lợi hoặc chắc chắn thất bại.",
+            "Không tự thêm mức tiết kiệm, thu nhập, chi phí, xác suất hoặc thời điểm tìm được việc mới.",
+            "Không giả định người thân đã cam kết hỗ trợ hoặc gán họ vào vị trí biểu tượng cụ thể.",
+            "Không biến các lo ngại về thiếu tiền, khó tìm việc hay tụt hậu thành sự kiện chắc chắn sẽ xảy ra.",
+            "Không đếm sự việc, dòng tiền và con cái trong claim_7 như ba nguồn chứng cứ độc lập."
+          ]
+        },
+        "answer_class": "conditional",
+        "decisive_claim_ids": [
+          "claim_7",
+          "claim_6",
+          "claim_2"
+        ],
+        "counter_claim_ids": [
+          "claim_7",
+          "claim_2",
+          "claim_4",
+          "claim_6",
+          "claim_1"
+        ],
+        "bottleneck_claim_id": "claim_7",
+        "mode_focus": "Ưu tiên kết luận có điều kiện, tách việc đơn nghỉ được xử lý khỏi độ bền của một năm ở nhà, rồi nêu nút làm thay đổi kết quả; không tạo ứng kỳ ngoài phạm vi người dùng đã nêu.",
+        "stage_logic": [
+          {
+            "slot": "answer",
+            "claim_ids": [
+              "claim_7",
+              "claim_6",
+              "claim_2"
+            ],
+            "note": "Có cửa triển khai nhưng không thuận trọn; cả việc giải quyết nghỉ và duy trì một năm đều phụ thuộc điều kiện."
+          },
+          {
+            "slot": "current",
+            "claim_ids": [
+              "claim_4"
+            ],
+            "note": "Sức ép và thông tin nền chưa đủ sáng khiến quyết định hiện tại cần được rà lại trước khi cam kết."
+          },
+          {
+            "slot": "next",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_6"
+            ],
+            "note": "Nút chuyển là tháo điều kiện cản, xác nhận phối hợp gia đình và hoàn tất bước xử lý thực tế."
+          },
+          {
+            "slot": "outcome",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_1"
+            ],
+            "note": "Phương án ở nhà một năm chỉ bền khi nguồn lực chăm sóc, tài chính và phối hợp được xác nhận."
+          },
+          {
+            "slot": "risk",
+            "claim_ids": [
+              "claim_7",
+              "claim_4",
+              "claim_6",
+              "claim_1"
+            ],
+            "note": "Rủi ro chính là cụm sự việc bị khóa, khâu thực hiện chưa thành và nền nguồn lực thiếu ổn định."
+          },
+          {
+            "slot": "action",
+            "claim_ids": [
+              "claim_7",
+              "claim_2",
+              "claim_4",
+              "claim_6"
+            ],
+            "note": "Ưu tiên xác minh điều kiện, thử bước nhỏ và chỉ mở rộng cam kết sau khi có phản hồi rõ."
+          },
+          {
+            "slot": "timing",
+            "claim_ids": [],
+            "note": "Chỉ dùng gần cuối tháng 10 và một năm như phạm vi do người dùng nêu, không dự báo thêm ngày."
+          }
+        ],
+        "recommendation_ids": [
+          "action_7",
+          "action_2",
+          "action_4",
+          "action_6"
+        ],
+        "timing_policy": "scope_only"
+      },
+      "sectionCount": 5
+    }
+  ],
+  "diagnostics": []
+}

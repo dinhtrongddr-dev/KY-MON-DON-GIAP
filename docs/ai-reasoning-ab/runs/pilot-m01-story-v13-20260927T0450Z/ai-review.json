@@ -1,0 +1,61 @@
+[
+  {
+    "caseId": "M01_CASE_A",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 20085,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 3,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 4
+      },
+      "Y": {
+        "directness": 2,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 3,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_ANCHORING",
+        "winner": "X",
+        "reason": "X bám rõ các dữ kiện riêng của ca như Kỷ Thổ, Cấn, vận 31–45 tuổi và các cung năm 2026; Y hầu như không nêu cấu trúc cụ thể nào nên nhiều đoạn có thể dùng cho nhiều lá số khác."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X cho thấy đường suy luận từ tổ hợp cung–sao–môn đến nhận định và thường giới hạn chúng ở mức “tín hiệu”; Y có mạch văn ổn nhưng thiếu căn cứ quan sát để nối các kết luận về gia đình, đời sống chung, công việc và tài chính."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X chuyển phần luận thành các việc tương đối cụ thể như rà giấy tờ, thanh lọc khoản chi và chọn một hướng chuyên môn dài hạn; Y chủ yếu khuyên linh hoạt, lắng nghe và điều chỉnh từng bước, đúng nhưng còn chung."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "Cả hai đều tránh khẳng định sự kiện chắc chắn, nhưng X nói rõ đây là luận tượng và phân biệt hiện diện, cơ hội với thành quả thực tế. Một số liên hệ của X vẫn hơi nhanh, chẳng hạn đưa “Cảnh” vào lời khuyên dù phần trình bày trước chưa làm rõ điểm này."
+      },
+      {
+        "code": "STYLE_AND_REPETITION",
+        "winner": "Y",
+        "reason": "Y đọc tự nhiên và liền mạch hơn. X quá dài, dùng nhiều đề mục và lặp các ý xây nền, xử lý cái cũ, kiểm chứng thông tin và tránh vội quyết định."
+      },
+      {
+        "code": "OVERALL",
+        "winner": "X",
+        "reason": "Dù cần biên tập gọn hơn, X đáp ứng tốt hơn yêu cầu luận riêng ca và đưa ra kết luận có thể sử dụng; Y an toàn nhưng mang màu văn mẫu và thiếu độ phân biệt."
+      }
+    ]
+  }
+]

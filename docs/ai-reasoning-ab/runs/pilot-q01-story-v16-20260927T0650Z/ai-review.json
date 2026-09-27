@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "Q01_CASE_B",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 19018,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 5,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 3,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 4,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 2,
+        "actionability": 4,
+        "nonRepetition": 4,
+        "calibration": 5
+      }
+    },
+    "findings": [
+      {
+        "code": "CASE_GROUNDING",
+        "winner": "X",
+        "reason": "X bám riêng ca bằng các yếu tố được nêu rõ như Kỷ tại Tốn, Canh tại Đoài, Sinh Môn và Lục Hợp, rồi liên hệ lần lượt với tâm lý, thủ tục nghỉ và tài lực. Y chủ yếu là tư vấn nghỉ việc phổ quát, hầu như không cho thấy căn cứ riêng từ bàn Kỳ Môn."
+      },
+      {
+        "code": "ANSWER_CLARITY",
+        "winner": "TIE",
+        "reason": "Cả hai đều trả lời rằng có thể xúc tiến nghỉ nhưng không thể bảo đảm duyệt đúng cuối tháng 10, và một năm ở nhà chỉ thuận khi tài chính cùng đường quay lại nghề đã được chuẩn bị."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X tách rõ người hỏi, sự việc, thương lượng, tài lực và thời điểm nên người đọc theo được đường từ dấu hiệu đến kết luận. Y có logic thực tế mạch lạc nhưng kết luận không được nối với dữ kiện Kỳ Môn cụ thể."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra ba nhóm hành động sát tình huống: xác định mốc tài chính an toàn, trao đổi sớm để bàn giao và duy trì một nhịp nghề nghiệp trong năm nghỉ. Y cũng hữu ích nhưng các bước ít cụ thể hơn."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "Y",
+        "reason": "X lặp nhiều lần hai cảnh báo về dự phòng tài chính và không đứt kết nối nghề nghiệp. Y cô đọng hơn, dù vẫn nhắc lại việc chưa thể bảo đảm mốc duyệt."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "TIE",
+        "reason": "Cả hai đều tránh khẳng định chắc chắn về việc duyệt đơn, mốc cuối tháng 10 và độ ổn định của một năm nghỉ; X còn phân biệt rõ dấu hiệu thuận với kết quả chắc chắn."
+      },
+      {
+        "code": "SYMBOL_TO_EVENT",
+        "winner": "X",
+        "reason": "X nhìn chung dùng ngôn ngữ xác suất như “có cửa”, “nghiêng về” và “không đồng nghĩa”, nên hạn chế nhảy thẳng từ biểu tượng sang sự kiện thật. Y còn thận trọng hơn nhưng sự thận trọng đạt được bằng cách gần như bỏ phần luận bàn."
+      }
+    ]
+  }
+]

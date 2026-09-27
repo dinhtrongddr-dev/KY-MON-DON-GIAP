@@ -26,7 +26,7 @@ function lifeMeaning(value,claim){
   return prefix+phrase+'.';
 }
 function trimLifeLead(text){
-  return String(text||'').replace(/^(?:Bạn có xu hướng|Ưu tiên của giai đoạn này là|Nhịp sống trong năm thiên về)\s+/,'').replace(/[.!?]+$/,'').trim();
+  return String(text||'').replace(/^(?:Bạn có xu hướng|Ưu tiên của giai đoạn này là|Nhịp sống trong năm thiên về|Nề nếp gia đình thiên về|Việc chăm sóc con nghiêng về|Trong đời sống chung, điều đáng chú ý là xu hướng|Trong công việc, hướng phù hợp là|Việc tạo dựng nguồn lực thiên về)\s+/,'').replace(/[.!?]+$/,'').trim();
 }
 function lowerFirst(text){return text?text.charAt(0).toLowerCase()+text.slice(1):'';}
 function naturalRisk(text){return lowerFirst(text).replace(/\bkiểm soát\b/gi,'muốn kiểm soát mọi thứ').replace(/\bkhẩu thiệt\b/gi,'lời nói gây va chạm').replace(/\bnhiễu\b/gi,'quyết định bị nhiễu').replace(/\bhoảng\b/gi,'hoảng hốt').replace(/,\s*/g,' hoặc ');}
@@ -47,6 +47,38 @@ function lifeSynthesisAtoms(c,atoms,ctx){
     const context=byRole('palaceContext'),action=byRole('actionChannel'),style=byRole('operatingStyle');if(!context||!action)return [];
     const risks=unique([context.caution,action.caution,style?.caution].filter(Boolean).map(naturalRisk)).slice(0,2);
     return [atom('annual_integrated_pattern','Trong năm đang xét, xung lực '+trimLifeLead(context.meaning)+' đi cùng cách phản ứng '+trimLifeLead(action.meaning)+'. Vì vậy, nên tách việc cần làm ngay khỏi việc cần thêm dữ liệu, rồi mới tăng tốc; cách này giúp giảm những mặt trái như '+(risks.join('; ')||'phản ứng quá nhanh')+'.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  return [];
+}
+function sectionSynthesisAtoms(id,row){
+  const ids=unique(row.ids.filter(x=>x!=='GLOBAL_STRUCTURE'));
+  const sourceEvidenceIds=unique(row.atoms.flatMap(a=>a.sourceEvidenceIds||[]));
+  const by=(claimId,role)=>row.atoms.find(a=>a.claimIds.includes(claimId)&&a.role===role);
+  if(id==='family'){
+    const parent=by('FAMILY_PARENTS','palaceContext'),child=by('CHILDREN_CORE','palaceContext'),care=by('CHILDREN_CORE','actionChannel');
+    if(!parent||!child)return [];
+    const childIdeas=unique([trimLifeLead(child.meaning),care&&trimLifeLead(care.meaning)].filter(Boolean));
+    return [atom('family_integrated_pattern','Trong gia đình, nề nếp nghiêng về '+trimLifeLead(parent.meaning)+', còn việc chăm sóc con nhấn vào '+childIdeas.join(' và ')+'. Mạch chung là đưa sự chủ động định hướng vào một nhịp nuôi dưỡng đều đặn và có sức bền.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  if(id==='marriage'){
+    const contexts=[],seen=new Set();
+    for(const a of row.atoms.filter(a=>a.role==='palaceContext')){
+      const key=(a.sourceEvidenceIds||[]).join('|');if(seen.has(key))continue;
+      seen.add(key);contexts.push(trimLifeLead(a.meaning));
+    }
+    if(contexts.length<3)return [];
+    return [atom('marriage_integrated_pattern','Trong đời sống chung, xu hướng '+contexts[0]+' cần đi cùng việc '+contexts[1]+'. Mặt '+contexts[2]+' cho thấy khi hoàn cảnh chưa rõ hoặc thay đổi, cách kết nối mềm và điều chỉnh từng bước giúp các bên phối hợp thay vì phản ứng rời rạc.',ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  if(id==='career'){
+    const styles=row.atoms.filter(a=>a.role==='operatingStyle').map(a=>trimLifeLead(a.meaning)),relation=row.atoms.find(a=>a.id.endsWith('_relation'));
+    if(styles.length<2||!relation)return [];
+    return [atom('career_integrated_pattern','Trong công việc, thế mạnh '+styles[0]+' phát huy rõ hơn khi được nối với '+styles[1]+'. '+relation.meaning,ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
+  }
+  if(id==='wealth'){
+    const style=by('WEALTH_CORE','operatingStyle'),action=by('WEALTH_CORE','actionChannel'),relation=row.atoms.find(a=>a.id.endsWith('_relation')),environment=row.atoms.find(a=>a.id==='wealth_environment');
+    if(!style||!action||!relation)return [];
+    const outside=environment?' '+environment.meaning:'';
+    return [atom('wealth_integrated_pattern',relation.meaning+' Nguồn lực phát triển bền hơn qua việc '+trimLifeLead(style.meaning)+' và '+trimLifeLead(action.meaning)+'.'+outside,ids,{sourceEvidenceIds,required:true,kind:'life_synthesis'})];
   }
   return [];
 }
@@ -160,6 +192,7 @@ export function buildMenhNarrativeFromContext(ctx){
       }[e?.effectTag];
       if(meaning)row.atoms.push(atom('wealth_environment',meaning,['WEALTH_CORE'],{sourceEvidenceIds:[e.evidenceId]}));
     }
+    row.atoms.push(...sectionSynthesisAtoms(id,row));
     const scopedIds=unique(row.ids),modifiers=unique(row.modifiers);
     units.push(unit(id,LABELS[id],scopedIds,row.atoms,{
       certainty:modifiers.length?'conditional':'tendency',conclusion:id==='luck'||id==='annual'?'period_tendency':'natal_tendency',modifierIds:modifiers

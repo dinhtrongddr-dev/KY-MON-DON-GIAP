@@ -92,22 +92,58 @@ export function validateNarrativeContract(contract){
   }
   return contract;
 }
-function surfaceWriterAtoms(contract,atoms){
-  if(contract.kind!=='menh')return atoms;
-  const required=atoms.filter(a=>a.required);
-  if(required.length)return required;
-  const selected=[],seenClaims=new Set();
-  for(const a of atoms){
-    const key=unique(a.claimIds).filter(id=>id!=='GLOBAL_STRUCTURE').sort().join('|')||a.id;
-    if(seenClaims.has(key))continue;
-    seenClaims.add(key);selected.push(a);
-    if(selected.length===2)return selected;
+function surfaceAtomGroup(a){
+  return unique(a.sourceEvidenceIds||[]).sort().join('|')||unique(a.claimIds).filter(id=>id!=='GLOBAL_STRUCTURE').sort().join('|')||a.id;
+}
+function rankedSurfaceAtoms(unitId,atoms){
+  const roles={
+    self:['actionChannel','hiddenFactor','heavenStemExpression','operatingStyle','palaceContext'],
+    family:['palaceContext','actionChannel','operatingStyle'],marriage:['palaceContext','actionChannel','operatingStyle'],
+    career:['operatingStyle','actionChannel','palaceContext'],wealth:['operatingStyle','actionChannel','palaceContext'],
+    annual:['operatingStyle','palaceContext','actionChannel']
+  }[unitId]||['palaceContext','operatingStyle','actionChannel','hiddenFactor','heavenStemExpression'];
+  return atoms.map((a,index)=>({a,index,rank:roles.indexOf(a.role)})).sort((x,y)=>(x.rank<0?99:x.rank)-(y.rank<0?99:y.rank)||x.index-y.index).map(x=>x.a);
+}
+function diverseSurfaceAtoms(unitId,atoms,limit,seed=[]){
+  const selected=[...seed],buckets=new Map();
+  for(const a of rankedSurfaceAtoms(unitId,atoms)){
+    const key=surfaceAtomGroup(a),rows=buckets.get(key)||[];rows.push(a);buckets.set(key,rows);
   }
-  for(const a of atoms){
-    if(!selected.includes(a))selected.push(a);
-    if(selected.length===2)break;
+  while(selected.length<limit){
+    let added=false;
+    for(const rows of buckets.values()){
+      const next=rows.find(a=>!selected.includes(a));
+      if(!next)continue;
+      selected.push(next);added=true;
+      if(selected.length===limit)break;
+    }
+    if(!added)break;
   }
   return selected;
+}
+function distinctSurfaceAtoms(atoms){
+  const rows=[],seen=new Set();
+  for(const a of [...atoms.filter(x=>x.required),...atoms.filter(x=>!x.required)]){
+    const key=normalizeNarrative(a.meaning).replace(/[^a-z0-9]+/g,' ').trim();if(!key||seen.has(key))continue;
+    seen.add(key);rows.push(a);
+  }
+  return rows;
+}
+function questionSurfaceAtoms(unitId,atoms){
+  const distinct=distinctSurfaceAtoms(atoms),required=distinct.filter(a=>a.required);
+  const priority={facet_synthesis:0,planner_synthesis:1,practical_consideration:2,scope:3,recommendation:4,constraint:5,interpretation:6,domain_translation:7};
+  const optional=distinct.filter(a=>!a.required).map((a,index)=>({a,index,rank:priority[a.kind]??8}))
+    .sort((x,y)=>x.rank-y.rank||x.index-y.index).map(x=>x.a);
+  const limit={answer:3,decision:4,approval_timing:3,financial_capacity:4,career_return:3,bottleneck:3,timing:2}[unitId]
+    ||(unitId.startsWith('consideration_')?4:unitId.startsWith('development_')?2:4);
+  return diverseSurfaceAtoms(unitId,optional,Math.max(limit,required.length),required);
+}
+function surfaceWriterAtoms(contract,unitId,atoms){
+  if(contract.kind==='question')return questionSurfaceAtoms(unitId,atoms);
+  if(contract.kind!=='menh')return atoms;
+  const required=atoms.filter(a=>a.required),optional=atoms.filter(a=>!a.required);
+  const limit={overview:2,self:3,family:4,marriage:4,career:3,wealth:3,luck:2,annual:2,birthTimeNote:2}[unitId]||4;
+  return diverseSurfaceAtoms(unitId,optional,Math.max(limit,required.length),required);
 }
 export function surfacePayload(contract){
   validateNarrativeContract(contract);
@@ -120,7 +156,7 @@ export function surfacePayload(contract){
     },
     units:contract.units.map(({id,label,conclusion,certainty,atoms,stage})=>({
       id,label,conclusion,certainty,
-      allowedMeaning:surfaceWriterAtoms(contract,atoms).map(({meaning,kind,required})=>({meaning,kind,required})),
+      allowedMeaning:surfaceWriterAtoms(contract,id,atoms).map(({meaning,kind,required})=>({meaning,kind,required})),
       ...(stage?{stage}:{})
     })),
     allowedFacts:contract.userFacts,

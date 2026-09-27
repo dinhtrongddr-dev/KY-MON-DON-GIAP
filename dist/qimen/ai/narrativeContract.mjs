@@ -87,10 +87,49 @@ function decisionPhrase(question){
     ||normalizeNarrative(clean).match(/(?:^|[,;])\s*(?:(?:toi|minh|chung toi)\s+)?(?:co\s+)?nen\s+(.+?)(?:\s+vi\s+|[?.!]|$)/i);
   return match?match[1].trim().replace(/\s+(?:không|khong)$/i,'').slice(0,140):'';
 }
+function questionDetails(question){
+  const raw=String(question||'').replace(/\s+/g,' ').trim(),normalized=normalizeNarrative(raw);
+  const pick=pattern=>raw.match(pattern)?.[0]?.trim()||'';
+  return {
+    leavePlan:/\b(nghi viec|nghi o nha|tam nghi)\b/.test(normalized),
+    filing:/\b(viet|nop|gui) don\b/.test(normalized),
+    fullTimeCare:pick(/(?:nghỉ|ở)\s+ở nhà chăm con hoàn toàn/i)||pick(/chăm con hoàn toàn/i),
+    childAge:pick(/bé[^,;.)!?]{0,24}(?:gần|được)\s+\d+\s+tháng/i),
+    approvalTarget:pick(/(?:gần\s+)?cuối tháng\s+\d{1,2}/i),
+    duration:pick(/ít nhất\s+(?:\d+|một)\s+năm/i)
+  };
+}
+function leaveFacetSynthesis(f,context){
+  const d=questionDetails(context.question);if(!d.leavePlan)return null;
+  const target=d.approvalTarget||'mốc bạn mong muốn',duration=d.duration||'quãng nghỉ dự tính';
+  const care=d.fullTimeCare?d.fullTimeCare.replace(/^nghỉ\s+/i,''):'chăm con';
+  const child=d.childAge?' khi '+d.childAge.toLowerCase():'';
+  const meaning={
+    decision:'Vì mục tiêu là '+care+child+', quyết định này thực chất đổi thời gian ở bên con lấy việc dừng nguồn thu hiện tại và tạo một khoảng ngắt nghề. Chỉ nên chốt khi lợi ích chăm con đáng để chấp nhận hai đánh đổi đó và gia đình có cách gánh chúng trong '+duration+'.',
+    approval_timing:(d.filing?'Việc viết hoặc nộp đơn bây giờ':'Bước khởi động thủ tục')+' và việc được duyệt vào '+target+' là hai mốc khác nhau. Bàn chỉ cho thấy có thể xúc tiến, không đủ cơ sở bảo đảm nơi giải quyết sẽ chấp thuận đúng mốc đó.',
+    financial_capacity:'Trước khi nghỉ, hãy lập một ngân sách cho ít nhất một năm gồm nguồn thu còn lại, chi phí chăm con, khoản dự phòng và phần hỗ trợ gia đình có thể cam kết. Việc mất thu nhập hiện tại chỉ nên được chấp nhận khi bảng này cho thấy phương án '+duration+' có sức chịu thực tế.',
+    career_return:'Khoảng nghỉ để chăm con không tự động đồng nghĩa với tụt hậu. Để đường quay lại nghề không bị đứt, hãy giữ một lịch cố định hằng tuần cho việc học, cập nhật hồ sơ hoặc duy trì liên hệ nghề nghiệp, ở mức vẫn phù hợp với nhịp chăm con.'
+  }[f.id];
+  return meaning?atom(f.id+'_integrated',meaning,f.claimIds,{required:true,kind:'facet_synthesis'}):null;
+}
 function contextualOpening(context,g,facets){
-  const main=plainEngineMeaning(g.primaryJudgment.main),n=normalizeNarrative(context.question),phrase=decisionPhrase(context.question);
+  const main=plainEngineMeaning(g.primaryJudgment.main),n=normalizeNarrative(context.question),phrase=decisionPhrase(context.question),details=questionDetails(context.question);
   const decision=!!phrase||(!['timing','direction'].includes(context.allInOne.classification.mode)&&/\b(co nen|nen|lua chon|quyet dinh|hay tu choi)\b/.test(n));
   if(decision){
+    if(details.leavePlan&&(details.approvalTarget||details.duration)){
+      const target=details.approvalTarget||'mốc mong muốn',duration=details.duration||'quãng nghỉ dự tính';
+      const leaveLead={
+        positive:'Bàn nghiêng về việc có thể xúc tiến viết đơn và chuẩn bị phương án nghỉ, nhưng chưa coi việc được duyệt vào '+target+' hay duy trì '+duration+' là kết quả tự bảo đảm.',
+        conditional_positive:'Bạn có thể xúc tiến việc viết đơn, với điều kiện phải khóa được nguồn lực cho '+duration+' và chuẩn bị đường quay lại nghề; mốc duyệt '+target+' vẫn cần theo dõi riêng.',
+        conditional:'Bạn có thể xúc tiến việc viết đơn, nhưng bàn chưa đủ cơ sở bảo đảm đơn sẽ được duyệt vào '+target+' hoặc phương án nghỉ '+duration+' sẽ bền; hai việc này còn phụ thuộc nguồn lực tài chính và cách giữ đường quay lại nghề.',
+        uncertain:'Bàn chưa đủ cơ sở để nghiêng hẳn về việc nộp đơn lúc này, càng chưa thể bảo đảm mốc duyệt '+target+' hay sức bền của phương án nghỉ '+duration+'.',
+        unresolved:'Chưa nên chốt việc nghỉ theo phương án hiện tại; trước hết cần làm rõ khả năng được duyệt vào '+target+' và sức chịu tài chính cho '+duration+'.',
+        needs_clarification:'Cần làm rõ quy trình duyệt, nguồn lực cho '+duration+' và cách giữ đường quay lại nghề trước khi quyết định nộp đơn.',
+        negative:'Bàn nghiêng về chưa nên nộp đơn theo phương án hiện tại vì chưa đủ nền để bảo đảm mốc '+target+' và quãng nghỉ '+duration+'.',
+        conditional_negative:'Phần bất lợi đang lấn át; chỉ nên xem lại việc nộp đơn khi đã tháo được điểm vướng về mốc duyệt và nguồn lực cho '+duration+'.'
+      }[g.primaryJudgment.answerClass];
+      if(leaveLead)return leaveLead;
+    }
     const subject=phrase?'Với việc '+phrase+', ':'Với quyết định đang cân nhắc, ';
     const lead={
       positive:'bàn nghiêng về hướng có thể tiến hành, nhưng quyết định vẫn cần gắn với điều kiện thực tế.',
@@ -157,23 +196,24 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
   const units=[unit('answer','Kết luận chính',primaryIds,answerAtoms,{conclusion,stage:g.primaryJudgment.stageAsked})];
   for(const f of facets){
     const points=orderedForIds(f.claimIds).map(a=>({...a,id:f.id+'_'+a.id}));
-    requireGrounding(points,f.kind);
+    const synthesis=leaveFacetSynthesis(f,context);
+    if(!synthesis)requireGrounding(points,f.kind);
     if(f.kind==='timing_scope')points.unshift(atom(f.id+'_scope',
       g.timing.allowedPredictions.length
         ?'Mốc bạn mong muốn cần được phân biệt với các thời điểm đã tính; chưa có dữ kiện xác nhận quyết định của nơi giải quyết.'
         :'Mốc được giải quyết bạn nêu hiện là mục tiêu sắp xếp, chưa phải ngày được bàn xác nhận. '+(/\b(?:viet|nop|gui) don\b/.test(normalizeNarrative(context.question))?'Việc gửi đơn và ngày được chấp thuận là hai chuyện riêng.':'Được đưa vào xử lý và được chấp thuận vẫn là hai bước khác nhau.'),
-      f.claimIds,{required:true,kind:'scope'}));
+      f.claimIds,{required:!synthesis,kind:'scope'}));
     if(f.kind==='resources')points.unshift(atom(f.id+'_budget',
       /\b(bien loi nhuan|loi nhuan|chi phi|dong tien)\b/.test(normalizeNarrative(context.question))
         ?'Biên lợi nhuận cần được tính sau toàn bộ chi phí, phần việc phát sinh và nguồn lực phải bỏ ra. Tín hiệu thuận trong bàn không thay thế con số lợi nhuận thực tế.'
         :'Để biết nguồn lực có đủ cho phương án đang tính hay không, hãy đặt những khoản thu có thể dựa vào cạnh các chi phí phải gánh. Những điểm hỗ trợ trong bàn chưa cho biết số dư thực tế.',
-      f.claimIds,{required:true,kind:'practical_consideration'}));
+      f.claimIds,{required:!synthesis,kind:'practical_consideration'}));
     if(f.kind==='practical_consideration')points.unshift(atom(f.id+'_preparation',
       f.id==='career_return'?(/\b(nghi viec|nghi o nha|tam nghi)\b/.test(normalizeNarrative(context.question))?'Việc nghỉ một thời gian chưa cho phép kết luận bạn sẽ tụt hậu hay mất đường nghề. Giữ liên hệ công việc và dành một nhịp đều cho việc học là cách chuẩn bị cho lúc quay lại.':'Khi tìm hoặc chuyển việc, hãy gắn việc học và chuẩn bị hồ sơ với yêu cầu của công việc đang nhắm tới. Duy trì liên hệ nghề nghiệp là một cách chủ động mở thêm lựa chọn.'):/\bo nha\b/.test(normalizeNarrative(f.sourceQuote))?'Muốn duy trì việc ở nhà lâu dài, bạn cần thu xếp nhịp sinh hoạt và trách nhiệm chăm sóc sao cho có thể theo được đều đặn. Được giải quyết nghỉ mới là bước đầu; sức bền của phương án còn phụ thuộc cách tổ chức sau đó.':'Đây là điểm cần kiểm tra riêng trước khi chốt. Hãy xác định tiêu chí thực tế và dấu hiệu nào sẽ khiến bạn giữ hoặc đổi quyết định.',
-      f.claimIds,{required:true,kind:'practical_consideration'}));
+      f.claimIds,{required:!synthesis,kind:'practical_consideration'}));
     const plannerNoteLimit=f.kind==='resources'?2:1;
     for(const [index,note] of (f.plannerNotes||[]).slice(0,plannerNoteLimit).entries())points.unshift(atom(f.id+'_planner_'+index,
-      note.replace(/[.!?]+$/,'')+'.',f.claimIds,{required:true,kind:'planner_synthesis'}));
+      note.replace(/[.!?]+$/,'')+'.',f.claimIds,{required:!synthesis,kind:'planner_synthesis'}));
     if(f.kind==='related_consideration')points.unshift(atom(f.id+'_frame',
       f.source==='check_only'
         ?'Trước khi chốt, hãy kiểm tra '+f.label.toLowerCase()+' vì '+f.whyRelevant.replace(/[.!?]+$/,'').replace(/^./,c=>c.toLowerCase())+'. Đây là dữ liệu còn cần xác minh.'
@@ -181,9 +221,10 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
       f.claimIds,{required:true,kind:'practical_consideration'}));
     if(f.kind==='decision'){
       const decisionPlans=stageRows.filter(row=>['action','next'].includes(row.slot)&&row.note).map(row=>({...row,claim_ids:row.claim_ids.filter(id=>f.claimIds.includes(id))})).filter(row=>row.claim_ids.length);
-      points.unshift(atom(f.id+'_decision','Đặt các phương án lên cùng tiêu chí về lợi ích, nguồn lực phải bỏ ra và điều kiện có thể kiểm soát. Chỉ chốt khi phương án được chọn đáp ứng giới hạn thực tế của bạn.',f.claimIds,{required:!decisionPlans.length}));
-      for(const row of decisionPlans.reverse())points.unshift(atom(f.id+'_plan_'+row.slot,row.note,row.claim_ids,{required:true,kind:'planner_synthesis'}));
+      points.unshift(atom(f.id+'_decision','Đặt các phương án lên cùng tiêu chí về lợi ích, nguồn lực phải bỏ ra và điều kiện có thể kiểm soát. Chỉ chốt khi phương án được chọn đáp ứng giới hạn thực tế của bạn.',f.claimIds,{required:!synthesis&&!decisionPlans.length}));
+      for(const row of decisionPlans.reverse())points.unshift(atom(f.id+'_plan_'+row.slot,row.note,row.claim_ids,{required:!synthesis,kind:'planner_synthesis'}));
     }
+    if(synthesis)points.unshift(synthesis);
     const facetConclusion=f.kind==='timing_scope'?'scope_only':f.kind==='resources'?'budget_required':f.kind==='practical_consideration'?'preparation_dependent':f.kind==='related_consideration'?'check_only':conclusion;
     units.push(unit(f.id,f.label,f.claimIds,points,{conclusion:facetConclusion,source:f.source,sourceQuote:f.sourceQuote}));
   }

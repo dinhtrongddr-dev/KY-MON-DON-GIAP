@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "Q01_CASE_B",
+    "round": 1,
+    "status": "completed",
+    "latencyMs": 21902,
+    "preferred": "X",
+    "scores": {
+      "X": {
+        "directness": 5,
+        "naturalness": 4,
+        "reasoningCoherence": 4,
+        "specificity": 5,
+        "actionability": 5,
+        "nonRepetition": 4,
+        "calibration": 5
+      },
+      "Y": {
+        "directness": 3,
+        "naturalness": 2,
+        "reasoningCoherence": 3,
+        "specificity": 2,
+        "actionability": 3,
+        "nonRepetition": 2,
+        "calibration": 4
+      }
+    },
+    "findings": [
+      {
+        "code": "DIRECT_ANSWER",
+        "winner": "X",
+        "reason": "X trả lời riêng từng ý: khả năng duyệt đơn, mức thuận khi nghỉ một năm, tài chính và nguy cơ tụt hậu; Y chủ yếu nói phương án “có thể triển khai” nhưng không kết luận rõ mức thuận của từng phần."
+      },
+      {
+        "code": "CASE_SPECIFICITY",
+        "winner": "X",
+        "reason": "X bám sát các chi tiết riêng của ca như mốc cuối tháng 10, con gần 7 tháng, thời gian nghỉ 12 tháng và việc duy trì nghề; Y dùng nhiều câu có thể áp dụng cho hầu hết quyết định nghỉ việc dài hạn."
+      },
+      {
+        "code": "REASONING_TRACE",
+        "winner": "X",
+        "reason": "X nối từng nhận định với dấu hiệu được nêu rồi giới hạn cách hiểu, chẳng hạn không đồng nhất Sinh Môn với việc tự nhiên có tiền; Y gần như không cho thấy căn cứ Kỳ Môn của các kết luận."
+      },
+      {
+        "code": "ACTIONABILITY",
+        "winner": "X",
+        "reason": "X đưa ra việc làm cụ thể như lập ngân sách 12 tháng, kiểm tra bảo hiểm, giữ quan hệ với công ty và dành 2–3 giờ mỗi tuần để giữ nghề. Y chỉ đề nghị chung chung “làm rõ”, “trao đổi” và “thử một bước nhỏ”."
+      },
+      {
+        "code": "REPETITION",
+        "winner": "X",
+        "reason": "Y lặp nhiều lần các cụm ý về nguồn lực, trách nhiệm, thông tin chưa chắc chắn và điều kiện thực tế mà không bổ sung đáng kể. X có nhắc lại cảnh báo nhưng phần kết cô đọng thành kế hoạch rõ ràng."
+      },
+      {
+        "code": "NATURALNESS",
+        "winner": "X",
+        "reason": "X có giọng đối thoại và diễn đạt gần với hoàn cảnh người hỏi. Y thiên về văn bản tư vấn hành chính, nhiều danh từ trừu tượng như “khâu thực hiện riêng”, “tăng mức cam kết” và “duy trì nền tảng cá nhân”."
+      },
+      {
+        "code": "CALIBRATION",
+        "winner": "X",
+        "reason": "X nhất quán dùng ngôn ngữ xác suất, nói rõ không thể bảo đảm đơn được duyệt hay tài chính tự ổn, đồng thời vẫn đưa ra xu hướng. Y cũng thận trọng nhưng thận trọng đến mức làm mờ câu trả lời."
+      }
+    ]
+  }
+]
