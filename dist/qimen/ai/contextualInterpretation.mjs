@@ -36,11 +36,15 @@ export function buildContextualInterpretation(claims,questionContext={}){
       claimId:claim.id,
       mechanism,
       semanticCore:semantic.core,
+      symbolRole:claim.role||claim.actorRole||null,
+      coreMeaning:semantic.core,
       contextMeaning:getDomainMeaning(questionContext.domain,mechanism),
       manifestations:claim.realWorldManifestation?.concepts||[],
       supportingFactors:claim.supportingFactors||[],
       limitingFactors:claim.conflicts||[],
       interactionHints:INTERACTION_HINTS[mechanism]||[],
+      contextualSense:getDomainMeaning(questionContext.domain,mechanism).join('; '),
+      interactions:claim.interactions||[],
       certaintyBoundary:'Ý nghĩa này dùng để giải thích biểu tượng trong hoàn cảnh câu hỏi, không phải xác nhận sự kiện đã xảy ra.',
       writerGuidance:'Tổng hợp căn cứ thành ý nghĩa đời thực; không tách từng ký hiệu thành từ khóa độc lập.'
     };
