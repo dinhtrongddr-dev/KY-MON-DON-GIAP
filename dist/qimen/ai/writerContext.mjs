@@ -65,6 +65,7 @@ export function buildWriterContext(context) {
         meaning:b.formation.meaning
       }:null,specialPatterns:b.specialPatterns})),
     claims:g.claims.map(claim=>({...claim,realWorldManifestation:{status:claim.realWorldManifestation.status,concepts:claim.realWorldManifestation.concepts}})),
+    contextualInterpretation:g.contextualInterpretation||[],
     rules:g.rules,outcomeDimensions:g.outcomeDimensions,eventStages:g.eventStages,primaryJudgment:g.primaryJudgment,timing:g.timing,
     likelyScenario:g.likelyScenario,recommendations:g.recommendations,unresolved:g.unresolved,coverage:g.coverage};
   const formationMarkersFor=row=>{

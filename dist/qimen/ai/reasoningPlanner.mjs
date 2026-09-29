@@ -1,6 +1,7 @@
 import {buildEvidenceBundles} from '../analysis/evidenceBundles.mjs';
 import {scoreEvidence} from '../analysis/evidenceScore.mjs';
 import {translateToRealWorld} from './realWorld.mjs';
+import {buildContextualInterpretation} from './contextualInterpretation.mjs';
 import {buildScenario} from './scenario.mjs';
 import {buildRecommendations} from './recommendations.mjs';
 import {freezeData} from '../schemas/board.mjs';
@@ -63,6 +64,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     ruleIds:['rule_nianming_v1'],counterEvidenceIds:[],limitations:p.limitations,
     semanticTags:['nianming','corroborator',p.id],conflicts:[],priority:0,status:'corroboration_only'}));
   const claims=[...coreClaims,...nianmingClaims];
+  const contextualInterpretation=buildContextualInterpretation(claims,questionContext);
   const selectedPalaces=new Set(selected.map(b=>b.palace));
   return freezeData({schemaVersion:'ReadingEvidenceGraph/2',questionContext,mode:questionContext.mode,modeRuleSet:modePlan.ruleSet,
     usefulGodProfile:analysis.yongshenProfile,
@@ -76,7 +78,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
     caseProfile,
     outcomeDimensions,eventStages,primaryJudgment:{...primaryJudgment,claimIds:likelyScenario.primaryJudgment.claimIds},timing,
     actors:graph.nodes,nodes:graph.nodes,relationships:graph.relations.filter(e=>selectedPalaces.has(e.fromPalace)&&selectedPalaces.has(e.toPalace)),
-    rules:RULE_REGISTRY,evidenceBundles:selected,claims,interactions,conflicts:selected.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`}))),
+    rules:RULE_REGISTRY,evidenceBundles:selected,claims,contextualInterpretation,interactions,conflicts:selected.flatMap(b=>b.conflicts.map(c=>({...c,claimId:`claim_${b.palace}`}))),
     supports:selected.map(b=>({claimId:`claim_${b.palace}`,capability:b.translation.capacity,condition:b.translation.implication})),
     blockers:selected.filter(b=>b.conflicts.length).map(b=>({claimId:`claim_${b.palace}`,conditions:b.conflicts})),
     opportunities:selected.filter(b=>['access','conditional_access','contact','growth'].includes(b.translation.mechanism)).map(b=>`claim_${b.palace}`),
