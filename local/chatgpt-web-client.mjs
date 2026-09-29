@@ -40,51 +40,43 @@ function statusError(status){
  return codedError('chatgpt2api chưa hoàn tất lượt Writer (HTTP '+status+').','AI_ROUTE_ERROR',{status});
 }
 
+const RETRYABLE_STATUS=new Set([408,429,502,503,504]);
+const sleep=(ms,signal)=>new Promise((resolve,reject)=>{
+ const timer=setTimeout(resolve,ms);
+ if(signal)signal.addEventListener('abort',()=>{clearTimeout(timer);reject(codedError('Đã hủy hoặc hết thời gian chờ AI.','AI_CANCELLED'));},{once:true});
+});
+
 export async function runChatgptWebText(instructions,input,{signal,fetchImpl=fetch,env=process.env,model,effort}={}){
  signal?.throwIfAborted();
  const runtime=chatgptWebRuntime(env);
  if(!runtime.enabled)throw codedError('Provider chatgpt2api chưa được bật.','AI_PROVIDER_DISABLED');
  const requestedModel=String(model||runtime.model||'').trim()||runtime.model;
  const requestedEffort=String(effort||runtime.effort||'').trim()||runtime.effort;
- let response;
- try{
-  response=await fetchImpl(runtime.base+'/chat/completions',{
-   method:'POST',
-   headers:{'Content-Type':'application/json','Authorization':'Bearer '+runtime.apiKey},
-   body:JSON.stringify({
-    model:requestedModel,
-    reasoning_effort:requestedEffort,
-    stream:false,
-    messages:[
-     {role:'system',content:String(instructions||'')},
-     {role:'user',content:normalizeTextInput(input)}
-    ]
-   }),
-   signal
-  });
- }catch(error){
-  if(signal?.aborted||error?.name==='AbortError')throw codedError('Đã hủy hoặc hết thời gian chờ AI.','AI_CANCELLED');
-  throw codedError('Không kết nối được chatgpt2api local. Kiểm tra service port 3000 rồi thử lại.','AI_NETWORK');
+ const body=JSON.stringify({model:requestedModel,reasoning_effort:requestedEffort,stream:false,messages:[
+  {role:'system',content:String(instructions||'')},{role:'user',content:normalizeTextInput(input)}
+ ]});
+ const maxAttempts=Math.max(1,Math.min(5,Number(env.CHATGPT2API_MAX_ATTEMPTS||3)||3));
+ let response,lastError;
+ for(let attempt=1;attempt<=maxAttempts;attempt++){
+  try{
+   response=await fetchImpl(runtime.base+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+runtime.apiKey},body,signal});
+  }catch(error){
+   if(signal?.aborted||error?.name==='AbortError')throw codedError('Đã hủy hoặc hết thời gian chờ AI.','AI_CANCELLED');
+   lastError=codedError('Không kết nối được chatgpt2api local. Kiểm tra service port 3000 rồi thử lại.','AI_NETWORK');
+   if(attempt===maxAttempts)throw lastError;
+   await sleep(350*attempt,signal);continue;
+  }
+  if(response.ok)break;
+  lastError=statusError(response.status);
+  if(!RETRYABLE_STATUS.has(response.status)||attempt===maxAttempts)throw lastError;
+  await sleep(500*attempt,signal);
  }
- if(!response.ok)throw statusError(response.status);
+ if(!response?.ok)throw lastError||codedError('chatgpt2api chưa hoàn tất lượt Writer.','AI_ROUTE_ERROR');
  let data;
  try{data=await response.json();}catch{throw codedError('chatgpt2api trả phản hồi không phải JSON hợp lệ.','AI_MALFORMED_OUTPUT');}
  const text=data?.choices?.[0]?.message?.content;
  if(typeof text!=='string'||!text.trim())throw codedError('chatgpt2api không trả nội dung văn bản cho Writer.','AI_MALFORMED_OUTPUT');
- return {
-  text:text.trim(),
-  metadata:Object.freeze({
-   provider:'chatgpt2api',
-   requestedModel,
-   reportedModel:typeof data?.model==='string'&&data.model.trim()?data.model.trim():null,
-   resolvedModel:null,
-   effortRequested:requestedEffort,
-   effortTransmitted:requestedEffort,
-   effortReported:null,
-   effectiveModelObserved:false,
-   effectiveEffortObserved:false
-  })
- };
+ return {text:text.trim(),metadata:Object.freeze({provider:'chatgpt2api',requestedModel,reportedModel:typeof data?.model==='string'&&data.model.trim()?data.model.trim():null,resolvedModel:null,effortRequested:requestedEffort,effortTransmitted:requestedEffort,effortReported:null,effectiveModelObserved:false,effectiveEffortObserved:false})};
 }
 
 export async function discoverChatgptWebModels({signal,fetchImpl=fetch,env=process.env}={}){

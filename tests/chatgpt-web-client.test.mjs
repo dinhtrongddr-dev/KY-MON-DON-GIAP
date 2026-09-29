@@ -75,3 +75,20 @@ test('model discovery is catalog evidence only, not entitlement proof',async()=>
  assert.equal(data.entitlementVerified,false);
  assert.equal(data.probed,false);
 });
+
+test('chatgpt2api retries transient upstream failures and preserves the same request',async()=>{
+ let calls=0;const bodies=[];
+ const result=await runChatgptWebText('i',{question:'q'},{env:{...env,CHATGPT2API_MAX_ATTEMPTS:'3'},fetchImpl:async(_url,options)=>{
+  calls++;bodies.push(options.body);
+  if(calls===1)return new Response('temporary',{status:502});
+  if(calls===2)return new Response('busy',{status:429});
+  return new Response(JSON.stringify({model:'gpt-5',choices:[{message:{content:'ok'}}]}),{status:200,headers:{'Content-Type':'application/json'}});
+ }});
+ assert.equal(result.text,'ok');assert.equal(calls,3);assert.equal(new Set(bodies).size,1);
+});
+
+test('chatgpt2api does not retry auth or malformed requests',async()=>{
+ let calls=0;
+ await assert.rejects(runChatgptWebText('i','x',{env,fetchImpl:async()=>{calls++;return new Response('no',{status:401});}}),e=>e.code==='AI_AUTH');
+ assert.equal(calls,1);
+});
