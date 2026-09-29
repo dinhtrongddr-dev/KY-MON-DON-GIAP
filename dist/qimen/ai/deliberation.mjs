@@ -11,6 +11,32 @@ const obj=properties=>({type:'object',additionalProperties:false,required:Object
 const str={type:'string'};
 const choice=values=>({type:'string',enum:values});
 
+
+const compactClaim=claim=>({
+  id:claim.id,bundleId:claim.bundleId,actorIds:claim.actorIds,evidenceIds:claim.evidenceIds,
+  mechanism:claim.mechanism,semanticMeaning:claim.semanticMeaning||null,realWorldManifestation:claim.realWorldManifestation,
+  implication:claim.implication,counterEvidenceIds:claim.counterEvidenceIds,limitations:claim.limitations,
+  conflicts:claim.conflicts,priority:claim.priority,status:claim.status
+});
+const compactActor=actor=>({
+  id:actor.id,role:actor.role,source:actor.source,palace:actor.palace,stem:actor.stem,status:actor.status,
+  element:actor.element,door:actor.door,star:actor.star,deity:actor.deity,strength:actor.strength,
+  specialStates:actor.specialStates,party:actor.party,zone:actor.zone,hostGuest:actor.hostGuest,
+  agencyBand:actor.agencyBand,agencyMeaning:actor.agencyMeaning,yongshenTier:actor.yongshenTier,
+  yongshenOrder:actor.yongshenOrder,yongshenPurpose:actor.yongshenPurpose
+});
+export function buildPlannerContext(writer){
+  const g=writer.readingGraph,claimIds=new Set(g.claims.map(x=>x.id));
+  return {question:writer.question,topic_id:writer.topic_id,mode:writer.mode,questionType:writer.questionType,
+    readingGraph:{questionContext:g.questionContext,usefulGodProfile:g.usefulGodProfile,actors:g.nodes.map(compactActor),
+      relationships:g.relationships,interactions:g.interactions,claims:g.claims.map(compactClaim),
+      contextualInterpretation:g.contextualInterpretation,outcomeDimensions:g.outcomeDimensions,eventStages:g.eventStages,
+      primaryJudgment:g.primaryJudgment,timing:g.timing,likelyScenario:g.likelyScenario,recommendations:g.recommendations,
+      unresolved:g.unresolved,conflicts:(g.conflicts||[]).filter(x=>!x.claimId||claimIds.has(x.claimId))},
+    comparisons:writer.comparisons,comparisonConvention:writer.comparisonConvention,caseGuidance:writer.caseGuidance,
+    presentation:writer.presentation,warnings:writer.warnings,unsupported:writer.unsupported};
+}
+
 export function deliberationSchema(context){
   const c=context.allInOne,g=c.reasoning;
   const claimIds=g.claims.map(x=>x.id),coreClaimIds=g.claims.filter(x=>x.status!=='corroboration_only').map(x=>x.id),recommendationIds=g.recommendations.map(x=>x.id);
