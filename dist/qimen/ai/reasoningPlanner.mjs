@@ -49,6 +49,7 @@ export function buildReadingEvidenceGraph(analysis,questionContext,modePlan,grap
   const likelyScenario=buildScenario(selected,questionContext,graph,interactions,modePlan,{outcomeDimensions,eventStages,primaryJudgment,timing,roleProfile:activeRoleProfile});
   const coreClaims=selected.map(b=>({id:`claim_${b.palace}`,bundleId:b.id,actorIds:b.actorIds,evidenceIds:[...new Set([...b.evidenceIds,...interactions.filter(i=>b.actorIds.includes(i.from)||b.actorIds.includes(i.to)).slice(0,2).map(i=>i.edgeId)])],
     mechanism:b.translation.mechanism,interpretation:b.translation.interaction,
+    semanticMeaning:{mechanism:b.translation.mechanism,interaction:b.translation.interaction,manifestation:b.translation.manifestation},
     realWorldManifestation:b.translation.manifestation,implication:b.translation.implication,
     ruleIds:['rule_board','rule_elements','rule_conditions','rule_strength','rule_structure_v2','rule_keying_v3','rule_formation_v3','rule_role_v2','rule_synthesis','rule_stages','rule_timing_scope',...new Set(b.actorIds.map(id=>analysis.roles.find(r=>r.id===id).selectionRule.id))],
     counterEvidenceIds:b.conflicts.length?[`c${b.palace}`,...(b.states.some(s=>['fan_yin','fu_yin'].includes(s.code))?['patterns']:[])]:[],
