@@ -113,7 +113,7 @@ function technicalGroundingFor(unit,contract){
 }
 function synthesisTaskFor(unit,contract){
   const mode=contract.kind==='menh'?'một nhận xét đời sống có chiều sâu':'một mắt xích rõ trong câu trả lời cho việc đang hỏi';
-  return 'Tự giải nghĩa và phối hợp các căn cứ kỹ thuật bên dưới thành '+mode+' về “'+unit.label+'”. Không dịch từng ký hiệu thành từng câu; hãy chỉ ra mối liên hệ, điểm mạnh, điểm vướng và hệ quả thực hành khi căn cứ đủ để nói.';
+  return 'Tự giải nghĩa và phối hợp các căn cứ kỹ thuật bên dưới thành '+mode+' về “'+unit.label+'”. Nói ý nghĩa/kịch bản thực tế trước; chỉ chọn 1–2 căn cứ quyết định để giải thích, không kể lại toàn bộ technicalGrounding. Khi đủ căn cứ, hãy nói điều gì có thể xảy ra và điều kiện chuyển kết quả; không chỉ lặp “có thuận/có cản/cần kiểm tra”.';
 }
 export function surfacePayload(contract){
   validateNarrativeContract(contract);
