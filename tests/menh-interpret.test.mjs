@@ -23,7 +23,7 @@ test('Mệnh fallback is natural, traceable, and independently recomputable afte
   const reading=await interpretMenhReading(prepared,{runner:async(_i,ctx)=>{
     calls++;const r=draftFor(ctx);r.sections[0].claim_ids=['INVENTED'];return r;
   }});
-  assert.equal(calls,2);assert.equal(reading.status,'verified_fallback');
+  assert.equal(calls,3);assert.equal(reading.status,'verified_fallback');
   assert.equal(reading.identity.profileId,prepared.result.profileId);
   const ctx=buildMenhWriterContext(prepared.result,{birthTimeMode:'KNOWN'});
   assert.equal(validateMenhReading(reading,ctx),reading);

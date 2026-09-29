@@ -96,8 +96,10 @@ export function validateNarrativeMenh(reading,context){
     const n=normalize(prose);
     // Certainty is checked against the contract by the mandatory fidelity
     // reviewer; negated statements must not fail a keyword-presence gate.
-    if(/\b(?:da xay ra|chac chan da|ban da (?:ket hon|ly hon|mat viec|nghi viec|sinh con|co \d+ con|mac benh|phau thuat|mua nha|ban nha))\b/.test(n))
-      reject('Không tự nâng xu hướng thành sự kiện ngoài đời.');
+    // Mệnh may describe a grounded future scenario as a possibility. Only block
+    // language that turns it into an observed/past fact or a certain event.
+    if(/\b(?:chac chan da|ban da (?:ket hon|ly hon|mat viec|nghi viec|sinh con|co \d+ con|mac benh|phau thuat|mua nha|ban nha))\b/.test(n))
+      reject('Không được biến xu hướng thành sự kiện đã xảy ra hoặc chắc chắn.');
     if(context.birthTimeMode==='UNKNOWN'&&/\bgio sinh (?:dung|chinh xac|la)\b/.test(n))
       reject('Không được tự chọn giờ sinh.');
     if(/\b\d+(?:[.,]\d+)*\s*(?:trieu|ty|vnd|usd|dong)\b/.test(n))

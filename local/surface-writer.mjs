@@ -21,7 +21,7 @@ export async function writeSurface(contract,{runner=runSurfaceText,reviewer=runA
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
   const payload=surfacePayload(contract);
   let revision,routeStartIndex=0,lastRoute;
-  for(let attempt=0;attempt<2;attempt++){
+  for(let attempt=0;attempt<3;attempt++){
     combined.throwIfAborted();
     const options=runner===runSurfaceText?{signal:combined,routeStartIndex}:{signal:combined};
     const draft=await runner(SURFACE_WRITER_INSTRUCTIONS,revision?{...payload,revision}:payload,surfaceSchema(contract),options);
@@ -43,13 +43,13 @@ export async function writeSurface(contract,{runner=runSurfaceText,reviewer=runA
       if(!(error instanceof SurfaceValidationError)&&!['ReadingValidationError','MenhReadingValidationError'].includes(error.name))throw error;
       const violations=error.violations||[{code:'INTEGRITY',unitId:'',sentence:'',reason:error.message}];
       if(runner===runSurfaceText)diagnostics?.({type:'validation_failure',flow:contract.kind,stage:'surface_audit',attempt:attempt+1,route:lastRoute?.id||'',model:lastRoute?.modelId||'',code:'SURFACE_CONTRACT',fallbackAllowed:false,message:error.message});
-      if(attempt===1){
+      if(attempt===2){
         const fallback=naturalSurfaceFallback(contract,planning);validate?.(fallback);
         return attachAiRoute(fallback,lastRoute);
       }
       if(runner===runSurfaceText&&Number.isInteger(lastRoute?.fallbackIndex))routeStartIndex=lastRoute.fallbackIndex;
       revision={violations,previousReading:draft,
-        instruction:'Sửa đúng lỗi kỹ thuật hoặc mức chắc chắn đã nêu trong section liên quan. Giữ các tổng hợp đang có căn cứ; không thu bài về câu mẫu, không thêm dữ kiện hoặc metadata. Nếu chỉ sai độ chắc chắn, sửa tối thiểu trong câu gốc. Trả lại đầy đủ mảng sections với đúng id.'};
+        instruction:'Sửa tối thiểu lỗi đã nêu trong section liên quan. Nếu lỗi chỉ là độ chắc chắn/stage, GIỮ nguyên nội dung dự báo và đổi cách nói thành khả năng, xu hướng hoặc kịch bản có điều kiện; không xóa cả nhận định. Giữ các tổng hợp đang có căn cứ; không thu bài về câu mẫu, không thêm dữ kiện hoặc metadata. Nếu chỉ sai độ chắc chắn, sửa tối thiểu trong câu gốc. Trả lại đầy đủ mảng sections với đúng id.'};
     }
   }
 }

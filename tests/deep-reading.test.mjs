@@ -83,7 +83,7 @@ test('missing provenance receives one structured rewrite without changing allowe
 test('a second inadequate reading returns verified facts; authentication or transport errors are never retried',async()=>{
   const p=prepareReading(body);let count=0;
   const route={id:'sol',provider:'9router/codex',model:'cx/gpt-5.6-sol',modelId:'gpt-5.6-sol',label:'GPT-5.6 Sol',routeLabel:'9router · ChatGPT',effort:'xhigh',fallbackIndex:0};
-  const fallback=await interpretReading(p,{runner:async()=>{count++;return attachAiRoute({},route);}});assert.equal(fallback.status,'verified_fallback');assert.equal(count,2);
+  const fallback=await interpretReading(p,{runner:async()=>{count++;return attachAiRoute({},route);}});assert.equal(fallback.status,'verified_fallback');assert.equal(count,3);
   assert.equal(aiRouteOf(fallback)?.modelId,'gpt-5.6-sol');
   assert.doesNotThrow(()=>validateReading(fallback,p.facts,body.topic,p.context));
   count=0;await assert.rejects(interpretReading(p,{runner:async()=>{count++;throw new Error('Không có quyền truy cập model');}}),/quyền truy cập/);assert.equal(count,1);
@@ -149,7 +149,7 @@ test('persistent invented events end in the exact natural fallback, not a patche
   const result=await interpretReading(p,{reviewer:acceptFidelity,runner:async(_i,payload)=>{
     count++;const r=draftFor(payload);firstParagraph(r).meaning+=' Khoản thu sẽ được xác nhận và chuyển tiền.';return r;
   }});
-  assert.equal(count,2);assert.equal(result.status,'verified_fallback');
+  assert.equal(count,3);assert.equal(result.status,'verified_fallback');
   assert.doesNotMatch(meaningOf(result),/Khoản thu sẽ được xác nhận/);
   assert.doesNotMatch(meaningOf(result),/deterministic|cap|veto|Kết luận chỉ phản ánh/);
   assert.doesNotThrow(()=>validateReading(result,p.facts,body.topic,p.context));

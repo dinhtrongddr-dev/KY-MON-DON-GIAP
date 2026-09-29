@@ -134,7 +134,7 @@ test('timing comparison facts use the candidate board instead of the question bo
 test('after one unsuccessful repair return only independently recomputable verified content',async()=>{
   const p=await buildReadingRequest(body);let count=0;
   const reading=await interpretReading(p,{runner:async()=>{count++;return {invented:'Khách hàng chắc chắn ký.'};}});
-  assert.equal(count,2);assert.equal(reading.status,'verified_fallback');
+  assert.equal(count,3);assert.equal(reading.status,'verified_fallback');
   const data={rules:p.context.rules,protocol:p.request.protocol,caseRules:CASE_ENGINE_VERSION,nianmingRules:p.request.nianmingRules,chartFingerprint:p.chartFingerprint,requestFingerprint:p.requestFingerprint,facts:p.facts,reading};
   assert.doesNotThrow(()=>validateReadingResponse(data,p));
   assert.ok(!JSON.stringify(reading).includes('Khách hàng chắc chắn ký'));

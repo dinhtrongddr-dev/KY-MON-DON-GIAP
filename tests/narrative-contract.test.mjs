@@ -220,7 +220,7 @@ test('Mệnh safety gates reject medical, death, exact children and marriage cla
 test('independent semantic review blocks contradictory prose without relying on Writer ids',async()=>{
   let writes=0,reviews=0;
   const r=await writeSurface(qc,{runner:async()=>{writes++;const draft=fallbackDraft(qc);section(draft,'answer').text='Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.';return draft;},reviewer:async()=>{reviews++;return {violations:[{code:'VERDICT_CHANGED',unitId:'answer',sentence:'Mọi điều kiện đều đã sẵn sàng, cứ nộp đơn ngay.',reason:'Đảo kết luận có điều kiện.',grounding:['Kết luận và điều kiện đã duyệt.']}]};}});
-  assert.equal(writes,2);assert.equal(reviews,2);assert.equal(r.status,'verified_fallback');
+  assert.equal(writes,3);assert.equal(reviews,3);assert.equal(r.status,'verified_fallback');
   assert.doesNotMatch(meaningOf(r),/Mọi điều kiện đều đã sẵn sàng/);
 });
 test('semantic review outages fail closed instead of marking a draft as verified',async()=>{
