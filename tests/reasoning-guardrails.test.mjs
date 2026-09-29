@@ -68,3 +68,11 @@ test('stage guards also reject invented completion and categorical success outsi
   for(const text of ['Bạn đã đạt mục tiêu ký kết.','Thỏa thuận đã hoàn tất.','Bạn chắc chắn đạt được mục tiêu.','Mọi điều kiện đã được đáp ứng.'])assert.ok(auditSynthesis([section(text,'summary')],p.context).length,text);
   assert.deepEqual(auditSynthesis([section('Nếu mọi điều kiện đã được đáp ứng thì mới xét kết quả cuối.','situation')],p.context),[]);
 });
+
+test('natural strategy wording is not mistaken for invented timing or completed outcomes',async()=>{
+  const {auditSynthesis}=await load(),p=prepareReading({...body,question:'Tôi cần làm gì để phát triển nhánh cung ứng tạp vụ cho doanh nghiệp? Cần làm điều gì vào ngày nào, hướng nào, sử dụng trực phù hoặc các thần ra sao?',mode:'strategy'});
+  assert.deepEqual(auditSynthesis([section('Mục tiêu là để một ngày doanh nghiệp vận hành ổn định hơn; trước mắt hãy thử quy mô nhỏ.','action')],p.context),[]);
+  assert.deepEqual(auditSynthesis([section('Hướng tới việc thỏa thuận đã hoàn tất không có nghĩa là hiện tại thỏa thuận đã hoàn tất.','action')],p.context),[]);
+  assert.ok(auditSynthesis([section('Sau một ngày, thỏa thuận đã hoàn tất.','timing')],p.context).length);
+  assert.ok(auditSynthesis([section('Thỏa thuận đã hoàn tất.','summary')],p.context).length);
+});

@@ -64,7 +64,9 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
       const prefix=before.split(/[.!?;]/).at(-1);
       const denied=/\b(?:chua|khong (?:the|co|nen|duoc|phai))\b/.test(prefix)&&!/\b(neu|nhung|tuy nhien)\b/.test(prefix);
       const forecasts=/\b(se|xay ra|ung vao|tien ve|nhan tien|tien vao)\b/.test(prefix);
-      if(!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0]))issues.push(`Mốc ứng kỳ ngoài Timing Engine: ${match[0]}; không được tự định ngày hoặc số ngày.`);
+      const temporalContext=/\b(?:trong|sau|truoc|den|tu|vao|ke tu|moc|thoi han|thoi diem|ung ky|ngay|tuan|thang)\s*$/.test(prefix)||/\b(?:se|xay ra|ung vao|tien ve|nhan tien|tien vao|cho|doi|hen|gap|goi|gui|ky|thanh toan)\b/.test(prefix);
+      const genericDay=match[0]==='mot ngay'&&!temporalContext&&!forecasts;
+      if(!genericDay&&!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0]))issues.push(`Mốc ứng kỳ ngoài Timing Engine: ${match[0]}; không được tự định ngày hoặc số ngày.`);
     }
     for(const match of q.matchAll(/\b\d{4}-\d{2}-\d{2}\b|\bngay \d{1,2} thang \d{1,2}(?: nam \d{4})?\b/g)){
       const scope=Object.values(g.timing.window||{}).includes(match[0])&&/\b(khoang hoi|pham vi|cua so|thoi han)\b/.test(q)&&!/\b(se|xay ra|tien ve)\b/.test(q);
@@ -92,7 +94,8 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
     for(const match of q.matchAll(/\b(?:ban da dat muc tieu|(?:thoa thuan|hop dong|du an|cong viec) da (?:hoan tat|hoan thanh|thanh cong)|moi dieu kien da (?:duoc )?dap ung|(?:ban |su viec |du an )?chac chan (?:dat|thanh cong|hoan tat|hoan thanh))[^.!?;]*/g)){
       const stagePrefix=q.slice(0,match.index).split(/[.!?;]/).at(-1);
       const negatedStage=/\b(?:tranh|dung|khong (?:nen|duoc)|chua the)\s+(?:voi|xem|coi|hieu|ket luan)[^.!?;]{0,100}$/.test(stagePrefix);
-      if(!conditionalPrefix(q,match.index)&&!negatedStage&&!source.includes(match[0]))issues.push('Tự nâng giai đoạn thành đạt mục tiêu/hoàn tất, trái nhận định có điều kiện của planner.');
+      const advisoryStage=/\b(?:muc tieu|huong toi|de|nham|can|nen|hay|co the|muon|giup|tung buoc)\b/.test(stagePrefix);
+      if(!conditionalPrefix(q,match.index)&&!negatedStage&&!advisoryStage&&!source.includes(match[0]))issues.push('Tự nâng giai đoạn thành đạt mục tiêu/hoàn tất, trái nhận định có điều kiện của planner.');
     }
     if(qc.domain==='finance'&&g.primaryJudgment.answerClass==='conditional_positive'){
       for(const match of q.matchAll(/\b(?:khong (?:co |biet (?:co )?)?(?:tien|khoan thu|phat sinh)|chac chan (?:tien|co tien|nhan tien))\b/g))
