@@ -224,3 +224,20 @@ test('Mệnh shows a successful chart timestamp directly under the Lập Mệnh 
   assert.match(app,/createdStatus\.textContent='✓ Đã lập bàn lúc '\+formatCreatedClock\(\)/);
   assert.match(app,/if\(createdStatus\)createdStatus\.hidden=true/);
 });
+
+test('Kỳ Môn intro and server-running explanation are visible on both products',()=>{
+  const questionHtml=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
+  const menhHtml=readFileSync(new URL('../dist/menh.html',import.meta.url),'utf8');
+  const questionAi=readFileSync(new URL('../dist/ai-local.mjs',import.meta.url),'utf8');
+  const menhAi=readFileSync(new URL('../dist/menh-ai.mjs',import.meta.url),'utf8');
+  for(const page of [questionHtml,menhHtml]){
+    assert.match(page,/class="qimen-intro"/);
+    assert.match(page,/Hơn 2\.000 năm trước/);
+    assert.match(page,/Gia Cát Lượng, Khương Tử Nha, Lưu Bá Ôn/);
+    assert.ok(page.indexOf('qimen-intro')<page.indexOf('<main'),'intro must sit below the topbar and above the main content');
+  }
+  for(const ai of [questionAi,menhAi]){
+    assert.match(ai,/Không phải một lời tiên tri\. Không phải sự may rủi\./);
+    assert.match(ai,/AI vẫn đang luận trên server/);
+  }
+});
