@@ -1,5 +1,5 @@
-import {runAI,READING_TIMEOUT_MS,attachAiRoute,aiRouteOf} from './ai-client.mjs';
-import {generateText} from './provider-client.mjs';
+import {READING_TIMEOUT_MS,attachAiRoute,aiRouteOf} from './ai-client.mjs';
+import {generateText,generateStructured} from './provider-client.mjs';
 import {parseStructuredText} from './codex-client.mjs';
 import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {surfacePayload} from '../dist/qimen/ai/narrativePrimitives.mjs';
@@ -16,7 +16,7 @@ export async function runSurfaceText(instructions,input,_schema,{signal,routeSta
 
 // Writer uses the natural-text provider path. Planner/reviewer remain structured so
 // exact JSON contracts stay on the provider path designed for structured output.
-export async function writeSurface(contract,{runner=runSurfaceText,reviewer=runAI,validate,planning=null,signal,budgetMs=READING_TIMEOUT_MS,diagnostics=recordAiDiagnostic}={}){
+export async function writeSurface(contract,{runner=runSurfaceText,reviewer=generateStructured,validate,planning=null,signal,budgetMs=READING_TIMEOUT_MS,diagnostics=recordAiDiagnostic}={}){
   if(typeof reviewer!=='function')throw new Error('Semantic fidelity reviewer is required.');
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
   const payload=surfacePayload(contract);

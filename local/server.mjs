@@ -4,7 +4,8 @@ import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,extname} from 'node:path';
-import {runAI,MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf,writerProviderFromEnv} from './ai-client.mjs';
+import {MODEL,REASONING_EFFORT,ROUTING_MODE,aiRouteOf,writerProviderFromEnv} from './ai-client.mjs';
+import {generateStructured} from './provider-client.mjs';
 import {runSurfaceText} from './surface-writer.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
@@ -56,7 +57,7 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=runAI,diagnostics=recordAiDiagnostic,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
+export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=generateStructured,diagnostics=recordAiDiagnostic,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
  let busy=false,activeJob=null;
  const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
