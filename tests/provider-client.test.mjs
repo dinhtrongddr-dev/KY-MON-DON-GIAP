@@ -100,3 +100,18 @@ test('structured provider interface preserves legacy runner contract',async()=>{
  });
  assert.equal(result.answer,'ok');
 });
+
+test('chatgpt2api structured route stays on chatgpt2api and parses JSON',async()=>{
+ const schema={type:'object',properties:{answer:{type:'string'}},required:['answer']};
+ const calls=[];
+ const env={QIMEN_WRITER_PROVIDER:'chatgpt2api',QIMEN_CHATGPT2API_ENABLED:'1',CHATGPT2API_BASE_URL:'http://127.0.0.1:3000/v1',CHATGPT2API_AUTH_KEY:'test',CHATGPT2API_WRITER_MODEL:'gpt-5-6',CHATGPT2API_REASONING_EFFORT:'xhigh'};
+ const result=await generateStructured('instructions',{question:'q'},schema,{
+  env,
+  chatgptTextRunner:async(instructions,input,options)=>{calls.push({instructions,input,options});return {text:'{\"answer\":\"ok\"}'};},
+  codexRunner:async()=>assert.fail('legacy structured provider must not run')
+ });
+ assert.equal(result.answer,'ok');
+ assert.equal(aiRouteOf(result).provider,'chatgpt2api');
+ assert.equal(calls.length,1);
+ assert.match(calls[0].instructions,/JSON Schema/);
+});

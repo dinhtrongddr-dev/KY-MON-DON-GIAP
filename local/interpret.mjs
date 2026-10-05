@@ -2,15 +2,16 @@ import {validateReading} from './reading.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {DELIBERATION_INSTRUCTIONS,buildPlannerContext,deliberationSchema,shouldDeliberate} from '../dist/qimen/ai/deliberation.mjs';
 import {buildQuestionNarrativeContract,validateDeliberation} from '../dist/qimen/ai/narrativeContract.mjs';
-import {runAI,READING_TIMEOUT_MS} from './ai-client.mjs';
+import {READING_TIMEOUT_MS} from './ai-client.mjs';
+import {generateStructured} from './provider-client.mjs';
 import {clarificationReading} from '../dist/qimen/ai/verifiedFallback.mjs';
 import {writeSurface,runSurfaceText} from './surface-writer.mjs';
 
-export async function interpretReading(prepared,{runner=runSurfaceText,planRunner,reviewer=runAI,budgetMs=READING_TIMEOUT_MS,signal,diagnostics}={}){
+export async function interpretReading(prepared,{runner=runSurfaceText,planRunner,reviewer=generateStructured,budgetMs=READING_TIMEOUT_MS,signal,diagnostics}={}){
   signal?.throwIfAborted();
   if(prepared.context.allInOne.questionContext.needsClarification)return clarificationReading(prepared.context);
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
-  const planner=planRunner===undefined?(runner===runSurfaceText?runAI:null):planRunner;
+  const planner=planRunner===undefined?(runner===runSurfaceText?generateStructured:null):planRunner;
   let planning=null;
   if(planner&&shouldDeliberate(prepared.context)){
     combined.throwIfAborted();
