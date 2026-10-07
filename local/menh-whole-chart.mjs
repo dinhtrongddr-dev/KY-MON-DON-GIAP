@@ -116,6 +116,22 @@ function auditFacts(reading,packet){
   for(const m of n.matchAll(moneyPattern))violations.push({code:'INVENTED_MONEY',reason:'Số tiền cụ thể không có trong dữ kiện.'});
   const datePattern=/(?:[0-9]{1,2}[/][0-9]{1,2}(?:[/][0-9]{2,4})?|[0-9]{4}-[0-9]{2}-[0-9]{2})/g;
   for(const m of n.matchAll(datePattern))if(!source.includes(m[0]))violations.push({code:'INVENTED_TIME',reason:'Mốc ngày cụ thể không có trong dữ kiện.'});
+  const escape=value=>String(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const sentences=n.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);
+  for(const palace of packet.chart?.palaces||[]){
+    const name=String(palace.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+    if(!name)continue;
+    const expected=[palace.door?.vi,palace.star?.vi,palace.deity?.vi].filter(Boolean).map(x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase());
+    const universe=[...new Set((packet.chart.palaces||[]).flatMap(x=>[x.door?.vi,x.star?.vi,x.deity?.vi]).filter(Boolean).map(x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase()))];
+    for(const sentence of sentences){
+      if(!sentence.includes(name))continue;
+      for(const label of universe){
+        if(expected.includes(label))continue;
+        if(new RegExp(escape(name)+'[^.!?]{0,70}'+escape(label)).test(sentence))
+          violations.push({code:'WRONG_TECHNICAL_ASSIGNMENT',reason:'Gán sai Môn/Tinh/Thần cho '+palace.name+': '+label+'.'});
+      }
+    }
+  }
   return violations;
 }
 function validationMessage(error){
