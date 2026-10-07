@@ -127,7 +127,11 @@ function auditFacts(reading,packet){
       if(!sentence.includes(name))continue;
       for(const label of universe){
         if(expected.includes(label))continue;
-        if(new RegExp(escape(name)+'[^.!?]{0,70}'+escape(label)).test(sentence))
+        const start=sentence.indexOf(name),tail=sentence.slice(start+name.length),position=tail.indexOf(label);
+        if(position<0||position>70)continue;
+        const between=tail.slice(0,position);
+        const anotherPalace=(packet.chart.palaces||[]).some(other=>other!==palace&&String(other.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase()&&between.includes(String(other.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase()));
+        if(!anotherPalace)
           violations.push({code:'WRONG_TECHNICAL_ASSIGNMENT',reason:'Gán sai Môn/Tinh/Thần cho '+palace.name+': '+label+'.'});
       }
     }
