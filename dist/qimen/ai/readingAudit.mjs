@@ -170,7 +170,46 @@ export function validateReading(r,facts,selectedTopic='general',context) {
   return r;
 }
 
+function validateWholeChartQuestionSurface(reading,context){
+  const c=context?.allInOne||{},classification=c.classification||{},questionContext=c.questionContext||{};
+  const expectedIdentity={
+    topic_id:c.resolvedTopic||'general',
+    mode:classification.mode||questionContext.mode||'strategy',
+    questionType:questionContext.questionType||classification.questionType||classification.mode||'prediction'
+  };
+  const issue=(reason)=>{throw new ReadingValidationError(reason);};
+  const top=['narrativeVersion','kind','status','identity','sections','facets','primaryConclusion','note','planning'];
+  if(!exact(reading,top)||reading.narrativeVersion===undefined||reading.kind!=='question'||!['reading','verified_fallback'].includes(reading.status))
+    issue('Bài Luận Toàn Bàn sai phiên bản hoặc loại bài.');
+  if(JSON.stringify(reading.identity)!==JSON.stringify(expectedIdentity))
+    issue('Bài Luận Toàn Bàn lệch nhóm sự việc, chế độ hoặc ý định hỏi.');
+  const sections=reading.sections;
+  if(!sections||typeof sections!=='object'||Array.isArray(sections))
+    issue('Bài Luận Toàn Bàn thiếu các mục cần trả lời.');
+  const keys=Object.keys(sections);
+  const required=['answer','situation','bottleneck','action_1'];
+  const allowed=new Set([...required,'action_2','action_3','timing']);
+  if(required.some(id=>!keys.includes(id))||keys.some(id=>!allowed.has(id)))
+    issue('Bài Luận Toàn Bàn thiếu hoặc thêm mục ngoài hợp đồng.');
+  const claimPattern=/^(?:question_context|global_structure|palace_[1-9])$/;
+  for(const id of keys){
+    const section=sections[id];
+    if(!exact(section,['label','conclusion','certainty','paragraphs'])||typeof section.label!=='string'||!['conditional','tendency'].includes(section.conclusion)||section.certainty!=='conditional'||!Array.isArray(section.paragraphs)||section.paragraphs.length!==1)
+      issue('Bài Luận Toàn Bàn đổi cấu trúc hoặc mức độ chắc chắn.');
+    const paragraph=section.paragraphs[0];
+    if(!exact(paragraph,['meaning','claim_ids','atom_ids','certainty','conclusion','technicalEvidence','trace'])||typeof paragraph.meaning!=='string'||paragraph.meaning.trim().length<1||!Array.isArray(paragraph.claim_ids)||!paragraph.claim_ids.length||paragraph.claim_ids.some(id=>typeof id!=='string'||!claimPattern.test(id))||!Array.isArray(paragraph.atom_ids)||paragraph.atom_ids.some(id=>typeof id!=='string')||paragraph.certainty!=='conditional'||paragraph.conclusion!==section.conclusion||typeof paragraph.technicalEvidence!=='string'||!paragraph.trace||typeof paragraph.trace!=='object'||Array.isArray(paragraph.trace))
+      issue('Bài Luận Toàn Bàn có đoạn hoặc căn cứ không hợp lệ.');
+    auditClaims([paragraph.meaning],context,[],{structured:true});
+  }
+  const primary=reading.primaryConclusion;
+  if(!exact(primary,['conclusion','certainty','stage','meaning','claimIds'])||primary.conclusion!=='conditional'||primary.certainty!=='conditional'||primary.stage!=='contextual'||typeof primary.meaning!=='string'||!Array.isArray(primary.claimIds)||!primary.claimIds.length||primary.claimIds.some(id=>typeof id!=='string'||!claimPattern.test(id)))
+    issue('Bài Luận Toàn Bàn đổi kết luận hoặc giai đoạn.');
+  return reading;
+}
+
 export function validateNarrativeQuestion(reading,context){
+  if(reading?.sections?.answer&&!reading?.sections?.summary&&reading?.primaryConclusion?.stage==='contextual')
+    return validateWholeChartQuestionSurface(reading,context);
   try{
     const contract=buildQuestionNarrativeContract(context,{deliberation:reading.planning});
     validateSurfaceReading(reading,contract);

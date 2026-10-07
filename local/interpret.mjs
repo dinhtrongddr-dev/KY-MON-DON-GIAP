@@ -15,11 +15,16 @@ export async function interpretReading(prepared,{runner=runSurfaceText,planRunne
   let planning=null;
   if(planner&&shouldDeliberate(prepared.context)){
     combined.throwIfAborted();
-    const draft=await planner(DELIBERATION_INSTRUCTIONS,buildPlannerContext(buildWriterContext(prepared.context)),deliberationSchema(prepared.context),{signal:combined});
-    combined.throwIfAborted();
-    // The model's notes never become evidence. An invalid plan falls back to the
-    // deterministic plan; transport/auth failures still propagate.
-    try{planning=validateDeliberation(draft,prepared.context);}catch{planning=null;}
+    // Planner output is advisory only. A malformed structured turn must not
+    // block the actual Writer; transport/auth/timeout failures still propagate.
+    try{
+      const draft=await planner(DELIBERATION_INSTRUCTIONS,buildPlannerContext(buildWriterContext(prepared.context)),deliberationSchema(prepared.context),{signal:combined});
+      combined.throwIfAborted();
+      try{planning=validateDeliberation(draft,prepared.context);}catch{planning=null;}
+    }catch(error){
+      if(!/AI trả kết quả chưa hợp lệ|JSON/i.test(String(error?.message||'')))throw error;
+      planning=null;
+    }
   }
   const contract=buildQuestionNarrativeContract(prepared.context,{deliberation:planning});
   return writeSurface(contract,{runner,reviewer,planning,signal:combined,budgetMs,diagnostics,

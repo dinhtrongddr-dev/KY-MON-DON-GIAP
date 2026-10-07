@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {resolveReasoningMode,buildCanonicalChartPacket,interpretWholeChart,WHOLE_CHART_PACKET_VERSION} from '../local/whole-chart.mjs';
-import {prepareReading} from '../local/reading.mjs';
+import {prepareReading,buildReadingRequest,validateReadingResponse} from '../local/reading.mjs';
 import {classifyQuestion} from '../dist/qimen/ai/classifier.mjs';
 
 const CASE={
@@ -71,6 +71,28 @@ test('whole chart uses one direct writer call, with repair only after a failed d
   assert.equal(firstInput.planning,undefined);
   assert.equal(firstInput.packet.deterministic.reasoning,undefined);
   assert.equal(firstInput.packet.salienceIndex.kind,'FACT_ONLY_SALIENCE_INDEX');
+});
+
+test('whole chart result passes the browser response validator without standard-contract identity rejection',async()=>{
+  const prepared=await buildReadingRequest(CASE);
+  const runner=async(_instructions,input)=>{
+    return {text:JSON.stringify({sections:input.surface.units.map(u=>({
+      id:u.id,
+      text:'Tổng hợp các cung liên quan thành cơ chế, điều kiện chuyển bước và dấu hiệu cần theo dõi cho đúng mục này.'
+    }))})};
+  };
+  const reading=await interpretWholeChart(prepared,{runner});
+  const data={
+    rules:prepared.context.rules,
+    protocol:prepared.request.protocol,
+    caseRules:prepared.request.caseRules,
+    nianmingRules:prepared.request.nianmingRules,
+    chartFingerprint:prepared.chartFingerprint,
+    requestFingerprint:prepared.requestFingerprint,
+    facts:prepared.facts,
+    reading
+  };
+  assert.doesNotThrow(()=>validateReadingResponse(data,prepared));
 });
 
 test('strategy wording routes the business case to strategy before Whole Chart runs',()=>{

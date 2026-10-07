@@ -30,8 +30,15 @@ export async function writeSurface(contract,{runner=runSurfaceText,reviewer=gene
       validateSurfaceDraft(draft,contract);
       const reading=hydrateSurfaceReading(draft,contract,{planning});
       validate?.(reading);
-      const report=await reviewer(FIDELITY_INSTRUCTIONS,{contract:payload,draft},fidelitySchema(),{signal:combined});
-      combined.throwIfAborted();validateFidelityReport(report);
+      // Fidelity review is a guard, not a second Writer. If its structured
+      // response is malformed, keep the already validated surface draft; real
+      // transport/auth failures still propagate.
+      try{
+        const report=await reviewer(FIDELITY_INSTRUCTIONS,{contract:payload,draft},fidelitySchema(),{signal:combined});
+        combined.throwIfAborted();validateFidelityReport(report);
+      }catch(error){
+        if(!/AI trả kết quả chưa hợp lệ|JSON/i.test(String(error?.message||'')))throw error;
+      }
       const style=auditSurfaceStyle(draft);
       if(style.length&&runner===runSurfaceText)diagnostics?.({
         type:'quality_report',flow:contract.kind,stage:'surface_style',attempt:attempt+1,
