@@ -3,6 +3,7 @@ import {parseStructuredText} from './codex-client.mjs';
 import {aiRouteOf,attachAiRoute} from './ai-client.mjs';
 import {NARRATIVE_VERSION,GENERAL_NOTE,atom,unit,validateNarrativeContract,surfacePayload} from '../dist/qimen/ai/narrativePrimitives.mjs';
 import {hydrateSurfaceReading,validateSurfaceDraft,validateSurfaceReading} from '../dist/qimen/ai/surfaceReading.mjs';
+import {METHOD_AWARE_READING_INSTRUCTIONS,GLOBAL_STRUCTURE_INSTRUCTIONS,MODE_SYNTHESIS_INSTRUCTIONS} from '../dist/qimen/ai/methodPrompt.mjs';
 
 export const REASONING_MODES=Object.freeze(['standard','whole_chart']);
 export const WHOLE_CHART_PACKET_VERSION='KM-WHOLE-CHART-3';
@@ -259,18 +260,7 @@ QUYỀN HẠN DỮ LIỆU:
 - Không dùng từ nội bộ như deterministic, packet, claim, evidence, pipeline, planner, validator, actor, schema, model hoặc mã rule trong bài.
 - Chỉ nêu thuật ngữ Kỳ Môn khi nó làm rõ cơ chế; nếu nêu, luôn nối ngay với ý nghĩa thực tế. Bài phải đọc như tư vấn có căn cứ, không như bản dịch máy.
 
-METHOD-OF-READING — THỜI GIA / CHUYỂN BÀN / THÁO BỔ / ÂM-DƯƠNG CỤC:
-- Hãy xác định phương pháp từ chartMeta.method, chartMeta.methodLabel, chartMeta.dun, chartMeta.xun và chartMeta.ju trước khi interpretation. Đây là bàn Thời Gia do Engine đã lập; không tự đổi sang một trường phái, cách an bàn hoặc phép định cục khác.
-- “Chuyển bàn” trong lượt này nghĩa là đọc đúng các cung đã được Engine an sẵn, theo đúng vị trí và vai trò trong packet; không tự quay bàn, an lại Cửu Tinh/Bát Môn/Bát Thần, đổi Âm thành Dương, đổi cục hoặc tính lại Trực Phù/Trực Sử.
-- “Tháo bổ” là cách suy luận từng lớp: tháo cung để đọc bối cảnh; tháo Thần để đọc lực hậu trường/tâm thế; tháo Tinh để đọc năng lực/nhịp vận hành; tháo Môn để đọc cửa hành động; tháo Thiên Can và Địa Can để đọc nguồn lực biểu hiện và nền điều kiện. Sau đó bổ sung quan hệ sinh-khắc, mạnh/yếu, Không Vong, Nhập Mộ/Kích Hình nếu packet có, Dịch Mã, Trực Phù/Trực Sử và cấu trúc Phục Ngâm/Phản Ngâm trước khi tổng hợp.
-- Âm Độn/Dương Độn và số cục là dữ kiện định hướng nhịp, vùng nội/ngoại và cách vận động đã được Engine tính. Chỉ dùng chúng khi chartMeta hoặc salienceIndex có facts/relations tương ứng; không suy ra một kết quả mới chỉ từ nhãn Âm/Dương.
-- Dụng Thần, Người hỏi, Sự việc và các role là lớp ưu tiên. Đọc cung Dụng Thần trong quan hệ với cung Người hỏi, cung Sự việc, Trực Phù, Trực Sử và các cung liên quan; không lấy một ký hiệu đơn lẻ làm kết luận.
-- Chuỗi suy luận nội bộ phải đi theo: phương pháp đã xác định → role/Dụng Thần → tổ hợp cung nổi bật → quan hệ/trạng thái toàn bàn → cơ chế thực tế → hành động và điều kiện chuyển bước. Không phơi chuỗi suy nghĩ nội bộ trong bài.
-- Nếu chartMeta, salienceIndex hoặc quan hệ có vẻ thiếu, hãy hạ certainty và nói phần nào còn điều kiện; không tự bổ sung dữ kiện từ ảnh, kiến thức ngoài packet hoặc một bàn khác.
-- Không biến “tháo bổ” thành việc liệt kê lại toàn bộ ký hiệu. Mục tiêu là làm rõ vì sao tổ hợp này tạo ra đúng đòn bẩy, nút thắt và nhịp hành động của câu hỏi này.
-
-
-WHOLE-CHART DEPTH REQUIREMENT:
+${METHOD_AWARE_READING_INSTRUCTIONS}\n\n${GLOBAL_STRUCTURE_INSTRUCTIONS}\n\n${MODE_SYNTHESIS_INSTRUCTIONS}\n\nWHOLE-CHART DEPTH REQUIREMENT:
 Không dừng ở lời khuyên chung mà một bàn khác cũng có thể nhận được. Với mỗi khuyến nghị chính, hãy tự xác định một hoặc hai cung/tổ hợp trong packet/salienceIndex làm nó phù hợp đặc biệt với bàn này. Không cần phơi toàn bộ kỹ thuật trong bài, nhưng kết luận phải sinh ra từ dữ liệu bàn này.
 Hãy kiểm tra các tổ hợp role + palace, deity + star + door + stems, self/affair relationship, chief structures, movement/void/repetition, Fu Yin/Fan Yin và các cung hỗ trợ hoặc xung đột.
 
