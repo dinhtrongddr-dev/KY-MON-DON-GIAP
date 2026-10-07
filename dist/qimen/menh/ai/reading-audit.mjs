@@ -1,5 +1,6 @@
 import {formatError} from '../../../reading-format.mjs';
 import {buildMenhNarrativeFromContext} from './narrative-contract.mjs';
+import {buildMenhWholeChartContract} from './whole-chart-contract.mjs';
 import {validateSurfaceReading,surfaceParagraphs,SurfaceValidationError,naturalSurfaceFallback} from '../../ai/surfaceReading.mjs';
 const SECTION_KEYS=['overview','self','family','marriage','career','wealth','luck','annual','birthTimeNote'];
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -85,7 +86,9 @@ export function validateMenhReading(reading,context,{enforceLongForm=false}={}){
 
 export function validateNarrativeMenh(reading,context){
   try{
-    const contract=buildMenhNarrativeFromContext(context);
+    const contract=reading?.identity?.reasoningMode==='whole_chart'
+      ?buildMenhWholeChartContract(context)
+      :buildMenhNarrativeFromContext(context);
     validateSurfaceReading(reading,contract);
     if(reading.status==='verified_fallback'){
       if(JSON.stringify(reading)!==JSON.stringify(naturalSurfaceFallback(contract)))reject('Dự phòng không khớp nhận định đã kiểm chứng.');

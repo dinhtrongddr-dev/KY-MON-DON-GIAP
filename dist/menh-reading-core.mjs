@@ -186,10 +186,11 @@ export async function menhReadingIdentity(prepared){
 }
 export async function buildMenhReadingRequest(body){
   const prepared=prepareMenhReading(body),identity=await menhReadingIdentity(prepared);
-  return {...prepared,...identity,request:{
+  const reasoningMode=body.reasoningMode==='whole_chart'?'whole_chart':'standard';
+  return {...prepared,...identity,reasoningMode,request:{
     fullName:prepared.input.fullName,birthPlace:prepared.input.birthPlace,birthDateLocal:prepared.input.birthDateLocal,birthTimeMode:prepared.input.birthTimeMode,birthTimeLocal:prepared.input.birthTimeLocal,
     tzOffset:prepared.input.tzOffset,timePlace:prepared.input.timePlace,age:prepared.input.age,annualYear:prepared.input.annualYear,sexMetadata:prepared.input.sexMetadata,lifeEvents:prepared.input.lifeEvents,birthTimeWindow:prepared.input.birthTimeWindow,
-    protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,...identity,
+    protocol:MENH_PROTOCOL,rules:MENH_RULE_VERSION,caseRules:CASE_ENGINE_VERSION,reasoningMode,...identity,
   }};
 }
 export function assertMenhCompatible(data){
@@ -200,8 +201,13 @@ export function writerContextForPrepared(prepared){
 }
 export function validateMenhReadingResponse(data,prepared){
   assertMenhCompatible(data);
+  const expectedReasoningMode=prepared.reasoningMode||prepared.request?.reasoningMode||'standard';
+  if(data.reasoningMode&&data.reasoningMode!==expectedReasoningMode)
+    throw new Error('Chế độ luận Mệnh trả về không khớp chế độ đã chọn.');
   if(data.deterministicFingerprint!==prepared.deterministicFingerprint||data.requestFingerprint!==prepared.requestFingerprint)
     throw new Error('Lời luận Mệnh không khớp dữ kiện sinh hoặc kết quả deterministic đang xem; kết quả đã bị chặn.');
+  if(expectedReasoningMode==='whole_chart'&&data.reading?.identity?.reasoningMode!=='whole_chart')
+    throw new Error('Bài luận không phải Luận Toàn Bàn.');
   const context=writerContextForPrepared(prepared);
   validateMenhReading(data.reading,context);
   return data;

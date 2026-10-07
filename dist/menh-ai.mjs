@@ -8,7 +8,7 @@ import {estimateReadingMs,readingProgressText} from './ai-progress-estimate.mjs'
 export function initMenhAi({prepare,activity=null}){
   const $=id=>document.getElementById(id);
   const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
-  const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check'),resultSwitch=$('menh-result-switch');
+  const status=$('menh-ai-status'),answer=$('menh-ai-answer'),read=$('menh-ai-read'),cancel=$('menh-ai-cancel'),check=$('menh-local-check'),resultSwitch=$('menh-result-switch'),reasoningModeSelect=$('menh-reasoning-mode');
   const tokenShell=$('menh-ai-token-shell'),connectionIcon=$('menh-ai-connection-icon');
   const progress=$('menh-ai-progress'),elapsed=$('menh-ai-elapsed'),readLabel=read.textContent;
   const storageKey='qimen.ai.connection-code';
@@ -93,6 +93,7 @@ export function initMenhAi({prepare,activity=null}){
   const invalidate=()=>{cancelWork();answer.hidden=true;answer.replaceChildren();setFloatingAiReady(false);status.textContent='Dữ kiện sinh đã thay đổi. Phân tích lại trước khi dùng AI.';};
   document.getElementById('menh-form').addEventListener('input',invalidate);
   document.getElementById('menh-form').addEventListener('change',invalidate);
+  reasoningModeSelect?.addEventListener('change',invalidate);
   token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();setConnectionState('disconnected');status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
   cancel.addEventListener('click',()=>{const wasChecking=tokenShell?.dataset.state==='checking';cancelWork();if(wasChecking)setConnectionState('disconnected');status.textContent='Đã hủy yêu cầu AI.';});
   async function call(path,body,signal){
@@ -118,6 +119,7 @@ export function initMenhAi({prepare,activity=null}){
     try{body=prepare();}catch(e){status.textContent=e.message;return;}
     const v=version,controller=start('Đang chuẩn bị Mệnh bàn để AI phân tích…',610000);
     try{
+      body.reasoningMode=reasoningModeSelect?.value==='standard'?'standard':'whole_chart';
       const prepared=await buildMenhReadingRequest(body);if(v!==version)return;
       setConnectionState('checking');const health=await call('/api/status',null,controller.signal);assertMenhCompatible(health);if(v!==version)return;
       setConnectionState('connected');status.textContent='AI đang gửi lượt luận Mệnh lên server…';

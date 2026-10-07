@@ -12,6 +12,7 @@ import {interpretReading} from './interpret.mjs';
 import {interpretWholeChart,resolveReasoningMode} from './whole-chart.mjs';
 import {prepareMenhReading,menhReadingIdentity,MENH_RULE_VERSION,MENH_PROTOCOL} from './menh-reading.mjs';
 import {interpretMenhReading} from './menh-interpret.mjs';
+import {interpretMenhWholeChart} from './menh-whole-chart.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
 import {defaultAiDiagnosticPath,recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {SITE_ORIGIN,ALLOWED_WEB_ORIGINS} from '../dist/site-config.mjs';
@@ -91,7 +92,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
    job.promise=(async()=>{
      let activityReadingId=track('startReading');
      try{
-       const result=isMenh?await interpretMenhReading(prepared,{runner,reviewer,signal:job.controller.signal}):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:job.controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:job.controller.signal});
+       const result=isMenh?(reasoningMode==='whole_chart'?await interpretMenhWholeChart(prepared,{runner,signal:job.controller.signal}):await interpretMenhReading(prepared,{runner,reviewer,signal:job.controller.signal})):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:job.controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:job.controller.signal});
        const {data,modelUsed}=readingData(isMenh,prepared,identity,result);
        const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
        if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
@@ -214,7 +215,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
        const isMenh=isAsyncMenhStart;let prepared,identity,reasoningMode;
-       try{reasoningMode=resolveReasoningMode(body.reasoningMode);if(isMenh&&reasoningMode!=='standard')throw new Error('Chế độ này hiện chỉ hỗ trợ Hỏi Việc.');}catch(e){return send(400,{error:e.message});}
+       try{reasoningMode=resolveReasoningMode(body.reasoningMode);}catch(e){return send(400,{error:e.message});}
        try{
          prepared=isMenh?prepareMenhReading(body):prepareReading(body);
          identity=isMenh?await menhReadingIdentity(prepared):await readingIdentity(prepared);
@@ -265,7 +266,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
           res.once('close',stopKeepAlive);
         }
         try{
-          const result=isMenhRead?await interpretMenhReading(prepared,{runner,reviewer,signal:controller.signal}):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:controller.signal});
+          const result=isMenhRead?(reasoningMode==='whole_chart'?await interpretMenhWholeChart(prepared,{runner,signal:controller.signal}):await interpretMenhReading(prepared,{runner,reviewer,signal:controller.signal})):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:controller.signal});
           const used=aiRouteOf(result);
           const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
           const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
