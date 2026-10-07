@@ -5,7 +5,7 @@ const INTENTS=[
   ['timing',/chon (ngay|gio|thoi diem)|ngay nao (nen|gui|ky|gap|goi|trien khai)|gio nao|khi nao nen|thoi diem nao/,'Câu hỏi yêu cầu chọn thời điểm hành động.'],
   ['direction',/huong nao|phuong huong|phuong vi|di huong|chon huong/,'Câu hỏi yêu cầu so sánh phương hướng.'],
   ['negotiation',/dam phan|thuong luong|nhuong|deal gia|nen noi gi|xu ly doi tac/,'Câu hỏi tập trung trao đổi điều kiện với đối phương.'],
-  ['strategy',/\bco nen\b|nen hay khong|co nen .* hay|phai lam gi|nen lam gi|lam the nao|chien luoc|tien hay lui|chu dong hay|phuong an|can chuan bi|cach nao de/,'Câu hỏi tập trung lựa chọn hành động hoặc quyết định nên/không nên.'],
+  ['strategy',/\bco nen\b|nen hay khong|co nen .* hay|phai lam gi|nen lam gi|can lam gi|toi can lam gi|minh can lam gi|lam sao de|lam the nao(?: de)?|bang cach nao|chien luoc|tien hay lui|chu dong hay|phuong an|can chuan bi|cach nao de|tu gio den .* lam gi/,'Câu hỏi tập trung lựa chọn hành động hoặc quyết định nên/không nên.'],
   ['prediction',/co .*khong|ket qua|phan hoi|dien bien|khi nao|bao gio|co thanh|co nhan duoc/,'Câu hỏi tập trung kết quả hoặc diễn biến.'],
   ['business',/doi thu|dau thau|bao gia|kinh doanh|khach hang|hop dong|du an|dong tien/,'Câu hỏi tập trung các bên hoặc khâu giao dịch.'],
 ];

@@ -44,9 +44,17 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
   const has=id=>g.nodes.some(n=>n.id===id);
   const actors=[['customer',/\b(khach hang|khach se|khach da)\b/],['payer',/\b(nguoi tra tien|ben tra tien|ben thanh toan|nguoi chuyen tien|ben chuyen khoan)\b/],
     ['authority',/\b(nguoi co quyen (?:phe duyet|chap thuan)|nguoi phe duyet|nguoi duyet|cap phe duyet|giam doc)\b/]];
+  const contextualActorAllowed=(id,q)=>{
+    const generic=id==='customer'&&/\b(khach hang|doanh nghiep|dau moi|doi tac|ben quan tam)\b/.test(q);
+    const genericAuthority=id==='authority'&&/\b(nguoi co quyen|nguoi phe duyet|nguoi duyet|cap phe duyet|dau moi)\b/.test(q);
+    const genericPayer=id==='payer'&&/\b(ben thanh toan|nguoi tra tien|ben chuyen khoan)\b/.test(q);
+    const practical=/\b(can|nen|hay|uu tien|tap trung|tim|tao|mo|de xuat|tiep can|trao doi|kiem tra|lam ro|theo doi|follow[- ]?up)\b/.test(q);
+    const asserted=/\b(?:da|dang|se)\s+(?:ky|dong y|chuyen tien|nhan|xac nhan|thanh toan|phe duyet)\b/.test(q);
+    return (generic||genericAuthority||genericPayer)&&practical&&!asserted;
+  };
   for(const p of passages){
     const q=normalized(p.text);if(!q)continue;
-    for(const [id,pattern] of actors)if(pattern.test(q)&&!pattern.test(source)&&!has(id)&&!(id==='authority'&&has('decisionMaker')))
+    for(const [id,pattern] of actors)if(pattern.test(q)&&!pattern.test(source)&&!has(id)&&!(id==='authority'&&has('decisionMaker'))&&!contextualActorAllowed(id,q))
       issues.push(`Đoạn ${p.slot} tự thêm vai ${id} ngoài actor map và câu hỏi.`);
     for(const match of q.matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g)){
       if(/[/:]/.test(q[match.index-1]||''))continue;

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {resolveReasoningMode,buildCanonicalChartPacket,interpretWholeChart,WHOLE_CHART_PACKET_VERSION} from '../local/whole-chart.mjs';
 import {prepareReading} from '../local/reading.mjs';
+import {classifyQuestion} from '../dist/qimen/ai/classifier.mjs';
 
 const CASE={
   question:'Trong 30 ngày tới công ty Greencore của tôi có phát sinh đơn hàng cung cấp tạp vụ cho công ty nào không?',
@@ -39,28 +40,40 @@ test('canonical packet contains the complete chart contract for a real reading',
   assert.equal(packet.question.mode,'prediction');
   assert.equal(packet.safeguards.noRecalculation,true);
   assert.ok(packet.palaces.filter(p=>p.palace!==5).every(p=>p.star&&p.door));
-  assert.ok(packet.deterministic.reasoning.claims.length>=1);
+  assert.equal(packet.deterministic.reasoning,undefined);
+  assert.equal(packet.salienceIndex.kind,'FACT_ONLY_SALIENCE_INDEX');
+  assert.ok(packet.salienceIndex.salientPalaces.length>=1);
+  assert.ok(!Object.hasOwn(packet.salienceIndex,'semantic_frame'));
+  assert.ok(!Object.hasOwn(packet.salienceIndex,'action_chain'));
 });
 
-test('whole chart retries one invalid surface draft and returns a validated reading',async()=>{
+test('whole chart uses one direct writer call, with repair only after a failed draft',async()=>{
   const prepared=prepareReading(CASE);
   let calls=0;
-  const safe={
-    answer:'Bàn cho thấy có khả năng xuất hiện đầu mối hoặc phản hồi trong phạm vi đang hỏi, nhưng chưa đủ căn cứ coi là đơn hàng đã xác nhận. Kết quả còn phụ thuộc bước phản hồi và điều kiện thực hiện.',
-    situation:'Các dấu hiệu cho thấy cơ hội cần được chuyển thành trao đổi cụ thể; cơ hội và kết quả cuối là hai bước khác nhau. Hãy theo dõi phản hồi và điều kiện thực hiện.',
-    bottleneck:'Điểm cần chuẩn bị trước là làm rõ phạm vi và cách thực hiện bằng phản hồi cụ thể.',
-    action_9:'Nên chủ động đưa ra phương án rõ ràng và theo dõi phản hồi để biết bước tiếp theo.',
-    timing:'Trong 30 ngày là phạm vi câu hỏi; nên dùng khoảng này để rà lại tiến triển, không coi đây là ngày bảo đảm kết quả.'
-  };
+  let firstInput=null;
   const runner=async(_instructions,input)=>{
-    calls++;
-    const sections=input.surface.units.map(u=>({id:u.id,text:calls===1?'Khách hàng sẽ ký hợp đồng ngay.':safe[u.id]}));
+    calls++;if(!firstInput)firstInput=input;
+    const sections=input.surface.units.map(u=>({
+      id:u.id,
+      text:calls===1
+        ?(u.id==='answer'?'Khách hàng sẽ ký hợp đồng ngay.':undefined)
+        :'Tự tổng hợp các cung và cấu trúc liên quan trong đúng mục '+u.label+'; nêu cơ chế, điều kiện chuyển bước và dấu hiệu cần theo dõi.'
+    }));
     return {text:JSON.stringify({sections})};
   };
   const reading=await interpretWholeChart(prepared,{runner});
   assert.equal(calls,2);
   assert.equal(reading.status,'reading');
   assert.ok(Object.hasOwn(reading.sections,'answer'));
+  assert.ok(Object.hasOwn(reading.sections,'action_1'));
   assert.ok(Object.keys(reading.sections).length>=3);
   assert.equal(reading.sections.answer.paragraphs.length,1);
+  assert.equal(firstInput.planning,undefined);
+  assert.equal(firstInput.packet.deterministic.reasoning,undefined);
+  assert.equal(firstInput.packet.salienceIndex.kind,'FACT_ONLY_SALIENCE_INDEX');
+});
+
+test('strategy wording routes the business case to strategy before Whole Chart runs',()=>{
+  const result=classifyQuestion('Tôi cần làm gì để phát triển công ty và xây dựng đội ngũ 20 tạp vụ cung cấp cho doanh nghiệp?','auto');
+  assert.equal(result.mode,'strategy');
 });
