@@ -281,7 +281,7 @@ Nếu câu hỏi là chiến lược hoặc kinh doanh, bắt buộc suy ra đ�
 4. REPEATABLE PATTERN — điều cần lặp lại, follow-up, quay lại lead cũ hoặc nhân bản; nếu có Phục Ngâm phải nói rõ nhịp lặp này.
 5. RESOURCE REQUIREMENT — năng lực phải có trước khi mở rộng: quy trình, tiêu chuẩn, người, ca, đào tạo, kiểm tra chất lượng, chi phí hoặc dòng tiền tùy dữ liệu.
 6. FAILURE MODE — cách chiến lược dễ hỏng, nhất là mở rộng quá rộng hoặc cam kết trước khi tháo nút thắt.
-7. PRACTICAL TARGET DECOMPOSITION — nếu câu hỏi có con số mục tiêu, tự thực hiện phép chia minh họa quản trị trực tiếp từ con số người dùng nêu (ví dụ 20 người có thể chia thành 4–5 doanh nghiệp, mỗi nơi 4–5 người). Luôn ghi rõ đây là cách lập kế hoạch, không phải dự báo từ bàn.
+7. PRACTICAL TARGET DECOMPOSITION — nếu câu hỏi có con số mục tiêu, bắt buộc đưa ít nhất một phép chia minh họa quản trị bằng số trực tiếp từ con số người dùng nêu (ví dụ 20 người có thể chia thành 4 doanh nghiệp × 5 người hoặc 5 doanh nghiệp × 4 người). Luôn ghi rõ đây là cách lập kế hoạch minh họa, không phải dự báo từ bàn.
 
 Trong cùng một câu trả lời, ưu tiên tổng hợp chiến lược có cấu trúc hơn là lặp “cần kiểm chứng”. Không thêm các câu kiểu “chưa xác định người ra quyết định”, “không thể kết luận thỏa thuận cụ thể” hoặc “vẫn cần xác minh thực tế” nếu câu đó không trực tiếp giúp trả lời việc người dùng hỏi. Thay vào đó, nêu bước kiểm chứng cụ thể và dấu hiệu hoàn tất.
 
