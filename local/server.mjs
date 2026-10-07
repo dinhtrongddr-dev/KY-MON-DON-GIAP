@@ -9,6 +9,7 @@ import {generateStructured} from './provider-client.mjs';
 import {runSurfaceText} from './surface-writer.mjs';
 import {prepareReading,RULE_VERSION,READING_PROTOCOL,readingIdentity} from './reading.mjs';
 import {interpretReading} from './interpret.mjs';
+import {interpretWholeChart,resolveReasoningMode} from './whole-chart.mjs';
 import {prepareMenhReading,menhReadingIdentity,MENH_RULE_VERSION,MENH_PROTOCOL} from './menh-reading.mjs';
 import {interpretMenhReading} from './menh-interpret.mjs';
 import {createActivityStore,defaultActivityPath} from './activity-store.mjs';
@@ -78,9 +79,9 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
      :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity,reading:result,facts:prepared.facts};
    return {data,modelUsed};
  };
- const startReadingJob=({isMenh,prepared,identity})=>{
+ const startReadingJob=({isMenh,prepared,identity,reasoningMode='standard'})=>{
    pruneJobs();
-   const kind=isMenh?'menh':'question',fingerprint=identity.requestFingerprint;
+   const kind=isMenh?'menh':'question',fingerprint=identity.requestFingerprint+':'+reasoningMode;
    if(busy){
      if(activeJob?.status==='running'&&activeJob.kind===kind&&activeJob.requestFingerprint===fingerprint)return {job:activeJob,reused:true};
      return null;
@@ -90,11 +91,11 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
    job.promise=(async()=>{
      let activityReadingId=track('startReading');
      try{
-       const result=isMenh?await interpretMenhReading(prepared,{runner,reviewer,signal:job.controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:job.controller.signal});
+       const result=isMenh?await interpretMenhReading(prepared,{runner,reviewer,signal:job.controller.signal}):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:job.controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:job.controller.signal});
        const {data,modelUsed}=readingData(isMenh,prepared,identity,result);
        const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
        if(activityReadingId){track('finishReading',activityReadingId,{status:activityStatus,modelUsed});activityReadingId=null;}
-       job.result=data;job.status='completed';
+       job.result={...data,reasoningMode};job.status='completed';
      }catch(e){
        const cancelled=job.controller.signal.aborted;
        diagnostics?.({type:'request_failure',flow:kind,stage:'async_job',code:e?.code||'AI_REQUEST_ERROR',fallbackAllowed:false,message:e?.message||String(e)});
@@ -212,7 +213,8 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
-       const isMenh=isAsyncMenhStart;let prepared,identity;
+       const isMenh=isAsyncMenhStart;let prepared,identity,reasoningMode;
+       try{reasoningMode=resolveReasoningMode(body.reasoningMode);if(isMenh&&reasoningMode!=='standard')throw new Error('Chế độ này hiện chỉ hỗ trợ Hỏi Việc.');}catch(e){return send(400,{error:e.message});}
        try{
          prepared=isMenh?prepareMenhReading(body):prepareReading(body);
          identity=isMenh?await menhReadingIdentity(prepared):await readingIdentity(prepared);
@@ -221,7 +223,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
          ? body.rules!==MENH_RULE_VERSION||body.protocol!==MENH_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.deterministicFingerprint!==identity.deterministicFingerprint||body.requestFingerprint!==identity.requestFingerprint
          : body.rules!==RULE_VERSION||body.protocol!==READING_PROTOCOL||body.caseRules!==CASE_ENGINE_VERSION||body.nianmingRules!==NIANMING_VERSION||body.chartFingerprint!==identity.chartFingerprint||body.requestFingerprint!==identity.requestFingerprint;
        if(identityMismatch)return send(409,{error:body.timePlace?.mode==='iana_civil'?'Dữ liệu múi giờ IANA giữa trình duyệt và server không khớp tại thời điểm này. Cập nhật trình duyệt/server hoặc tạm dùng UTC offset cố định rồi thử lại.':'Bàn hoặc bộ quy tắc của hai đầu kết nối không khớp. Cập nhật bộ kết nối và tải lại website.'});
-       const started=startReadingJob({isMenh,prepared,identity});
+       const started=startReadingJob({isMenh,prepared,identity,reasoningMode});
        if(!started)return send(429,{error:'Đang có một lượt luận khác. Đợi lượt đó xong rồi thử lại.'});
        return send(202,{jobId:started.job.id,status:started.job.status,reused:started.reused});
      }
@@ -235,7 +237,8 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
      try{
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
-       let prepared,identity;
+       let prepared,identity,reasoningMode;
+       try{reasoningMode=resolveReasoningMode(body.reasoningMode);if(isMenhRead&&reasoningMode!=='standard')throw new Error('Chế độ này hiện chỉ hỗ trợ Hỏi Việc.');}catch(e){return send(400,{error:e.message});}
        try{
          prepared=isMenhRead?prepareMenhReading(body):prepareReading(body);
          identity=isMenhRead?await menhReadingIdentity(prepared):await readingIdentity(prepared);
@@ -262,7 +265,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
           res.once('close',stopKeepAlive);
         }
         try{
-          const result=isMenhRead?await interpretMenhReading(prepared,{runner,reviewer,signal:controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:controller.signal});
+          const result=isMenhRead?await interpretMenhReading(prepared,{runner,reviewer,signal:controller.signal}):reasoningMode==='whole_chart'?await interpretWholeChart(prepared,{signal:controller.signal}):await interpretReading(prepared,{runner,reviewer,signal:controller.signal});
           const used=aiRouteOf(result);
           const modelUsed=used?{id:used.modelId,label:used.label,provider:used.provider,routeLabel:used.routeLabel,effort:used.effort,fallbackIndex:used.fallbackIndex}:null;
           const activityStatus=result.status==='verified_fallback'?'fallback':result.status==='needs_clarification'?'clarification':'completed';
@@ -272,7 +275,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
               ?{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,menhRules:MENH_RULE_VERSION,menhProtocol:MENH_PROTOCOL,caseRules:CASE_ENGINE_VERSION,...identity,reading:result}
               :{router:used?.provider||ROUTING_MODE,model:used?.modelId||MODEL,reasoningEffort:used?.effort||REASONING_EFFORT,modelUsed,rules:RULE_VERSION,protocol:READING_PROTOCOL,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity,reading:result,facts:prepared.facts};
             stopKeepAlive();
-            streaming?res.end(JSON.stringify(data)):send(200,data);
+            streaming?res.end(JSON.stringify({...data,reasoningMode})):send(200,{...data,reasoningMode});
           }
         }finally{stopKeepAlive();busy=false;}
       }catch(e){

@@ -8,7 +8,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
  const $=id=>document.getElementById(id);
  const token=$('local-token'),remember=$('local-remember'),rememberHint=$('local-remember-hint');
  const status=$('ai-status'),answer=$('ai-answer'),read=$('ai-read'),cancel=$('ai-cancel'),check=$('local-check'),resultSwitch=$('result-switch');
- const tokenShell=$('ai-token-shell'),connectionIcon=$('ai-connection-icon');
+ const tokenShell=$('ai-token-shell'),connectionIcon=$('ai-connection-icon'),reasoningMode=$('reasoning-mode');
  const progress=$('ai-progress'),elapsed=$('ai-elapsed'),readLabel=read.textContent;
  const storageKey='qimen.ai.connection-code';
  let active=null,activeJobId=null,version=0,progressTimer=null,requestTimeout=null,activityReadingId=null;
@@ -134,7 +134,7 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
      if(v!==version)return;
      setConnectionState('connected');status.textContent='AI đang gửi lượt luận lên server…';
      activityReadingId=track('startReading');
-     const data=await jobClient.run('/api/read/start',prepared.request,controller.signal,{
+     const data=await jobClient.run('/api/read/start',{...prepared.request,reasoningMode:reasoningMode?.value||'standard'},controller.signal,{
        onStarted:()=>{clearTimeout(requestTimeout);requestTimeout=null;},
        onJob:(jobId,started)=>{
          activeJobId=jobId;

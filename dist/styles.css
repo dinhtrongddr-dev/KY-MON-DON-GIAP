@@ -1989,3 +1989,5 @@ body.share-view-mode main{padding-top:18px}
 .qimen-intro p{margin:0 0 8px}.qimen-intro p:last-child{margin-bottom:0}
 .ai-feedback-compact #ai-status,.ai-feedback-compact #menh-ai-status{white-space:pre-line}
 @media(max-width:640px){.qimen-intro{margin:0 0 12px;padding:12px 13px;font-size:.82rem;line-height:1.52}.qimen-intro p{margin-bottom:7px}}
+
+.reasoning-mode-picker{display:flex;align-items:center;gap:12px;margin:12px 0;color:#194a39;font-weight:600}.reasoning-mode-picker select{border:1px solid #a9bfb1;background:#fff;padding:9px 12px;border-radius:8px;color:#173e30;font:inherit}
