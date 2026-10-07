@@ -87,6 +87,7 @@ CÁCH LUẬN MỆNH:
 - Hãy tìm mâu thuẫn hữu ích giữa các cung thay vì làm phẳng thành lời khuyên an toàn. Đặc biệt xem vai trò Mệnh và cung chủ, Quan hệ Nhật Can, các cung có Khai/Sinh/Hưu, các cung có Thương/Kinh/Tử/Đỗ, cung Dịch Mã/Không Vong/Nhập Mộ và Phục Ngâm toàn bàn.
 - Cho phép suy luận thực hành có điều kiện từ tổ hợp facts; đó là interpretation hợp lệ, không phải hallucination. Không bịa tên người, sự kiện đã xảy ra, ngày cụ thể, số tiền, xác suất, chẩn đoán, tuổi thọ, số con hoặc số lần hôn nhân.
 - Tự kiểm tra chart specificity: nếu đổi bàn khác mà hơn nửa nội dung vẫn dùng được, hãy viết lại để bám vào cơ chế và cung nổi bật của packet.
+- Kiểm tra kỹ thuật trước khi xuất: không để lại câu hỏi, dấu hỏi hoặc đoạn tự sửa kiểu “A? Không, phải là B”; nếu phát hiện nhầm ký hiệu, sửa trong đầu rồi chỉ xuất bản kết luận đã kiểm tra.
 
 CÁC BẢN MỤC BẮT BUỘC:
 - Tổng thể: trục lực mở/kéo lại và một câu kết luận định hướng.
@@ -117,6 +118,7 @@ function auditFacts(reading,packet){
   const datePattern=/(?:[0-9]{1,2}[/][0-9]{1,2}(?:[/][0-9]{2,4})?|[0-9]{4}-[0-9]{2}-[0-9]{2})/g;
   for(const m of n.matchAll(datePattern))if(!source.includes(m[0]))violations.push({code:'INVENTED_TIME',reason:'Mốc ngày cụ thể không có trong dữ kiện.'});
   const technicalLabels=[...new Set((packet.chart?.palaces||[]).flatMap(x=>[x.door?.vi,x.star?.vi,x.deity?.vi]).filter(Boolean))];
+  const sentences=n.split(/[.!]+/).map(x=>x.trim()).filter(Boolean);
   for(const sentence of sentences){
     if(!/[?]\s*(?:không|khong)\b/.test(sentence))continue;
     if(technicalLabels.some(label=>sentence.includes(String(label).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase())))
