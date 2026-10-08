@@ -43,7 +43,7 @@ function auditClaims(passages,context,rows=[],{structured=false}={}) {
   }
   const sourceDates=context.question.match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[];
   const rowDates=rows.flatMap(row=>(row.label.match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[]).flatMap(value=>[value,value.replace(/\/\d{2,4}$/,'')]));
-  const responseDates=(context.allInOne.reasoning.timing?.candidates||[]).flatMap(row=>[row.display,row.display?.replace(/\/\d{4}$/,'')]).filter(Boolean);
+  const responseDates=(context.allInOne.reasoning?.timing?.candidates||context.allInOne.timingFacts?.candidates||[]).flatMap(row=>[row.display,row.display?.replace(/\/\d{4}$/,'')]).filter(Boolean);
   const allowedDates=new Set([...sourceDates,...rowDates,...responseDates]);
   for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
 }
@@ -218,7 +218,7 @@ export function validateNarrativeQuestion(reading,context){
       return reading;
     }
     const paragraphs=surfaceParagraphs(reading);
-    const rows=context.allInOne.comparison?.ranking||context.allInOne.plan.computed.ranking||[];
+    const rows=context.allInOne.comparison?.ranking||context.allInOne.plan?.computed?.ranking||[];
     const violations=[];
     for(const p of paragraphs){
       try{

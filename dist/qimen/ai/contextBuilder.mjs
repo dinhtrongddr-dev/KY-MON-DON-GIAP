@@ -7,6 +7,7 @@ import {normalizeQuestion} from './classifier.mjs';
 import {activationGoalForTopic,evaluateSpiritActivation,resolveActivationGoal} from '../analysis/spiritActivation.mjs';
 import {normalizeAction} from '../modes/actionRules.mjs';
 import {compareTimes} from './timingComparison.mjs';
+import {buildWholeChartTimingFacts} from './timingEngine.mjs';
 import {buildQuestionContext} from './questionContext.mjs';
 import {buildReadingEvidenceGraph} from './reasoningPlanner.mjs';
 import {pillarFromGanzhi} from '../core/calendar.mjs';
@@ -66,10 +67,17 @@ export function buildAnalysisContext(chart,body,facts) {
       ?`${spiritActivation.version}: mục tiêu ${spiritActivation.goal.label}; engine ưu tiên ${r.spirit.name} tại ${r.palaceName} (${r.direction}); đặt ${r.backDirection} phía sau lưng, mặt hướng ${r.faceDirection}; mức ${r.activationLevel}. Lý do: ${r.reasons.join(' | ')||'không có lý do bổ sung'}. Cảnh báo: ${r.warnings.join(' | ')||'không có cảnh báo bổ sung'}. Đây là kết quả deterministic; AI chỉ được giải thích, không tự chọn lại Thần hoặc phương vị.`
       :`${spiritActivation.version}: mục tiêu ${spiritActivation.goal.label}; không có phương vị đạt mức Có thể sử dụng trở lên. AI không được tự chọn một Bát Thần thay thế.`;
   }
+  const directWholeChart=body.reasoningMode==='whole_chart';
   const action=normalizeAction(['timing','direction'].includes(classification.mode)?body.action??'general':'general');
-  const plan=analyzeMode(classification.mode,analysis,{action,direction:questionContext.direction});
+  // Whole Chart is a direct reasoning path. It still receives deterministic roles,
+  // palaces and candidate comparisons, but it must not construct the legacy
+  // semantic mode plan or evidence graph behind the scenes.
+  const plan=directWholeChart?null:analyzeMode(classification.mode,analysis,{action,direction:questionContext.direction});
   const comparison=classification.mode==='timing'?compareTimes(board,body.candidates,{action,topic:resolvedTopic,actors,selfPillar,timePlace:body.timePlace??null}):null;
-  const roleIds=relevantActorIds(questionContext,analysis.roles,plan);
+  // This timing index is deterministic metadata only. Whole Chart interprets it;
+  // no legacy planner or semantic evidence graph is constructed for that path.
+  const timingFacts=directWholeChart?buildWholeChartTimingFacts(questionContext,board,analysis):null;
+  const roleIds=relevantActorIds(questionContext,analysis.roles,plan||{});
   const graph=relationGraph(analysis,[...new Set(['event','self',...roleIds])]);
   for(const role of analysis.roles){
     const tier=role.yongshenTier?`; Dụng Thần ${role.yongshenTier}${role.yongshenPurpose?` — ${role.yongshenPurpose}`:''}`:'';
@@ -105,12 +113,12 @@ export function buildAnalysisContext(chart,body,facts) {
   for(const [i,p] of analysis.patterns.matches.entries())facts[`special_${i}`]=`${p.name} tại cung ${p.palace}: ${p.heavenStem} trên ${p.earthStem}${p.carried?', xét can ký':''}. Chỉ là tổ hợp, không kết luận thành/bại.`;
   for(const c of analysis.contradictions)facts[c.id]=`Cung ${c.palace}: ${c.text}`;
   for(const edge of graph.relations)facts[edge.id]=`${graph.nodes.find(n=>n.id===edge.from).label} (cung ${edge.fromPalace}) → ${graph.nodes.find(n=>n.id===edge.to).label} (cung ${edge.toPalace}): ${edge.text}; ${edge.samePalace?'đồng cung':'khác cung'}. Không suy chiều thời gian từ cạnh này.`;
-  for(const step of plan.chain)facts[step.id]=`${plan.label} / ${step.title}: ${step.focus} Đại diện cần nối: ${step.roleIds.join(', ')}. Đây là khâu phân tích, không phải sự kiện đã xảy ra.`;
-  for(const row of comparison?.ranking||plan.computed.ranking||[])facts[row.id]=`${row.label}: nhóm ${row.rank}, ${row.blockers.length} điều kiện cản; ${row.fit} dấu hiệu hợp mục tiêu theo bộ lọc app. ${row.blockers.join('; ')}. ${row.supports.join('; ')}. ${row.directionMarkers?.length?`Đối chiếu KM-DIRECTION-4.0: ${row.directionMarkers.map(x=>x.name).join(', ')}; marker không đổi rank. `:''}${row.note} Không phải xác suất thành công.`;
+  if(plan)for(const step of plan.chain)facts[step.id]=`${plan.label} / ${step.title}: ${step.focus} Đại diện cần nối: ${step.roleIds.join(', ')}. Đây là khâu phân tích, không phải sự kiện đã xảy ra.`;
+  for(const row of comparison?.ranking||plan?.computed?.ranking||[])facts[row.id]=`${row.label}: nhóm ${row.rank}, ${row.blockers.length} điều kiện cản; ${row.fit} dấu hiệu hợp mục tiêu theo bộ lọc app. ${row.blockers.join('; ')}. ${row.supports.join('; ')}. ${row.directionMarkers?.length?`Đối chiếu KM-DIRECTION-4.0: ${row.directionMarkers.map(x=>x.name).join(', ')}; marker không đổi rank. `:''}${row.note} Không phải xác suất thành công.`;
   const relevantPalaces=classification.mode==='direction'?analysis.palaces.map(p=>p.number):[...new Set(graph.nodes.map(n=>n.palace).filter(Boolean))];
   const known=graph.nodes.filter(n=>n.status!=='unresolved').length;
-  const reasoning=buildReadingEvidenceGraph(analysis,questionContext,plan,graph,board);
-  return {board,analysis,plan,graph,classification,actors,nianmingInput,resolvedTopic,relevantPalaces,action,comparison,questionContext,reasoning,spiritActivation,
+  const reasoning=directWholeChart?null:buildReadingEvidenceGraph(analysis,questionContext,plan,graph,board);
+  return {board,analysis,plan,graph,classification,actors,nianmingInput,resolvedTopic,relevantPalaces,action,comparison,timingFacts,questionContext,reasoning,spiritActivation,
     coverage:{resolvedActors:known,totalActors:graph.nodes.length,confidence:null,
       meaning:'Độ đủ đại diện chỉ mô tả dữ liệu; chưa có xác suất dự báo được hiệu chuẩn.'}};
 }

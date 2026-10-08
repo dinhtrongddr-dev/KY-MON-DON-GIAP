@@ -193,3 +193,59 @@ export function buildTiming(context,board,selected=[]) {
     ],
     limit:milestoneLimit};
 }
+
+
+// Fact-only timing index for the direct Whole Chart path.
+// It reuses deterministic timing rules without constructing the legacy
+// evidence graph, semantic plan, or writer conclusion.
+export function buildWholeChartTimingFacts(context,board,analysis) {
+  const safeContext={
+    ...(context||{}),
+    timeHorizon:context?.timeHorizon||{code:'unspecified',status:'unspecified',text:''}
+  };
+  const roles=Array.isArray(analysis?.roles)?analysis.roles:[];
+  const byPalace=new Map();
+  for(const role of roles){
+    if(!Number.isInteger(role?.palace))continue;
+    const row=byPalace.get(role.palace)||{palace:role.palace,actorIds:[],roles:[],states:[],evidenceIds:[]};
+    row.actorIds.push(role.id);
+    row.roles.push({id:role.id,label:role.label||role.id,stem:role.stem||null,status:role.status||null});
+    row.evidenceIds.push('p'+role.palace,'c'+role.palace);
+    byPalace.set(role.palace,row);
+  }
+  for(const row of byPalace.values()){
+    const palace=analysis.palaces?.find(p=>p.number===row.palace);
+    if(!palace)continue;
+    if(palace.voided)row.states.push({code:'void',detail:null});
+    if(palace.horse)row.states.push({code:'horse',detail:null});
+    for(const pair of palace.stemPairs||[]){
+      const stem=pair.heaven?.han||pair.heaven?.vi||null;
+      if(pair.punishment)row.states.push({code:'punishment',detail:stem});
+      if(pair.tomb||pair.wonderTomb)row.states.push({code:'tomb',detail:stem});
+    }
+    row.states=[...new Map(row.states.map(state=>[state.code+':'+(state.detail||''),state])).values()];
+    row.evidenceIds=[...new Set(row.evidenceIds)];
+  }
+  const selected=[...byPalace.values()].filter(row=>row.states.length||row.actorIds.some(id=>id==='self'||id==='event'));
+  const timing=buildTiming(safeContext,board,selected);
+  return {
+    kind:'FACT_ONLY_TIMING_INDEX',
+    version:timing.version,
+    horizon:timing.horizon,
+    window:timing.window,
+    pace:timing.pace,
+    basis:timing.basis,
+    timingConfidence:timing.timingConfidence,
+    triggerPriority:timing.triggerPriority,
+    allowedPredictions:timing.allowedPredictions,
+    candidates:timing.candidates,
+    instrumentResponses:timing.instrumentResponses,
+    signals:timing.signals,
+    sourceProfile:timing.sourceProfile,
+    unsupportedRules:timing.unsupportedRules,
+    limit:timing.limit,
+    bundles:selected.map(row=>({
+      palace:row.palace,actorIds:row.actorIds,roles:row.roles,states:row.states,evidenceIds:row.evidenceIds
+    }))
+  };
+}

@@ -99,3 +99,17 @@ test('strategy wording routes the business case to strategy before Whole Chart r
   const result=classifyQuestion('Tôi cần làm gì để phát triển công ty và xây dựng đội ngũ 20 tạp vụ cung cấp cho doanh nghiệp?','auto');
   assert.equal(result.mode,'strategy');
 });
+
+
+test('whole chart context bypasses the legacy planner and exposes fact-only timing/direction indexes',()=>{
+  const prepared=prepareReading({...CASE,reasoningMode:'whole_chart',mode:'strategy'});
+  const allInOne=prepared.context.allInOne;
+  assert.equal(allInOne.plan,null);
+  assert.equal(allInOne.reasoning,null);
+  assert.equal(allInOne.timingFacts.kind,'FACT_ONLY_TIMING_INDEX');
+  const packet=buildCanonicalChartPacket(prepared);
+  assert.equal(packet.directionFacts.kind,'FACT_ONLY_DIRECTION_INDEX');
+  assert.ok(packet.palaces.some(p=>p.directionMarkers));
+  assert.ok(!Object.hasOwn(packet,'semantic_frame'));
+  assert.ok(!Object.hasOwn(packet,'action_chain'));
+});

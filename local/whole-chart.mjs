@@ -25,7 +25,7 @@ const compactRole=role=>({
   evidenceId:role.evidenceId,evidenceIds:role.evidenceIds,confidenceLevel:role.confidenceLevel,
   limitations:role.limitations,selectionRule:role.selectionRule,provenance:role.provenance
 });
-const compactPalace=(p,layer)=>({
+const compactPalace=(p,layer,directionLayer)=>({
   palace:p.number,
   trigram:p.trigram?.vi||p.vi||null,
   han:p.han||null,
@@ -42,6 +42,7 @@ const compactPalace=(p,layer)=>({
   earthStem:nameOf(p.earthStem),
   void:Boolean(p.voided??p.void),
   horse:Boolean(p.horse),
+  directionMarkers:copy(directionLayer||null),
   carriesQin:Boolean(p.carriesQin),
   dutyStar:Boolean(p.isDutyStar),
   dutyDoor:Boolean(p.isDutyDoor),
@@ -64,6 +65,7 @@ export function buildSalienceIndex({chartMeta,palaces,roles,globalStructure}){
   }
   const rows=palaces.map(p=>{
     const roles=rolePalaces.get(p.palace)||[];
+    const directionMarkerCount=Object.values(p.directionMarkers||{}).reduce((sum,value)=>sum+(Array.isArray(value)?value.length:0),0);
     const salienceFlags=[
       roles.length?'role':null,
       p.void?'void':null,
@@ -71,12 +73,13 @@ export function buildSalienceIndex({chartMeta,palaces,roles,globalStructure}){
       p.dutyStar?'duty_star':null,
       p.dutyDoor?'duty_door':null,
       ['Sinh Môn','Khai Môn','Thương Môn','Kinh Môn'].includes(p.door)?'door_focus':null,
-      ['Lục Hợp','Thái Âm','Cửu Thiên'].includes(p.deity)?'deity_focus':null
+      ['Lục Hợp','Thái Âm','Cửu Thiên'].includes(p.deity)?'deity_focus':null,
+      directionMarkerCount?'direction_marker':null
     ].filter(Boolean);
     return {
       palace:p.palace,trigram:p.trigram,direction:p.direction,deity:p.deity,star:p.star,door:p.door,
       starId:p.starId,doorId:p.doorId,heavenStems:p.heavenStems,earthStem:p.earthStem,
-      void:p.void,horse:p.horse,carriesQin:p.carriesQin,dutyStar:p.dutyStar,dutyDoor:p.dutyDoor,
+      void:p.void,horse:p.horse,directionMarkers:copy(p.directionMarkers),directionMarkerCount:Object.values(p.directionMarkers||{}).reduce((sum,value)=>sum+(Array.isArray(value)?value.length:0),0),carriesQin:p.carriesQin,dutyStar:p.dutyStar,dutyDoor:p.dutyDoor,
       roles,salienceFlags,
       strength:{star:p.analysis?.strength?.star?.level||null,door:p.analysis?.strength?.door?.level||null,palace:p.analysis?.strength?.palace?.level||null},
       relations:{starDoor:p.analysis?.starDoor?.text||null,doorPalace:p.analysis?.doorPalace?.plainMeaning||null},
@@ -110,9 +113,10 @@ export function buildCanonicalChartPacket(prepared){
   const chartPalaces=Array.isArray(chart.palaces)?chart.palaces:[];
   const layers=analysis?.palaces||[];
   const layerByPalace=new Map(layers.map(p=>[p.number,p]));
+  const directionByPalace=analysis?.directions?.byPalace||{};
   const palaces=boardPalaces.map(p=>{
     const source=chartPalaces.find(x=>x.number===p.number)||p;
-    return compactPalace(source,layerByPalace.get(p.number));
+    return compactPalace(source,layerByPalace.get(p.number),directionByPalace[p.number]||null);
   });
   return {
     schemaVersion:WHOLE_CHART_PACKET_VERSION,
@@ -129,6 +133,20 @@ export function buildCanonicalChartPacket(prepared){
       timeHorizon:copy(allInOne.questionContext?.timeHorizon),
       userStatements:copy(allInOne.questionContext?.userStatements||[])
     },
+    // Deterministic timing metadata. The model may interpret it but may not
+    // invent dates or turn an action window into a guaranteed outcome.
+    timingFacts:copy(allInOne.timingFacts),
+    // Direction markers are deterministic facts for the direction mode; the
+    // writer may interpret them but must not turn them into a rank or guarantee.
+    directionFacts:copy(analysis?.directions?{
+      kind:'FACT_ONLY_DIRECTION_INDEX',
+      version:analysis.directions.version||null,
+      profile:analysis.directions.profile||null,
+      byPalace:analysis.directions.byPalace||{},
+      coverage:analysis.directions.coverage||null,
+      provenance:analysis.directions.provenance||null,
+      limitations:analysis.directions.limitations||[]
+    }:null),
     chartMeta:{
       schemaVersion:board?.schemaVersion||null,
       engineVersion:chart.engineVersion||board?.engineVersion||null,
@@ -194,6 +212,19 @@ function buildDirectWholeChartContract(prepared,packet){
   const fallback=(packet.salienceIndex?.palaces||[]).filter(row=>row.palace!==5).slice(0,6);
   const focusRows=focus.length?focus:fallback;
   const roleRows=packet.salienceIndex?.roles||[];
+  const timingFacts=packet.timingFacts||{};
+  const hasTimingEvidence=Boolean(
+    timingFacts.candidates?.length||
+    timingFacts.signals?.length||
+    (timingFacts.pace?.tendency&&timingFacts.pace.tendency!=='unknown')
+  );
+  const modeLabels={
+    strategy:['Đòn bẩy chính và nút thắt','Chuỗi hành động và nhịp lặp','Nguồn lực, ứng thời và điểm dừng'],
+    business:['Giai đoạn giao dịch và cổng chốt','Báo giá, hợp đồng và tiền về','Năng lực thực hiện và mở rộng'],
+    negotiation:['Thế và mục tiêu trao đổi','Nhượng bộ có điều kiện','Điểm dừng và thời điểm chốt']
+  }[mode]||['Đòn bẩy chính và cách tiếp cận','Cách triển khai và nhịp lặp','Nguồn lực và điều kiện mở rộng'];
+  const singleActionLabel=mode==='prediction'?'Diễn biến và dấu hiệu xác nhận':mode==='direction'?'Cách dùng phương hướng và blocker':mode==='timing'?'Lựa chọn và điều kiện chọn':'Bước nên làm tiếp theo';
+  const timingLabel=mode==='strategy'?'Ứng thời hành động và dấu hiệu phản hồi':mode==='business'?'Nhịp giao dịch và thời điểm tiền về':mode==='negotiation'?'Thời điểm trao đổi và chốt':'Nhịp thời gian và dấu hiệu theo dõi';
   const palaceClaimIds=row=>row.map(item=>`palace_${item.palace}`);
   const questionClaim={
     id:'question_context',evidenceIds:['question_context'],ruleIds:['deterministic_question'],
@@ -203,7 +234,7 @@ function buildDirectWholeChartContract(prepared,packet){
   const globalClaim={
     id:'global_structure',evidenceIds:['global_structure'],ruleIds:['deterministic_global'],
     actorIds:[],status:'observed',certainty:'conditional',
-    technicalEvidence:JSON.stringify({chartMeta:packet.chartMeta,globalStructure:packet.globalStructure,salience:packet.salienceIndex?.global||null})
+    technicalEvidence:JSON.stringify({chartMeta:packet.chartMeta,globalStructure:packet.globalStructure,timingFacts:packet.timingFacts,directionFacts:packet.directionFacts,salience:packet.salienceIndex?.global||null})
   };
   const palaceClaims=(packet.salienceIndex?.palaces||[]).map(row=>({
     id:`palace_${row.palace}`,evidenceIds:[`palace_${row.palace}`],ruleIds:['deterministic_palace'],
@@ -225,15 +256,15 @@ function buildDirectWholeChartContract(prepared,packet){
   ];
   if(['strategy','business','negotiation'].includes(mode)){
     units.push(
-      makeUnit('action_1','Đòn bẩy chính và cách tiếp cận',baseIds),
-      makeUnit('action_2','Cách triển khai và nhịp lặp',focusIds.length?focusIds:baseIds),
-      makeUnit('action_3','Nguồn lực và điều kiện mở rộng',roleIds.length?roleIds.slice(0,6):baseIds)
+      makeUnit('action_1',modeLabels[0],baseIds),
+      makeUnit('action_2',modeLabels[1],focusIds.length?focusIds:baseIds),
+      makeUnit('action_3',modeLabels[2],roleIds.length?roleIds.slice(0,6):baseIds)
     );
   }else{
-    units.push(makeUnit('action_1','Bước nên làm tiếp theo',baseIds));
+    units.push(makeUnit('action_1',singleActionLabel,baseIds));
   }
-  if(mode==='timing'||/\b(?:ngay|tuan|thang|30 ngay|thoi diem|khi nao)\b/i.test(String(questionContext.question||context.question||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase())){
-    units.push(makeUnit('timing','Nhịp thời gian và dấu hiệu theo dõi',baseIds));
+  if(mode==='timing'||hasTimingEvidence||/\b(?:ngay|tuan|thang|30 ngay|thoi diem|khi nao)\b/i.test(String(questionContext.question||context.question||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase())){
+    units.push(makeUnit('timing',timingLabel,baseIds));
   }
   const contract={
     version:NARRATIVE_VERSION,kind:'question',
