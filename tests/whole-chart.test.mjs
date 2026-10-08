@@ -100,6 +100,16 @@ test('strategy wording routes the business case to strategy before Whole Chart r
   assert.equal(result.mode,'strategy');
 });
 
+test('whole chart UI request keeps reasoning mode inside the server fingerprint contract',async()=>{
+  const body={...CASE,reasoningMode:'whole_chart',mode:'strategy'};
+  const prepared=await buildReadingRequest(body);
+  const roundTrip=await buildReadingRequest(prepared.request);
+  const standard=await buildReadingRequest({...body,reasoningMode:'standard'});
+  assert.equal(prepared.request.reasoningMode,'whole_chart');
+  assert.equal(prepared.requestFingerprint,roundTrip.requestFingerprint);
+  assert.notEqual(prepared.requestFingerprint,standard.requestFingerprint);
+});
+
 
 test('whole chart context bypasses the legacy planner and exposes fact-only timing/direction indexes',()=>{
   const prepared=prepareReading({...CASE,reasoningMode:'whole_chart',mode:'strategy'});

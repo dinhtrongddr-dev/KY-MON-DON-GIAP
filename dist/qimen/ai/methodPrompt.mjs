@@ -33,9 +33,9 @@ export const MODE_SYNTHESIS_INSTRUCTIONS=[
 ].join('\n');
 
 export const SURFACE_METHOD_INSTRUCTIONS=[
-'PHƯƠNG PHÁP: giữ đúng method/methodLabel, Thời Gia, Chuyển bàn, Âm Độn/Dương Độn, số cục, nguyên, Trực Phù và Trực Sử do Engine trả về; “Tháo bổ · Phù đầu” khác “Mao Sơn · 5 ngày/nguyên”. Không an lại hoặc đổi bàn.',
-'ĐỌC: nối vai/Dụng Thần với tổ hợp Cung–Thần–Tinh–Môn–Can và trạng thái sinh-khắc, vượng suy, Không Vong, Dịch Mã, Nhập Mộ, Kích Hình, Môn bức/Cung bức, Phục Ngâm/Phản Ngâm.',
-'CÁCH CỤC: chỉ gọi tên khi packet có record thật: Thanh Long phản thủ, Phi Điểu Điệt Huyệt, Ngọc Nữ thủ môn, Tam Kỳ đắc sử; cảnh báo Tam Kỳ nhập mộ, Tam Trá/Ngũ Giả/Cửu Độn, Tam Thắng, Địa Tư Môn phải gắn đúng cung/vai và điều kiện tháo gỡ.',
-'MODE: Hỏi Việc nêu đòn bẩy–nút thắt–chuỗi hành động; Thời điểm giữ ứng viên; Phương hướng giữ điểm quy chiếu; Mệnh nối cấu trúc với lựa chọn đời sống. Số mục tiêu chỉ là phép chia kế hoạch, không phải dự báo.',
-'Viết nghĩa thực tế trước thuật ngữ, bám đúng bàn, không bịa người/ngày/số tiền/sự kiện và không nói cách cục nếu packet không có.'
+'PHƯƠNG PHÁP: giữ Thời Gia Chuyển bàn, method, Âm Độn/Dương Độn, cục/nguyên, Trực Phù/Trực Sử của Engine. Tháo bổ · Phù đầu khác Mao Sơn · 5 ngày/nguyên; không an lại.',
+'ĐỌC: nối vai/Dụng Thần + Cung–Thần–Tinh–Môn–Can; xét sinh-khắc, vượng suy, Không/Mã/Mộ/Hình, Môn bức/Cung bức, Phục/Phản Ngâm.',
+'CÁCH CỤC: chỉ gọi tên khi có record đúng cung/vai: Thanh Long phản thủ, Phi Điểu Điệt Huyệt, Ngọc Nữ thủ môn, Tam Kỳ đắc sử, Tam Kỳ nhập mộ, Tam Trá/Ngũ Giả/Cửu Độn, Tam Thắng, Địa Tư Môn; giữ blocker.',
+'MODE: Hỏi Việc/dự đoán: kết luận→lực đẩy/cản→dấu hiệu→điều kiện; Chiến lược: đòn bẩy→nút thắt→bước→lặp→nguồn lực→dừng; Thương chiến: đầu mối→báo giá→thỏa thuận→thực hiện→tiền; Đàm phán: nhượng bộ có đổi lại; Thời điểm: giữ ứng viên, tách hành động/kết quả; Phương hướng: giữ quy chiếu/marker; Mệnh: nối cấu trúc với đời sống. Số mục tiêu là kế hoạch minh họa.',
+'Nghĩa trước thuật ngữ; bám bàn, không bịa người/ngày/tiền/sự kiện.'
 ].join('\n');

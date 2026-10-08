@@ -239,7 +239,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>16000)return send(413,{error:'Câu hỏi quá dài.'});chunks.push(c);}
        let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{return send(400,{error:'Dữ liệu JSON không hợp lệ.'});}
        let prepared,identity,reasoningMode;
-       try{reasoningMode=resolveReasoningMode(body.reasoningMode);if(isMenhRead&&reasoningMode!=='standard')throw new Error('Chế độ này hiện chỉ hỗ trợ Hỏi Việc.');}catch(e){return send(400,{error:e.message});}
+       try{reasoningMode=resolveReasoningMode(body.reasoningMode);}catch(e){return send(400,{error:e.message});}
        try{
          prepared=isMenhRead?prepareMenhReading(body):prepareReading(body);
          identity=isMenhRead?await menhReadingIdentity(prepared):await readingIdentity(prepared);

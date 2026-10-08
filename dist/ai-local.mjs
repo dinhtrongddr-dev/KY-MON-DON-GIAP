@@ -127,14 +127,15 @@ export function initLocalAi({prepare,activity=null,captureReportVisual}) {
    cancelWork();let body;try{body=prepare();if(!body.question)throw new Error('Hãy nhập sự việc cần hỏi trước khi luận.');}catch(e){status.textContent=e.message;return;}
    const v=version,controller=startWork('Đang chuẩn bị dữ liệu bàn và câu hỏi…',true,610000);
    try{
-     const prepared=await buildReadingRequest(body);
+     body={...body,reasoningMode:reasoningMode?.value||'standard'};
+   const prepared=await buildReadingRequest(body);
      if(v!==version)return;
      status.textContent='Đang kiểm tra kết nối AI…';setConnectionState('checking');
      const health=await call('/api/status',null,controller.signal);assertCompatible(health);
      if(v!==version)return;
      setConnectionState('connected');status.textContent='AI đang gửi lượt luận lên server…';
      activityReadingId=track('startReading');
-     const data=await jobClient.run('/api/read/start',{...prepared.request,reasoningMode:reasoningMode?.value||'standard'},controller.signal,{
+     const data=await jobClient.run('/api/read/start',prepared.request,controller.signal,{
        onStarted:()=>{clearTimeout(requestTimeout);requestTimeout=null;},
        onJob:(jobId,started)=>{
          activeJobId=jobId;

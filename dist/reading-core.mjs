@@ -113,7 +113,7 @@ export async function buildReadingRequest(body) {
     subject:prepared.context.allInOne.questionContext.subject.mapping,
     direction:prepared.context.allInOne.questionContext.direction?{origin:prepared.context.allInOne.questionContext.direction.origin,kind:prepared.context.allInOne.questionContext.direction.kind}:null,
     depth:prepared.context.allInOne.questionContext.depth,action:prepared.context.allInOne.action,candidates:prepared.context.allInOne.comparison?.values||[],
-    method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity}};
+    reasoningMode:body.reasoningMode||'standard',method:prepared.chart.method,input:prepared.timePlace.originalInput,timePlace:prepared.timePlace.request,protocol:READING_PROTOCOL,rules:RULE_VERSION,caseRules:CASE_ENGINE_VERSION,nianmingRules:NIANMING_VERSION,...identity}};
 }
 export function assertCompatible(data) {
   if (data?.rules!==RULE_VERSION || data?.protocol!==READING_PROTOCOL || data?.caseRules!==CASE_ENGINE_VERSION || data?.nianmingRules!==NIANMING_VERSION) throw new Error(UPGRADE_MESSAGE);
