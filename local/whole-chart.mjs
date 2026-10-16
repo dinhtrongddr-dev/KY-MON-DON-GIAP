@@ -383,7 +383,7 @@ function minimalFactAudit(reading,packet){
   const timing=packet.timingFacts||{};
   for(const value of [timing.window?.start,timing.window?.end,...(timing.allowedPredictions||[]),...(timing.candidates||[]).flatMap(candidate=>[candidate?.date,candidate?.display])])addDateTokens(value);
   const violations=[];
-  for(const match of normalizeFactText(text).matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g)){
+  for(const match of normalizeFactText(text).matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|do la|dong(?!\s*thoi\b))\b/g)){
     if(!source.includes(match[0]))violations.push({code:'INVENTED_MONEY',unitId:'',reason:'Số tiền cụ thể ngoài câu hỏi: '+match[0]});
   }
   for(const match of normalizeFactText(text).matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b|\b\d{4}-\d{2}-\d{2}\b/g)){
