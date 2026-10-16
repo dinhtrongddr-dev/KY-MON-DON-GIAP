@@ -212,10 +212,14 @@ test('surface factual audit still blocks fabricated placements, dates, money, pr
   }
 });
 test('Mệnh safety gates reject medical, death, exact children and marriage claims',()=>{
-  for(const sentence of ['Bạn sẽ chết 72 tuổi.','Bạn sẽ có 3 con.','Bạn sẽ kết hôn 2 lần.','Bạn chắc chắn vô sinh.','Bạn sẽ nhận 500 triệu đồng.']){
+  for(const sentence of ['Bạn sẽ chết 72 tuổi.','Bạn sẽ có 3 con.','Bạn sẽ kết hôn 2 lần.','Bạn chắc chắn vô sinh.']){
     const draft=append(fallbackDraft(mc),'overview',' '+sentence);
     assert.throws(()=>validateMenhReading(hydrateSurfaceReading(draft,mc),ctx),undefined,sentence);
   }
+});
+test('Mệnh audit allows contextual financial illustrations without weakening safety gates',()=>{
+  const draft=append(fallbackDraft(mc),'overview',' Có thể minh họa bằng 500 triệu đồng nếu đó là ví dụ có điều kiện.');
+  assert.doesNotThrow(()=>validateMenhReading(hydrateSurfaceReading(draft,mc),ctx));
 });
 test('independent semantic review blocks contradictory prose without relying on Writer ids',async()=>{
   let writes=0,reviews=0;

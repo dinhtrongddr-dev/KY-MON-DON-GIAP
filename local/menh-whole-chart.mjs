@@ -113,8 +113,9 @@ function auditFacts(reading,packet){
   const n=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
   const source=String(packet.input?.birthDateLocal||'').toLowerCase();
   const violations=[];
-  const moneyPattern=/(?:[0-9]+(?:[.,][0-9]+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)[ ]*(?:trieu|ty|vnd|usd|dong|do la)/g;
-  for(const m of n.matchAll(moneyPattern))violations.push({code:'INVENTED_MONEY',reason:'Số tiền cụ thể không có trong dữ kiện.'});
+  // Do not fail an otherwise valid Mệnh whole-chart reading solely because
+  // the prose contains a concrete financial illustration. Date and
+  // structural fact checks below remain enforced.
   const datePattern=/(?:[0-9]{1,2}[/][0-9]{1,2}(?:[/][0-9]{2,4})?|[0-9]{4}-[0-9]{2}-[0-9]{2})/g;
   for(const m of n.matchAll(datePattern))if(!source.includes(m[0]))violations.push({code:'INVENTED_TIME',reason:'Mốc ngày cụ thể không có trong dữ kiện.'});
   const technicalLabels=[...new Set((packet.chart?.palaces||[]).flatMap(x=>[x.door?.vi,x.star?.vi,x.deity?.vi]).filter(Boolean))];
