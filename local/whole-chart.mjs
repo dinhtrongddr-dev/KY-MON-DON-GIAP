@@ -359,17 +359,35 @@ function minimalFactAudit(reading,packet){
   const text=Object.values(reading.sections||{}).flatMap(section=>(section.paragraphs||[]).map(paragraph=>paragraph.meaning||'')).join(' ');
   const source=normalizeFactText(packet.question?.text);
   const input=packet.chartMeta?.input||{};
-  const allowedDates=[
-    input.year&&input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0')+'/'+input.year:'',
-    input.year&&input.month&&input.day?input.year+'-'+String(input.month).padStart(2,'0')+'-'+String(input.day).padStart(2,'0'):'',
-    input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0'):''
-  ].filter(Boolean).map(normalizeFactText);
+  const dateTokens=new Set();
+  const addDateTokens=value=>{
+    const raw=String(value??'').trim();
+    if(!raw)return;
+    dateTokens.add(normalizeFactText(raw));
+    let match=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(match){
+      const [,year,month,day]=match;
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')+'/'+year));
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')));
+      return;
+    }
+    match=raw.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?$/);
+    if(match){
+      const [,day,month,year]=match;
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')));
+      if(year)dateTokens.add(normalizeFactText(year.length===2?'20'+year:year+'-'+month.padStart(2,'0')+'-'+day.padStart(2,'0')));
+    }
+  };
+  addDateTokens(input.year&&input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0')+'/'+input.year:'');
+  addDateTokens(input.year&&input.month&&input.day?input.year+'-'+String(input.month).padStart(2,'0')+'-'+String(input.day).padStart(2,'0'):'');
+  const timing=packet.timingFacts||{};
+  for(const value of [timing.window?.start,timing.window?.end,...(timing.allowedPredictions||[]),...(timing.candidates||[]).flatMap(candidate=>[candidate?.date,candidate?.display])])addDateTokens(value);
   const violations=[];
   for(const match of normalizeFactText(text).matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g)){
     if(!source.includes(match[0]))violations.push({code:'INVENTED_MONEY',unitId:'',reason:'Số tiền cụ thể ngoài câu hỏi: '+match[0]});
   }
   for(const match of normalizeFactText(text).matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b|\b\d{4}-\d{2}-\d{2}\b/g)){
-    if(!source.includes(match[0])&&!allowedDates.includes(match[0]))violations.push({code:'INVENTED_TIME',unitId:'',reason:'Mốc ngày cụ thể ngoài câu hỏi hoặc input bàn: '+match[0]});
+    if(!source.includes(match[0])&&!dateTokens.has(match[0]))violations.push({code:'INVENTED_TIME',unitId:'',reason:'Mốc ngày cụ thể ngoài câu hỏi hoặc input bàn: '+match[0]});
   }
   if(violations.length){const error=new Error('Whole Chart fact audit failed.');error.violations=violations;throw error;}
   return true;
