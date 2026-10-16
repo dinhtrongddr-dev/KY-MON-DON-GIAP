@@ -86,25 +86,24 @@ Status: **implemented in the feature worktree and covered by repository tests**.
 
 Status: **adapter implemented, live capability probe completed and Writer-only VPS canary is active**.
 
-Upstream source pin:
+Provider source:
 
-`basketikun/chatgpt2api@dc105e51bd486bd75c8ef4f74be4bc4724bdfc33`
+`dinhtrongddr-dev/chatgpt2api-web@f47c0ed`
 
 Implemented:
 
 - loopback-only client at `http://127.0.0.1:3000/v1`;
+- new Web Edition Docker runtime at `qimen-chatgpt2api-web`;
 - explicit runtime auth-key requirement;
 - Chat Completions text path for the Surface Writer;
 - catalog discovery marked advertised-only, never entitlement proof;
-- conservative model/effort observability;
-- auth/rate-limit/unavailable/network/malformed/cancel error mapping;
-- source-pinned Docker deployment bound to `127.0.0.1:3000:80`;
-- no credentials committed and no public provider/admin tunnel.
-- live probe service is bound to `127.0.0.1:3000`.
-- tested runtime image digest: `sha256:fbee934fd5363ef6ce5f7632df854f87c770e382bf0f874f8c59372eeded6aab`.
-- one existing local Codex OAuth account was imported at runtime without committing credentials.
-- `gpt-5-6` completed the real Case B Surface Writer payload and returned all six expected sections in parseable JSON.
-- first full Case B Writer call took about 78.8 s; a later equivalent call completed in about 9.9 s.
+- model/effort configured as `gpt-6-astra-wm` / `xhigh`;
+- no credentials committed and no public provider/admin tunnel;
+- old `basketikun/chatgpt2api` container, image, env and data removed from the VPS.
+- live provider service is bound to `127.0.0.1:3000`.
+- `/v1/models` returned 8 advertised models, including `gpt-6-astra-wm`.
+- text generation is pending addition of a ChatGPT account to the new service pool; no old account credentials were migrated.
+- the source commit includes the text-chat initialization fix verified by a live request.
 
 ## Phase 9 — focused A/B on locked regression packages
 
@@ -113,12 +112,12 @@ Status: **focused Case A / Case B comparison completed; both providers passed de
 Case B — Hỏi Việc:
 
 - current Writer route: `gpt-5.6-sol`, about 15.6 s, valid output, style report `REPEATED_VERIFICATION`;
-- chatgpt2api Writer route: `gpt-5-6`, about 9.9 s on the measured repeat, valid output, same style report.
+- retired pre-migration provider route: `gpt-5-6`, about 9.9 s on the measured repeat, valid output, same style report.
 
 Case A — Mệnh:
 
 - current Writer route: `gpt-5.6-sol`, about 20.3 s, valid output, no style issue;
-- chatgpt2api Writer route: `gpt-5-6`, about 8.6 s, valid output, no style issue.
+- retired pre-migration provider route: `gpt-5-6`, about 8.6 s, valid output, no style issue.
 
 These timings are observational, not a model-quality ranking. Cache/warm-state effects can materially change latency.
 
