@@ -45,7 +45,13 @@ function parseJsonCandidate(value){
 }
 
 export function parseStructuredText(text){
- const value=String(text??'').trim();
+ let value=String(text??'').trim();
+ // Web text responses may wrap JSON with this transport marker. Strip only
+ // the outer marker; keep JSON validation strict and preserve literal text.
+ if(value.startsWith('<escape>')){
+  value=value.slice('<escape>'.length).trim();
+  if(value.endsWith('</escape>'))value=value.slice(0,-'</escape>'.length).trim();
+ }
  const direct=parseJsonCandidate(value);if(direct!==null)return direct;
  const match=value.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
  if(match){const fenced=parseJsonCandidate(match[1]);if(fenced!==null)return fenced;}
