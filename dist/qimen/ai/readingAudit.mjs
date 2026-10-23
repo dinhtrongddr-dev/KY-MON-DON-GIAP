@@ -37,7 +37,7 @@ function auditClaims(passages,context,rows=[],{structured=false}={}) {
   // match cannot decide whether a fluent sentence asserts or denies certainty.
   // Fabricated numerical probabilities remain a deterministic integrity error.
   if(/\b(ty le (thanh cong|thang)|xac suat)\b[^.!?]{0,50}\d|\d+(?:[.,]\d+)?\s*%\s*(thanh cong|chien thang)/.test(normalized)||!structured&&certainty.some(m=>!negatesCertainty(normalized.slice(0,m.index))))reject('Không được tạo xác suất hoặc kết quả chắc chắn từ tượng.');
-  for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong)\b/g)){
+  for(const m of normalized.matchAll(/\d+(?:[.,]\d+)?\s*(?:trieu|ty|vnd|usd|dong(?!\s+thoi\b))\b/g)){
     if(/[/:]/.test(normalized[m.index-1]||''))continue;
     if(!source.includes(m[0]))reject('Bài luận tự thêm số tiền không có trong câu hỏi.');
   }
