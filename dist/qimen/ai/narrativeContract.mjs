@@ -2,6 +2,8 @@ import {buildWriterContext} from './writerContext.mjs';
 import {NARRATIVE_VERSION,freezeNarrative,unique,normalizeNarrative,atom,unit,plainEngineMeaning,GENERAL_NOTE,validateNarrativeContract} from './narrativePrimitives.mjs';
 import {eventClaimEvidence,comparisonEvidence,ACTOR_LABELS} from './narrativeEvidence.mjs';
 import {wantsDevelopment} from './presentation.mjs';
+import {BRANCHES as WARFARE_BRANCHES} from '../modes/warfare.mjs';
+const BRANCH_LABELS=Object.fromEntries(Object.entries(WARFARE_BRANCHES).map(([k,v])=>[k,v.label]));
 const FACET_RULES=[
   {id:'decision',label:'Quyết định đang cân nhắc',pattern:/\b(nghi viec|co nen|nen|quyet dinh|phan van|lua chon|hay tu choi)\b/,roles:[],kind:'decision'},
   {id:'approval_timing',label:'Mốc được giải quyết',pattern:/\b(duyet|phe duyet|cuoi thang|giai quyet)\b/,roles:['contract','authority','decisionMaker','event'],kind:'timing_scope'},
@@ -269,6 +271,18 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
       ?'Thực hành với '+r.spirit.name+': đặt hướng '+r.backDirection+' sau lưng, mặt nhìn về '+r.faceDirection+'. Mức phù hợp: '+r.activationLevel+'. Đây là thực hành tượng trưng để tập trung và định hướng hành động.'
       :'Hiện chưa có phương vị đủ điều kiện để ưu tiên.';
     units.push(unit('spirit_practice','Hướng thực hành',primaryIds,[atom('spirit_fixed',meaning,primaryIds,{kind:'instruction',required:true})],{certainty:'scope',conclusion:'symbolic_practice'}));
+  }
+  // TG-CB-7.0 (P6): the warfare plan (branch, host/guest, direction, hours) is a unit of its own.
+  const war=c.plan?.computed?.warfare;
+  if(war&&['strategy','business','negotiation'].includes(c.classification.mode)&&war.sides?.self&&!units.some(u=>u.id==='strategy_play')){
+    const s=war.sides,act=war.action,pct=x=>x==null?'chưa rõ':x>=0.8?'mạnh':x>=0.45?'trung bình':'yếu';
+    const lines=[
+      'Nước đi chính: '+act.label+'. '+act.summary,
+      'So lực: ta '+pct(s.self.power)+(s.rival?', đối thủ (Canh) '+pct(s.rival.power):'')+'; '+war.hostGuest.basis,
+      act.orientation?'Phương hành động: '+act.orientation+(act.hours.length?' Giờ dùng: '+act.hours.join(', ')+'.':''):null,
+      act.alternative?'Nhánh dự phòng: '+(BRANCH_LABELS[act.alternative]||act.alternative)+'.':null
+    ].filter(Boolean);
+    units.push(unit('strategy_play','Nước đi chiến lược',primaryIds,lines.map((m,i)=>atom('strategy_play_'+i,m,primaryIds,{kind:'recommendation',required:i===0})),{certainty:'recommendation',conclusion:'action_plan'}));
   }
   // TG-CB-7.0 (P4): a negative verdict is a hard lock on the first unit so every writer
   // (and every repair) must state it plainly.

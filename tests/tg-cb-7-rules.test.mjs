@@ -52,3 +52,30 @@ test('P3: business questions carry Canh as the market rival symbol', () => {
   const roles = analyzeBoard(board, {topic: 'contract'}).roles || [];
   assert.ok(roles.some((r) => r.id === 'market_rival' && r.stem === '庚'), JSON.stringify(roles.map((r) => r.id)));
 });
+
+// ---- P6: warfare / business strategy ----
+import {computeWarfare, BRANCHES as WAR_BRANCHES} from '../dist/qimen/modes/warfare.mjs';
+import {prepareReading} from '../local/reading.mjs';
+import {buildQuestionNarrativeContract} from '../dist/qimen/ai/narrativeContract.mjs';
+
+test('P6: warfare model covers offensive, alliance and retreat branches and picks direction/hours', () => {
+  const seen = new Set();
+  for (const board of boards(160)) {
+    const w = computeWarfare(analyzeBoard(board, {topic: 'contract'}), {focus: 'business'});
+    seen.add(w.action.branch);
+    assert.ok(WAR_BRANCHES[w.action.branch]);
+    assert.ok(['guest', 'host', 'even'].includes(w.hostGuest.advantage));
+    assert.ok(w.sides.rival, 'Canh fallback must always locate a rival');
+    if (['attack', 'capture_share', 'alliance', 'squeeze_price', 'hold'].includes(w.action.branch) && w.action.palace) assert.ok(w.action.hours.length > 0);
+  }
+  for (const id of ['attack', 'strategic_retreat']) assert.ok(seen.has(id), `${id} never chosen in sample: ${[...seen]}`);
+  assert.ok(seen.size >= 4, [...seen].join(','));
+});
+
+test('P6: business questions get a strategy_play unit with the chosen branch', () => {
+  const p = prepareReading({input: {year: 2026, month: 9, day: 21, hour: 14, minute: 0, tzOffset: 7}, question: 'Tôi nên cạnh tranh với đối thủ thế nào để giành khách trong quý này?', topic: 'contract', mode: 'business', method: 'chaibu'});
+  const c = buildQuestionNarrativeContract(p.context);
+  const u = c.units.find((x) => x.id === 'strategy_play');
+  assert.ok(u, c.units.map((x) => x.id).join(','));
+  assert.match(u.atoms[0].meaning, /Nước đi chính/);
+});

@@ -1,4 +1,5 @@
 import {steps,finish,roleState,relationOf} from './shared.mjs';
+import {computeWarfare} from './warfare.mjs';
 export function business(a) {
   const ids=['self','customer','decisionMaker','service','quote','money','competitor','contract','opportunity'];
   const pipeline=ids.map(id=>roleState(a,id));
@@ -17,11 +18,13 @@ export function business(a) {
     ['service','Sản phẩm / dịch vụ',['service'],'Gắn với việc cụ thể người hỏi đã kể.'],
     ['quote','Báo giá',['quote','capital'],'Tách phạm vi, đơn giá và tổng chi phí.'],
     ['money','Tiền',['money','capital'],'Tách vốn, lợi nhuận, điều kiện thanh toán và tiền về.'],
-    ['competitor','Đối thủ',['competitor'],'Không có đại diện thì chưa thể xếp mạnh/yếu.'],
+    ['competitor','Đối thủ',['competitor','market_rival'],'Canh là biểu tượng đối thủ/trở lực; so lực ta với Canh theo vượng suy và sinh khắc cung.'],
+    ['play','Nước đi thương chiến',['self','market_rival','money','contract'],'Chọn một nhánh: tấn công, giành thị phần, ép giá, liên minh, giữ thế hoặc rút lui; kèm phương và giờ hành động.'],
     ['contract','Hợp đồng',['contract','quote'],'Từ đồng ý miệng sang điều khoản được xác nhận.'],
     ['result','Khả năng chốt và bước tiếp',['opportunity','contract','customer'],'Phản hồi → làm rõ → duyệt → ký là các mốc khác nhau, không tự coi đã đạt.'],
   ]);
-  return finish('business',a,chain,{pipeline,bottlenecks,initiative:relationOf(a,'self','customer'),roleFrame:a.roleProfile?.hostGuest,selfAgency:a.roleProfile?.roles?.find(r=>r.id==='self')?.agencyBand,
-    priceIssueConfirmed:false,competitorComparison:roleState(a,'competitor').status==='unresolved'?'unresolved':'compare_symbolic_positions',
+  const warfare=computeWarfare(a,{focus:'business'});
+  return finish('business',a,chain,{warfare,pipeline,bottlenecks,initiative:relationOf(a,'self','customer'),roleFrame:a.roleProfile?.hostGuest,selfAgency:a.roleProfile?.roles?.find(r=>r.id==='self')?.agencyBand,
+    priceIssueConfirmed:false,competitorComparison:warfare.sides.rival?'compare_symbolic_positions':'unresolved',
     closing:{status:'requires_real_world_confirmation',gates:['Phạm vi','Người duyệt','Điều khoản','Xác nhận ký']}});
 }

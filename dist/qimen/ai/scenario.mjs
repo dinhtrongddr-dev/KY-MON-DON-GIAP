@@ -26,7 +26,7 @@ export function buildScenario(selected,context,graph,interactions=[],modePlan={c
     conflicts.some(c=>c.code==='reversal')?'unstable_progress':principal?'condition_constrained':opening?'conditional_opening':'check_bottleneck';
   const objective=strategy?'choose_action_sequence':context.questionType==='comparison'?'compare_evidence':context.questionType==='diagnosis'?'explain_bottleneck':context.questionType==='decision'?'compare_conditions':'assess_conditional_outcome';
   const operations={prediction:'observe_response_and_conditions',strategy:'activate_and_test_response',business:strategy?'advance_commercial_gate':'assess_commercial_stage',negotiation:'exchange_conditions_after_verification',timing:'compare_computed_candidate_conditions',direction:'compare_directions_and_origin'};
-  const inputs=Object.fromEntries(['path','initiative','posture','closing','concessions','stopConditions','otherKnown','powerRelation','roleFrame','selfAgency','otherAgency','action','targets','origin'].filter(k=>modePlan.computed[k]!==undefined).map(k=>[k,modePlan.computed[k]]));
+  const inputs=Object.fromEntries(['path','initiative','posture','closing','concessions','stopConditions','otherKnown','powerRelation','roleFrame','selfAgency','otherAgency','action','targets','origin','warfare'].filter(k=>modePlan.computed[k]!==undefined).map(k=>[k,modePlan.computed[k]]));
   if(modePlan.computed.bottlenecks)inputs.bottlenecks=modePlan.computed.bottlenecks.filter(b=>b.signals.length);
   const activeRoles=new Set(graph.nodes.map(n=>n.id));
   if(inputs.bottlenecks)inputs.bottlenecks=inputs.bottlenecks.filter(b=>activeRoles.has(b.role));

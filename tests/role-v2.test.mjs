@@ -100,7 +100,7 @@ test('strategy mode can use Role posture without overriding direct blockers',()=
   const g=p.context.allInOne.reasoning;
   assert.equal(g.roleProfile.hostGuest.timeBias,'guest_first_move');
   assert.equal(g.roleProfile.hostGuest.questionPosture,'initiator');
-  assert.ok(['prepare_and_verify','reduce_exposure','small_reversible_step','hold_then_respond'].includes(g.likelyScenario.modeDecision.inputs.initiative));
+  assert.ok(['prepare_and_verify','reduce_exposure','small_reversible_step','hold_then_respond','attack','capture_share','squeeze_price','alliance','hold','strategic_retreat','probe'].includes(g.likelyScenario.modeDecision.inputs.initiative));
   const self=g.roleProfile.roles.find(r=>r.id==='self');
   if(self.agencyBand==='constrained')assert.equal(g.likelyScenario.modeDecision.inputs.initiative,'prepare_and_verify');
   assert.ok(g.recommendations.every(r=>r.postureGuidance));
