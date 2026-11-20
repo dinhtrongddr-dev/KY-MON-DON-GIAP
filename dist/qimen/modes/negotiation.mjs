@@ -5,7 +5,9 @@ export function negotiation(a) {
   const warfare=computeWarfare(a,{focus:'negotiation'});
   // TG-CB-7.0 (P6): a clear upper hand allows pressing on price; retreat maps to walk-away.
   const legacyPosture=!link?'discover_authority_and_needs':link.kind==='controlled_by'?'protect_walkaway':self.friction.length?'clarify_before_conceding':'exchange_conditional_concessions';
-  const posture=warfare.action.branch==='squeeze_price'&&!self.friction.length?'press_terms':warfare.action.branch==='strategic_retreat'?'protect_walkaway':warfare.action.branch==='alliance'?'bring_intermediary':legacyPosture;
+  // Without a located counterparty, discovering needs and authority stays first.
+  const posture=!link?(warfare.action.branch==='alliance'?'bring_intermediary':legacyPosture):
+    warfare.action.branch==='squeeze_price'&&!self.friction.length?'press_terms':warfare.action.branch==='strategic_retreat'?'protect_walkaway':warfare.action.branch==='alliance'?'bring_intermediary':legacyPosture;
   return finish('negotiation',a,steps('negotiation',[
     ['self','Ta',['self'],'Mục tiêu và giới hạn của người hỏi.'],
     ['other','Đối phương',['customer'],'Những gì đã biết, chưa biết và cần hỏi trực tiếp.'],
