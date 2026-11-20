@@ -1,5 +1,5 @@
 import {generateText} from './provider-client.mjs';
-import {parseStructuredText} from './codex-client.mjs';
+import {parseStructuredText} from './structured-text.mjs';
 import {aiRouteOf,attachAiRoute} from './ai-client.mjs';
 import {NARRATIVE_VERSION,GENERAL_NOTE,atom,unit,validateNarrativeContract,surfacePayload} from '../dist/qimen/ai/narrativePrimitives.mjs';
 import {hydrateSurfaceReading,validateSurfaceDraft,validateSurfaceReading} from '../dist/qimen/ai/surfaceReading.mjs';

@@ -4,7 +4,7 @@
   "private": true,
   "type": "commonjs",
   "license": "UNLICENSED",
-  "description": "Thoi Gia Ky Mon rotating-board app and local Codex bridge",
+  "description": "Thoi Gia Ky Mon rotating-board app and VPS AI bridge",
   "engines": {
     "node": ">=22"
   },
@@ -12,10 +12,6 @@
     "test": "node scripts/run-tests.mjs",
     "verify": "node scripts/verify-release.mjs",
     "check": "npm test && npm run verify",
-    "prepare:windows": "node scripts/prepare-windows.mjs",
-    "build:launcher": "node scripts/build-launcher.mjs",
-    "verify:package": "python scripts/package-local.py --check",
-    "package:local": "python scripts/package-local.py",
     "test:menh-rectification": "node scripts/menh-rectification-backtest.mjs",
     "report:outcomes": "node scripts/outcome-report.mjs",
     "eval:blind:prepare": "node scripts/ai-reading-blind-review.mjs prepare",

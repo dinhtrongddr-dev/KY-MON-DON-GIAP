@@ -27,9 +27,8 @@
   <main>
     <section class="help-hero">
       <p class="eyebrow">Kết nối AI</p>
-      <h1>Trang chính chỉ cần mã kết nối; toàn bộ phần cài server đặt ở đây</h1>
-      <p>Mã kết nối không phải API key. Trình duyệt dùng mã này để ghép với bridge AI trên VPS hoặc máy đang chạy bộ kết nối.</p>
-      <p><a class="button button-primary" href="./downloads/ky-mon-ai.zip" download>Tải bộ kết nối AI <span aria-hidden="true">↓</span></a></p>
+      <h1>AI chạy trên VPS; không cần cài gì trên máy</h1>
+      <p>Website gọi thẳng bridge AI trên VPS. Khi VPS bật truy cập mở, ô mã kết nối có thể để trống; mã kết nối không phải API key.</p>
     </section>
 
     <section class="help-section">
@@ -47,48 +46,43 @@
       <p class="eyebrow">VPS · cấu trúc đang dùng</p><h2>Luồng kết nối</h2>
       <div class="help-grid">
         <article class="help-card"><h3>Website</h3><p><strong>kymon.pp.ua</strong> chỉ chứa giao diện và logic lập/kiểm tra bàn. Không chứa API key AI.</p></article>
-        <article class="help-card"><h3>Named Tunnel</h3><p><strong>ai-origin.kymon.pp.ua</strong> chuyển request tới bridge nội bộ; không cần mở cổng 8765 trực tiếp ra Internet.</p></article>
+        <article class="help-card"><h3>Caddy</h3><p><strong>ai-origin.kymon.pp.ua</strong> chuyển request tới bridge nội bộ; cổng 8765 không mở trực tiếp ra Internet.</p></article>
         <article class="help-card"><h3>Bridge</h3><p><code>local/server.mjs</code> nghe localhost, kiểm tra Host/Origin/mã ghép nối và xác minh protocol trước khi gọi AI.</p></article>
-        <article class="help-card"><h3>AI router</h3><p>Runtime hiện dùng router nội bộ và fallback chain đã cấu hình trên VPS; web không tự đổi provider/model.</p></article>
+        <article class="help-card"><h3>AI router</h3><p>Một route duy nhất qua ChatGPT2API trên VPS; model và mức suy luận lấy từ env, web không tự đổi.</p></article>
       </div>
     </section>
 
     <section class="help-section">
       <p class="eyebrow">Cài VPS</p><h2>Thiết lập chuẩn theo repo hiện tại</h2>
       <ol class="help-steps">
-        <li><strong>Cài runtime.</strong> Cần Node.js 22+, Codex CLI, cloudflared, curl và 9router service.</li>
-        <li><strong>Đưa source lên VPS.</strong> Giữ nguyên cấu trúc <code>dist/</code>, <code>local/</code>, <code>START-VPS.sh</code> và <code>scripts/</code>.</li>
-        <li><strong>Tạo file môi trường riêng.</strong> Không commit mã ghép nối, API key hoặc token Cloudflare vào GitHub.</li>
-        <li><strong>Tạo Named Tunnel.</strong> Token tunnel lưu thành file riêng, permission 600. Tunnel trỏ hostname AI về bridge localhost.</li>
-        <li><strong>Cài autostart.</strong> Chạy script systemd đi kèm để 9router và Kỳ Môn bridge tự lên sau reboot.</li>
-        <li><strong>Kiểm tra.</strong> Chỉ coi là hoàn tất khi systemd active, <code>/api/status</code> trả đúng protocol và app đổi trạng thái thành ✓.</li>
+        <li><strong>Cài runtime.</strong> Node.js 22+, ChatGPT2API nghe ở <code>127.0.0.1:8787</code>, Caddy phục vụ <code>ai-origin.kymon.pp.ua</code>.</li>
+        <li><strong>Đưa source lên VPS.</strong> Chép <code>dist/</code>, <code>local/</code> và <code>package.json</code> vào <code>/opt/kymon</code>.</li>
+        <li><strong>Tạo file môi trường riêng.</strong> Theo mẫu <code>ops/kymon-vps.env.example</code>; không commit khóa vào GitHub.</li>
+        <li><strong>Chạy service.</strong> systemd <code>kymon</code> chạy <code>node local/server.mjs</code> với <code>EnvironmentFile=/etc/kymon-vps/env</code>.</li>
+        <li><strong>Kiểm tra.</strong> <code>/api/status</code> trả đúng luật và protocol, rồi luận thử trên kymon.pp.ua.</li>
       </ol>
     </section>
 
     <section class="help-section">
       <p class="eyebrow">Biến cấu hình chính</p><h2>Không đặt bí mật vào mã website</h2>
-      <div class="code-block">QIMEN_PAIRING_TOKEN=...            # mã ghép nối riêng
-QIMEN_AI_ROUTER=9router
-QIMEN_MODEL=qimen-smart
-QIMEN_REASONING_EFFORT=auto
-OPENAI_BASE_URL=http://127.0.0.1:20128/v1
-OPENAI_API_KEY=...                 # khóa nội bộ router, chỉ ở VPS
-QIMEN_TUNNEL_HOSTNAME=ai-origin.kymon.pp.ua
-CLOUDFLARE_TUNNEL_TOKEN_FILE=~/.config/kymon-vps/cloudflare-tunnel.token</div>
+      <div class="code-block">QIMEN_TUNNEL_HOSTNAME=ai-origin.kymon.pp.ua
+QIMEN_OPEN_ACCESS=1                # bỏ mã ghép nối
+QIMEN_DIRECT_MODEL=gpt-6-thinking
+QIMEN_REASONING_EFFORT=xhigh       # bước luận chính
+QIMEN_AUX_REASONING_EFFORT=high    # kiểm tra, sửa câu
+PRISM_PROXY_BASE_URL=http://127.0.0.1:8787/v1
+PRISM_PROXY_API_KEY=...            # chỉ ở VPS</div>
       <p class="source-note">Tên biến là cấu hình của repo hiện tại. Giá trị thật phải nằm trong file môi trường riêng trên VPS, không dán vào giao diện công khai.</p>
     </section>
 
     <section class="help-section">
       <p class="eyebrow">Lệnh vận hành</p><h2>Systemd</h2>
-      <div class="code-block">cd /duong-dan/KY-MON-DON-GIAP
-bash scripts/install-vps-autostart.sh
-
-sudo systemctl status 9router.service
-sudo systemctl status kymon-vps.service
+      <div class="code-block">sudo systemctl status kymon
+sudo journalctl -u kymon -n 50
 
 # Sau khi thay source/config:
-sudo systemctl restart kymon-vps.service</div>
-      <p>Nếu app báo ×: kiểm tra theo thứ tự <strong>bridge → 9router → Named Tunnel → mã ghép nối → protocol</strong>. Không khắc phục bằng cách mở trực tiếp cổng 8765 ra Internet hoặc tắt kiểm tra Host/Origin.</p>
+sudo systemctl restart kymon</div>
+      <p>Nếu app báo ×: kiểm tra theo thứ tự <strong>bridge (kymon) → ChatGPT2API (8787) → Caddy → protocol</strong>. Không khắc phục bằng cách mở trực tiếp cổng 8765 ra Internet hoặc tắt kiểm tra Host/Origin.</p>
     </section>
 
     <section class="help-section">

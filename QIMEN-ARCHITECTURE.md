@@ -60,4 +60,4 @@ Mã kết nối hiển thị rõ; ghi nhớ là lựa chọn, spinner/elapsed/ca
 
 Debug chỉ là CLI riêng, không có endpoint/UI debug production. Ví dụ PowerShell: đặt `$env:QIMEN_DEBUG_REASONING='1'`, chạy `node scripts/debug-reasoning.mjs tests/fixtures/income-emergence-2026-09-16.json .release/reasoning-debug.json`, rồi bỏ biến sau khi dùng. Script mặc định từ chối chạy; whitelist chỉ thu các tầng luận và payload, không đọc cấu hình auth/pairing. Không chia sẻ dump chứa câu hỏi riêng tư.
 
-Chạy `npm run check`, `npm run package:local`, `npm run verify:package`. Danh sách file đóng gói bao gồm fixtures JSON mới. Báo cáo actual before/after, live model và giới hạn: `docs/releases/REASONING-UPGRADE-2026-09-16.md`; bằng chứng trong `docs/releases/evidence/reasoning-*.json`.
+Chạy `npm run check`. Gói Windows local (Codex CLI, launcher, relay) đã bỏ từ v17.7.0; AI chỉ chạy trên VPS.

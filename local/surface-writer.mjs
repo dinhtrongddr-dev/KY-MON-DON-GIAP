@@ -1,6 +1,6 @@
 import {READING_TIMEOUT_MS,attachAiRoute,aiRouteOf,auxEffort} from './ai-client.mjs';
 import {generateText,generateStructured} from './provider-client.mjs';
-import {parseStructuredText} from './codex-client.mjs';
+import {parseStructuredText} from './structured-text.mjs';
 import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 import {surfacePayload} from '../dist/qimen/ai/narrativePrimitives.mjs';
 import {SURFACE_WRITER_INSTRUCTIONS} from '../dist/qimen/ai/surfacePrompt.mjs';

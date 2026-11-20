@@ -1,4 +1,4 @@
-import {READING_TIMEOUT_MS} from './codex-client.mjs';
+import {READING_TIMEOUT_MS} from './structured-text.mjs';
 import {runPrism,runPrismText} from './prism-client.mjs';
 import {runChatgptWebText,chatgptWebRuntime} from './chatgpt-web-client.mjs';
 import {recordAiDiagnostic} from './ai-diagnostics.mjs';

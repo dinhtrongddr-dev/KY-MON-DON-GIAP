@@ -14,7 +14,7 @@ Bản 17.6.3 / TG-CB-6.3 (protocol 6) làm bài luận AI dễ đọc hơn: các
 
 Core TG-ROTATING-2.0 giữ nguyên. Sáu mode và Auto, so 2-12 thời điểm bằng bàn riêng, tám phương vị và dữ liệu đã lưu vẫn được hỗ trợ. Source phát hành từ GitHub main lên Cloudflare Pages. Kiến trúc hiện tại: `QIMEN-ARCHITECTURE.md`.
 
-Chạy `npm run prepare:windows` trước `npm run package:local`. Bước chuẩn bị kiểm SHA-256 của launcher và tải hoặc dùng lại đúng cloudflared 2026.9.0 đã xác minh. Đóng gói phải có đủ Windows/tunnel và toàn bộ `dist/qimen/`; thiếu tệp hoặc sai checksum sẽ dừng, giữ nguyên ZIP cũ. Hai đầu khóa SHA-256 của bàn và toàn bộ ngữ cảnh (mode, graph, ứng viên, đại diện). `local/interpret.mjs` cho phép sửa bài tối đa một lần trong tổng 600 giây, phía web chờ 610 giây; giữ Hủy, không thử lại lỗi xác thực, và khi bài đã trả nhưng không vượt validator thì lượt sửa tiếp tục trên chính model vừa dùng. Chỉ lỗi hết hạn mức mới cho phép chuyển sang model dự phòng.
+Kiểm tra trước khi phát hành: `npm run check`. Triển khai VPS: chép `dist/`, `local/`, `package.json` vào `/opt/kymon` rồi `sudo systemctl restart kymon` (mẫu env: `ops/kymon-vps.env.example`). Gói Windows local đã bỏ từ v17.7.0.
 
 Gói này phải được cài vào bộ kết nối trên máy người dùng; publish web không cập nhật server đó. Ngày 14/09/2026 đã kiểm tra một lượt AI thật qua website, Worker và tunnel: 146,326 giây, kết quả qua xác thực và hiển thị đủ năm tab. Kiểm thử giao thức tự động dùng mock; chưa hoàn tất toàn bộ ma trận chất lượng AI trong `AI-EVAL.md`. Bằng chứng và phạm vi kiểm tra: `docs/releases/BASELINE-2026-09-14.md`. Các ngưỡng độ dài chỉ chống đầu ra quá sơ lược, không chứng minh lời luận đúng hoặc hay.
 

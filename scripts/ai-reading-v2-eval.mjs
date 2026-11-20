@@ -5,7 +5,7 @@ import {buildQuestionNarrativeContract} from '../dist/qimen/ai/narrativeContract
 import {buildMenhNarrativeContract} from '../dist/qimen/menh/ai/narrative-contract.mjs';
 import {surfacePayload} from '../dist/qimen/ai/narrativePrimitives.mjs';
 import {SURFACE_WRITER_INSTRUCTIONS} from '../dist/qimen/ai/surfacePrompt.mjs';
-import {parseStructuredText} from '../local/codex-client.mjs';
+import {parseStructuredText} from '../local/structured-text.mjs';
 import {runAIText,aiRouteOf} from '../local/ai-client.mjs';
 import {validateSurfaceDraft,hydrateSurfaceReading,auditSurfaceStyle} from '../dist/qimen/ai/surfaceReading.mjs';
 import {buildMenhWriterContext} from '../dist/qimen/menh/ai/writer-context.mjs';

@@ -7,7 +7,7 @@ import {interpretMenhReading} from '../local/menh-interpret.mjs';
 import {aiRouteOf,runAI} from '../local/ai-client.mjs';
 import {runSurfaceText} from '../local/surface-writer.mjs';
 import {generateText} from '../local/provider-client.mjs';
-import {parseStructuredText} from '../local/codex-client.mjs';
+import {parseStructuredText} from '../local/structured-text.mjs';
 import {buildQuestionNarrativeContract} from '../dist/qimen/ai/narrativeContract.mjs';
 import {buildMenhNarrativeContract} from '../dist/qimen/menh/ai/narrative-contract.mjs';
 import {naturalSurfaceFallback,auditSurfaceStyle,surfaceParagraphs} from '../dist/qimen/ai/surfaceReading.mjs';

@@ -3,7 +3,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const files = ['tests', 'relay/test'].flatMap(directory =>
+const files = ['tests'].flatMap(directory =>
   readdirSync(new URL(`../${directory}/`, import.meta.url))
     .filter(name => name.endsWith('.test.mjs')).sort().map(name => `${directory}/${name}`));
 const run = (command, args) => {
@@ -13,4 +13,3 @@ const run = (command, args) => {
 };
 // Expand files here: shell wildcards behave differently on Windows and Node 22.
 run(process.execPath, ['--test', ...files]);
-run(process.env.KYMON_PYTHON || 'python', ['tests/package.test.py']);

@@ -81,7 +81,7 @@ test('Guide covers modes, AI wait expectation, Mệnh use and beginner board rea
 });
 
 test('Server page contains VPS setup while info page owns activity and system detail',()=>{
-  assert.match(server,/VPS/);assert.match(server,/systemd/i);assert.match(server,/install-vps-autostart\.sh/);assert.match(server,/QIMEN_PAIRING_TOKEN/);
+  assert.match(server,/VPS/);assert.match(server,/systemd/i);assert.match(server,/QIMEN_OPEN_ACCESS/);assert.match(server,/QIMEN_DIRECT_MODEL/);
   assert.match(info,/id="activity-chart-count"/);assert.match(info,/id="activity-reading-count"/);assert.match(info,/id="activity-reading-list"/);
   assert.match(infoJs,/createActivityLog/);assert.match(infoJs,/api\/status/);
   assert.match(info,/TG-CB-7.0/);assert.match(info,/KM-MENH-1\.1/);

@@ -57,7 +57,7 @@ Thêm Không Vong theo tuần ngày (日空, `dayVoidBranches`) cho việc dài 
 - Bỏ chuỗi 9router Sol → Gemini khỏi route.
 - **Chưa đo trên VPS.** Mục tiêu dưới 3 phút cần kiểm lại bằng một lượt luận thật sau khi deploy.
 
-**Mã chết còn giữ (cần chủ dự án quyết)**: `local/codex-client.mjs` (`runCodex`), `LOGIN-WINDOWS.cmd`, phần 9router/cloudflared trong `START-VPS.sh`, gói `dist/downloads/ky-mon-ai.zip` và `relay/`. Route AI không còn gọi Codex, nhưng gói Windows local vẫn dựa vào các file này, nên chưa xoá. `npm run verify:package` cần `tools/cloudflared.exe` (chạy `npm run prepare:windows`) nên không chạy được trong môi trường audit.
+**Đã dọn (v17.7.0)**: Codex CLI (`local/codex-client.mjs`, helper JSON chuyển sang `local/structured-text.mjs`), gói Windows local (launcher KyMonTray, `START-*`, `LOGIN-WINDOWS.cmd`, script đóng gói, zip tải về), `relay/` (frontend gọi thẳng `ai-origin.kymon.pp.ua`) và script autostart 9router.
 
 ## P9 · Cấu hình bằng env (thay bản vá tay trên VPS)
 

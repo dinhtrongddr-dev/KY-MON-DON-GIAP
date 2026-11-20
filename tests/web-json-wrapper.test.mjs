@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseStructuredText} from '../local/codex-client.mjs';
+import {parseStructuredText} from '../local/structured-text.mjs';
 
 test('Web JSON transport marker is accepted without changing the reading',()=>{
  const draft={sections:[{id:'answer',text:'Cơ hội có điều kiện; không phải kết quả chắc chắn.'}]};

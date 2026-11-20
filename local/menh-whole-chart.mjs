@@ -1,4 +1,4 @@
-import {parseStructuredText} from './codex-client.mjs';
+import {parseStructuredText} from './structured-text.mjs';
 import {aiRouteOf,attachAiRoute,READING_TIMEOUT_MS} from './ai-client.mjs';
 import {runSurfaceText} from './surface-writer.mjs';
 import {buildMenhWriterContext} from '../dist/qimen/menh/ai/writer-context.mjs';

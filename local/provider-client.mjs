@@ -1,6 +1,6 @@
 import {runAI,runAIText,writerProviderFromEnv,attachAiRoute} from './ai-client.mjs';
 import {chatgptWebRuntime,discoverChatgptWebModels,runChatgptWebText} from './chatgpt-web-client.mjs';
-import {parseStructuredText} from './codex-client.mjs';
+import {parseStructuredText} from './structured-text.mjs';
 
 export const PROVIDER_INTERFACE_VERSION='QIMEN-AI-PROVIDER-1';
 

@@ -7,7 +7,7 @@ import {SURFACE_WRITER_INSTRUCTIONS} from '../dist/qimen/ai/surfacePrompt.mjs';
 import {interpretReading} from '../local/interpret.mjs';
 import {attachAiRoute,aiRouteOf} from '../local/ai-client.mjs';
 import {readingFixture,clarificationFixture} from './reading-fixture.mjs';
-import {parseStructuredText} from '../local/codex-client.mjs';
+import {parseStructuredText} from '../local/structured-text.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {CASE_ENGINE_VERSION} from '../dist/qimen/case/engine.mjs';
 import {draftFor,acceptFidelity,questionContract,meaningOf,firstParagraph} from './surface-fixture.mjs';
