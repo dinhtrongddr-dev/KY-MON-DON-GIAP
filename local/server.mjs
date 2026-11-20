@@ -59,8 +59,10 @@ export function isAllowedOrigin(value,port,host){
  if(host?.type==='tunnel'&&value===`https://${host.hostname}`)return true;
  return false;
 }
-export function createBridge({token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=generateStructured,diagnostics=recordAiDiagnostic,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
+export function openAccessFromEnv(env=process.env){return ['1','true','yes','on'].includes(String(env.QIMEN_OPEN_ACCESS||'').trim().toLowerCase());}
+export function createBridge({env=process.env,token=defaultPairingToken(),port=8765,runner=runSurfaceText,reviewer=generateStructured,diagnostics=recordAiDiagnostic,activityStore=createActivityStore(),outcomeRegistry=createOutcomeRegistry(),keepAliveAfterMs=75000,keepAliveEveryMs=15000,tunnelHostname=configuredTunnelHostname(),shareDir=defaultShareDir()}={}){
  token=validatePairingToken(token);
+ const openAccess=openAccessFromEnv(env);
  let busy=false,activeJob=null;
  const jobs=new Map(),JOB_TTL_MS=30*60*1000,JOB_ID=/^[A-Za-z0-9_-]{20,64}$/;
  const origin=`http://127.0.0.1:${port}`;
@@ -146,6 +148,9 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        usage.count++;activityClients.set(client,usage);track('recordChart');
        return send(200,{ok:true,activity:activityStore.summary(requestUrl.searchParams.get('tzOffset'))});
      }
+     // TG-CB-7.0 (P9): QIMEN_OPEN_ACCESS=1 (VPS) skips the pairing code; the frontend
+     // sends 'open-access' when no code is entered. Host/Origin checks above still apply.
+     if(!openAccess){
      const value=Buffer.from(req.headers['x-qimen-token']||'');const expected=Buffer.from(token);
      let failure=failures.get(client);
      if(failure&&failure.blockedUntil>now){res.setHeader('Retry-After','600');return send(429,{error:'Quá nhiều lần nhập sai mã. Thử lại sau 10 phút.'});}
@@ -158,6 +163,7 @@ export function createBridge({token=defaultPairingToken(),port=8765,runner=runSu
        return send(401,{error:'Mã ghép nối không đúng. Nhập mã hiển thị trong cửa sổ server.'});
      }
      failures.delete(client);
+     }
      if(path==='/api/share'&&req.method==='POST'){
        if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'Cần dữ liệu JSON.'});
        try{

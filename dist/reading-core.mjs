@@ -15,7 +15,7 @@ import {NARRATIVE_VERSION} from './qimen/ai/narrativePrimitives.mjs';
 export {NIANMING_VERSION};
 
 // One deterministic contract is used by the browser and the AI bridge.
-export const RULE_VERSION = 'TG-CB-6.3';
+export const RULE_VERSION = 'TG-CB-7.0';
 export const READING_PROTOCOL = 6;
 const UPGRADE_MESSAGE = `Bộ kết nối AI chưa cùng bộ quy tắc ${RULE_VERSION}. Hãy cập nhật bộ kết nối theo hướng dẫn; chưa thể nhận lời luận khác phiên bản.`;
 const named = p => `${p.vi} ${p.number} (${p.element})`;

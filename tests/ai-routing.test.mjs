@@ -34,3 +34,10 @@ test('text writer uses the same direct route and returns route metadata',async()
   const value=await runAIText('i',{},{env:{QIMEN_DIRECT_MODEL:'m1'},prismTextRunner:async(_i,_x,o)=>`model=${o.model};effort=${o.effort}`,diagnostics:()=>{}});
   assert.equal(value.text,'model=m1;effort=xhigh');assert.equal(aiRouteOf(value).modelId,'m1');
 });
+
+// TG-CB-7.0 (P9c): the VPS skips the pairing code only when QIMEN_OPEN_ACCESS is set.
+import {openAccessFromEnv} from '../local/server.mjs';
+test('QIMEN_OPEN_ACCESS opt-in for skipping the pairing code',()=>{
+  assert.equal(openAccessFromEnv({}),false);assert.equal(openAccessFromEnv({QIMEN_OPEN_ACCESS:'0'}),false);
+  for(const v of ['1','true','YES','on'])assert.equal(openAccessFromEnv({QIMEN_OPEN_ACCESS:v}),true);
+});

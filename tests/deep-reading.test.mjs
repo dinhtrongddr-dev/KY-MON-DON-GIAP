@@ -105,7 +105,7 @@ test('materially missing input is clarified before any writer call',async()=>{
 });
 
 test('v6 request fingerprint binds the planner, mode and Nian Ming-ready technical contract without Semantic Matrix prose',async()=>{
-  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,6);assert.equal(READING_PROTOCOL,6);assert.equal(RULE_VERSION,'TG-CB-6.3');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);assert.equal(p.request.nianmingRules,'KM-NIANMING-1.0');
+  const p=await buildReadingRequest(body);assert.equal(p.request.protocol,6);assert.equal(READING_PROTOCOL,6);assert.equal(RULE_VERSION,'TG-CB-7.0');assert.equal(p.request.caseRules,CASE_ENGINE_VERSION);assert.equal(p.request.nianmingRules,'KM-NIANMING-1.0');
   assert.ok(p.context.topics[0].focus.distinguish.includes('Phân biệt có phản hồi'));
   const writer=buildWriterContext(p.context);assert.equal(writer.semanticMatrix,undefined);assert.ok(writer.readingGraph.usefulGodProfile);assert.ok(writer.readingGraph.evidenceBundles.length>0);
 });

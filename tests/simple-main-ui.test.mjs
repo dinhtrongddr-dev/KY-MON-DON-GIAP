@@ -84,7 +84,7 @@ test('Server page contains VPS setup while info page owns activity and system de
   assert.match(server,/VPS/);assert.match(server,/systemd/i);assert.match(server,/install-vps-autostart\.sh/);assert.match(server,/QIMEN_PAIRING_TOKEN/);
   assert.match(info,/id="activity-chart-count"/);assert.match(info,/id="activity-reading-count"/);assert.match(info,/id="activity-reading-list"/);
   assert.match(infoJs,/createActivityLog/);assert.match(infoJs,/api\/status/);
-  assert.match(info,/TG-CB-6\.3/);assert.match(info,/KM-MENH-1\.1/);
+  assert.match(info,/TG-CB-7.0/);assert.match(info,/KM-MENH-1\.1/);
 });
 
 test('new compact UI styles status symbols and mobile controls without textual color legends',()=>{

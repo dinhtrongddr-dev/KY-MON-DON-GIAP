@@ -23,7 +23,7 @@ test('bridge recomputes KM-MENH, checks fingerprints and preserves existing serv
   const headers={Host:'127.0.0.1:8765','X-Qimen-Token':'menh-test-token',Origin:'https://kymon.pp.ua','Content-Type':'application/json'};
   const status=await(await fetchLocal(url+'/api/status',{headers})).json();
   assert.equal(status.menhRules,MENH_RULE_VERSION);assert.equal(status.menhProtocol,MENH_PROTOCOL);
-  assert.equal(status.rules,'TG-CB-6.3');assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.caseRules,CASE_ENGINE_VERSION);
+  assert.equal(status.rules,'TG-CB-7.0');assert.equal(status.protocol,READING_PROTOCOL);assert.equal(status.caseRules,CASE_ENGINE_VERSION);
 
   const prepared=await buildMenhReadingRequest(payload);
   const legacy=await fetchLocal(url+'/api/menh/read',{method:'POST',headers,body:JSON.stringify(payload)});

@@ -45,7 +45,7 @@ test('the official website can reach the current question protocol through the e
   const call=await start(t);
   const result=await call('/api/status');
   assert.equal(result.status,200);
-  assert.equal(JSON.parse(result.text).rules,'TG-CB-6.3');
+  assert.equal(JSON.parse(result.text).rules,'TG-CB-7.0');
   assert.equal(JSON.parse(result.text).protocol,READING_PROTOCOL);
   assert.equal(JSON.parse(result.text).caseRules,CASE_ENGINE_VERSION);
   assert.equal(JSON.parse(result.text).nianmingRules,NIANMING_VERSION);
@@ -212,4 +212,12 @@ test('async reading job can be explicitly cancelled instead of depending on a dr
   let state;
   for(let i=0;i<50;i++){state=JSON.parse((await call('/api/jobs/'+first.jobId)).text);if(state.status!=='running')break;await new Promise(r=>setTimeout(r,5));}
   assert.equal(aborted,true);assert.equal(state.status,'cancelled');
+});
+
+test('TG-CB-7.0: QIMEN_OPEN_ACCESS lets the website call token-protected routes with open-access, origin checks unchanged',async t=>{
+  const open=await start(t,{env:{QIMEN_OPEN_ACCESS:'1'}});
+  assert.equal((await open('/api/validation/report',{headers:{Origin:'','X-Qimen-Token':'open-access'}})).status,200);
+  assert.equal((await open('/api/validation/report',{headers:{Origin:'https://foreign.example','X-Qimen-Token':'open-access'}})).status,403);
+  const closed=await start(t,{env:{}});
+  assert.equal((await closed('/api/validation/report',{headers:{Origin:'','X-Qimen-Token':'open-access'}})).status,401);
 });

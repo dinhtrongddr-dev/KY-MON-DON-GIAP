@@ -6,7 +6,9 @@ Domain chính [kymon.pp.ua](https://kymon.pp.ua) được Cloudflare Pages tự 
 
 ## Luận bằng AI
 
-Nút Luận bằng AI kết nối qua endpoint chuyển tiếp cố định tới bộ kết nối do người dùng vận hành. Trên cấu hình VPS hiện tại, route ChatGPT đi qua 9router local; Prism là fallback local riêng và không thay đổi cấu hình upstream. Gói cập nhật nằm trong `dist/downloads/ky-mon-ai.zip`; hướng dẫn nguồn: `HUONG-DAN-LOCAL.md`.
+Nút Luận bằng AI gọi bộ kết nối trên VPS. Từ TG-CB-7.0, AI đi một route duy nhất qua ChatGPT2API (`127.0.0.1:8787`), model và mức suy luận lấy từ env (`QIMEN_DIRECT_MODEL`, `QIMEN_REASONING_EFFORT`, `QIMEN_AUX_REASONING_EFFORT`); `QIMEN_OPEN_ACCESS=1` bỏ mã ghép nối. Mẫu env: `ops/kymon-vps.env.example`.
+
+Bản 17.7.0 / TG-CB-7.0 (protocol 6): kết luận bất lợi được nói thẳng khi Dụng Thần dính nhiều hại; ứng kỳ nhiều lớp quy ra ngày dương lịch (KM-TIMING-4.0); thương chiến KM-WARFARE-1.0; Kích Thần theo protocol riêng từng thần; một lượt luận gồm 1 lượt viết + 1 lượt kiểm tra + tối đa 1 lượt sửa câu. Báo cáo audit ở `docs/audit/`, tư liệu ở `docs/research/`.
 
 Bản 17.6.3 / TG-CB-6.3 (protocol 6) làm bài luận AI dễ đọc hơn: các câu căn cứ/thuật ngữ Kỳ Môn đứng trước phần dịch nghĩa vẫn được giữ nguyên trong DOM nhưng mặc định ẩn; nút **Hiện căn cứ Kỳ Môn** cho phép bật lại toàn bộ phần kỹ thuật và đổi thành **Ẩn căn cứ Kỳ Môn** khi đang mở. Hỏi Việc và Mệnh dùng cùng cơ chế; prompt tiếp tục bắt cấu trúc kỹ thuật trước → dịch nghĩa sau, không đổi engine lập bàn, deterministic reasoning hay protocol AI.
 
