@@ -20,10 +20,12 @@ const copy=value=>{
   try{return JSON.parse(JSON.stringify(value));}catch{return null;}
 };
 const compactRole=role=>({
+  // Writer-facing roles are facts only. Keep the resolver identity and direct
+  // evidence, while omitting repeated provenance/limitation prose already
+  // enforced by the deterministic layer.
   id:role.id,label:role.label,actorId:role.actorId,role:role.role,semanticRole:role.semanticRole,
-  palace:role.palace,stem:role.stem,status:role.status,basis:role.basis,source:role.source,
-  evidenceId:role.evidenceId,evidenceIds:role.evidenceIds,confidenceLevel:role.confidenceLevel,
-  limitations:role.limitations,selectionRule:role.selectionRule,provenance:role.provenance
+  palace:role.palace,stem:role.stem,status:role.status,
+  evidenceId:role.evidenceId,evidenceIds:role.evidenceIds
 });
 const compactPalace=(p,layer,directionLayer)=>({
   palace:p.number,
@@ -51,7 +53,6 @@ const compactPalace=(p,layer,directionLayer)=>({
     strength:copy(layer.strength),
     starDoor:copy(layer.starDoor),
     doorPalace:copy(layer.doorPalace),
-    stemPairs:copy(layer.stemPairs)
   }:null
 });
 const pick=(source,keys)=>Object.fromEntries(keys.filter(key=>source?.[key]!==undefined).map(key=>[key,source[key]]));
@@ -84,10 +85,17 @@ export function buildSalienceIndex({chartMeta,palaces,roles,globalStructure}){
       strength:{star:p.analysis?.strength?.star?.level||null,door:p.analysis?.strength?.door?.level||null,palace:p.analysis?.strength?.palace?.level||null},
       relations:{starDoor:p.analysis?.starDoor?.text||null,doorPalace:p.analysis?.doorPalace?.plainMeaning||null},
       conditions:copy(p.analysis?.conditions||null),
-      stemPairs:copy(p.analysis?.stemPairs||null)
     };
   });
-  const salientPalaces=rows.filter(row=>row.salienceFlags.length).sort((a,b)=>b.salienceFlags.length-a.salienceFlags.length);
+  const salientPalaces=rows.filter(row=>row.salienceFlags.length)
+    .sort((a,b)=>b.salienceFlags.length-a.salienceFlags.length)
+    .slice(0,6)
+    .map(row=>({
+      palace:row.palace,trigram:row.trigram,direction:row.direction,deity:row.deity,
+      star:row.star,door:row.door,starId:row.starId,doorId:row.doorId,
+      heavenStems:row.heavenStems,earthStem:row.earthStem,void:row.void,horse:row.horse,
+      roles:row.roles,salienceFlags:row.salienceFlags,strength:row.strength,relations:row.relations
+    }));
   return {
     kind:'FACT_ONLY_SALIENCE_INDEX',
     purpose:'Sắp xếp các dữ kiện đã tính theo mức liên quan; không tạo kết luận.',
@@ -99,9 +107,9 @@ export function buildSalienceIndex({chartMeta,palaces,roles,globalStructure}){
       duty:copy(globalStructure?.duty||null)
     },
     roles:roleRows,
-    salientPalaces,
-    palaces:rows,
-    relationships:copy((roles?.relationships||[]).slice(0,24))
+    // The full palace facts remain in packet.palaces. Do not duplicate all
+    // nine palaces and relationship graph inside the salience index.
+    salientPalaces
   };
 }
 
@@ -118,6 +126,16 @@ export function buildCanonicalChartPacket(prepared){
     const source=chartPalaces.find(x=>x.number===p.number)||p;
     return compactPalace(source,layerByPalace.get(p.number),directionByPalace[p.number]||null);
   });
+  const salienceIndex=buildSalienceIndex({
+    chartMeta:{fuYin:Boolean(chart.patterns?.starFuYin||chart.patterns?.doorFuYin||board?.fuYin),fanYin:Boolean(chart.patterns?.starFanYin||chart.patterns?.doorFanYin||board?.fanYin)},
+    palaces,
+    roles:{deterministic:analysis?.roles||[],relationships:allInOne.graph?.relations||[]},
+    globalStructure:{patterns:chart.patterns||board?.patterns,voidBranches:chart.voidBranches||board?.voidBranches,horseBranch:chart.horseBranch||board?.horseBranch,duty:chart.duty}
+  });
+  // Keep detailed per-palace analysis only for the three most salient facts.
+  // Every palace still retains its core symbols; this prevents the writer
+  // packet from duplicating all nine analysis blobs and hitting upstream size limits.
+  const detailedPalaces=palaces.map(p=>salienceIndex.salientPalaces.slice(0,3).some(row=>row.palace===p.palace)?p:{...p,analysis:null});
   return {
     schemaVersion:WHOLE_CHART_PACKET_VERSION,
     authority:'Deterministic Engine đã tính; packet chỉ là bản chiếu dữ liệu, không phải yêu cầu model tự lập lại bàn.',
@@ -142,7 +160,9 @@ export function buildCanonicalChartPacket(prepared){
       kind:'FACT_ONLY_DIRECTION_INDEX',
       version:analysis.directions.version||null,
       profile:analysis.directions.profile||null,
-      byPalace:analysis.directions.byPalace||{},
+      // Direction detail is relevant only to the direction mode. Keep the
+      // index metadata in other modes without duplicating every palace row.
+      byPalace:['direction'].includes(allInOne.classification?.mode)?(analysis.directions.byPalace||{}):{},
       coverage:analysis.directions.coverage||null,
       provenance:analysis.directions.provenance||null,
       limitations:analysis.directions.limitations||[]
@@ -178,13 +198,8 @@ export function buildCanonicalChartPacket(prepared){
       deterministic:copy((analysis?.roles||[]).map(compactRole)),
       relationships:copy(allInOne.graph?.relations||[])
     },
-    palaces,
-    salienceIndex:buildSalienceIndex({
-      chartMeta:{fuYin:Boolean(chart.patterns?.starFuYin||chart.patterns?.doorFuYin||board?.fuYin),fanYin:Boolean(chart.patterns?.starFanYin||chart.patterns?.doorFanYin||board?.fanYin)},
-      palaces,
-      roles:{deterministic:analysis?.roles||[],relationships:allInOne.graph?.relations||[]},
-      globalStructure:{patterns:chart.patterns||board?.patterns,voidBranches:chart.voidBranches||board?.voidBranches,horseBranch:chart.horseBranch||board?.horseBranch,duty:chart.duty}
-    }),
+    palaces:detailedPalaces,
+    salienceIndex,
     deterministic:{
       packetNote:'Bản chiếu chỉ gồm dữ kiện và quan hệ đã tính; Whole Chart tự diễn giải và tự tổng hợp.',
       analysis:{
@@ -209,7 +224,7 @@ function buildDirectWholeChartContract(prepared,packet){
   const questionContext=c.questionContext||{},mode=classification.mode||packet.question.mode||'strategy';
   const questionType=questionContext.questionType||classification.questionType||mode;
   const focus=(packet.salienceIndex?.salientPalaces||[]).slice(0,6);
-  const fallback=(packet.salienceIndex?.palaces||[]).filter(row=>row.palace!==5).slice(0,6);
+  const fallback=(packet.palaces||[]).filter(row=>row.palace!==5).slice(0,6);
   const focusRows=focus.length?focus:fallback;
   const roleRows=packet.salienceIndex?.roles||[];
   const timingFacts=packet.timingFacts||{};
@@ -236,7 +251,7 @@ function buildDirectWholeChartContract(prepared,packet){
     actorIds:[],status:'observed',certainty:'conditional',
     technicalEvidence:JSON.stringify({chartMeta:packet.chartMeta,globalStructure:packet.globalStructure,timingFacts:packet.timingFacts,directionFacts:packet.directionFacts,salience:packet.salienceIndex?.global||null})
   };
-  const palaceClaims=(packet.salienceIndex?.palaces||[]).map(row=>({
+  const palaceClaims=(packet.palaces||[]).map(row=>({
     id:`palace_${row.palace}`,evidenceIds:[`palace_${row.palace}`],ruleIds:['deterministic_palace'],
     actorIds:roleRows.filter(role=>role.palace===row.palace).map(role=>role.id),
     status:'observed',certainty:'conditional',technicalEvidence:JSON.stringify(row)
@@ -344,17 +359,35 @@ function minimalFactAudit(reading,packet){
   const text=Object.values(reading.sections||{}).flatMap(section=>(section.paragraphs||[]).map(paragraph=>paragraph.meaning||'')).join(' ');
   const source=normalizeFactText(packet.question?.text);
   const input=packet.chartMeta?.input||{};
-  const allowedDates=[
-    input.year&&input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0')+'/'+input.year:'',
-    input.year&&input.month&&input.day?input.year+'-'+String(input.month).padStart(2,'0')+'-'+String(input.day).padStart(2,'0'):'',
-    input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0'):''
-  ].filter(Boolean).map(normalizeFactText);
+  const dateTokens=new Set();
+  const addDateTokens=value=>{
+    const raw=String(value??'').trim();
+    if(!raw)return;
+    dateTokens.add(normalizeFactText(raw));
+    let match=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(match){
+      const [,year,month,day]=match;
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')+'/'+year));
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')));
+      return;
+    }
+    match=raw.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?$/);
+    if(match){
+      const [,day,month,year]=match;
+      dateTokens.add(normalizeFactText(day.padStart(2,'0')+'/'+month.padStart(2,'0')));
+      if(year)dateTokens.add(normalizeFactText(year.length===2?'20'+year:year+'-'+month.padStart(2,'0')+'-'+day.padStart(2,'0')));
+    }
+  };
+  addDateTokens(input.year&&input.month&&input.day?String(input.day).padStart(2,'0')+'/'+String(input.month).padStart(2,'0')+'/'+input.year:'');
+  addDateTokens(input.year&&input.month&&input.day?input.year+'-'+String(input.month).padStart(2,'0')+'-'+String(input.day).padStart(2,'0'):'');
+  const timing=packet.timingFacts||{};
+  for(const value of [timing.window?.start,timing.window?.end,...(timing.allowedPredictions||[]),...(timing.candidates||[]).flatMap(candidate=>[candidate?.date,candidate?.display])])addDateTokens(value);
   const violations=[];
-  for(const match of normalizeFactText(text).matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|dong|do la)\b/g)){
+  for(const match of normalizeFactText(text).matchAll(/\b(?:\d+(?:[.,]\d+)*|mot|hai|ba|bon|nam|sau|bay|tam|chin|muoi)\s*(?:trieu|ty|vnd|usd|do la|dong(?!\s*thoi\b))\b/g)){
     if(!source.includes(match[0]))violations.push({code:'INVENTED_MONEY',unitId:'',reason:'Số tiền cụ thể ngoài câu hỏi: '+match[0]});
   }
   for(const match of normalizeFactText(text).matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b|\b\d{4}-\d{2}-\d{2}\b/g)){
-    if(!source.includes(match[0])&&!allowedDates.includes(match[0]))violations.push({code:'INVENTED_TIME',unitId:'',reason:'Mốc ngày cụ thể ngoài câu hỏi hoặc input bàn: '+match[0]});
+    if(!source.includes(match[0])&&!dateTokens.has(match[0]))violations.push({code:'INVENTED_TIME',unitId:'',reason:'Mốc ngày cụ thể ngoài câu hỏi hoặc input bàn: '+match[0]});
   }
   if(violations.length){const error=new Error('Whole Chart fact audit failed.');error.violations=violations;throw error;}
   return true;

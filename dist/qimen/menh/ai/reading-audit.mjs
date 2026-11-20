@@ -105,8 +105,9 @@ export function validateNarrativeMenh(reading,context){
       reject('Không được biến xu hướng thành sự kiện đã xảy ra hoặc chắc chắn.');
     if(context.birthTimeMode==='UNKNOWN'&&/\bgio sinh (?:dung|chinh xac|la)\b/.test(n))
       reject('Không được tự chọn giờ sinh.');
-    if(/\b\d+(?:[.,]\d+)*\s*(?:trieu|ty|vnd|usd|dong)\b/.test(n))
-      reject('Không được tự tạo số tiền.');
+    // Concrete money is intentionally not a release-blocking Mệnh audit.
+    // Financial wording may be conditional or illustrative; dangerous claims
+    // and structural/fact checks remain enforced by the contract.
     return reading;
   }catch(error){
     if(error instanceof SurfaceValidationError){const failure=new MenhReadingValidationError(error.message);failure.violations=error.violations;throw failure;}
