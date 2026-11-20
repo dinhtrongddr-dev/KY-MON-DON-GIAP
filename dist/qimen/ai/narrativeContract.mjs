@@ -270,13 +270,23 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
       :'Hiện chưa có phương vị đủ điều kiện để ưu tiên.';
     units.push(unit('spirit_practice','Hướng thực hành',primaryIds,[atom('spirit_fixed',meaning,primaryIds,{kind:'instruction',required:true})],{certainty:'scope',conclusion:'symbolic_practice'}));
   }
+  // TG-CB-7.0 (P4): a negative verdict is a hard lock on the first unit so every writer
+  // (and every repair) must state it plainly.
+  if(['negative','conditional_negative'].includes(conclusion)&&units.length){
+    const first=units.find(u=>u.id==='answer')||units[0];
+    if(!first.atoms.some(a=>a.id==='verdict_negative'))first.atoms.unshift(atom('verdict_negative',g.primaryJudgment.main,primaryIds,{kind:'hard_verdict',required:true}));
+  }
   const contract={
     version:NARRATIVE_VERSION,kind:'question',identity:{topic_id:c.resolvedTopic,mode:c.classification.mode,questionType:g.questionContext.questionType},
     question:context.question,claims,units,facets,showDevelopment:asksDevelopment,
     primaryConclusion:{conclusion,certainty:'conditional',stage:g.primaryJudgment.stageAsked,meaning:opening,claimIds:primaryIds},
-    userFacts:g.questionContext.userStatements||[],allowedImplications:['Được tự giải nghĩa và nối nhiều căn cứ kỹ thuật trong cùng chủ đề thành một nhận xét toàn thể có căn cứ.','Các việc chuẩn bị là khuyến nghị, không phải sự kiện đã xảy ra.'],
+    userFacts:g.questionContext.userStatements||[],allowedImplications:['Được tự giải nghĩa và nối nhiều căn cứ kỹ thuật trong cùng chủ đề thành một nhận xét toàn thể có căn cứ.','Các việc chuẩn bị là khuyến nghị, không phải sự kiện đã xảy ra.','Ngày/giờ cụ thể chỉ lấy từ câu hỏi hoặc allowedTimingWindows (nêu căn cứ, là mốc cần theo dõi); ngoài ra dùng khung tương đối như vài ngày tới, tuần sau, sau giao tiết.'],
     forbiddenImplications:[...g.primaryJudgment.forbiddenClaims,'Không đổi thứ hạng, đại diện, hướng thực hành hoặc ngày từ dữ liệu đã tính.','Không tự nâng giai đoạn; có thuận lợi không có nghĩa đã đạt kết quả.'],
-    note:GENERAL_NOTE
+    note:GENERAL_NOTE,
+    // TG-CB-7.0 (P4/P5): dated windows the writer may cite; anything else stays relative.
+    timingWindows:c.comparison?.candidates?.length?[]:(g.timing?.layers?.rows||[]).slice(0,8).map(r=>({display:r.display,slot:r.slot||null,layer:r.layer,confidence:r.confidence,reason:r.reason}))
   };
+  if(['negative','conditional_negative'].includes(conclusion))contract.allowedImplications.push(
+    'Bàn hung với Dụng Thần chính: được và phải nói thẳng việc không thành / bất lợi / nên bỏ hoặc đổi hướng, nêu căn cứ; không làm mềm thành "vẫn có cơ hội" khi căn cứ không có.');
   validateNarrativeContract(contract);return freezeNarrative(contract);
 }

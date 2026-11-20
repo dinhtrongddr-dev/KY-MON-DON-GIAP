@@ -16,8 +16,15 @@ const incomeBody={
   question:'Trong tuần này tôi có khoản tiền vào được phát sinh không?',
   topic:'general',mode:'auto',method:'chaibu'
 };
-const unresolvedBody={
+// TG-CB-7.0: 21/09 10:00 now resolves to a first-class negative verdict (event void +
+// tomb, contract with Thương Môn + 乙辛), so the abstention fixture moved to 22/09 06:00.
+const negativeBody={
   input:{year:2026,month:9,day:21,hour:10,minute:0,tzOffset:7},
+  question:'Trong 30 ngày tới, tôi có ký được hợp đồng A không?',
+  topic:'contract',mode:'auto',method:'chaibu'
+};
+const unresolvedBody={
+  input:{year:2026,month:9,day:22,hour:6,minute:0,tzOffset:7},
   question:'Trong 30 ngày tới, tôi có ký được hợp đồng A không?',
   topic:'contract',mode:'auto',method:'chaibu'
 };
@@ -37,7 +44,7 @@ test('Phase 12 versions and policy forbid automatic collection, Case writes and 
 });
 
 test('observation windows lock explicit duration and relative week against the original board time',()=>{
-  const duration=resolveObservationWindow({status:'explicit_duration',amount:30,unit:'day',code:'duration'},unresolvedBody.input);
+  const duration=resolveObservationWindow({status:'explicit_duration',amount:30,unit:'day',code:'duration'},negativeBody.input);
   assert.equal(duration.status,'RESOLVED');
   assert.equal(duration.startAt,'2026-09-21T03:00:00.000Z');
   assert.equal(duration.dueAt,'2026-10-21T03:00:00.000Z');
@@ -56,11 +63,17 @@ test('conditional-positive becomes a directional snapshot while unresolved absta
   assert.equal(positiveSnapshot.eligibility.benchmarkEligibleAtCapture,true);
 
   const unresolved=await buildReadingRequest(unresolvedBody);
-  const unresolvedSnapshot=buildValidationSnapshot(unresolved,{capturedAt:'2026-09-21T03:04:00Z'});
+  const unresolvedSnapshot=buildValidationSnapshot(unresolved,{capturedAt:"2026-09-21T23:04:00Z"});
   assert.equal(unresolved.context.allInOne.reasoning.primaryJudgment.answerClass,'unresolved');
   assert.equal(unresolvedSnapshot.judgment.prediction.kind,'ABSTAIN');
   assert.equal(unresolvedSnapshot.judgment.prediction.outcomeClass,null);
   assert.equal(unresolvedSnapshot.eligibility.reason,'UNRESOLVED');
+
+  const negative=await buildReadingRequest(negativeBody);
+  const negativeSnapshot=buildValidationSnapshot(negative,{capturedAt:'2026-09-21T03:04:00Z',evaluationUnitRef:'unit-negative'});
+  assert.equal(negative.context.allInOne.reasoning.primaryJudgment.answerClass,'negative');
+  assert.equal(negativeSnapshot.judgment.prediction.kind,'DIRECTIONAL');
+  assert.equal(negativeSnapshot.judgment.prediction.outcomeClass,'NOT_OBSERVED');
 });
 
 
@@ -180,7 +193,7 @@ test('summary reports selective coverage/agreement as descriptive counts and nev
 
 test('closed abstention cases stay in benchmark denominator so coverage is not forced to 100%',async()=>{
   const p=await buildReadingRequest(unresolvedBody);
-  const snapshot=buildValidationSnapshot(p,{capturedAt:'2026-09-21T03:04:00Z',evaluationUnitRef:'unit-abstain'});
+  const snapshot=buildValidationSnapshot(p,{capturedAt:"2026-09-21T23:04:00Z",evaluationUnitRef:"unit-abstain"});
   assert.equal(snapshot.judgment.prediction.kind,'ABSTAIN');
   assert.equal(snapshot.eligibility.benchmarkEligibleAtCapture,true);
   const outcome=normalizeOutcomeSubmission(snapshot,{outcomeClass:'NOT_OBSERVED',sourceKind:'system_record',sourceRef:'crm:abstain1',humanReviewed:true,independentOfReading:true},{recordedAt:'2026-10-22T00:00:00Z'});

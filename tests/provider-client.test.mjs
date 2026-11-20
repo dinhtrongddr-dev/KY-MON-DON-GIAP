@@ -24,32 +24,26 @@ test('writer provider defaults to current chain and chatgpt2api selection is exp
  assert.equal(providerCapabilities({}).text.provider,'current');
 });
 
-test('current text route keeps quota-only Sol to Gemini fallback',async()=>{
+test('current text route is the single direct proxy route (TG-CB-7.0)',async()=>{
  const calls=[];
  const result=await runAIText('i',{question:'q'},{
-  env:{},
+  env:{QIMEN_DIRECT_MODEL:'gpt-6-thinking'},
   diagnostics:()=>{},
-  codexTextRunner:async(_i,_x,o)=>{
-   calls.push(o.model);
-   if(calls.length===1)throw quota();
-   return 'Văn bản tự nhiên';
-  },
-  prismTextRunner:async()=>{assert.fail('Prism should not be reached');}
+  prismTextRunner:async(_i,_x,o)=>{calls.push(o.model);return 'Văn bản tự nhiên';}
  });
- assert.deepEqual(calls,['cx/gpt-5.6-sol','gemini/gemini-3.6-flash']);
+ assert.deepEqual(calls,['gpt-6-thinking']);
  assert.equal(result.text,'Văn bản tự nhiên');
- assert.equal(aiRouteOf(result).id,'gemini');
+ assert.equal(aiRouteOf(result).id,'direct');
 });
 
-test('current text route fails closed on non-quota errors',async()=>{
+test('current text route fails closed on errors',async()=>{
  const calls=[];
  await assert.rejects(()=>runAIText('i','x',{
   env:{},
   diagnostics:()=>{},
-  codexTextRunner:async(_i,_x,o)=>{calls.push(o.model);throw Object.assign(new Error('auth'),{code:'AI_AUTH'});},
-  prismTextRunner:async()=>{calls.push('prism');return 'wrong';}
+  prismTextRunner:async()=>{calls.push('prism');throw Object.assign(new Error('auth'),{code:'AI_AUTH'});}
  }),error=>error.code==='AI_AUTH');
- assert.deepEqual(calls,['cx/gpt-5.6-sol']);
+ assert.deepEqual(calls,['prism']);
 });
 
 test('chatgpt2api writer does not silently downgrade to current providers',async()=>{
@@ -95,8 +89,7 @@ test('structured provider interface preserves legacy runner contract',async()=>{
  const schema={type:'object',properties:{answer:{type:'string'}},required:['answer']};
  const result=await generateStructured('i',{},schema,{
   diagnostics:()=>{},
-  codexRunner:async()=>({answer:'ok'}),
-  prismRunner:async()=>({answer:'no'})
+  prismRunner:async()=>({answer:'ok'})
  });
  assert.equal(result.answer,'ok');
 });

@@ -17,7 +17,7 @@ const bundle=(palace,states,actorIds=['event'])=>({
 
 test('KM-TIMING-3.0 preserves Tam kỳ tomb response windows from KM-YINGQI-2.0',()=>{
   const t=buildTiming(context,board,[bundle(2,[{code:'tomb',detail:'乙'}])]);
-  assert.equal(t.version,'KM-TIMING-3.0');
+  assert.equal(t.version,'KM-TIMING-4.0');
   assert.equal(t.basis,'deterministic_response_scan_v3');
   assert.equal(t.pace.tendency,'slow');
   assert.deepEqual(t.candidates.slice(0,2).map(x=>[x.display,x.rule,x.branch]),[

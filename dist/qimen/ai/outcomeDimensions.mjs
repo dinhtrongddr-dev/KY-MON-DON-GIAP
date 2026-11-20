@@ -1,4 +1,5 @@
 export const STAGE_KEYS=['POSSIBILITY','EMERGENCE','FORMATION','CONFIRMATION','EXECUTION','REALIZATION','COMPLETION'];
+const ADVERSE_HARMS=['void','tomb','punishment','door_pressure'];
 const GENERIC=['opportunity','emergence','formation','confirmation','execution','realization','completion'];
 const FINANCE=['opportunity','income_emergence','income_formation','payment_commitment','payment_processing','cash_realization','completion'];
 export const dimensionKeys=context=>context.domain==='finance'?FINANCE:GENERIC;
@@ -38,7 +39,22 @@ export function buildOutcomeDimensions(selected,context,interactions) {
     const directEvent=supportive.find(b=>b.actorIds.includes('event'))||supportive[0];
     const clustered=directEvent?(strengthBand(directEvent)==='strong'||(!directEvent.capacityStrength&&(['vượng','tướng'].includes(directEvent.strength.status)||['ren','xin','fu','chong'].includes(directEvent.symbols.star.id)))):false;
     const weakSupport=supportive.filter(b=>strengthBand(b)==='weak');
-    const status=index===6?'unresolved':index>=3?(hasSupport&&specific?'conditional':specific?'uncertain':'unresolved'):
+    // TG-CB-7.0 (P4, quyết định 2): symmetric adverse rule. A stage whose own Dụng Thần
+    // carries two of the four harms (Không Vong, Nhập Mộ, Kích Hình, Môn bức), or one harm
+    // together with a severe stem pattern / hung door, is adverse. With no supportive
+    // cluster it is NEGATIVE; with support that is itself harmed, the adverse side dominates.
+    const stageRole=ids=>ids?.some(id=>rolesByStage[index].includes(id));
+    const harmCount=b=>(b.states||[]).filter(st=>ADVERSE_HARMS.includes(st.code)&&stageRole(st.actorIds)).length;
+    const severeStem=b=>(b.stemResponses||[]).some(r=>r.weight<=-0.75&&stageRole(r.actorIds));
+    const hungDoor=b=>['si','fear','shang'].includes(b.symbols?.door?.id);
+    const severe=b=>harmCount(b)>=2||harmCount(b)>=1&&severeStem(b);
+    const heavy=b=>severe(b)||harmCount(b)>=1&&hungDoor(b)||severeStem(b)&&hungDoor(b);
+    const heavyRelevant=relevant.filter(heavy);
+    const adverseDominant=specific&&heavyRelevant.length>0&&(supportive.length===0||supportive.every(heavy));
+    const decisiveNegative=adverseDominant&&!supportive.length&&relevant.some(severe);
+    const upstreamNegative=index>=3&&result[keys[2]]?.status==='negative';
+    const status=upstreamNegative&&index<6?'negative':index===6?'unresolved':index>=3?(hasSupport&&specific?'conditional':specific?'uncertain':'unresolved'):
+      decisiveNegative?'negative':
       supportive.length?(conflicts.length||weakSupport.length||index===2&&pressure.length||!clustered?'conditional':'positive'):'uncertain';
     const conditions=unique([...conflicts.map(c=>c.resolution),...pressure.map(i=>i.implication),...(weakSupport.length?['Biểu tượng hỗ trợ đang ở mức lực yếu theo mô hình mùa của chính Dụng Thần; cần thêm điều kiện thực tế hoặc hỗ trợ khác trước khi nâng kết luận.']:[])]);
     if(index>=3)conditions.push(finance?[
@@ -49,9 +65,11 @@ export function buildOutcomeDimensions(selected,context,interactions) {
       const stemSupport=b.stemResponses?.filter(r=>r.actorIds?.some(id=>rolesByStage[index].includes(id))&&r.weight>=0.75).map(r=>`${r.pair}: ${r.plainMeaning}`).join(', ');
       return `${b.symbols.door.vi} + ${b.symbols.star.vi} + ${b.symbols.deity.vi}${stemSupport?` + cấu trúc ${stemSupport}`:''} tại cung ${b.palace}`;
     }));
-    result[key]={status,supportingEvidenceIds:supports.length?supports:index>=3&&upstreamSupport?[...result[keys[1]].supportingEvidenceIds]:[],
-      limitingEvidenceIds:limits,conditions,confidenceLevel:supportive.length?'moderate':'low',
-      reason:index===6?'Chưa có dữ kiện thực tế xác nhận hoàn tất; không suy việc đã xong từ tượng.':
+    const heavyLimits=unique(heavyRelevant.flatMap(b=>b.evidenceIds.filter(id=>/^(p|c|structure_)\d$/.test(id))));
+    result[key]={status,adverseDominant:status==='negative'||adverseDominant,adverseEvidenceIds:heavyLimits,supportingEvidenceIds:supports.length?supports:index>=3&&upstreamSupport?[...result[keys[1]].supportingEvidenceIds]:[],
+      limitingEvidenceIds:unique([...limits,...heavyLimits]),conditions,confidenceLevel:supportive.length?'moderate':'low',
+      reason:status==='negative'?(upstreamNegative?'Tầng thành hình đã bất lợi nên tầng này không thể coi là đạt.':'Dụng Thần của tầng này bị nhiều hại cùng lúc (Không Vong, Nhập Mộ, Kích Hình, Môn bức hoặc hung cách) và không có cụm hỗ trợ: tầng này không thành theo bàn.'):
+        index===6?'Chưa có dữ kiện thực tế xác nhận hoàn tất; không suy việc đã xong từ tượng.':
         supportive.length?`${symbols.join('; ')} hỗ trợ tầng ${key}${limits.length?', kèm điều kiện chuyển bước riêng':''}.`:
           upstreamSupport?'Có hỗ trợ ở tầng trước; tầng này còn thiếu xác nhận riêng.':'Chưa có cụm tượng trực tiếp đủ rõ cho tầng này.',
       relationshipIds:relationEffects.map(i=>i.edgeId),basis:'symbolic_interpretation_not_observed_fact'};

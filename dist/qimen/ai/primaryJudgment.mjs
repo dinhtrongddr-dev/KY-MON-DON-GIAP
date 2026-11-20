@@ -2,15 +2,20 @@ import {askedDimension,dimensionKeys} from './outcomeDimensions.mjs';
 export function buildPrimaryJudgment(dimensions,eventStages,selected,context) {
   const key=askedDimension(context),target=dimensions[key],finance=context.domain==='finance',keys=dimensionKeys(context);
   const realization=dimensions[keys[5]],positive=target.status==='positive';
-  const answerClass=context.needsClarification?'needs_clarification':positive?'conditional_positive':target.status==='conditional'?'conditional':'unresolved';
+  // TG-CB-7.0 (P4): negative verdicts are first-class; a harmed Dụng Thần is not softened to "unresolved".
+  const negative=target.status==='negative',adverse=!negative&&target.adverseDominant===true;
+  const answerClass=context.needsClarification?'needs_clarification':negative?'negative':positive&&!adverse?'conditional_positive':
+    adverse?'conditional_negative':target.status==='conditional'?'conditional':'unresolved';
   const label=eventStages.stages.find(s=>s.dimension===key).label.toLowerCase();
-  const main=positive?`Có tín hiệu ${label}; nhận định ở tầng đang hỏi thiên về có.`:
+  const main=negative?`Tầng ${label} không thành theo bàn: Dụng Thần bị nhiều hại cùng lúc và không có cụm hỗ trợ; nên coi là bất lợi, không nên kỳ vọng theo hướng hiện tại.`:
+    adverse?`Tầng ${label} có tín hiệu nhưng phần bất lợi lấn át (Dụng Thần dính hại nặng); khả năng không thành cao hơn khả năng thành nếu không tháo được điểm vướng.`:
+    positive?`Có tín hiệu ${label}; nhận định ở tầng đang hỏi thiên về có.`:
     target.status==='conditional'?`Tầng ${label} còn phụ thuộc điều kiện chuyển bước, chưa thể coi đã đạt.`:`Tầng ${label} chưa có hỗ trợ đủ rõ để kết luận kết quả.`;
   const early=['opportunity','emergence','formation'].includes(context.outcomeTarget.stageAsked);
   const distinction=finance&&early?(positive&&realization.status!=='positive'?'Tượng phát sinh khoản thu mạnh hơn tượng thực nhận; có phát sinh không có nghĩa tiền đã vào tay.':'Khả năng phát sinh khoản thu và tiền thực nhận là hai tầng riêng.'):
     finance?'Phát sinh hoặc cam kết khoản thu chưa đồng nghĩa tiền đã thực nhận và hoàn tất.':context.intent==='reply'?'Có phản hồi chưa đồng nghĩa chấp thuận hoặc ký hợp đồng.':'Tiến triển ở một khâu chưa đồng nghĩa đạt kết quả cuối.';
   const strongestSupport=target.supportingEvidenceIds;
-  const strongestLimit=[...new Set([...target.limitingEvidenceIds,...(early?realization.limitingEvidenceIds:[])])];
+  const strongestLimit=[...new Set([...target.limitingEvidenceIds,...(target.adverseEvidenceIds||[]),...(early?realization.limitingEvidenceIds:[])])];
   const claimIds=selected.filter(b=>strongestSupport.includes(`p${b.palace}`)||strongestLimit.includes(`c${b.palace}`)||b.actorIds.includes('self')||b.actorIds.includes('event')).map(b=>`claim_${b.palace}`);
   return {answerClass,stageAsked:context.outcomeTarget.stageAsked,dimension:key,main,distinction,strongestSupport,strongestLimit,
     condition:target.conditions[0]||eventStages.transitions.find(t=>t.from==='EMERGENCE')?.condition,
@@ -18,6 +23,7 @@ export function buildPrimaryJudgment(dimensions,eventStages,selected,context) {
     claimIds,questionType:context.questionType,
     forbiddenClaims:['Không biến hỗ trợ biểu tượng thành sự kiện đã xảy ra.','Không tự thêm người, số tiền hoặc ngày dự báo.',
       ...(finance&&early&&positive?['Không phủ định phát sinh chỉ vì tầng thực nhận còn bị giới hạn.']:[]),
-      'Không suy danh tính hoặc quyền phê duyệt từ Trực Phù.'],
+      'Không suy danh tính hoặc quyền phê duyệt từ Trực Phù.',
+      ...(negative||adverse?['Không làm mềm kết luận bất lợi thành trung tính hoặc tích cực; nói rõ việc không thành / bất lợi và lý do.']:[])],
     confidenceMeaning:'Mức phù hợp giữa cụm tượng và câu hỏi, không phải xác suất dự báo.'};
 }

@@ -2,7 +2,7 @@ import {validateReading} from './reading.mjs';
 import {buildWriterContext} from '../dist/qimen/ai/writerContext.mjs';
 import {DELIBERATION_INSTRUCTIONS,buildPlannerContext,deliberationSchema,shouldDeliberate} from '../dist/qimen/ai/deliberation.mjs';
 import {buildQuestionNarrativeContract,validateDeliberation} from '../dist/qimen/ai/narrativeContract.mjs';
-import {READING_TIMEOUT_MS} from './ai-client.mjs';
+import {READING_TIMEOUT_MS,auxEffort} from './ai-client.mjs';
 import {generateStructured} from './provider-client.mjs';
 import {clarificationReading} from '../dist/qimen/ai/verifiedFallback.mjs';
 import {writeSurface,runSurfaceText} from './surface-writer.mjs';
@@ -11,14 +11,16 @@ export async function interpretReading(prepared,{runner=runSurfaceText,planRunne
   signal?.throwIfAborted();
   if(prepared.context.allInOne.questionContext.needsClarification)return clarificationReading(prepared.context);
   const deadline=AbortSignal.timeout(budgetMs),combined=signal?AbortSignal.any([signal,deadline]):deadline;
-  const planner=planRunner===undefined?(runner===runSurfaceText?generateStructured:null):planRunner;
+  // TG-CB-7.0 (P8): the advisory planner costs one extra model turn; it is opt-in
+  // (QIMEN_DELIBERATION=1) and runs at auxiliary effort.
+  const planner=planRunner===undefined?(runner===runSurfaceText&&process.env.QIMEN_DELIBERATION==='1'?generateStructured:null):planRunner;
   let planning=null;
   if(planner&&shouldDeliberate(prepared.context)){
     combined.throwIfAborted();
     // Planner output is advisory only. A malformed structured turn must not
     // block the actual Writer; transport/auth/timeout failures still propagate.
     try{
-      const draft=await planner(DELIBERATION_INSTRUCTIONS,buildPlannerContext(buildWriterContext(prepared.context)),deliberationSchema(prepared.context),{signal:combined});
+      const draft=await planner(DELIBERATION_INSTRUCTIONS,buildPlannerContext(buildWriterContext(prepared.context)),deliberationSchema(prepared.context),{signal:combined,effort:auxEffort()});
       combined.throwIfAborted();
       try{planning=validateDeliberation(draft,prepared.context);}catch{planning=null;}
     }catch(error){

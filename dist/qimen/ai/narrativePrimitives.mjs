@@ -132,6 +132,7 @@ export function surfacePayload(contract){
       technicalGrounding:technicalGroundingFor(unit,contract),
       ...(unit.stage?{stage:unit.stage}:{})
     })),
+    allowedTimingWindows:contract.timingWindows||[],
     allowedFacts:contract.userFacts,
     allowedImplications:contract.allowedImplications,
     forbiddenImplications:contract.forbiddenImplications,

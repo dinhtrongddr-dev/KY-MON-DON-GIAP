@@ -1,16 +1,29 @@
-import {runCodex,runCodexText,READING_TIMEOUT_MS} from './codex-client.mjs';
+import {READING_TIMEOUT_MS} from './codex-client.mjs';
 import {runPrism,runPrismText} from './prism-client.mjs';
 import {runChatgptWebText,chatgptWebRuntime} from './chatgpt-web-client.mjs';
 import {recordAiDiagnostic} from './ai-diagnostics.mjs';
 
-export const ROUTING_MODE='quota-fallback-chain';
-export const MODEL='sol → gemini → prism-astra';
-export const REASONING_EFFORT='xhigh';
-export const AI_ROUTES=Object.freeze([
-  Object.freeze({id:'sol',provider:'9router/codex',model:'cx/gpt-5.6-sol',modelId:'gpt-5.6-sol',label:'GPT-5.6 Sol',routeLabel:'9router · ChatGPT',effort:'xhigh'}),
-  Object.freeze({id:'gemini',provider:'9router/gemini',model:'gemini/gemini-3.6-flash',modelId:'gemini-3.6-flash',label:'Gemini 3.6 Flash',routeLabel:'9router · Gemini',effort:'xhigh'}),
-  Object.freeze({id:'prism-astra',provider:'prism',model:'gpt-6-astra',modelId:'gpt-6-astra',label:'GPT-6 Astra',routeLabel:'Prism fallback',effort:'xhigh'})
-]);
+// TG-CB-7.0 (P9): one direct route through the local OpenAI-compatible proxy
+// (ChatGPT2API on the VPS at 127.0.0.1:8787, provider id 'prism'). Model and effort
+// come from env, so the VPS no longer needs hand patches. The former 9router
+// Sol/Gemini chain was removed (P8): it was not used in production.
+export const ROUTING_MODE='direct';
+export const DEFAULT_DIRECT_MODEL='gpt-6-thinking';
+export const DEFAULT_REASONING_EFFORT='xhigh';
+export const DEFAULT_AUX_REASONING_EFFORT='high';
+const EFFORTS=new Set(['minimal','low','medium','high','xhigh','ultra','auto']);
+const effortFrom=(value,fallback)=>{const v=String(value||'').trim().toLowerCase();return EFFORTS.has(v)?v:fallback;};
+export function directRoute(env=process.env){
+  const model=String(env.QIMEN_DIRECT_MODEL||'').trim()||DEFAULT_DIRECT_MODEL;
+  const effort=effortFrom(env.QIMEN_REASONING_EFFORT,DEFAULT_REASONING_EFFORT);
+  return Object.freeze({id:'direct',provider:'prism',model,modelId:model,label:model,routeLabel:'ChatGPT2API · VPS',effort});
+}
+// Decision 4: auxiliary steps (fidelity review, sentence repair, planner) use 'high';
+// the main writer keeps the configured effort (xhigh).
+export function auxEffort(env=process.env){return effortFrom(env.QIMEN_AUX_REASONING_EFFORT,DEFAULT_AUX_REASONING_EFFORT);}
+export const MODEL=directRoute().model;
+export const REASONING_EFFORT=directRoute().effort;
+export const AI_ROUTES=Object.freeze([directRoute()]);
 const aborted=(signal,error)=>signal?.aborted||error?.name==='AbortError'||/Đã hủy|hết thời gian chờ/i.test(error?.message||'');
 export function attachAiRoute(value,route){
   if(value&&typeof value==='object')Object.defineProperty(value,'__aiRoute',{value:route,enumerable:false,configurable:true});
@@ -45,41 +58,24 @@ export function writerProviderFromEnv(env=process.env){
   return 'current';
 }
 
-export async function runAI(instructions,input,schema,{signal,codexRunner=runCodex,prismRunner=runPrism,routeStartIndex=0,diagnostics=recordAiDiagnostic}={}){
-  const failures=[];
-  const start=Number.isInteger(routeStartIndex)&&routeStartIndex>=0&&routeStartIndex<AI_ROUTES.length?routeStartIndex:0;
-  for(const [index,route] of AI_ROUTES.entries()){
-    if(index<start)continue;
-    signal?.throwIfAborted();
-    try{
-      const value=route.provider==='prism'
-        ?await prismRunner(instructions,input,schema,{signal})
-        :await codexRunner(instructions,input,schema,{signal,model:route.model,effort:route.effort});
-      return attachAiRoute(value,Object.freeze({...route,fallbackIndex:index}));
-    }catch(error){
-      if(aborted(signal,error))throw error;
-      const fallbackAllowed=error?.code==='AI_QUOTA_EXHAUSTED'&&error?.fallbackAllowed===true;
-      const failure={id:route.id,model:route.modelId,code:error?.code||'AI_ROUTE_ERROR',message:error?.message||String(error),fallbackAllowed};
-      failures.push(failure);
-      diagnostics?.({type:'route_failure',flow:'runtime',stage:'model_call',route:route.id,model:route.modelId,code:failure.code,fallbackAllowed,message:failure.message});
-      if(!fallbackAllowed){
-        Object.defineProperty(error,'routeFailures',{value:[...failures],enumerable:false,configurable:true});
-        throw error;
-      }
-    }
+export async function runAI(instructions,input,schema,{signal,env=process.env,prismRunner=runPrism,effort,diagnostics=recordAiDiagnostic}={}){
+  signal?.throwIfAborted();
+  const base=directRoute(env),route=Object.freeze({...base,effort:effortFrom(effort,base.effort),fallbackIndex:0});
+  try{
+    const value=await prismRunner(instructions,input,schema,{signal,env,model:route.model,effort:route.effort});
+    return attachAiRoute(value,route);
+  }catch(error){
+    if(aborted(signal,error))throw error;
+    diagnostics?.({type:'route_failure',flow:'runtime',stage:'model_call',route:route.id,model:route.modelId,code:error?.code||'AI_ROUTE_ERROR',fallbackAllowed:false,message:error?.message||String(error)});
+    throw error;
   }
-  const error=new Error('Các model dự phòng đều đã hết hạn mức. Hãy thử lại sau.');
-  Object.defineProperty(error,'code',{value:'AI_ALL_QUOTA_EXHAUSTED',enumerable:false});
-  Object.defineProperty(error,'routeFailures',{value:failures,enumerable:false});
-  throw error;
 }
 export async function runAIText(instructions,input,{
   signal,
   env=process.env,
-  codexTextRunner=runCodexText,
   prismTextRunner=runPrismText,
   chatgptTextRunner=runChatgptWebText,
-  routeStartIndex=0,
+  effort,
   diagnostics=recordAiDiagnostic
 }={}){
   const selected=writerProviderFromEnv(env);
@@ -105,33 +101,15 @@ export async function runAIText(instructions,input,{
     }
   }
 
-  const failures=[];
-  const start=Number.isInteger(routeStartIndex)&&routeStartIndex>=0&&routeStartIndex<AI_ROUTES.length?routeStartIndex:0;
-  for(const [index,routeBase] of AI_ROUTES.entries()){
-    if(index<start)continue;
-    signal?.throwIfAborted();
-    const route=Object.freeze({...routeBase,fallbackIndex:index});
-    try{
-      const value=route.provider==='prism'
-        ?await prismTextRunner(instructions,input,{signal,env,model:route.model,effort:route.effort})
-        :await codexTextRunner(instructions,input,{signal,model:route.model,effort:route.effort});
-      return textResult(value,route);
-    }catch(error){
-      if(aborted(signal,error))throw error;
-      const fallbackAllowed=error?.code==='AI_QUOTA_EXHAUSTED'&&error?.fallbackAllowed===true;
-      const failure={id:route.id,model:route.modelId,code:error?.code||'AI_ROUTE_ERROR',message:error?.message||String(error),fallbackAllowed};
-      failures.push(failure);
-      diagnostics?.({type:'route_failure',flow:'writer-v2',stage:'text_generation',route:route.id,model:route.modelId,code:failure.code,fallbackAllowed,message:failure.message});
-      if(!fallbackAllowed){
-        Object.defineProperty(error,'routeFailures',{value:[...failures],enumerable:false,configurable:true});
-        throw error;
-      }
-    }
+  const base=directRoute(env),route=Object.freeze({...base,effort:effortFrom(effort,base.effort),fallbackIndex:0});
+  signal?.throwIfAborted();
+  try{
+    return textResult(await prismTextRunner(instructions,input,{signal,env,model:route.model,effort:route.effort}),route);
+  }catch(error){
+    if(aborted(signal,error))throw error;
+    diagnostics?.({type:'route_failure',flow:'writer-v2',stage:'text_generation',route:route.id,model:route.modelId,code:error?.code||'AI_ROUTE_ERROR',fallbackAllowed:false,message:error?.message||String(error)});
+    throw error;
   }
-  const error=new Error('Các model Writer dự phòng đều đã hết hạn mức. Hãy thử lại sau.');
-  Object.defineProperty(error,'code',{value:'AI_ALL_QUOTA_EXHAUSTED',enumerable:false});
-  Object.defineProperty(error,'routeFailures',{value:failures,enumerable:false});
-  throw error;
 }
 
 export {READING_TIMEOUT_MS};

@@ -1,4 +1,5 @@
 import {normalizeQuestion} from './classifier.mjs';
+import {allowedTimingDates} from './timingEngine.mjs';
 import {plainReadingText} from '../../reading-format.mjs';
 const normalized=text=>normalizeQuestion(plainReadingText(text));
 const TAGS={
@@ -74,7 +75,7 @@ export function auditSynthesis(passages,context,{structured=false}={}) {
       const forecasts=/\b(se|xay ra|ung vao|tien ve|nhan tien|tien vao)\b/.test(prefix);
       const temporalContext=/\b(?:trong|sau|truoc|den|tu|vao|ke tu|moc|thoi han|thoi diem|ung ky|ngay|tuan|thang)\s*$/.test(prefix)||/\b(?:se|xay ra|ung vao|tien ve|nhan tien|tien vao|cho|doi|hen|gap|goi|gui|ky|thanh toan)\b/.test(prefix);
       const genericDay=match[0]==='mot ngay'&&!temporalContext&&!forecasts;
-      if(!genericDay&&!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0]))issues.push(`Mốc ứng kỳ ngoài Timing Engine: ${match[0]}; không được tự định ngày hoặc số ngày.`);
+      if(!genericDay&&!denied&&(forecasts||!source.includes(match[0]))&&!g.timing.allowedPredictions.includes(match[0])&&!allowedTimingDates(g.timing).includes(match[0]))issues.push(`Mốc ứng kỳ ngoài Timing Engine: ${match[0]}; không được tự định ngày hoặc số ngày.`);
     }
     for(const match of q.matchAll(/\b\d{4}-\d{2}-\d{2}\b|\bngay \d{1,2} thang \d{1,2}(?: nam \d{4})?\b/g)){
       const scope=Object.values(g.timing.window||{}).includes(match[0])&&/\b(khoang hoi|pham vi|cua so|thoi han)\b/.test(q)&&!/\b(se|xay ra|tien ve)\b/.test(q);

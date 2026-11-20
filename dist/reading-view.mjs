@@ -108,7 +108,7 @@ export function renderReading(answer,data,prepared) {
       node('p','Chuỗi điều kiện do bộ luận tổng hợp; đây không phải các sự kiện đã xảy ra.',tabs.story,'ai-note');
       for(const step of g.eventStages.stages.filter(s=>['EMERGENCE','FORMATION','EXECUTION','REALIZATION'].includes(s.stage))){
         const item=node('li','',stages);node('span',step.label,item,'ai-stage-label');
-        const meaning={positive:'Có cụm tượng hỗ trợ',conditional:'Phụ thuộc điều kiện chuyển bước',uncertain:'Chưa có hỗ trợ đủ rõ',unresolved:'Chưa xác định'};
+        const meaning={positive:'Có cụm tượng hỗ trợ',conditional:'Phụ thuộc điều kiện chuyển bước',uncertain:'Chưa có hỗ trợ đủ rõ',unresolved:'Chưa xác định',negative:'Bất lợi, không thành theo bàn'};
         prose(meaning[step.status]+(step.conditions[0]?': '+step.conditions[0]:'.'),item);
         const ids=g.claims.filter(c=>c.evidenceIds.some(e=>step.supportingEvidenceIds.includes(e)||step.limitingEvidenceIds.includes(e))).map(c=>c.id);trace(ids,item,tabs.story);
       }

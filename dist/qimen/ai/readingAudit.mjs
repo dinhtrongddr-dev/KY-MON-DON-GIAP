@@ -9,8 +9,9 @@ import {pillarFromGanzhi} from '../core/calendar.mjs';
 import {analyzeBoard} from '../analysis/index.mjs';
 import {auditSynthesis} from './synthesisAudit.mjs';
 import {buildQuestionNarrativeContract} from './narrativeContract.mjs';
+import {allowedTimingDates} from './timingEngine.mjs';
 import {validateSurfaceReading,surfaceParagraphs,SurfaceValidationError,naturalSurfaceFallback} from './surfaceReading.mjs';
-export class ReadingValidationError extends Error {constructor(message){super(message);this.name='ReadingValidationError';}}
+export class ReadingValidationError extends Error {constructor(message,violations=null){super(message);this.name='ReadingValidationError';if(Array.isArray(violations)&&violations.length)this.violations=violations;}}
 const reject=message=>{throw new ReadingValidationError(message);};
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const text=(s,min=1,max=5000)=>typeof s==='string'&&s.trim().length>=min&&s.length<=max;
@@ -43,9 +44,20 @@ function auditClaims(passages,context,rows=[],{structured=false}={}) {
   }
   const sourceDates=context.question.match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[];
   const rowDates=rows.flatMap(row=>(row.label.match(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)||[]).flatMap(value=>[value,value.replace(/\/\d{2,4}$/,'')]));
-  const responseDates=(context.allInOne.reasoning?.timing?.candidates||context.allInOne.timingFacts?.candidates||[]).flatMap(row=>[row.display,row.display?.replace(/\/\d{4}$/,'')]).filter(Boolean);
-  const allowedDates=new Set([...sourceDates,...rowDates,...responseDates]);
-  for(const m of prose.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g))if(!allowedDates.has(m[0]))reject('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.');
+  const timing=context.allInOne.reasoning?.timing||context.allInOne.timingFacts||null;
+  const responseDates=(timing?.candidates||[]).flatMap(row=>[row.display,row.display?.replace(/\/\d{4}$/,'')]).filter(Boolean);
+  // TG-CB-7.0 (P4): every date the timing engine derived (all layers, window bounds) is allowed,
+  // and an unknown date is reported per sentence so only that sentence is repaired.
+  const comparing=!!context.allInOne.comparison?.candidates?.length;
+  const allowedDates=new Set([...sourceDates,...rowDates,...responseDates,...(comparing?[]:allowedTimingDates(timing))]);
+  const invented=[];
+  for(const passage of passages.map(String))for(const m of passage.matchAll(/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/g)){
+    if(allowedDates.has(m[0]))continue;
+    const sentence=(passage.slice(0,m.index).split(/(?<=[.!?])\s+/).at(-1)+passage.slice(m.index).split(/(?<=[.!?])\s/)[0]).trim();
+    const allowedList=[...allowedDates].filter(x=>/^\d{2}\/\d{2}\/\d{4}$/.test(x)).slice(0,8).join(', ')||'không có mốc';
+    invented.push({code:'INVENTED_TIME',unitId:'',sentence,reason:`Ngày ${m[0]} không có trong câu hỏi hay bảng ứng kỳ của engine. Chỉ sửa câu này: bỏ ngày cụ thể hoặc dùng mốc được phép (${allowedList}).`});
+  }
+  if(invented.length)throw new ReadingValidationError('Bài luận tự thêm ngày chính xác ngoài dữ liệu được phép.',invented);
 }
 const ACTIVATION_SPIRITS=['Trực Phù','Đằng Xà','Thái Âm','Lục Hợp','Bạch Hổ','Huyền Vũ','Cửu Địa','Cửu Thiên'];
 const ACTIVATION_DIRECTIONS=['Đông Bắc','Đông Nam','Tây Bắc','Tây Nam','Bắc','Đông','Nam','Tây'];
@@ -232,7 +244,8 @@ export function validateNarrativeQuestion(reading,context){
         if(/<script\b|javascript:/i.test(p.meaning))reject('Không nhận mã thực thi trong nội dung bài.');
       }catch(error){
         if(!(error instanceof ReadingValidationError))throw error;
-        violations.push({code:'FACTUAL_INTEGRITY',unitId:p.unitId,sentence:p.meaning,reason:error.message});
+        if(error.violations?.length)violations.push(...error.violations.map(v=>({...v,unitId:p.unitId})));
+        else violations.push({code:'FACTUAL_INTEGRITY',unitId:p.unitId,sentence:p.meaning,reason:error.message});
       }
     }
     if(violations.length)throw new SurfaceValidationError(violations);
