@@ -92,7 +92,14 @@ const notablePairs=Object.freeze({
   '庚己':{id:'punishment_structure',name:'Hình cách',tone:'severe_adverse'},
   '庚戊':{id:'hidden_palace_structure',name:'Phục cung cách',tone:'severe_adverse'},
   '戊庚':{id:'flying_palace_structure',name:'Phi cung cách',tone:'severe_adverse'},
+  '庚壬':{id:'small_structure',name:'Tiểu cách',tone:'adverse'},
 });
+// TG-CB-7.0 (P3): 烟波钓叟歌 — Canh gặp can trụ = 岁/月/日/时格; Tam Kỳ lâm cung vượng = 三奇升殿.
+const PILLAR_STRUCTURES=Object.freeze([
+  ['year','year_structure','Tuế cách'],['month','month_structure','Nguyệt cách'],
+  ['day','day_structure','Nhật cách'],['hour','hour_structure','Thời cách'],
+]);
+const WONDER_ASCENDS=Object.freeze({'乙':3,'丙':9,'丁':7});
 
 const sanQiDeShiPairs=new Set(['乙己','乙辛','丙戊','丙庚','丁壬','丁癸']);
 
@@ -142,6 +149,17 @@ function classicPatternsForPalace(board,p,stemResponses){
         plainMeaning:blemished&&!chief?'Có điều kiện “đắc sử” nhưng đồng thời vướng một cách xấu; không nâng kết luận nếu chưa có Trực Phù cùng cung.':'Tam Kỳ gặp đúng nghi theo quy ước cổ; dùng như tín hiệu hỗ trợ, không tự chốt thành công.'});
     }
   }
+  for(const response of stemResponses){
+    if(response.heavenStem==='庚'){
+      for(const [pillar,id,name] of PILLAR_STRUCTURES){
+        const stem=board.pillars?.[pillar]?.stem?.han;
+        if(stem&&stem!=='甲'&&stem!=='庚'&&response.earthStem===stem)matches.push({id,name,pair:response.pair,tone:'adverse',qualified:true,carried:response.carried,
+          source:CLASSIC_PATTERN_SOURCE,plainMeaning:'Canh đè can trụ '+(pillar==='year'?'năm (bề trên, cơ quan)':pillar==='month'?'tháng (đồng nghiệp, môi trường)':pillar==='day'?'ngày (người hỏi)':'giờ (sự việc)')+': trở lực trực tiếp ở đúng tầng đó.'});
+      }
+    }
+    if(WONDER_ASCENDS[response.heavenStem]===p.number)matches.push({id:'wonder_ascends_hall',name:'Tam Kỳ thăng điện',pair:response.pair,tone:'favorable',qualified:!p.voided,carried:response.carried,
+      source:CLASSIC_PATTERN_SOURCE,plainMeaning:'Kỳ lâm cung vượng của mình (Ất Chấn, Bính Ly, Đinh Đoài): lực của kỳ được phát huy.'});
+  }
   if(p.number===board.zhiShi?.palace&&p.heavenStems.some(s=>s.han==='丁'))matches.push({
     id:'jade_woman_guards_door',name:'Ngọc Nữ thủ môn',pair:null,tone:'favorable',qualified:true,source:CLASSIC_PATTERN_SOURCE,
     plainMeaning:'Đinh Kỳ cùng cung Trực Sử; dùng như tín hiệu thuận cho phối hợp/việc kín, không tự suy sự kiện.'
@@ -185,7 +203,7 @@ export function analyzeStructures(board,palaces,roles=[]){
     fourHarms:allFourHarms,stemResponses:allStemResponses,patterns:allPatterns,
     coverage:{tenStemResponses:Object.keys(TEN_STEM_RESPONSES).length,fourHarms:['void','door_pressure','punishment','tomb'],
       doorRelations:['door_controls_palace','palace_controls_door'],
-      classicPatternFamilies:['6 cách cục cát/hung trọng yếu','4 cách liên quan Canh','Tam Kỳ đắc sử','Ngọc Nữ thủ môn','Thiên/Địa/Nhân độn']},
+      classicPatternFamilies:['6 cách cục cát/hung trọng yếu','5 cách liên quan Canh','Tuế/Nguyệt/Nhật/Thời cách','Tam Kỳ thăng điện','Tam Kỳ đắc sử','Ngọc Nữ thủ môn','Thiên/Địa/Nhân độn']},
     limitations:[
       'Thập Can Khắc Ứng là corpus diễn giải truyền thống; tone chỉ dùng xếp ưu tiên nội bộ, không phải xác suất.',
       'Tên Môn bức/Cung bức có dị bản; engine lưu chiều ngũ hành thật và không suy logic từ tên gọi.',

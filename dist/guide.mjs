@@ -53,7 +53,9 @@ export const PUNISHMENT_PALACES = Object.freeze({'戊':3,'己':2,'庚':8,'辛':9
 // 遁甲演義卷2 / 奇門法竅: 乙奇墓坤2、丙奇墓乾6、丁奇墓艮8。
 export const THREE_WONDERS_TOMBS = Object.freeze({'乙':2,'丙':6,'丁':8});
 // KM-TIMING-3.0 profile: visible stem tomb palaces derived from the same
-// yin/yang Twelve-Life-Stage convention already used by KM-STRENGTH-2.0.
+// yin/yang Twelve-Life-Stage convention already used by KM-STRENGTH-2.0,
+// EXCEPT 乙: the Three Wonders verse keeps 乙 in Khôn 2 (未), while yin-reverse
+// Twelve Life Stages would put 乙's tomb in 戌 (Càn 6). TG-CB-7.0 P3 keeps the verse (R6).
 // Qimen Fa Qiao explicitly extends tomb reading from the Three Wonders to the Six Registers.
 export const VISIBLE_STEM_TOMBS = Object.freeze({'乙':2,'丙':6,'丁':8,'戊':6,'己':8,'庚':8,'辛':4,'壬':4,'癸':2});
 export function palaceConditions(palace) {

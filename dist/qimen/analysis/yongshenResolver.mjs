@@ -20,6 +20,7 @@ const PROFILES=Object.freeze({
     roles:[role('opportunity','primary','Cơ hội giao dịch'),role('quote','secondary','Hồ sơ, phạm vi và báo giá'),
       role('contract','secondary','Khả năng hình thành thỏa thuận'),role('money','secondary','Lợi ích và dòng tiền'),
       role('authority','corroborator','Biểu tượng quyền quyết định'),role('capital','corroborator','Nguồn lực bỏ ra')],
+    extras:[extra('market_rival','Canh · đối thủ/trở lực thị trường',['stem','庚'],'corroborator','Biểu tượng đối thủ cạnh tranh hoặc trở lực; không tự gán danh tính một đối thủ cụ thể')],
   },
   project:{
     roles:[role('event','primary','Mục tiêu dự án'),role('execution','secondary','Khâu triển khai'),
