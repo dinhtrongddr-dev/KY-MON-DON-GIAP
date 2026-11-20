@@ -59,7 +59,7 @@ export function initMenhAi({prepare,activity=null}){
   });
   const jobClient=createReadingJobClient({
     endpoint:AI_RELAY_ORIGIN,
-    getToken:()=>token.value.trim(),
+    getToken:()=>(token.value.trim()||'open-access'),
     onRunning:()=>{status.textContent='Không phải một lời tiên tri. Không phải sự may rủi. Kỳ Môn Độn Giáp là một hệ thống tư duy cổ xưa từng được các bậc mưu lược sử dụng để tìm thời cơ trong những thời khắc quyết định. Qua hàng nghìn năm, những bí quyết về thiên thời, địa lợi, nhân hòa vẫn được lưu truyền như một bản đồ giúp con người nhìn rõ hơn hoàn cảnh trước khi hành động. Hôm nay, AI giúp mở lại cánh cửa ấy — biến những ký hiệu cổ xưa thành những phân tích gần gũi, để bạn hiểu bàn Kỳ Môn và hiểu chính quyết định của mình.\n\nAI vẫn đang luận trên server. Bạn có thể chuyển sang ứng dụng khác; khi quay lại kết quả sẽ tự cập nhật.';},
     onReconnect:()=>{status.textContent='Mất kết nối tạm thời. AI vẫn tiếp tục luận trên server; đang chờ kết nối lại để nhận kết quả.';}
   });
@@ -97,7 +97,7 @@ export function initMenhAi({prepare,activity=null}){
   token.addEventListener('input',()=>{if(remember.checked)savePreference();cancelWork();setConnectionState('disconnected');status.textContent='Mã kết nối đã thay đổi; hãy kiểm tra kết nối.';});
   cancel.addEventListener('click',()=>{const wasChecking=tokenShell?.dataset.state==='checking';cancelWork();if(wasChecking)setConnectionState('disconnected');status.textContent='Đã hủy yêu cầu AI.';});
   async function call(path,body,signal){
-    const connectionCode=token.value.trim();
+    const connectionCode=(token.value.trim()||'open-access');
     if(!connectionCode)throw new Error('Nhập mã kết nối AI.');
     if(connectionCode.length<4||connectionCode.length>128)throw new Error('Mã kết nối AI phải dài từ 4 đến 128 ký tự.');
     let response;

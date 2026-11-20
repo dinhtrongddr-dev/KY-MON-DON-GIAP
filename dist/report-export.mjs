@@ -115,6 +115,7 @@ function shareApiEndpoint(){
   return SHARE_ORIGIN+'/api/share';
 }
 async function requestShare(payload,token){
+  token=token||'open-access';
   if(!token)throw new Error('Nhập mã kết nối AI trước khi tạo link chia sẻ.');
   const response=await fetch(shareApiEndpoint(),{method:'POST',headers:{'Content-Type':'application/json','X-Qimen-Token':token},body:JSON.stringify(payload),credentials:'omit',cache:'no-store'});
   let data;try{data=await response.json();}catch{throw new Error('Máy chủ chia sẻ trả dữ liệu không đọc được.');}
