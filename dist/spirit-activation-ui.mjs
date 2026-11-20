@@ -208,6 +208,12 @@ function hourlyCard(root,data,recommended,goalId){
   summary.append(top,meaning,footer);card.append(summary);
 
   const body=el('div','spirit-card-details');
+  if(data.protocol){
+    // TG-CB-7.0 (P7): the spirit's own protocol (purpose, use of direction, hours, bans).
+    body.append(el('h4','','Cách dùng thần này'),el('p','spirit-protocol',data.protocol.purpose+'. '+data.instruction));
+    if(data.protocol.hours?.length)body.append(el('p','spirit-protocol-hours','Giờ dùng: '+data.protocol.hours.join(', ')));
+    if(data.protocol.note)body.append(el('p','spirit-protocol-note',data.protocol.note));
+  }
   if(data.semantic.keywords?.length){body.append(el('h4','','Từ khóa'),chips(data.semantic.keywords,4,'spirit-keyword-row'));}
   if(data.semantic.bestFor?.length){body.append(el('h4','','Phù hợp cho'),chips(data.semantic.bestFor,4,'spirit-bestfor-chips'));}
   const risks=detailList('Mặt cần thận trọng',data.semantic.risks?.slice(0,3),'spirit-warning-block');if(risks)body.append(risks);

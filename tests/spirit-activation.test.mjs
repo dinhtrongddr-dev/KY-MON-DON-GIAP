@@ -96,7 +96,7 @@ test('natal spirit is read only from the natal self palace and is separate from 
 test('AI receives deterministic activation data without raw score and validator blocks a different spirit/direction',()=>{
   const body={
     question:'Tôi nên dùng Thần nào và đặt phương vị nào sau lưng để hỗ trợ việc đàm phán hợp đồng này?',
-    topic:'contract',mode:'strategy',method:'chaibu',input:input(10)
+    topic:'contract',mode:'strategy',method:'chaibu',input:input(11)
   };
   const p=prepareReading(body),activation=p.context.allInOne.spiritActivation;
   assert.equal(activation.requested,true);
@@ -198,4 +198,26 @@ test('mobile activation orientation keeps all dynamic direction data inside one 
   assert.match(css,/\.spirit-orientation\{[\s\S]*max-width:100%;[\s\S]*overflow:hidden;/);
   assert.match(css,/\.spirit-orientation-visual\{[\s\S]*grid-template-columns:minmax\(64px,.8fr\) minmax\(104px,1.25fr\) minmax\(64px,.8fr\)/);
   assert.match(css,/@media\(max-width:560px\)/);
+});
+
+// TG-CB-7.0 (P7): every spirit has its own protocol; bans and forbidden goals are hard stops.
+import {SPIRIT_PROTOCOLS,spiritOrientation} from '../dist/qimen/analysis/spiritActivation.mjs';
+test('P7: eight distinct spirit protocols with purpose, forbidden goals, use of direction and hours', () => {
+  assert.deepEqual(Object.keys(SPIRIT_PROTOCOLS).sort(), ['chief','earth9','harmony','heaven9','moon','snake','tiger','tortoise']);
+  assert.equal(SPIRIT_PROTOCOLS.earth9.use, 'back'); assert.equal(SPIRIT_PROTOCOLS.heaven9.use, 'face'); assert.equal(SPIRIT_PROTOCOLS.tiger.use, 'project');
+  for (const id of ['money','investment','business','love']) assert.ok(SPIRIT_PROTOCOLS.snake.forbidden.includes(id));
+  assert.ok(SPIRIT_PROTOCOLS.tiger.forbidden.includes('money') && SPIRIT_PROTOCOLS.tortoise.forbidden.includes('money'));
+  const back = spiritOrientation({number: 2}, SPIRIT_PROTOCOLS.earth9), face = spiritOrientation({number: 2}, SPIRIT_PROTOCOLS.heaven9);
+  assert.deepEqual([back.backDirection, back.faceDirection], ['Tây Nam', 'Đông Bắc']);
+  assert.deepEqual([face.backDirection, face.faceDirection], ['Đông Bắc', 'Tây Nam']);
+});
+test('P7: a palace with Không Vong / Nhập Mộ / Kích Hình / Môn bức, or a forbidden goal, is never eligible', () => {
+  for (let h = 0; h < 24; h += 1) {
+    const p = prepareReading({question: 'Tôi nên dùng Thần nào để cầu tài?', topic: 'money', mode: 'strategy', method: 'chaibu', input: input(h)});
+    const result = evaluateSpiritActivation(p.board, 'money', {analysis: p.context.allInOne.analysis});
+    for (const c of result.candidates) {
+      if (c.protocol.bans.length || c.protocol.forbiddenGoal) { assert.equal(c.eligible, false); assert.deepEqual(c.protocol.hours, []); }
+      if (['snake','tiger','tortoise'].includes(c.spirit.id)) assert.equal(c.eligible, false, `${c.spirit.id} must not serve money`);
+    }
+  }
 });

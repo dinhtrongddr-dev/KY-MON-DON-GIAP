@@ -268,7 +268,7 @@ export function buildQuestionNarrativeContract(context,{deliberation=null}={}){
   const spirit=c.spiritActivation;
   if(spirit?.requested){
     const r=spirit.recommended,meaning=r
-      ?'Thực hành với '+r.spirit.name+': đặt hướng '+r.backDirection+' sau lưng, mặt nhìn về '+r.faceDirection+'. Mức phù hợp: '+r.activationLevel+'. Đây là thực hành tượng trưng để tập trung và định hướng hành động.'
+      ?'Thực hành với '+r.spirit.name+(r.protocol?.purpose?' ('+r.protocol.purpose.toLowerCase()+')':'')+': đặt hướng '+r.backDirection+' sau lưng, mặt nhìn về '+r.faceDirection+'. Mức phù hợp: '+r.activationLevel+'.'+(r.protocol?.hours?.length?' Giờ dùng: '+r.protocol.hours.join(', ')+'.':'')+(r.protocol?.note?' '+r.protocol.note:'')+' Đây là thực hành tượng trưng để tập trung và định hướng hành động.'
       :'Hiện chưa có phương vị đủ điều kiện để ưu tiên.';
     units.push(unit('spirit_practice','Hướng thực hành',primaryIds,[atom('spirit_fixed',meaning,primaryIds,{kind:'instruction',required:true})],{certainty:'scope',conclusion:'symbolic_practice'}));
   }

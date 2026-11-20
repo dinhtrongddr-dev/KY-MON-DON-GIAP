@@ -44,6 +44,7 @@ function compactSpiritActivation(result){
   const compact=row=>row?{
     palace:row.palace,palaceName:row.palaceName,direction:row.direction,spirit:row.spirit,door:row.door,star:row.star,stem:row.stem,
     backDirection:row.backDirection,faceDirection:row.faceDirection,activationLevel:row.activationLevel,reasons:row.reasons,warnings:row.warnings,
+    protocol:row.protocol?{use:row.protocol.use,purpose:row.protocol.purpose,note:row.protocol.note,hours:row.protocol.hours,bans:row.protocol.bans,forbiddenGoal:row.protocol.forbiddenGoal}:null,
     practice:{durationMinutes:row.practice?.durationMinutes||10,intention:row.practice?.intention||'',instruction:row.practice?.instruction||''}
   }:null;
   return {

@@ -2,7 +2,7 @@ import {PALACES} from '../core/palace.mjs';
 import {SEMANTIC_MATRIX} from '../semantic/matrix-data.mjs';
 import {elementLink} from './relationships.mjs';
 
-export const SPIRIT_ACTIVATION_VERSION='KM-SPIRIT-ACTIVATION-1.0';
+export const SPIRIT_ACTIVATION_VERSION='KM-SPIRIT-ACTIVATION-2.0';
 
 const BACKING=Object.freeze({
   1:{sourceDirection:'Bắc',facingDirection:'Nam',bearing:0},
@@ -50,6 +50,56 @@ const STAR_FIT=Object.freeze({
   travel:{chong:1.3,peng:.5},property:{ren:1.2,xin:.5},dispute:{xin:1.1,zhu:.5},other:{xin:.6,fu:.6}
 });
 
+// TG-CB-7.0 (P7, quyết định 3): one protocol per spirit (遁甲演義, 奇門法竅; see
+// docs/research/ung-ky-trach-thoi.md §5). use: 'face' = turn toward the palace,
+// 'back' = sit with the palace behind you, 'project' = aim the palace's force at the
+// opponent (never used for one's own gain).
+export const SPIRIT_PROTOCOLS=Object.freeze({
+  chief:{use:'face',purpose:'Cầu quý nhân, xin phép, gặp người quyết định',suited:['work','support','decision','dispute','property'],forbidden:[],hours:'Giờ cung Trực Phù khi cung không Không Vong',
+    note:'Kỵ dùng cho việc mờ ám hoặc lừa người có quyền.'},
+  heaven9:{use:'face',purpose:'Tấn công, khai trương, quảng bá, đi xa (dương binh)',suited:['work','business','creativity','travel','money'],forbidden:['meditation'],hours:'Giờ dương (Tý, Dần, Thìn, Ngọ, Thân, Tuất) của cung Cửu Thiên',
+    note:'Không dùng khi cần giữ kín hay ẩn náu.'},
+  earth9:{use:'back',purpose:'Phòng thủ, cất giữ, tích luỹ, ẩn quân (tàng binh)',suited:['property','investment','meditation','family','decision'],forbidden:['travel','creativity'],hours:'Giờ âm (Sửu, Mão, Tỵ, Mùi, Dậu, Hợi) của cung Cửu Địa',
+    note:'Không dùng để khởi sự nhanh hay cầu danh.'},
+  moon:{use:'back',purpose:'Mật sự, đàm phán ngầm, giữ kín, tĩnh tâm',suited:['negotiation','meditation','decision','study','love'],forbidden:['creativity'],hours:'Giờ âm của cung Thái Âm',
+    note:'Không phô trương; không dùng cho quảng cáo, công bố.'},
+  harmony:{use:'face',purpose:'Hợp tác, ký kết, mai mối, hoà giải',suited:['love','business','negotiation','support','family','dispute'],forbidden:[],hours:'Giờ cung Lục Hợp khi có cát môn',
+    note:'Không hợp với việc cần cắt đứt dứt khoát.'},
+  snake:{use:'project',purpose:'Nghi binh, gây rối thế đối phương',suited:['dispute'],forbidden:['money','investment','business','love','negotiation','family','property','support','work'],hours:'Chỉ khi chủ động phá thế đối thủ',
+    note:'Không dùng cho việc thật, ký kết hay cầu tài.'},
+  tiger:{use:'project',purpose:'Tranh đấu, đòi nợ cứng, lấy uy',suited:['dispute'],forbidden:['money','investment','love','family','meditation','study','support','property'],hours:'Giờ cung Bạch Hổ khi không nhập Mộ, không Không Vong',
+    note:'Không tựa lưng vào Bạch Hổ; không dùng cho cầu tài hoà, cưới hỏi, chữa bệnh.'},
+  tortoise:{use:'face',purpose:'Dò tin, truy tìm đồ mất, phòng gian',suited:['decision','dispute'],forbidden:['money','investment','business','negotiation','love'],hours:'Giờ âm của cung Huyền Vũ',
+    note:'Không dùng cho giao dịch tiền hay tin người lạ.'},
+});
+const OPPOSITE={'Bắc':'Nam','Nam':'Bắc','Đông':'Tây','Tây':'Đông','Đông Bắc':'Tây Nam','Tây Nam':'Đông Bắc','Đông Nam':'Tây Bắc','Tây Bắc':'Đông Nam'};
+const BRANCH_HAN='子丑寅卯辰巳午未申酉戌亥',BRANCH_VI_LIST=['Tý','Sửu','Dần','Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'];
+const YANG_BRANCH=new Set([0,2,4,6,8,10]);
+function protocolHours(palace,protocol,board){
+  const voids=new Set((board?.voidBranches||[]).map(b=>BRANCH_HAN.indexOf(b?.han??b)));
+  let list=(PALACES[palace.number]?.branches||[]).filter(i=>!voids.has(i));
+  if(/Giờ dương/.test(protocol.hours))list=list.filter(i=>YANG_BRANCH.has(i)).length?list.filter(i=>YANG_BRANCH.has(i)):list;
+  if(/Giờ âm/.test(protocol.hours))list=list.filter(i=>!YANG_BRANCH.has(i)).length?list.filter(i=>!YANG_BRANCH.has(i)):list;
+  return list.map(i=>{const st=(i*2+23)%24;return `${BRANCH_VI_LIST[i]} (${String(st).padStart(2,'0')}:00–${String((st+1)%24).padStart(2,'0')}:59)`;});
+}
+export function spiritOrientation(palace,protocol){
+  const dir=PALACES[palace.number]?.direction,opp=OPPOSITE[dir];
+  const name=`${PALACES[palace.number]?.vi} ${palace.number}`;
+  if(protocol.use==='back')return {backDirection:dir,faceDirection:opp,
+    instruction:`Ngồi tựa lưng về hướng ${dir} (cung ${name}), sau lưng là phía ${dir}, mặt hướng về ${opp}.`};
+  if(protocol.use==='project')return {backDirection:opp,faceDirection:dir,
+    instruction:`Không tự cầu lợi từ phương này. Khi cần phá thế đối phương: sau lưng là phía ${opp}, mặt hướng về ${dir} (cung ${name}), hướng lực về phía vấn đề cần xử lý.`};
+  return {backDirection:opp,faceDirection:dir,instruction:`Quay mặt hướng về ${dir} (cung ${name}), sau lưng là phía ${opp}.`};
+}
+function hardBans(palace,structure,board){
+  const out=[];
+  if(palace.voided)out.push('Không Vong');
+  if((palace.conditions?.wonderTombs||[]).length||(palace.conditions?.stemTombs||[]).length||(structure?.fourHarms||[]).some(x=>x.code==='tomb'))out.push('Nhập Mộ');
+  if((palace.conditions?.punishment||[]).length||(structure?.fourHarms||[]).some(x=>x.code==='punishment'))out.push('Kích Hình');
+  if(palace.conditions?.doorPressure||structure?.doorRelation?.doorControlsPalace)out.push('Môn bức');
+  if(board?.fanYin||board?.patterns?.starFanYin||board?.patterns?.doorFanYin)out.push('Phản Ngâm toàn bàn');
+  return out;
+}
 const round=value=>Math.round(value*100)/100;
 const uniq=items=>[...new Set(items.filter(Boolean))];
 
@@ -141,8 +191,12 @@ export function evaluateSpiritActivation(board,goal='decision',{analysis=null,se
     const formation=analysis?.formations?.byPalace?.[palace.number]||null;
     const qualified=(formation?.matches||[]).filter(x=>!x.qualificationStatus||x.qualificationStatus==='qualified').length;
     const formationScore=Math.min(.4,qualified*.2);
-    const score=round(spiritFit+doorFit+starFit+strength+condition.score+global.score+targetRel.score+selfRel.score+formationScore);
-    const backing=getBackingDirection(palace.number),level=levelFor(score,condition.severe);
+    const protocol=SPIRIT_PROTOCOLS[palace.spirit.id]||SPIRIT_PROTOCOLS.chief;
+    const goalFit=protocol.suited.includes(resolvedGoal.id)?.8:0,forbiddenGoal=protocol.forbidden.includes(resolvedGoal.id);
+    const bans=hardBans(palace,structure,board);
+    const score=round(spiritFit+doorFit+starFit+strength+condition.score+global.score+targetRel.score+selfRel.score+formationScore+goalFit);
+    const backing={...getBackingDirection(palace.number),...spiritOrientation(palace,protocol)};
+    const level=forbiddenGoal||bans.length?'Không nên kích hoạt lúc này':levelFor(score,condition.severe);
     const reasons=uniq([
       spiritFit>0?`${palace.spirit.vi}: ${profile.activationTheme||profile.modernMeaning||profile.core_meaning}.`:null,
       doorFit>0?`${palace.door.vi} phù hợp với cách hành động của mục tiêu này.`:null,
@@ -152,9 +206,14 @@ export function evaluateSpiritActivation(board,goal='decision',{analysis=null,se
       selfRel.text&&selfRel.score>0?`Quan hệ với cung người hỏi: ${selfRel.text}.`:null,
       ...(condition.reasons||[])
     ]).slice(0,5);
-    const warnings=uniq([...condition.warnings,...global.warnings,targetRel.score<0&&targetRel.text?`Với cung mục tiêu: ${targetRel.text}; cần thận trọng khi dùng phương này.`:null,selfRel.score<0&&selfRel.text?`Với cung người hỏi: ${selfRel.text}; phương này tạo thêm sức ép.`:null]).slice(0,6);
+    const warnings=uniq([
+      forbiddenGoal?`${palace.spirit.vi} không dùng cho mục đích “${resolvedGoal.label}” (${protocol.note})`:null,
+      bans.length?`Cấm kích: cung đang ${bans.join(', ')}.`:null,
+      ...condition.warnings,...global.warnings,targetRel.score<0&&targetRel.text?`Với cung mục tiêu: ${targetRel.text}; cần thận trọng khi dùng phương này.`:null,selfRel.score<0&&selfRel.text?`Với cung người hỏi: ${selfRel.text}; phương này tạo thêm sức ép.`:null]).slice(0,7);
     return Object.freeze({
       palace:palace.number,palaceName:`${palace.vi} ${palace.number}`,direction:palace.direction,
+      protocol:{use:protocol.use,purpose:protocol.purpose,suitedFor:protocol.suited,forbiddenFor:protocol.forbidden,note:protocol.note,
+        hourRule:protocol.hours,hours:bans.length||forbiddenGoal?[]:protocolHours(palace,protocol,board),bans,forbiddenGoal},
       spirit:{id:palace.spirit.id,name:palace.spirit.vi,han:palace.spirit.han},
       door:{id:palace.door.id,name:palace.door.vi},star:{id:palace.star.id,name:palace.star.vi},
       stem:(palace.heavenStems||[]).map(x=>x.vi||x.han).join(' + '),earthStem:palace.earthStem?.vi||palace.earthStem?.han||'',
